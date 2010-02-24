@@ -23,6 +23,9 @@ do_install () {
      # install mapdmaq on target
      install -d ${D}/${installdir}/codecs
      install -m 0755 ${WORKDIR}/mapdmaq ${D}/${installdir}/codecs
+
+    install -d ${D}${CODEC_INSTALL_DIR_RECIPE}
+    cp -pPrf ${S}/* ${D}${CODEC_INSTALL_DIR_RECIPE}
 }
 
 do_stage() {

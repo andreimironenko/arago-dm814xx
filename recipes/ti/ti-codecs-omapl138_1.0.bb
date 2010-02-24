@@ -31,5 +31,8 @@ do_install () {
 	for file in `find . -name *.${DSPSUFFIX}`; do
 		cp ${file} ${D}/${installdir}/codec-combo
 	done
+
+    install -d ${D}${CODEC_INSTALL_DIR_RECIPE}
+    cp -pPrf ${S}/* ${D}${CODEC_INSTALL_DIR_RECIPE}
 }
 

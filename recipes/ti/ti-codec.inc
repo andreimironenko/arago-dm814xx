@@ -2,6 +2,7 @@ DESCRIPTION = "TI Codec for ${MACHINE_ARCH}"
 SECTION = "multimedia"
 
 require ti-paths.inc
+require ti-staging.inc
 
 do_stage() {
     install -d ${CODEC_INSTALL_DIR}

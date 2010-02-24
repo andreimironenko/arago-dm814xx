@@ -38,5 +38,8 @@ do_install () {
 	for file in `find . -name *.x64P`; do
 		cp ${file} ${D}/${installdir}/codec-combo
 	done
+
+    install -d ${D}${CODEC_INSTALL_DIR_RECIPE}
+    cp -pPrf ${S}/* ${D}${CODEC_INSTALL_DIR_RECIPE}
 }
 
