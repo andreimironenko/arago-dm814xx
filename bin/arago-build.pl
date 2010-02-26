@@ -3,23 +3,19 @@
 ################################################################################
 # Arago build script
 ################################################################################
-my $script_version = "0.3";
-
-my $image = "";
-
-my $sdk = "";
-my $sdk_default = "yes";
-
-my $keep = "";
-my $keep_default = "no";
-
-my $sdktarkeep = "";
-my $sdktarkeep_default = "no";
-
-my $sdkpath = "";
-my $sdkpath_default = "arago-sdk";
+my $script_version = "0.4";
 
 my @no_machines = ("arago", "include");
+my @images;
+
+my $filesystem_image = "arago-base-image";
+my $psp_source = "task-tisdk-psp-sourcetree";
+my $multimedia_source = "task-tisdk-multimedia-sourcetree";
+my $dsp_source = "task-tisdk-dsp-sourcetree";
+
+my $psp_default = "no";
+my $multimedia_default = "yes";
+my $dsp_default = "no";
 
 ################################################################################
 # main
@@ -34,16 +30,9 @@ if (! exists $ENV{'OEBASE'}) {
 }
 
 my $arago_dir = "$ENV{'OEBASE'}";
-my $arago_image_dir = "$arago_dir/arago/recipes/images";
+my $arago_images_dir = "$arago_dir/arago-deploy/images";
 my $arago_machine_dir = "$arago_dir/arago/conf/machine";
 my $arago_tmp = "$arago_dir/arago-tmp";
-
-if (! -d "$arago_image_dir") {
-    print "ERROR: $arago_dir/arago/recipes/images not found! Either your ";
-    print "\$OE_BASE variable is not pointing correctly or your Arago ";
-    print "installation is broken\n";
-    exit 1;
-}
 
 if (! -d "$arago_machine_dir") {
     print "ERROR: $arago_dir/arago/conf/machine not found! Either your ";
@@ -60,154 +49,9 @@ validate_input();
 
 build_image();
 
-if (!$keep eq "yes") {
-    remove_tmp();
-}
-
-if ($sdk eq "yes") {
-    generate_sdk();
-    extract_sdk();
-
-    if (!$sdktarkeep eq "yes") {
-        remove_sdktar();
-    }
-}
+copy_output();
 
 print "\nBuild of Arago completed\n";
-
-################################################################################
-# remove_tmp
-################################################################################
-sub remove_tmp
-{
-    my $result;
-    my $cmd;
-
-    print "\nRemoving arago-tmp\n";
-    if (-e $arago_tmp) {
-        $cmd = "rm -rf $arago_tmp";
-        $result = system($cmd);
-        if ($result) {
-            print "ERROR: Failed to execute $cmd\n";
-            exit 1;
-        }
-    }
-    else {
-        print "WARNING: $arago_tmp doesn't exist.\n";
-    }
-}
-
-################################################################################
-# remove_sdktar
-################################################################################
-sub remove_sdktar
-{
-    my $result;
-    my $cmd;
-
-    my @sdk_files = <$arago_dir/arago-deploy/sdk/*> or die
-        "Failed to read directory $arago_dir/arago-deploy/sdk\n";
-
-    foreach (@sdk_files) {
-        print "\nRemoving $_\n";
-        $cmd = "rm -f $_";
-        $result = system($cmd);
-        if ($result) {
-            print "ERROR: Failed to delete $_\n";
-            exit 1;
-        }
-    }
-}
-
-################################################################################
-# extract_sdk
-################################################################################
-sub extract_sdk
-{
-    my $result;
-    my $cmd;
-    my $del;
-    my $del_default = "yes";
-
-    print "\nExtracting SDK\n";
-    if (-d "$sdkpath") {
-        print "$sdkpath already exists. Do you want to remove this ";
-        print "directory and recreated the SDK?";
-        print "[ $del_default ] ";
-        my $input = <STDIN>;
-        $input =~ s/\s+$//;
-
-        if ($input) {
-            if ($input =~ m/y/i) {
-                $del = "yes";
-            }
-            else {
-                $del = "no";
-            }
-        }
-        else {
-            $del = $del_default;
-        }
-
-        if ($del eq "yes") {
-            $cmd = "rm -rf $sdkpath";
-            $result = system($cmd);
-            if ($result) {
-                print "ERROR: Failed to remove $sdkpath";
-                exit 1;
-            }
-        }
-        else {
-            print "Directory already exists, not extracting SDK\n";
-            return;
-        }
-    }
-
-    my $arago_dir_numdirs = @{[$arago_dir =~ /\//g]};  
-    $arago_dir_numdirs += 1;
-
-    my @sdk_files = <$arago_dir/arago-deploy/sdk/*> or die
-        "Failed to read directory $arago_dir/arago-deploy/sdk\n";
-
-    foreach (@sdk_files) {
-        $cmd = "tar xz --strip $arago_dir_numdirs -C $arago_dir -f $_";
-        $result = system($cmd);
-        if ($result) {
-            print "ERROR: Failed to extract $_\n";
-            exit 1;
-        }
-    }
-}
-
-################################################################################
-# generate_sdk
-################################################################################
-sub generate_sdk
-{
-    my $result;
-    my $cmd;
-    my $sdk_name;
-
-    $sdk_name = $image;
-    $sdk_name =~ s/arago-(.*)/meta-$1/;
-
-    print "\nGenerating SDK $sdk_name\n";
-    $cmd = "MACHINE=$machine META_SDK_PATH=$sdkpath bitbake $sdk_name -c clean";
-
-    $result = system($cmd);
-    if ($result) {
-        print "\nERROR: Failed to clean SDK $sdk_name\n";
-        exit 1;
-    }
-
-    $cmd = "MACHINE=$machine META_SDK_PATH=$sdkpath bitbake $sdk_name";
-
-    $result = system($cmd);
-    if ($result) {
-        print "\nERROR: Failed to generate SDK $sdk_name\n";
-        exit 1;
-    }
-}
 
 ################################################################################
 # build_image
@@ -217,21 +61,109 @@ sub build_image
     my $result;
     my $cmd;
 
-    print "\nBuilding $image for $machine\n";
+	foreach (@images) {
+    	print "\nCleaning $_ for $machine\n";
 
-    $cmd = "MACHINE=$machine bitbake $image";
-    $result = system($cmd);
-    if ($result) {
-        print "\nERROR: Failed to build $image for $machine\n";
-        exit 1;
-    }
+    	$cmd = "MACHINE=$machine bitbake $_ -c clean";
+    	$result = system($cmd);
+    	if ($result) {
+        	print "\nERROR: Failed to clean $_ for $machine\n";
+        	exit 1;
+    	}
 
-    $cmd = "MACHINE=$machine bitbake board-set";
-    $result = system($cmd);
-    if ($result) {
-        print "\nERROR: Failed to build board-set for $machine\n";
-        exit 1;
+    	print "\nBuilding $_ for $machine\n";
+
+    	$cmd = "MACHINE=$machine bitbake $_";
+    	$result = system($cmd);
+    	if ($result) {
+        	print "\nERROR: Failed to build $_ for $machine\n";
+        	exit 1;
+    	}
     }
+}
+
+################################################################################
+# copy_output
+################################################################################
+sub copy_output
+{
+    my $result;
+    my $cmd;
+
+	print "\nCopying files ...";
+	foreach (@images) {
+
+		if ($_ =~ m/image/) {
+			my $image_file = "$arago_images_dir/$machine/$_-$machine.tar.gz";
+			print "\n + $_-$machine.tar.gz -> lsp";
+
+			$cmd = "mkdir -p  $sdkpath/$machine/lsp";
+    		$result = system($cmd);
+    		if ($result) {
+        		print "\nERROR: Failed to execute command\n";
+        		exit 1;
+    		}
+
+			$cmd = "cp $image_file $sdkpath/$machine/lsp";
+    		$result = system($cmd);
+    		if ($result) {
+        		print "\nERROR: Failed to execute command\n";
+        		exit 1;
+    		}
+		}
+		else {
+			my @recommends;
+			my $category;
+
+			if ($_ =~ m/lsp/) {
+				$category = "lsp";
+			}
+			elsif ($_ =~ m/multimedia/) {
+				$category = "multimedia";
+			}
+			elsif ($_ =~ m/dsp/) {
+				$category = "dsp";
+			}
+			elsif ($_ =~ m/graphics/) {
+				$category = "graphics";
+			}
+			else {
+				print "\nERROR: Unknown category\n";
+				exit 1;	
+			}
+	
+    		$cmd = "dpkg -I $arago_dir/arago-deploy/ipk/$machine/$_\_*.ipk  | grep Recommends | cut -f2 -d:";
+
+			open (CMD, "$cmd |");
+			while (<CMD>) {
+				(@recommends) = split(/,/,$_);
+			}
+			close(CMD);
+			
+			foreach (@recommends) {
+			 	$_ =~ s/^\s+//;
+			 	$_ =~ s/\s+$//;
+		
+				my $ipk = "$arago_dir/arago-deploy/ipk/$machine/$_*.ipk";
+
+				$cmd = "mkdir -p  $sdkpath/$machine/$category";
+    			$result = system($cmd);
+    			if ($result) {
+        			print "\nERROR: Failed to execute command\n";
+        			exit 1;
+    			}
+				
+				print "\n + $_ ipk -> $category";
+
+				$cmd = "cp $ipk $sdkpath/$machine/$category";
+    			$result = system($cmd);
+    			if ($result) {
+        			print "\nERROR: Failed to execute command\n";
+        			exit 1;
+    			}
+			}
+		}
+	}
 }
 
 ################################################################################
@@ -239,43 +171,10 @@ sub build_image
 ################################################################################
 sub validate_input
 {
-    if (! -e "$arago_image_dir/$image.bb") {
-        print "ERROR: Image $arago_image_dir/$image.bb not found\n";
-        exit 1;
-    }
-
     if (! -e "$arago_machine_dir/$machine.conf") {
         print "ERROR: Machine $arago_machine_dir/$machine.conf not found\n";
         exit 1;
     }
-
-    if (-e "$sdkpath" && ! -w "$sdkpath") {
-        print "ERROR: $sdkpath is not writeable by user\n";
-        exit 1;
-    }
-}
-
-################################################################################
-# compatible_machine
-################################################################################
-sub compatible_machine
-{
-    my @lines;
-    my $found = 1;
-
-    open IMAGEFILE, "<$_[0]" or die "Failed to open $_[0] for reading\n";
-    @lines = <IMAGEFILE>;
-    close IMAGEFILE;
-
-    for (my $cnt = 0; $cnt < scalar @lines; $cnt++) {
-        if ($lines[$cnt] =~ m/.*COMPATIBLE_MACHINE(.*)/) {
-            if (not $lines[$cnt] =~ m/COMPATIBLE_MACHINE.*$_[1]/) {
-                $found = 0;
-            }
-        }
-    }
-
-    return $found;
 }
 
 ################################################################################
@@ -284,6 +183,7 @@ sub compatible_machine
 sub get_input
 {
     my $input;
+	my $index = 0;
 
     if (!$machine) {
         print "\nAvailable Arago machine types:\n";
@@ -301,11 +201,9 @@ sub get_input
                 }
             }
             if (not $skip) {
+                print "    $cnt: $xs \n";
                 $machine_hash{ $cnt++ } = $xs;
             }
-        }
-        foreach $x (sort keys %machine_hash) {
-            print "    $x: $machine_hash{ $x }\n";
         }
         print "\nWhich Arago machine type to you want to build for?\n";
         print "[ 1 ] ";
@@ -318,111 +216,93 @@ sub get_input
         else {
             $machine = $machine_hash{ 1 };
         }
-    }
 
-    if (!$image) {
-        print "\nAvailable Arago images:\n";
-        my @images = <$arago_image_dir/*> or die
-            "Failed to read directory $arago_image_dir\n";
-        my %image_hash = ();
-        my $cnt = 1;
-        foreach $x (@images) {
-            if (compatible_machine($x, $machine)) {
-                my $xs = $x;
-                $xs =~ s/.*\/(.*).bb/$1/;
-                $image_hash{ $cnt++ } = $xs;
-            }
-        }
-        foreach $x (sort keys %image_hash) {
-            print "    $x: $image_hash{ $x }\n";
-        }
-        print "\nWhich Arago image do you want to build?\n";
-        print "[ 1 ] ";
-        $input = <STDIN>;
-        $input =~ s/\s+$//;
+		$images[$index++] = $filesystem_image;
 
-        if ($input) {
-            $image = $image_hash{ $input };
-        }
-        else {
-            $image = $image_hash{ 1 };
-        }
-    }
+    	if (!$psp) {
+        	print "\nDo you want to add PSP packages in SDK? \n";
+        	print "[ $psp_default ] ";
+        	$input = <STDIN>;
+        	$input =~ s/\s+$//;
 
-    if (!$keep) {
-        print "\nDo you want to keep arago-tmp after building Arago?\n";
-        print "(Deleting it saves space)\n";
-        print "[ $keep_default ] ";
-        $input = <STDIN>;
-        $input =~ s/\s+$//;
+        	if ($input) {
+            	if ($input =~ m/y/i) {
+                	$psp = "yes";
+            	}
+            	else {
+                	$psp = "no";
+            	}
+        	}
+        	else {
+            	$psp = $psp_default;
+        	}
 
-        if ($input) {
-            if ($input =~ m/y/i) {
-                $keep = "yes";
-            }
-            else {
-                $keep = "no";
-            }
-        }
-        else {
-            $keep = $keep_default;
-        }
-    }
+          	if ($psp =~ m/yes/i) {
+				$images[$index++] = $psp_source;
+          	}
+    	}
 
-    if (!$sdk) {
-        print "\nDo you want to generate an Arago SDK?\n";
-        print "[ $sdk_default ] ";
-        $input = <STDIN>;
-        $input =~ s/\s+$//;
+    	if (!$multimedia) {
+        	print "\nDo you want to add Multimedia packages in SDK? \n";
+        	print "[ $multimedia_default ] ";
+        	$input = <STDIN>;
+        	$input =~ s/\s+$//;
 
-        if ($input) {
-            if ($input =~ m/y/i) {
-                $sdk = "yes";
-            }
-            else {
-                $sdk = "no";
-            }
-        }
-        else {
-            $sdk = $sdk_default;
-        }
-    }
+        	if ($input) {
+            	if ($input =~ m/y/i) {
+                	$multimedia = "yes";
+            	}
+            	else {
+                	$multimedia = "no";
+            	}
+        	}
+        	else {
+            	$multimedia = $multimedia_default;
+        	}
 
-    if ($sdk eq "yes" && !$sdkpath) {
-        $sdkpath_default = "$image-sdk-$machine";
-        print "\nWhere do you want to generate the Arago SDK?\n";
-        print "(Relative to $arago_dir)\n";
-        print "[ $sdkpath_default ] ";
-        $input = <STDIN>;
-        $input =~ s/\s+$//;
+          	if ($multimedia =~ m/yes/i) {
+				$images[$index++] = $multimedia_source;
+          	}
+    	}
 
-        if ($input) {
-            $sdkpath = "$arago_dir/$input";
-        }
-        else {
-            $sdkpath = "$arago_dir/$sdkpath_default";
-        }
-    }
+    	if (!$dsp) {
+        	print "\nDo you want to add DSP packages in SDK? \n";
+        	print "[ $dsp_default ] ";
+        	$input = <STDIN>;
+        	$input =~ s/\s+$//;
 
-    if ($sdk eq "yes" && !$sdktarkeep) {
-        print "\nDo you want to keep the SDK tar ball after extracting it?\n";
-        print "(Deleting it saves space, but you may want to reextract it ";
-        print "later manually)\n";
-        print "[ $sdktarkeep_default ] ";
-        $input = <STDIN>;
-        $input =~ s/\s+$//;
+        	if ($input) {
+            	if ($input =~ m/y/i) {
+                	$dsp = "yes";
+            	}
+            	else {
+                	$dsp = "no";
+            	}
+        	}
+        	else {
+            	$dsp = $dsp_default;
+        	}
 
-        if ($input) {
-            if ($input =~ m/y/i) {
-                $sdktarkeep = "yes";
-            }
-            else {
-                $sdktarkeep = "no";
-            }
-        }
-        else {
-            $sdktarkeep = $sdktarkeep_default;
-        }
+          	if ($dsp =~ m/yes/i) {
+				$images[$index++] = $dsp_source;
+          	}
+    	}
+
+    	if (!$sdkpath) {
+        	$sdkpath_default = "sdk-cdrom";
+        	print "\nWhere do you want to copy the Arago binaries ?\n";
+        	print "(Relative to $arago_dir)\n";
+        	print "[ $sdkpath_default ] ";
+        	$input = <STDIN>;
+        	$input =~ s/\s+$//;
+
+        	if ($input) {
+            	$sdkpath = "$arago_dir/$input";
+        	}
+        	else {
+            	$sdkpath = "$arago_dir/$sdkpath_default";
+        	}
+    	}
     }
 }
 
@@ -445,33 +325,27 @@ sub parse_args
             next;
         }
 
-        if ($ARGV[0] eq '-i' || $ARGV[0] eq '--image') {
+        if ($ARGV[0] eq '-p' || $ARGV[0] eq '--psp') {
             shift(@ARGV);
-            $image = shift(@ARGV);
+            $psp = shift(@ARGV);
             next;
         }
 
-        if ($ARGV[0] eq '-k' || $ARGV[0] eq '--keep') {
+        if ($ARGV[0] eq '-m' || $ARGV[0] eq '--multimedia') {
             shift(@ARGV);
-            $keep = "yes";
+            $multimedia = shift(@ARGV);
             next;
         }
 
-        if ($ARGV[0] eq '-s' || $ARGV[0] eq '--nosdk') {
+        if ($ARGV[0] eq '-d' || $ARGV[0] eq '--dsp') {
             shift(@ARGV);
-            $sdk = "no";
+            $dsp = shift(@ARGV);
             next;
         }
 
-        if ($ARGV[0] eq '-p' || $ARGV[0] eq '--sdkpath') {
+        if ($ARGV[0] eq '-o' || $ARGV[0] eq '--outpath') {
             shift(@ARGV);
             $sdkpath = shift(@ARGV);
-            next;
-        }
-
-        if ($ARGV[0] eq '-d' || $ARGV[0] eq '--sdktarkeep') {
-            shift(@ARGV);
-            $sdktarkeep = "yes";
             next;
         }
 
@@ -489,10 +363,6 @@ sub display_help
     print "Usage: perl arago-build.pl [options]\n\n";
     print "    -h | --help         Display this help message.\n";
     print "    -m | --machine      Machine type to build for.\n";
-    print "    -i | --image        Image to build\n";
-    print "    -k | --keep         Don't delete arago-tmp when done.\n";
-    print "    -s | --nosdk        Do not generate an Arago SDK\n";
-    print "    -d | --sdktarkeep   Do not delete SDK tar.gz after extracting\n";
     print "    -p | --sdkpath      Where to generate the Arago SDK\n";
     print "\nIf an option is not given it will be queried interactively.\n\n";
 }
