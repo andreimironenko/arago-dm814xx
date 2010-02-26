@@ -9,6 +9,7 @@ SRC_URI = "${BASE_SRC_URI}/dm355_codecs_setuplinux_${PV}.bin \
 S = "${WORKDIR}/dm355_codecs_${PV}"
 
 require ti-paths.inc
+require ti-staging.inc
 
 BINFILE = "dm355_codecs_setuplinux_${PV}.bin"
 TI_BIN_UNPK_CMDS = "Y:Y: qY:workdir"

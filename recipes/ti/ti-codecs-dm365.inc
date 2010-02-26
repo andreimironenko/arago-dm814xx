@@ -7,6 +7,7 @@ SRC_URI	= "${BASE_SRC_URI}/dm365_codecs_${PV}.tar.gz"
 S = "${WORKDIR}/dm365_codecs_${PV}"
 
 require ti-paths.inc
+require ti-staging.inc
 
 do_compile() {
 	echo "Do nothing"
