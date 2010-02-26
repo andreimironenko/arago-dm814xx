@@ -15,7 +15,6 @@ my $protocol = "";
 my $protocol_default = "git";
 
 my $aragocommit_default        = "HEAD";
-my $aragobomcommit_default     = "HEAD";
 my $aragooecommit_default      = "e3a9f623da78411882001db6ba6c67a4d818f49d";
 my $aragobitbakecommit_default = "3dd225e5b648d6ebcccd60e9c1bb8dd8a6094d7d";
 
@@ -23,7 +22,6 @@ my $auto_install = 0;
 
 my %git_repositories = (
     "arago"         => [ "", "arago-project.org/git/people/aravindbr/arago-dsp.git" ],
-    "arago-bom"     => [ "", "arago-project.org/git/people/aravindbr/arago-bom-dsp.git" ],
     "arago-bitbake" => [ "", "arago-project.org/git/arago-bitbake.git" ],
     "arago-oe-dev"  => [ "", "arago-project.org/git/arago-oe-dev.git" ],
 );
@@ -407,22 +405,6 @@ sub get_input
         }
     }
 
-    if (!$git_repositories{ "arago-bom" }[0]) {
-        print "Which 'commit id/tag' do you want to use for the Arago BOM recipes?";
-        print " ('arago-bom' directory)\n";
-        print "[ $aragobomcommit_default ] ";
-
-        $input = <STDIN>;
-        $input =~ s/\s+$//;
-
-        if ($input) {
-            $git_repositories{ "arago-bom" }[0] = $input;
-        }
-        else {
-            $git_repositories{ "arago-bom" }[0] = $aragobomcommit_default;
-        }
-    }
-
     if (!$git_repositories{ "arago" }[0]) {
         print "Which 'commit id/tags' do you want to use for the Arago recipes?";
         print " ('arago' directory)\n";
@@ -519,12 +501,6 @@ sub parse_args
             next;
         }
 
-        if ($ARGV[0] eq '--bom-commit') {
-            shift(@ARGV);
-            $git_repositories{ "arago-bom" }[0] = shift(@ARGV);
-            next;
-        }
-
         if ($ARGV[0] eq '--oe-commit') {
             shift(@ARGV);
             $git_repositories{ "arago-oe-dev" }[0] = shift(@ARGV);
@@ -564,8 +540,6 @@ sub display_help
     print "    -g | --aragogit     The URL of the Arago GIT repository.\n";
     print "         --arago-commit The commit ID (SHA1 or tag) to set\n";
     print "                        arago to after checkout.\n";
-    print "         --bom-commit   The commit ID (SHA1 or tag) to set\n";
-    print "                        arago-bom to after checkout.\n";
     print "         --oe-commit    The commit ID (SHA1 or tag) to set\n";
     print "                        arago-oe-dev to after checkout\n";
     print "         --bb-commit    The commit ID (SHA1 or tag) to set\n";
