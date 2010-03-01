@@ -179,11 +179,11 @@ echo "
 <HTML>
 <HEAD>
 <TITLE>
-$machine SDK $1 Software Installation Summary 
+$machine SDK $1 Installation Summary 
 </TITLE>
 </HEAD>
 <BODY>
-<h1><CENTER> $machine SDK $1 Software Installation Manifest </CENTER></h1>
+<h1><CENTER> $machine SDK $1 Installation Manifest </CENTER></h1>
 "
 }
 
