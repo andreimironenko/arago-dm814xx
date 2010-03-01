@@ -182,6 +182,15 @@ sub copy_output
         print "\n ERROR: failed to execute $cmd\n";
         exit 1;
     }
+
+    # copy platform directory top label directory
+    $cmd = "cp $arago_dir/arago/bin/$machine/* $sdkpath/$machine/";
+    $result = system($cmd);
+
+    if ($result) {
+        print "\n ERROR: failed to execute $cmd\n";
+        exit 1;
+    }
 }
 
 ################################################################################
