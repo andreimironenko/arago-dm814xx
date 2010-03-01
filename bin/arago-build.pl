@@ -62,15 +62,6 @@ sub build_image
     my $cmd;
 
 	foreach (@images) {
-    	print "\nCleaning $_ for $machine\n";
-
-    	$cmd = "MACHINE=$machine bitbake $_ -c clean";
-    	$result = system($cmd);
-    	if ($result) {
-        	print "\nERROR: Failed to clean $_ for $machine\n";
-        	exit 1;
-    	}
-
     	print "\nBuilding $_ for $machine\n";
 
     	$cmd = "MACHINE=$machine bitbake $_";
@@ -111,7 +102,7 @@ sub copy_output
         		exit 1;
     		}
 		}
-		else {
+		elsif($_ =~ m/task/)  {
 			my @recommends;
 			my $category;
 
@@ -128,8 +119,7 @@ sub copy_output
 				$category = "graphics";
 			}
 			else {
-				print "\nERROR: Unknown category\n";
-				exit 1;	
+				$category = "";
 			}
 	
     		$cmd = "dpkg -I $arago_dir/arago-deploy/ipk/$machine/$_\_*.ipk  | grep Recommends | cut -f2 -d:";
@@ -163,7 +153,35 @@ sub copy_output
     			}
 			}
 		}
+		else {
+			my $ipk = "$arago_dir/arago-deploy/ipk/$machine/$_\_*.ipk";
+			
+			print "\n + $_ ipk";
+
+			$cmd = "mkdir -p  $sdkpath/$machine";
+    		$result = system($cmd);
+    		if ($result) {
+        		print "\nERROR: Failed to execute command\n";
+        		exit 1;
+    		}
+
+			$cmd = "cp $ipk $sdkpath/$machine";
+    		$result = system($cmd);
+    		if ($result) {
+        		print "\nERROR: Failed to execute command\n";
+        		exit 1;
+    		}
+		}
 	}
+
+    # copy install.sh in top label directory
+    $cmd = "cp $arago_dir/arago/bin/install.sh $sdkpath";
+    $result = system($cmd);
+
+    if ($result) {
+        print "\n ERROR: failed to execute $cmd\n";
+        exit 1;
+    }
 }
 
 ################################################################################
@@ -302,10 +320,11 @@ sub get_input
         	else {
             	$sdkpath = "$arago_dir/$sdkpath_default";
         	}
+
+			$images[$index++] = "ti-tisdk-tools";
     	}
     }
 }
-
 
 ################################################################################
 # parse_args
