@@ -54,6 +54,16 @@ MULTIMEDIA_SOURCETREE_dm6467 = " \
     ti-xdais-sourcetree \
     "
 
+MULTIMEDIA_SOURCETREE_da850-omapl138-evm = " \
+    ti-framework-components-sourcetree \
+    ti-codec-engine-sourcetree \
+    ti-codecs-omapl138-sourcetree \
+    ti-linuxutils-sourcetree \
+    ti-xdctools-sourcetree \
+    ti-dmai-sourcetree \
+    ti-xdais-sourcetree \
+    "
+
 RRECOMMENDS_${PN} = "\
     ${MULTIMEDIA_SOURCETREE} \
     "
