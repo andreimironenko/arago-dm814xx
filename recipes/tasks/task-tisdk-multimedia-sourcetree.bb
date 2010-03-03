@@ -1,4 +1,4 @@
-DESCRIPTION = "Task to generate source tree packages for TI MULTIMEDIA"
+DESCRIPTION = "Task to build and install packages needed for TISDK"
 PR = "r2"
 
 inherit task
