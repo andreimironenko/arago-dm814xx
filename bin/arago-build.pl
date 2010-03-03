@@ -3,17 +3,16 @@
 ################################################################################
 # Arago build script
 ################################################################################
-my $script_version = "0.4";
+my $script_version = "0.5";
 
 my @no_machines = ("arago", "include");
-my @images;
+my @packages;
 
-my $filesystem_image = "arago-base-image";
-my $psp_source = "task-tisdk-psp-sourcetree";
+my $bsp_source = "task-tisdk-bsp-sourcetree";
 my $multimedia_source = "task-tisdk-multimedia-sourcetree";
 my $dsp_source = "task-tisdk-dsp-sourcetree";
 
-my $psp_default = "no";
+my $bsp_default = "yes";
 my $multimedia_default = "yes";
 my $dsp_default = "no";
 
@@ -30,7 +29,9 @@ if (! exists $ENV{'OEBASE'}) {
 }
 
 my $arago_dir = "$ENV{'OEBASE'}";
-my $arago_images_dir = "$arago_dir/arago-deploy/images";
+my $arago_images_output_dir = "$arago_dir/arago-deploy/images";
+my $arago_image_dir = "$arago_dir/arago/recipes/images";
+my $arago_ipk_dir = "$arago_dir/arago-deploy/ipk";
 my $arago_machine_dir = "$arago_dir/arago/conf/machine";
 my $arago_tmp = "$arago_dir/arago-tmp";
 
@@ -61,7 +62,7 @@ sub build_image
     my $result;
     my $cmd;
 
-	foreach (@images) {
+	foreach (@packages) {
     	print "\nBuilding $_ for $machine\n";
 
     	$cmd = "MACHINE=$machine bitbake $_";
@@ -74,6 +75,43 @@ sub build_image
 }
 
 ################################################################################
+# copy_task_recommended
+################################################################################
+sub copy_task_recommended
+{
+    my $result;
+    my $cmd;
+	my $task_name = $_[0];
+	my $category = $_[1];
+
+	# TODO: figure out a way to use opkg command to query information from
+	# .ipk. until then we will use dpkg to query the ipk information.
+	
+   	$cmd = "dpkg -I $task_name\_*.ipk  | grep Recommends | cut -f2 -d:";
+	open (CMD, "$cmd |");
+		while (<CMD>) {
+		(@recommends) = split(/,/,$_);
+	}
+	close(CMD);
+
+	# go through the recommended packages and copy them individually on sdk
+	foreach (@recommends) {
+		$_ =~ s/^\s+//;
+	 	$_ =~ s/\s+$//;
+		
+		my $ipk = "$arago_ipk_dir/$machine/$_*.ipk";
+
+		print "\n + $_";
+		$cmd = "cp $ipk $sdkpath/$machine/$category";
+    	$result = system($cmd);
+    	if ($result) {
+        	print "\nERROR: Failed to execute command $cmd\n";
+        	exit 1;
+    	}
+	}
+}
+
+################################################################################
 # copy_output
 ################################################################################
 sub copy_output
@@ -81,24 +119,24 @@ sub copy_output
     my $result;
     my $cmd;
 
-	print "\nCopying files ...";
-	foreach (@images) {
-
+	print "\nCopying ...";
+	foreach (@packages) {
+		# If it's an image then copy image tarball in bsp directory
 		if ($_ =~ m/image/) {
-			my $image_file = "$arago_images_dir/$machine/$_-$machine.tar.gz";
-			print "\n + $_-$machine.tar.gz -> lsp";
+			my $image_file = "$arago_images_output_dir/$machine/$_-$machine.tar.gz";
+			print "\n + $_-$machine.tar.gz";
 
-			$cmd = "mkdir -p  $sdkpath/$machine/lsp";
+			$cmd = "mkdir -p  $sdkpath/$machine/bsp";
     		$result = system($cmd);
     		if ($result) {
-        		print "\nERROR: Failed to execute command\n";
+        		print "\nERROR: Failed to execute command $cmd\n";
         		exit 1;
     		}
 
-			$cmd = "cp $image_file $sdkpath/$machine/lsp";
+			$cmd = "cp $image_file $sdkpath/$machine/bsp";
     		$result = system($cmd);
     		if ($result) {
-        		print "\nERROR: Failed to execute command\n";
+        		print "\nERROR: Failed to execute command $cmd\n";
         		exit 1;
     		}
 		}
@@ -106,8 +144,8 @@ sub copy_output
 			my @recommends;
 			my $category;
 
-			if ($_ =~ m/lsp/) {
-				$category = "lsp";
+			if ($_ =~ m/bsp/) {
+				$category = "bsp";
 			}
 			elsif ($_ =~ m/multimedia/) {
 				$category = "multimedia";
@@ -122,53 +160,41 @@ sub copy_output
 				$category = "";
 			}
 	
-    		$cmd = "dpkg -I $arago_dir/arago-deploy/ipk/$machine/$_\_*.ipk  | grep Recommends | cut -f2 -d:";
-
-			open (CMD, "$cmd |");
-			while (<CMD>) {
-				(@recommends) = split(/,/,$_);
-			}
-			close(CMD);
+			$cmd = "mkdir -p  $sdkpath/$machine/$category";
+    		$result = system($cmd);
+    		if ($result) {
+        		print "\nERROR: Failed to execute command $cmd\n";
+        		exit 1;
+    		}
 			
-			foreach (@recommends) {
-			 	$_ =~ s/^\s+//;
-			 	$_ =~ s/\s+$//;
-		
-				my $ipk = "$arago_dir/arago-deploy/ipk/$machine/$_*.ipk";
+			print "\n + $_";
+			$cmd = "cp $arago_ipk_dir/$machine/$_\_*.ipk $sdkpath/$machine/$category";
+    		$result = system($cmd);
+    		if ($result) {
+        		print "\nERROR: Failed to execute command $cmd\n";
+        		exit 1;
+    		}
 
-				$cmd = "mkdir -p  $sdkpath/$machine/$category";
-    			$result = system($cmd);
-    			if ($result) {
-        			print "\nERROR: Failed to execute command\n";
-        			exit 1;
-    			}
-				
-				print "\n + $_ ipk -> $category";
+			# if its a task then copy all the recommended packages
+			copy_task_recommended("$arago_ipk_dir/$machine/$_", "$category");
 
-				$cmd = "cp $ipk $sdkpath/$machine/$category";
-    			$result = system($cmd);
-    			if ($result) {
-        			print "\nERROR: Failed to execute command\n";
-        			exit 1;
-    			}
-			}
 		}
 		else {
-			my $ipk = "$arago_dir/arago-deploy/ipk/$machine/$_\_*.ipk";
+			my $ipk = "$arago_ipk_dir/$machine/$_\_*.ipk";
 			
-			print "\n + $_ ipk";
+			print "\n + $_";
 
 			$cmd = "mkdir -p  $sdkpath/$machine";
     		$result = system($cmd);
     		if ($result) {
-        		print "\nERROR: Failed to execute command\n";
+        		print "\nERROR: Failed to execute command $cmd\n";
         		exit 1;
     		}
 
 			$cmd = "cp $ipk $sdkpath/$machine";
     		$result = system($cmd);
     		if ($result) {
-        		print "\nERROR: Failed to execute command\n";
+        		print "\nERROR: Failed to execute command $cmd\n";
         		exit 1;
     		}
 		}
@@ -202,6 +228,29 @@ sub validate_input
         print "ERROR: Machine $arago_machine_dir/$machine.conf not found\n";
         exit 1;
     }
+}
+
+################################################################################
+# compatible_machine
+################################################################################
+sub compatible_machine
+{
+    my @lines;
+    my $found = 1;
+
+    open IMAGEFILE, "<$_[0]" or die "Failed to open $_[0] for reading\n";
+    @lines = <IMAGEFILE>;
+    close IMAGEFILE;
+
+    for (my $cnt = 0; $cnt < scalar @lines; $cnt++) {
+        if ($lines[$cnt] =~ m/.*COMPATIBLE_MACHINE(.*)/) {
+            if (not $lines[$cnt] =~ m/COMPATIBLE_MACHINE.*$_[1]/) {
+                $found = 0;
+            }
+        }
+    }
+
+    return $found;
 }
 
 ################################################################################
@@ -244,28 +293,58 @@ sub get_input
             $machine = $machine_hash{ 1 };
         }
 
-		$images[$index++] = $filesystem_image;
 
-    	if (!$psp) {
-        	print "\nDo you want to add PSP packages in SDK? \n";
-        	print "[ $psp_default ] ";
+    	if (!$image) {
+        	print "\nAvailable Arago images:\n";
+        	my @images = <$arago_image_dir/*.bb> or die
+            	"Failed to read directory $arago_image_dir\n";
+        	my %image_hash = ();
+        	my $cnt = 1;
+        	foreach $x (@images) {
+            	if (compatible_machine($x, $machine)) {
+                	my $xs = $x;
+                	$xs =~ s/.*\/(.*).bb/$1/;
+                	$image_hash{ $cnt++ } = $xs;
+            	}
+        	}
+        	foreach $x (sort keys %image_hash) {
+            	print "    $x: $image_hash{ $x }\n";
+        	}
+        	print "\nWhich Arago image do you want to include in SDK?\n";
+        	print "[ 1 ] ";
+        	$input = <STDIN>;
+        	$input =~ s/\s+$//;
+
+        	if ($input) {
+            	$image = $image_hash{ $input };
+        	}
+        	else {
+            	$image = $image_hash{ 1 };
+        	}
+
+			$packages[$index++] = $image;
+    	}
+
+    	if (!$bsp) {
+        	print "\nDo you want to add BSP packages in SDK? \n";
+        	print "[ $bsp_default ] ";
         	$input = <STDIN>;
         	$input =~ s/\s+$//;
 
         	if ($input) {
             	if ($input =~ m/y/i) {
-                	$psp = "yes";
+                	$bsp = "yes";
             	}
             	else {
-                	$psp = "no";
+                	$bsp = "no";
             	}
         	}
         	else {
-            	$psp = $psp_default;
+            	$bsp = $bsp_default;
         	}
 
-          	if ($psp =~ m/yes/i) {
-				$images[$index++] = $psp_source;
+          	if ($bsp =~ m/yes/i) {
+				$packages[$index++] = $bsp_source;
           	}
     	}
 
@@ -288,7 +367,7 @@ sub get_input
         	}
 
           	if ($multimedia =~ m/yes/i) {
-				$images[$index++] = $multimedia_source;
+				$packages[$index++] = $multimedia_source;
           	}
     	}
 
@@ -311,13 +390,13 @@ sub get_input
         	}
 
           	if ($dsp =~ m/yes/i) {
-				$images[$index++] = $dsp_source;
+				$packages[$index++] = $dsp_source;
           	}
     	}
 
     	if (!$sdkpath) {
         	$sdkpath_default = "sdk-cdrom";
-        	print "\nWhere do you want to copy the Arago binaries ?\n";
+        	print "\nWhere do you want to copy Arago sdk ?\n";
         	print "(Relative to $arago_dir)\n";
         	print "[ $sdkpath_default ] ";
         	$input = <STDIN>;
@@ -330,7 +409,7 @@ sub get_input
             	$sdkpath = "$arago_dir/$sdkpath_default";
         	}
 
-			$images[$index++] = "ti-tisdk-tools";
+			$packages[$index++] = "ti-tisdk-tools";
     	}
     }
 }
@@ -353,13 +432,13 @@ sub parse_args
             next;
         }
 
-        if ($ARGV[0] eq '-p' || $ARGV[0] eq '--psp') {
+        if ($ARGV[0] eq '-b' || $ARGV[0] eq '--bsp') {
             shift(@ARGV);
-            $psp = shift(@ARGV);
+            $bsp = shift(@ARGV);
             next;
         }
 
-        if ($ARGV[0] eq '-m' || $ARGV[0] eq '--multimedia') {
+        if ($ARGV[0] eq '-e' || $ARGV[0] eq '--multimedia') {
             shift(@ARGV);
             $multimedia = shift(@ARGV);
             next;
@@ -391,6 +470,10 @@ sub display_help
     print "Usage: perl arago-build.pl [options]\n\n";
     print "    -h | --help         Display this help message.\n";
     print "    -m | --machine      Machine type to build for.\n";
+    print "    -i | --image        Image to build.\n";
+    print "    -b | --bsp          Add Board Support Package in SDK.\n";
+    print "    -e | --multimedia   Add Multimedia packages in SDK.\n";
+    print "    -d | --dsp          Add DSP packages in SDK.\n";
     print "    -p | --sdkpath      Where to generate the Arago SDK\n";
     print "\nIf an option is not given it will be queried interactively.\n\n";
 }
