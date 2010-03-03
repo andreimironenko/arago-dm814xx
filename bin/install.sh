@@ -8,6 +8,7 @@
 #
 
 VERSION="1.0"
+SDK_VERSION="<version>"
 
 #
 # Display program usage
@@ -19,7 +20,7 @@ Usage: `basename $1` [options] --machine <machine_name> <install_dir>
 
   --help                Print this help message
   --graphics            Install graphics packages
-  --lsp                 Install linux support packages
+  --bsp                 Install board support packages
   --dsp                 Install c64p dsp packages
   --multimedia          Install multimedia packages
 "
@@ -73,11 +74,15 @@ ipk_install()
 #
 # Extract tar balls from LSP directory
 #
-lsp_install()
+bsp_install()
 {
+  # install ipks
+  ipk_install $1
+
   # extract filesystem first - this requires root access
   mkdir -p $root_dir/filesystem
-  tar zxf lsp/arago-base-image-$machine.tar.gz  -C $root_dir/filesystem
+  rootfs="`ls -1 $1/arago-*.tar.gz`"
+  tar zxf ${rootfs}  -C $root_dir/filesystem
 }
 
 
@@ -87,7 +92,7 @@ lsp_install()
 start_install()
 {
   test ! -z $graphics && ipk_install graphics
-  test ! -z $lsp && lsp_install
+  test ! -z $bsp && bsp_install bsp
   test ! -z $dsp && ipk_install dsp
   test ! -z $multimedia && ipk_install multimedia
   ipk_install .
@@ -179,11 +184,11 @@ echo "
 <HTML>
 <HEAD>
 <TITLE>
-$machine SDK $1 Installation Summary 
+$machine SDK ${SDK_VERSION} Installation Summary 
 </TITLE>
 </HEAD>
 <BODY>
-<h1><CENTER> $machine SDK $1 Installation Manifest </CENTER></h1>
+<h1><CENTER> $machine SDK ${SDK_VERSION} Installation Manifest </CENTER></h1>
 "
 }
 
@@ -214,8 +219,8 @@ while [ $# -gt 0 ]; do
       graphics="yes";
       shift;
       ;;
-    --lsp)
-      lsp="yes";
+    --bsp)
+      bsp="yes";
       shift;
       ;;
     --dsp)
