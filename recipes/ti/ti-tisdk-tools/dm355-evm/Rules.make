@@ -1,5 +1,5 @@
 # Define target platform.
-PLATFORM=<__PLATFORM__>
+PLATFORM=dm355
 
 # The installation directory of the SDK.
 SDK_INSTALL_DIR=<__SDK__INSTALL_DIR__>
@@ -11,7 +11,7 @@ DVEVM_INSTALL_DIR=$(SDK_INSTALL_DIR)
 CE_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__codec-engine__>
 
 # Where the codecs are installed.
-CODEC_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__codecs-omap3530__>
+CODEC_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__codecs-dm355__>
 
 # Where DMAI package is installed.
 DMAI_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__dmai__>

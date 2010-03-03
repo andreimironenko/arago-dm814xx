@@ -1,5 +1,5 @@
 # Define target platform.
-PLATFORM=<__PLATFORM__>
+PLATFORM=dm6446
 
 # The installation directory of the SDK.
 SDK_INSTALL_DIR=<__SDK__INSTALL_DIR__>

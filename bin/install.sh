@@ -117,8 +117,6 @@ update_rules_make()
   done
   sed -i -e s=\<__SDK__INSTALL_DIR__\>=${root_dir}= \
     $root_dir/usr/share/ti/Rules.make
-  sed -i -e s/\<__PLATFORM__\>/${machine}/g \
-    $root_dir/usr/share/ti/Rules.make
 }
 
 #
