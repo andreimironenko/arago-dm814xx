@@ -8,6 +8,8 @@ SRC_URI = "${BASE_SRC_URI}/dm365mm_${PV}.tar.gz;name=dm365mmtarball"
 S = "${WORKDIR}/dm365mm_${PV}"
 
 inherit module
+require ti-paths.inc
+require ti-staging.inc
 
 do_compile() {
     unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
@@ -22,6 +24,9 @@ do_compile() {
 do_install () {
     install -d ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp
     install -m 0755 ${S}/module/dm365mmap.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp
+
+    install -d ${D}${DM365MM_INSTALL_DIR_RECIPE}
+    cp -pPrf ${S}/* ${D}${DM365MM_INSTALL_DIR_RECIPE}
 }
 
 INHIBIT_PACKAGE_STRIP = "1"

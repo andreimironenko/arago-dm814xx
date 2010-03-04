@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install packages needed for TISDK"
-PR = "r2"
+PR = "r3"
 
 inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
@@ -31,6 +31,7 @@ MULTIMEDIA_SOURCETREE_dm365 = " \
     ti-linuxutils-sourcetree \
     ti-xdctools-sourcetree \
     ti-dmai-sourcetree \
+    ti-dm365mm-module-sourcetree \
     ti-xdais-sourcetree \
     "
 

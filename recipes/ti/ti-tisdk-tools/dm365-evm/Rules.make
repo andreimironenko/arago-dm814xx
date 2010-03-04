@@ -5,6 +5,7 @@ PLATFORM=dm365
 SDK_INSTALL_DIR=<__SDK__INSTALL_DIR__>
 
 # For backwards compatibility
+DVSDK_INSTALL_DIR=$(SDK_INSTALL_DIR)
 DVEVM_INSTALL_DIR=$(SDK_INSTALL_DIR)
 
 # Where the Codec Engine package is installed.
@@ -24,6 +25,12 @@ DVTB_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__dvtb__>
 
 # Where the Framework Components package is installed.
 FC_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__framework-components__>
+
+# Where the DM365mm module is installed.
+DM365MM_MODULE_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__dm365mm-module__>
+
+# Where the PSP is installed.
+PSP_INSTALL_DIR=$(SDK_INSTALL_DIR)/psp
 
 # Where the MFC Linux Utils package is installed.
 LINUXUTILS_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__linuxutils__>
