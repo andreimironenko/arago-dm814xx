@@ -55,6 +55,20 @@ verify_cdrom ()
 }
 
 #
+# execute command
+#
+execute ()
+{
+  echo "Executing $*"
+  $* 2>/dev/null
+  if [ $? -ne 0 ]; then
+    echo "ERROR: failed to execute $*"
+    exit 1;
+  fi
+
+}
+
+#
 # install ipk's
 # 
 ipk_install()
@@ -79,10 +93,25 @@ bsp_install()
   # install ipks
   ipk_install $1
 
-  # extract filesystem first - this requires root access
-  mkdir -p $root_dir/filesystem
-  rootfs="`ls -1 $1/arago-*.tar.gz`"
-  tar zxf ${rootfs}  -C $root_dir/filesystem
+  # extract filesystem first
+  if [ -f $1/arago-*image-*.tar.gz ]; then
+    mkdir -p $root_dir/filesystem
+    rootfs="`ls -1 $1/arago-*.tar.gz`"
+    execute "tar zxf ${rootfs}  -C $root_dir/filesystem"
+  else
+    echo "ERROR: failed to find root filesystem image"
+    exit 1
+  fi
+
+  # extract lsp source
+  if [ -f $1/linux-*staging*.tar.gz ]; then
+    mkdir -p $root_dir/psp/linux-kernel-source
+    rootfs="`ls -1 $1/linux-*staging*.tar.gz`"
+    execute "tar zxf ${rootfs}  -C $root_dir/psp/linux-kernel-source"
+  else
+    echo "ERROR: failed to find linux kernel tarball"
+    exit 1
+  fi
 }
 
 
@@ -115,6 +144,9 @@ update_rules_make()
     sed -i -e s/\<__${name}__\>/${name}_${version}/g \
      $root_dir/usr/share/ti/Rules.make
   done
+
+  sed -i -e s=\<__kernel__\>=psp/linux-kernel-source/git= \
+    $root_dir/usr/share/ti/Rules.make
   sed -i -e s=\<__SDK__INSTALL_DIR__\>=${root_dir}= \
     $root_dir/usr/share/ti/Rules.make
 }
@@ -138,6 +170,11 @@ move_to_root_dir()
       mv ${root_dir}/usr/share/ti/ti-$name-tree ${root_dir}/${name}_${version}
     fi
   done
+  if [ -d ${root_dir}/usr/share/ti/ti-psp-tree ]; then
+    mv ${root_dir}/usr/share/ti/ti-psp-tree/* ${root_dir}/psp
+    rm -rf ${root_dir}/usr/share/ti/ti-psp-tree
+  fi
+
   mv ${root_dir}/usr/share/ti/* ${root_dir}/
   rm -rf $root_dir/usr
 }
