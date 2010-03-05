@@ -186,15 +186,16 @@ generate_sw_manifest()
 {
 echo "
 <h2><u>$1</u></h2>
-<table border=1 cellspacing=2 cellpadding=2>
-<tr bgcolor=#c0c0c0  color=white><td><b>Package Name</b></td><td><b>Version</b></td><td><b>License</b></td><td><b>Category</b></td></tr>
+<table border=1 cellspacing=1 cellpadding=1 width=80%>
+<tr bgcolor=#c0c0c0  color=white><td><b>Package Name</b></td><td><b>Version</b></td><td><b>License</b></td><td><b>Location</b></td><td><b>Delivered As</b></td> <td><b>Modified</b></td><td><b>Obtained from</b></td></tr>
 "
 
   for i in $2/usr/lib/opkg/info/*.control; do
     package="`cat $i | grep Package: | awk {'print $2'}`"
-    version="`cat $i | grep Version: | awk {'print $2'}`"
+    version="`cat $i | grep Version: | awk {'print $2'} | cut -f1-2 -d-`"
     section="`cat $i | grep Section: | awk {'print $2'}`"
     license="`cat $i | grep License: | awk {'print $2'}`"
+    source="`cat $i | grep Source: | awk {'print $2'}`"
     if [ "$license" = "unknown" ]; then
       highlight="bgcolor=yellow"
     elif [ "$license" = "GPLv3" ]; then
@@ -203,8 +204,28 @@ echo "
       highlight=""
     fi
 
+    case "$source" in
+      file://*) source="";;
+      *) ;;
+    esac
+
+    case "$package" in
+      task-*) continue ;;
+      ti-*-sourcetree*) delivered_as="Source and Binary"
+            modified="Yes" 
+            location="$2"
+            ;; 
+      ti-*) delivered_as="Source and Binary"
+            location="$2"
+            modified="Yes" ;; 
+      *)    delivered_as="Binary"
+            location="$2"
+            modified="No";;
+            
+    esac
+
     echo "
-<tr><td>${package} </td><td> ${version}</td> <td $highlight> ${license} </td> <td> $section</td></tr>
+<tr><td>${package} </td><td>${version}</td> <td $highlight> ${license} </td><td>$location</td><td>$delivered_as</td><td>$modified</td> <td><a href=$source>$source</a></td></tr>
 "
   done
 echo "</table><br><br>"
@@ -223,7 +244,17 @@ $machine SDK ${SDK_VERSION} Installation Summary
 </TITLE>
 </HEAD>
 <BODY>
-<h1><CENTER> $machine SDK ${SDK_VERSION} Installation Manifest </CENTER></h1>
+<h1><CENTER> $machine SDK ${SDK_VERSION} Software Manifest </CENTER></h1>
+<h2><b><u>Legend</u></b></h2>
+<table border=1 width=45%>
+<tr><td>Package Name</td><td>The name of the application or files</td></tr>
+<tr><td>Version</td><td>Version of the application or files</td></tr>
+<tr><td>License</td><td>Name of the license or licenses that apply to the Package.</td></tr>
+<tr><td>Location</td><td>The directory name and path on the media (or in an archive) where the Package is located.</td></tr>
+<tr><td>Delivered As</td><td>This field will either be &ldquo;Source&rdquo;, &ldquo;Binary&rdquo; or &ldquo;Source and Binary&ldquo; and is the form the content of the Package is delivered in.  If the Package is delivered in an archive format, this field applies to the contents of the archive. If the word Limited is used with Source, as in &ldquo;Limited Source&rdquo; or &ldquo;Limited Source and Binary&rdquo; then only portions of the Source for the application are provided.</td></tr>
+<tr><td>Modified </td><td>This field will either be &ldquo;Yes&rdquo; or &ldquo;No&rdquo;. A &ldquo;Yes&rdquo; means TI had made changes to the Package. A &ldquo;No&rdquo; means TI has not made any changes.</td></tr>
+<tr><td>Obtained from</td><td>This field specifies where TI obtained the Package from. It may be a URL to an Open Source site, a 3rd party company name or TI. If this field contains a link to an Open Source package, the date it was downloaded is also recorded.</td></tr>
+</table>
 "
 }
 
@@ -301,8 +332,8 @@ update_rules_make
 # create software manifest docs
 mkdir -p $root_dir/docs
 sw_manifest_header > ${root_dir}/docs/software_manifest.htm
-generate_sw_manifest "Packages installed on the host machine:" $root_dir >> ${root_dir}/docs/software_manifest.htm;
-generate_sw_manifest "Packages installed on the target filesystem:" $root_dir/filesystem >> ${root_dir}/docs/software_manifest.htm;
+generate_sw_manifest "Packages installed on the host machine:" "$root_dir" >> ${root_dir}/docs/software_manifest.htm;
+generate_sw_manifest "Packages installed on the target filesystem:" "$root_dir/filesystem" >> ${root_dir}/docs/software_manifest.htm;
 sw_manifest_footer >> ${root_dir}/docs/software_manifest.htm
 
 # move sourcetree in dvsdk style
