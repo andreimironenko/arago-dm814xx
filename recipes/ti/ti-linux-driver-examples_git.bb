@@ -2,7 +2,7 @@ require ti-linux-driver-examples.inc
 
 SRCREV = "afa28447addb2fadd9daf5c94c6cf46d8c855d05"
 
-PV = "${MACHINE_KERNEL_PR}+gitr${SRCREV}"
+PV = "git-${MACHINE_KERNEL_PR}-gitr${SRCREV}"
 PR_append = "c"
 
 SRC_URI = "git://arago-project.org/git/projects/examples-davinci.git;protocol=git \
