@@ -139,6 +139,27 @@ sub copy_output
         		print "\nERROR: Failed to execute command $cmd\n";
         		exit 1;
     		}
+
+			print "\n + Downloading linux-davinci-staging.tar.gz\n";
+			# TODO: we don't have recipe for generating linux kernel source
+			# until then wget linux-davinci tar ball
+			$cmd = "wget http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/DVSDK_3_10/latest/exports/linux-davinci-staging.tar.gz -P ${sdkpath}/${machine}/bsp";
+			$result = system($cmd);
+			if ($result) {
+				print "\nERROR: Failed to execute command $cmd\n";
+				exit 1;
+			}
+
+			print "\n + Downloading /arago-2009.11-armv5te-linux-gnueabi-sdk.tar.gz\n";
+			# TODO: we don't have recipe to generate linuxlibs tarball yet, 
+			# until then wget arago sdk tarball and use script to convert arago
+			# in linuxlib format
+			$cmd = "wget http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/DVSDK_3_10/latest/exports/arago-2009.11-armv5te-linux-gnueabi-sdk.tar.gz -P ${sdkpath}/${machine}/bsp";
+			$result = system($cmd);
+			if ($result) {
+				print "\nERROR: Failed to execute command $cmd";
+				exit 1;
+			}			
 		}
 		elsif($_ =~ m/task/)  {
 			my @recommends;
