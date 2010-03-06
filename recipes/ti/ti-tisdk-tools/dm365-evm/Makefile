@@ -17,7 +17,7 @@ clean:	cmem_clean dm365mm_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: linux all dmai psp_examples ceexamples
+everything: linux psp_examples cmem dm365mm ceexamples dmai
 
 #==============================================================================
 # Install everything
@@ -27,7 +27,7 @@ install: linux_install cmem_install dm365mm_install dmai_install psp_examples_in
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean
+clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean dm365mm_clean
 
 #==============================================================================
 # A help message target.
