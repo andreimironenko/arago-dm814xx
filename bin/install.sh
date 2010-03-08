@@ -47,11 +47,6 @@ verify_cdrom ()
     echo "ERROR: arch.conf does not exist in current working directory"
     exit 1;
   fi
-
-  if [ ! -f ti-tisdk-tools*.ipk ]; then
-    echo "ERROR: ti-tisdk-tools*.ipk does not exist is cwd"
-    exit 1;
-  fi
 }
 
 #
@@ -60,7 +55,7 @@ verify_cdrom ()
 execute ()
 {
   echo "Executing $*"
-  $* 2>/dev/null
+  $*
   if [ $? -ne 0 ]; then
     echo "ERROR: failed to execute $*"
     exit 1;
@@ -79,10 +74,7 @@ ipk_install()
   fi
 
   mkdir -p $root_dir/usr/lib/opkg
-  for i in `ls -1 $1/*ipk`; do
-    echo "Installing $i"
-      opkg-cl -o ${root_dir} -f arch.conf install --force-depends $i >/dev/null
-  done
+  opkg-cl -o ${root_dir} -f arch.conf install $1/*.ipk 
 }
 
 #
@@ -96,8 +88,8 @@ bsp_install()
   # extract filesystem first
   if [ -f $1/arago-*image-*.tar.gz ]; then
     mkdir -p $root_dir/filesystem
-    rootfs="`ls -1 $1/arago-*.tar.gz`"
-    execute "tar zxf ${rootfs}  -C $root_dir/filesystem"
+    rootfs="`ls -1 $1/arago-*image-*.tar.gz`"
+    execute "fakeroot tar zxf ${rootfs}  -C $root_dir/filesystem"
   else
     echo "ERROR: failed to find root filesystem image"
     exit 1
@@ -120,11 +112,11 @@ bsp_install()
 #
 start_install()
 {
-  test ! -z $graphics && ipk_install graphics
+  ipk_install base
   test ! -z $bsp && bsp_install bsp
   test ! -z $dsp && ipk_install dsp
   test ! -z $multimedia && ipk_install multimedia
-  ipk_install .
+  test ! -z $graphics && ipk_install graphics
 }
 
 #
@@ -132,7 +124,8 @@ start_install()
 #
 update_rules_make()
 {
-  for i in ${root_dir}/usr/lib/opkg/info/*.control; do
+  echo "Updating Rules.make ..."
+  for i in ${root_dir}/usr/lib/opkg/info/*sourcetree*.control; do
     # we are not greping package name because the name contains ti-*-sourcetree
     name="`cat $i | grep OE | awk {'print $2'} | cut -f2-5 -d-`"
 
@@ -156,6 +149,7 @@ update_rules_make()
 #
 move_to_root_dir()
 {
+  echo "Moving sourcetree ..."
   for i in ${root_dir}/usr/lib/opkg/info/*.control; do
     # we are not greping package name because the name contains ti-*-sourcetree
     name="`cat $i | grep OE | awk {'print $2'} | cut -f2-5 -d-`"
@@ -167,16 +161,29 @@ move_to_root_dir()
     # move source from pkginstall_dir/ti-$name-tree to 
     # $ROOT_DIR/$name_$version to present older dvsdk style
     if [ -d ${root_dir}/usr/share/ti/ti-$name-tree ]; then
+      echo " from ti-$name-tree => ${name}_${version}"
       mv ${root_dir}/usr/share/ti/ti-$name-tree ${root_dir}/${name}_${version}
     fi
   done
   if [ -d ${root_dir}/usr/share/ti/ti-psp-tree ]; then
+    echo " from ti-psp-tree => psp"
     mv ${root_dir}/usr/share/ti/ti-psp-tree/* ${root_dir}/psp
     rm -rf ${root_dir}/usr/share/ti/ti-psp-tree
   fi
 
   mv ${root_dir}/usr/share/ti/* ${root_dir}/
   rm -rf $root_dir/usr
+  rm -rf $root_dir/lib
+  rm -rf $root_dir/etc
+  rm -rf $root_dir/sbin
+}
+
+#
+# remove glibc packages from the host.
+#
+remove_glibc()
+{
+  opkg-cl -o ${root_dir} -f arch.conf remove  -force-depends libc6 libgcc1 libstdc++6
 }
 
 #
@@ -315,21 +322,32 @@ if [ ! -d $PWD/$machine ];  then
   exit 1;
 fi
 
-# check if run as root
-if [ "$UID" -ne "0" ]; then
-  echo "You must be root to run this script!"
+if [ ! -f install-tools.tgz ]; then
+  echo "ERROR: failed to find install-tools.tgz"
   exit 1;
 fi
+execute "tar zxf install-tools.tgz -C /tmp"
+
+# export fakeroot and opkg-cl command
+if [ ! -d /tmp/install-tools/`uname -m` ]; then
+  echo "ERROR: failed to find installation tool for host arch=`uname -m`"
+  exit 1;
+fi
+
+export PATH=/tmp/install-tools/`uname -m`/bin:$PATH
 
 cd $PWD/$machine
 
 # install packages
 test -z $root_dir && usage $0
 verify_cdrom
-start_install 
+echo "Starting installation machine=$machine, bsp=$bsp, multimedia=$multimedia, dsp=$dsp, root_dir=${root_dir}"
+start_install
+remove_glibc
 update_rules_make
 
 # create software manifest docs
+echo "Generating software manifest"
 mkdir -p $root_dir/docs
 sw_manifest_header > ${root_dir}/docs/software_manifest.htm
 generate_sw_manifest "Packages installed on the host machine:" "$root_dir" >> ${root_dir}/docs/software_manifest.htm;
@@ -338,6 +356,8 @@ sw_manifest_footer >> ${root_dir}/docs/software_manifest.htm
 
 # move sourcetree in dvsdk style
 move_to_root_dir
+
+echo "Installation completed!"
 
 exit 0
  

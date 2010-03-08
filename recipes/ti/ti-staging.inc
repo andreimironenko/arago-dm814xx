@@ -8,4 +8,4 @@ ALLOW_EMPTY_${PN}-dev = "1"
 PACKAGES =+ "${PN}-sourcetree"
 FILES_${PN}-sourcetree = "${installdir}/*-tree"
 INSANE_SKIP_${PN}-sourcetree = "True"
-
+RDEPENDS_${PN}-sourcetree = " "

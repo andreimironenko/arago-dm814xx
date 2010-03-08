@@ -1,4 +1,4 @@
-DESCRIPTION = "Package contain makefile/rule.make etc used for building sdk on host machine"
+DESCRIPTION = "Package contain Makefile and Rule.make used for building DVSDK components"
 
 require ti-paths.inc
 

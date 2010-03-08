@@ -118,6 +118,15 @@ sub copy_output
 {
     my $result;
     my $cmd;
+	my $march;
+
+	if ($machine =~ m/beagleboard/ || $machine =~ m/omap3evm/ ||
+		$machine =~ m/am3517-evm/) {
+		$march = "armv7a";
+	}
+	else {
+		$march = "armv5te";
+	}
 
 	print "\nCopying ...";
 	foreach (@packages) {
@@ -140,26 +149,6 @@ sub copy_output
         		exit 1;
     		}
 
-			print "\n + Downloading linux-davinci-staging.tar.gz\n";
-			# TODO: we don't have recipe for generating linux kernel source
-			# until then wget linux-davinci tar ball
-			$cmd = "wget http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/DVSDK_3_10/latest/exports/linux-davinci-staging.tar.gz -P ${sdkpath}/${machine}/bsp";
-			$result = system($cmd);
-			if ($result) {
-				print "\nERROR: Failed to execute command $cmd\n";
-				exit 1;
-			}
-
-			print "\n + Downloading /arago-2009.11-armv5te-linux-gnueabi-sdk.tar.gz\n";
-			# TODO: we don't have recipe to generate linuxlibs tarball yet, 
-			# until then wget arago sdk tarball and use script to convert arago
-			# in linuxlib format
-			$cmd = "wget http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/DVSDK_3_10/latest/exports/arago-2009.11-armv5te-linux-gnueabi-sdk.tar.gz -P ${sdkpath}/${machine}/bsp";
-			$result = system($cmd);
-			if ($result) {
-				print "\nERROR: Failed to execute command $cmd";
-				exit 1;
-			}			
 		}
 		elsif($_ =~ m/task/)  {
 			my @recommends;
@@ -205,14 +194,14 @@ sub copy_output
 			
 			print "\n + $_";
 
-			$cmd = "mkdir -p  $sdkpath/$machine";
+			$cmd = "mkdir -p  $sdkpath/$machine/base";
     		$result = system($cmd);
     		if ($result) {
         		print "\nERROR: Failed to execute command $cmd\n";
         		exit 1;
     		}
 
-			$cmd = "cp $ipk $sdkpath/$machine";
+			$cmd = "cp $ipk $sdkpath/$machine/base";
     		$result = system($cmd);
     		if ($result) {
         		print "\nERROR: Failed to execute command $cmd\n";
@@ -221,7 +210,7 @@ sub copy_output
 		}
 	}
 
-    # copy install.sh in top label directory
+    # copy install.sh
     $cmd = "cp $arago_dir/arago/bin/install.sh $sdkpath";
     $result = system($cmd);
 
@@ -230,7 +219,18 @@ sub copy_output
         exit 1;
     }
 
-    # copy platform directory top label directory
+    # copy opkg and fakeroot command on sdk cdrom, these commands will be
+    # used by install.sh during installation.
+    $cmd = "cp $arago_dir/arago/bin/install-tools.tgz  $sdkpath";
+	
+    $result = system($cmd);
+
+    if ($result) {
+        print "\n ERROR: failed to execute $cmd\n";
+        exit 1;
+    }
+
+    # copy platform specific arch.conf needed during opkg installation.
     $cmd = "cp $arago_dir/arago/bin/$machine/* $sdkpath/$machine/";
     $result = system($cmd);
 
@@ -238,6 +238,50 @@ sub copy_output
         print "\n ERROR: failed to execute $cmd\n";
         exit 1;
     }
+	
+	# TODO: we don't have recipe for generating linux kernel source
+	# until then wget linux-davinci tar ball on supported platforms.
+			
+	if ($bsp) {
+		if ($machine =~ m/dm365-evm/ || $machine =~ m/dm6467-evm/ ||
+			$machine =~ m/dm355-evm/) {	
+			print "\n + Downloading linux-davinci-staging.tar.gz\n";
+
+			$cmd = "wget http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/DVSDK_3_10/latest/exports/linux-davinci-staging.tar.gz -P ${sdkpath}/${machine}/bsp";
+			$result = system($cmd);
+			if ($result) {
+				print "\nERROR: Failed to execute command $cmd\n";
+				exit 1;
+			}
+		}
+	}
+
+	# copy libc6, libgcc1 and libstdc++6 ipk's.
+	# TODO: sourcetree depends on libc6, need to figure out way to disable 
+	# this depedency, until then copy the package to keep opkg happy
+	$cmd = "cp $arago_ipk_dir/$march/libc6_* $sdkpath/$machine/base";
+
+	$result = system($cmd);
+	if ($result) {
+		print "\n ERROR: failed to execute $cmd\n";
+		exit 1;
+	}
+
+	$cmd = "cp $arago_ipk_dir/$march/libgcc1_* $sdkpath/$machine/base";
+
+	$result = system($cmd);
+	if ($result) {
+		print "\n ERROR: failed to execute $cmd\n";
+		exit 1;
+	}
+
+	$cmd = "cp $arago_ipk_dir/$march/libstdc++6_* $sdkpath/$machine/base";
+
+	$result = system($cmd);
+	if ($result) {
+		print "\n ERROR: failed to execute $cmd\n";
+		exit 1;
+	}
 }
 
 ################################################################################
@@ -430,7 +474,7 @@ sub get_input
             	$sdkpath = "$arago_dir/$sdkpath_default";
         	}
 
-			$packages[$index++] = "ti-tisdk-tools";
+			$packages[$index++] = "ti-tisdk-makefile";
     	}
     }
 }
