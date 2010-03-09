@@ -62,7 +62,6 @@ execute ()
     echo "ERROR: failed to execute $*"
     exit 1;
   fi
-
 }
 
 #
@@ -76,17 +75,14 @@ ipk_install()
   fi
 
   mkdir -p $root_dir/usr/lib/opkg
-  opkg-cl -o ${root_dir} -f arch.conf install $1/*.ipk 
+  execute "opkg-cl -o ${root_dir} -f arch.conf install $1/*.ipk"
 }
 
 #
-# Extract tar balls from LSP directory
+# Extract tar balls from BSP directory
 #
-bsp_install()
+extract_tars()
 {
-  # install ipks
-  ipk_install $1
-
   # extract lsp source
   if [ -f $1/linux-*staging*.tar.gz ]; then
     mkdir -p $root_dir/psp/linux-kernel-source
@@ -95,6 +91,29 @@ bsp_install()
   else
     echo "ERROR: failed to find linux kernel tarball"
     exit 1
+  fi
+
+  # extract linuxlibs 
+  if [ ! -f bsp/linuxlibs*.tar.gz ]; then
+    echo "ERROR: failed to find linuxlibs tarball"
+    exit 1
+  fi
+  linuxlibs="`ls -1 bsp/linuxlibs*.tar.gz`"
+  execute "tar zxf ${linuxlibs} -C ${root_dir}"
+  mv ${root_dir}/linuxlibs* ${root_dir}/linuxlibs
+
+  # extract rootfs tarball
+  if [ ! -f bsp/arago-*image-*.tar.gz ]; then
+    echo "ERROR: failed to find root filesystem image"
+    exit 1
+  fi
+  rootfs="`ls -1 bsp/arago-*image-*.tar.gz`"
+
+  mkdir -p ${root_dir}/filesystem
+  if [ "$extract_fs" = "yes" ]; then
+    sudo tar zxf ${rootfs} -C ${root_dir}/filesystem
+  else
+    cp ${rootfs} ${root_dir}/filesystem
   fi
 }
 
@@ -105,10 +124,10 @@ bsp_install()
 start_install()
 {
   ipk_install base
-  test ! -z $bsp && bsp_install bsp
   test ! -z $dsp && ipk_install dsp
   test ! -z $multimedia && ipk_install multimedia
   test ! -z $graphics && ipk_install graphics
+  test ! -z $bsp && ipk_install bsp && extract_tars bsp
 }
 
 #
@@ -175,7 +194,7 @@ move_to_root_dir()
 #
 remove_glibc()
 {
-  opkg-cl -o ${root_dir} -f arch.conf remove  -force-depends libc6 libgcc1 libstdc++6
+ execute "opkg-cl -o ${root_dir} -f arch.conf remove  -force-depends libc6 libgcc1 libstdc++6"
 }
 
 #
@@ -342,7 +361,7 @@ if [ ! -f install-tools.tgz ]; then
 fi
 execute "tar zxf install-tools.tgz -C /tmp"
 
-# export fakeroot and opkg-cl commands
+# export opkg-cl commands
 if [ ! -d /tmp/install-tools/ ]; then
   echo "ERROR: failed to find installation tool for host arch=`uname -m`"
   exit 1;
@@ -372,20 +391,6 @@ echo "Generating software manifest"
 mkdir -p $root_dir/docs
 sw_manifest_header > ${root_dir}/docs/software_manifest.htm
 generate_sw_manifest "Packages installed on the host machine:" "$root_dir" >> ${root_dir}/docs/software_manifest.htm;
-
-# install rootfs
-if [ ! -f bsp/arago-*image-*.tar.gz ]; then
-  echo "ERROR: failed to find root filesystem image"
-  exit 1
-fi
-rootfs="`ls -1 bsp/arago-*image-*.tar.gz`"
-
-mkdir -p ${root_dir}/filesystem
-if [ "$extract_fs" = "yes" ]; then
-  sudo tar zxf ${rootfs} -C ${root_dir}/filesystem
-else
-  cp ${rootfs} ${root_dir}/filesystem
-fi
 
 generate_sw_manifest "Packages installed on the target filesystem:" "$root_dir/filesystem" >> ${root_dir}/docs/software_manifest.htm;
 sw_manifest_footer >> ${root_dir}/docs/software_manifest.htm

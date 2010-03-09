@@ -256,6 +256,18 @@ sub copy_output
 		}
 	}
 
+	# TODO: we don't have recipe to generate linuxlibs yet, until then wget
+	# linuxlibs tar ball from psp sdk
+	if ($march =~ m/armv5te/) {
+		$cmd = "wget http://arago-project.org/files/releases/davinci-psp_3.x.0.0-r32/sdk/linuxlibs-2009.11-armv5te.tar.gz -P ${sdkpath}/${machine}/bsp";
+
+		$result = system($cmd);
+		if ($result) {
+			print "\nERROR: Failed to execute command $cmd\n";
+			exit 1;
+		}
+	}
+
 	# copy libc6, libgcc1 and libstdc++6 ipk's.
 	# TODO: sourcetree depends on libc6, need to figure out way to disable 
 	# this depedency, until then copy the package to keep opkg happy
