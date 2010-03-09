@@ -86,8 +86,8 @@ extract_tars()
   # extract lsp source
   if [ -f $1/linux-*staging*.tar.gz ]; then
     mkdir -p $root_dir/psp/linux-kernel-source
-    rootfs="`ls -1 $1/linux-*staging*.tar.gz`"
-    execute "tar zxf ${rootfs}  -C $root_dir/psp/linux-kernel-source"
+    lsp="`ls -1 $1/linux-*staging*.tar.gz`"
+    execute "tar zxf ${lsp}  -C $root_dir/psp/linux-kernel-source"
   else
     echo "ERROR: failed to find linux kernel tarball"
     exit 1
@@ -262,11 +262,11 @@ echo "
 <HTML>
 <HEAD>
 <TITLE>
-$machine SDK ${DVSDK_VERSION} Installation Summary 
+$machine DVSDK ${DVSDK_VERSION} Installation Summary 
 </TITLE>
 </HEAD>
 <BODY>
-<h1><CENTER> $machine SDK ${DVSDK_VERSION} Software Manifest </CENTER></h1>
+<h1><CENTER> $machine DVSDK ${DVSDK_VERSION} Software Manifest </CENTER></h1>
 <h2><b><u>Legend</u></b></h2>
 <table border=1 width=45%>
 <tr><td>Package Name</td><td>The name of the application or files</td></tr>
@@ -392,7 +392,15 @@ mkdir -p $root_dir/docs
 sw_manifest_header > ${root_dir}/docs/software_manifest.htm
 generate_sw_manifest "Packages installed on the host machine:" "$root_dir" >> ${root_dir}/docs/software_manifest.htm;
 
-generate_sw_manifest "Packages installed on the target filesystem:" "$root_dir/filesystem" >> ${root_dir}/docs/software_manifest.htm;
+# if installer has copied rootfs tar then extract opkg control file for 
+# generating sw manifest
+if [ -f ${root_dir}/filesystem/arago-*image-*.tar.gz ]; then
+  tar zxf `ls -1 bsp/arago-*image-*.tar.gz` -C ${root_dir}/filesystem --wildcards *.control*
+  generate_sw_manifest "Packages installed on the target filesystem:" "$root_dir/filesystem" >> ${root_dir}/docs/software_manifest.htm;
+  rm -rf ${root_dir}/filesystem/usr
+else
+  generate_sw_manifest "Packages installed on the target filesystem:" "$root_dir/filesystem" >> ${root_dir}/docs/software_manifest.htm;
+fi
 sw_manifest_footer >> ${root_dir}/docs/software_manifest.htm
 
 # move sourcetree in dvsdk style
