@@ -48,7 +48,7 @@ get_input();
 
 validate_input();
 
-build_image();
+#build_image();
 
 copy_output();
 
@@ -75,43 +75,6 @@ sub build_image
 }
 
 ################################################################################
-# copy_task_recommended
-################################################################################
-sub copy_task_recommended
-{
-    my $result;
-    my $cmd;
-	my $task_name = $_[0];
-	my $category = $_[1];
-
-	# TODO: figure out a way to use opkg command to query information from
-	# .ipk. until then we will use dpkg to query the ipk information.
-	
-   	$cmd = "dpkg -I $task_name\_*.ipk  | grep Recommends | cut -f2 -d:";
-	open (CMD, "$cmd |");
-		while (<CMD>) {
-		(@recommends) = split(/,/,$_);
-	}
-	close(CMD);
-
-	# go through the recommended packages and copy them individually on sdk
-	foreach (@recommends) {
-		$_ =~ s/^\s+//;
-	 	$_ =~ s/\s+$//;
-		
-		my $ipk = "$arago_ipk_dir/$machine/$_*.ipk";
-
-		print "\n + $_";
-		$cmd = "cp $ipk $sdkpath/$machine/$category";
-    	$result = system($cmd);
-    	if ($result) {
-        	print "\nERROR: Failed to execute command $cmd\n";
-        	exit 1;
-    	}
-	}
-}
-
-################################################################################
 # copy_output
 ################################################################################
 sub copy_output
@@ -128,86 +91,24 @@ sub copy_output
 		$march = "armv5te";
 	}
 
-	print "\nCopying ...";
-	foreach (@packages) {
-		# If it's an image then copy image tarball in bsp directory
-		if ($_ =~ m/image/) {
-			my $image_file = "$arago_images_output_dir/$machine/$_-$machine.tar.gz";
-			print "\n + $_-$machine.tar.gz";
+	print "\nCopying ipk directory ...\n";
 
-			$cmd = "mkdir -p  $sdkpath/$machine/bsp";
-    		$result = system($cmd);
-    		if ($result) {
-        		print "\nERROR: Failed to execute command $cmd\n";
-        		exit 1;
-    		}
-
-			$cmd = "cp $image_file $sdkpath/$machine/bsp";
-    		$result = system($cmd);
-    		if ($result) {
-        		print "\nERROR: Failed to execute command $cmd\n";
-        		exit 1;
-    		}
-
-		}
-		elsif($_ =~ m/task/)  {
-			my @recommends;
-			my $category;
-
-			if ($_ =~ m/bsp/) {
-				$category = "bsp";
-			}
-			elsif ($_ =~ m/multimedia/) {
-				$category = "multimedia";
-			}
-			elsif ($_ =~ m/dsp/) {
-				$category = "dsp";
-			}
-			elsif ($_ =~ m/graphics/) {
-				$category = "graphics";
-			}
-			else {
-				$category = "";
-			}
+	# create directories
+    $cmd = "mkdir -p $sdkpath/config/$machine/ $sdkpath/base";
+	$result = system($cmd);
 	
-			$cmd = "mkdir -p  $sdkpath/$machine/$category";
-    		$result = system($cmd);
-    		if ($result) {
-        		print "\nERROR: Failed to execute command $cmd\n";
-        		exit 1;
-    		}
-			
-			print "\n + $_";
-			$cmd = "cp $arago_ipk_dir/$machine/$_\_*.ipk $sdkpath/$machine/$category";
-    		$result = system($cmd);
-    		if ($result) {
-        		print "\nERROR: Failed to execute command $cmd\n";
-        		exit 1;
-    		}
+	if ($result) {
+		print "\n ERROR: failed to execute $cmd";
+		exit 1;
+	}
 
-			# if its a task then copy all the recommended packages
-			copy_task_recommended("$arago_ipk_dir/$machine/$_", "$category");
-
-		}
-		else {
-			my $ipk = "$arago_ipk_dir/$machine/$_\_*.ipk";
-			
-			print "\n + $_";
-
-			$cmd = "mkdir -p  $sdkpath/$machine/base";
-    		$result = system($cmd);
-    		if ($result) {
-        		print "\nERROR: Failed to execute command $cmd\n";
-        		exit 1;
-    		}
-
-			$cmd = "cp $ipk $sdkpath/$machine/base";
-    		$result = system($cmd);
-    		if ($result) {
-        		print "\nERROR: Failed to execute command $cmd\n";
-        		exit 1;
-    		}
-		}
+	# copy image tar
+	$cmd = "cp $arago_images_output_dir/$machine/$packages[0]\-${machine}.tar.gz $sdkpath/base";
+	$result = system($cmd);
+	
+	if ($result) {
+		print "\n ERROR: failed to execute $cmd";
+		exit 1;
 	}
 
     # copy install.sh
@@ -230,8 +131,8 @@ sub copy_output
         exit 1;
     }
 
-    # copy platform specific arch.conf needed during opkg installation.
-    $cmd = "cp $arago_dir/arago/bin/$machine/* $sdkpath/$machine/";
+    # copy platform specific opkg.conf needed during opkg installation.
+    $cmd = "cp $arago_dir/arago/bin/$machine/* $sdkpath/config/$machine/";
     $result = system($cmd);
 
     if ($result) {
@@ -245,9 +146,8 @@ sub copy_output
 	if ($bsp) {
 		if ($machine =~ m/dm365-evm/ || $machine =~ m/dm6467-evm/ ||
 			$machine =~ m/dm355-evm/) {	
-			print "\n + Downloading linux-davinci-staging.tar.gz\n";
 
-			$cmd = "wget http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/DVSDK_3_10/latest/exports/linux-davinci-staging.tar.gz -P ${sdkpath}/${machine}/bsp";
+			$cmd = "wget http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/DVSDK_3_10/latest/exports/linux-davinci-staging.tar.gz -P ${sdkpath}/base";
 			$result = system($cmd);
 			if ($result) {
 				print "\nERROR: Failed to execute command $cmd\n";
@@ -259,7 +159,7 @@ sub copy_output
 	# TODO: we don't have recipe to generate linuxlibs yet, until then wget
 	# linuxlibs tar ball from psp sdk
 	if ($march =~ m/armv5te/) {
-		$cmd = "wget http://arago-project.org/files/releases/davinci-psp_3.x.0.0-r32/sdk/linuxlibs-2009.11-armv5te.tar.gz -P ${sdkpath}/${machine}/bsp";
+		$cmd = "wget http://arago-project.org/files/releases/davinci-psp_3.x.0.0-r32/sdk/linuxlibs-2009.11-armv5te.tar.gz -P ${sdkpath}/base";
 
 		$result = system($cmd);
 		if ($result) {
@@ -268,32 +168,14 @@ sub copy_output
 		}
 	}
 
-	# copy libc6, libgcc1 and libstdc++6 ipk's.
-	# TODO: sourcetree depends on libc6, need to figure out way to disable 
-	# this depedency, until then copy the package to keep opkg happy
-	$cmd = "cp $arago_ipk_dir/$march/libc6_* $sdkpath/$machine/base";
+    $cmd = "cp -ar ${arago_ipk_dir} ${sdkpath}";
+    $result = system($cmd);
 
-	$result = system($cmd);
 	if ($result) {
-		print "\n ERROR: failed to execute $cmd\n";
+		print "\nERROR: Failed to execute command $cmd\n";
 		exit 1;
 	}
 
-	$cmd = "cp $arago_ipk_dir/$march/libgcc1_* $sdkpath/$machine/base";
-
-	$result = system($cmd);
-	if ($result) {
-		print "\n ERROR: failed to execute $cmd\n";
-		exit 1;
-	}
-
-	$cmd = "cp $arago_ipk_dir/$march/libstdc++6_* $sdkpath/$machine/base";
-
-	$result = system($cmd);
-	if ($result) {
-		print "\n ERROR: failed to execute $cmd\n";
-		exit 1;
-	}
 }
 
 ################################################################################

@@ -8,7 +8,7 @@
 #
 
 VERSION="1.0"
-DVSDK_VERSION="<version>"
+DVSDK_VERSION="__<version>__"
 
 #
 # Display program usage
@@ -24,7 +24,6 @@ Usage: `basename $1` [options] --machine <machine_name> <install_dir>
   --dsp                 Install c64p dsp packages
   --multimedia          Install multimedia packages
   --force               Force installation on unsupported host
-  --untar-fs            Extract root filesystem tarball, requires sudo access
 "
   exit 1
 }
@@ -45,10 +44,11 @@ version()
 #
 verify_cdrom ()
 {
-  if [ ! -f arch.conf ]; then
+  if [ ! -f config/$machine/opkg.conf ]; then
     echo "ERROR: arch.conf does not exist in current working directory"
     exit 1;
   fi
+  sed s=\${PWD}=$PWD= config/dm365-evm/opkg.conf > ${root_dir}/.opkg.conf
 }
 
 #
@@ -94,27 +94,23 @@ extract_tars()
   fi
 
   # extract linuxlibs 
-  if [ ! -f bsp/linuxlibs*.tar.gz ]; then
+  if [ ! -f $1/linuxlibs*.tar.gz ]; then
     echo "ERROR: failed to find linuxlibs tarball"
     exit 1
   fi
-  linuxlibs="`ls -1 bsp/linuxlibs*.tar.gz`"
+  linuxlibs="`ls -1 $1/linuxlibs*.tar.gz`"
   execute "tar zxf ${linuxlibs} -C ${root_dir}"
   mv ${root_dir}/linuxlibs* ${root_dir}/linuxlibs
 
   # extract rootfs tarball
-  if [ ! -f bsp/arago-*image-*.tar.gz ]; then
+  if [ ! -f $1/arago-*image-*.tar.gz ]; then
     echo "ERROR: failed to find root filesystem image"
     exit 1
   fi
-  rootfs="`ls -1 bsp/arago-*image-*.tar.gz`"
+  rootfs="`ls -1 $1/arago-*image-*.tar.gz`"
 
   mkdir -p ${root_dir}/filesystem
-  if [ "$extract_fs" = "yes" ]; then
-    sudo tar zxf ${rootfs} -C ${root_dir}/filesystem
-  else
-    cp ${rootfs} ${root_dir}/filesystem
-  fi
+  cp ${rootfs} ${root_dir}/filesystem
 }
 
 
@@ -123,11 +119,11 @@ extract_tars()
 #
 start_install()
 {
-  ipk_install base
-  test ! -z $dsp && ipk_install dsp
-  test ! -z $multimedia && ipk_install multimedia
-  test ! -z $graphics && ipk_install graphics
-  test ! -z $bsp && ipk_install bsp && extract_tars bsp
+  mkdir -p $root_dir/usr/lib/opkg
+  execute "opkg-cl --cache ${root_dir}/deploy/cache -o ${root_dir} -f ${root_dir}/.opkg.conf  update"
+  execute "opkg-cl --cache ${root_dir}/deploy/cache -o ${root_dir} -f ${root_dir}/.opkg.conf install ti-tisdk-makefile ${bsp} ${multimedia} ${dsp} ${graphics}  "
+
+  test ! -z $bsp && extract_tars base
 }
 
 #
@@ -194,7 +190,7 @@ move_to_root_dir()
 #
 remove_glibc()
 {
- execute "opkg-cl -o ${root_dir} -f arch.conf remove  -force-depends libc6 libgcc1 libstdc++6"
+ execute "opkg-cl  --cache ${root_dir}/deploy/cache -o ${root_dir} -f ${root_dir}/.opkg.conf remove  -force-depends libc6 libgcc1 libstdc++6"
 }
 
 #
@@ -304,19 +300,19 @@ while [ $# -gt 0 ]; do
       version $0
       ;;
     --graphics)
-      graphics="yes";
+      graphics="task-tisdk-graphics-sourcetree";
       shift;
       ;;
     --bsp)
-      bsp="yes";
+      bsp="task-tisdk-bsp-sourcetree";
       shift;
       ;;
     --dsp)
-      dsp="yes";
+      dsp="task-tisdk-dsp-sourcetree";
       shift;
       ;;
     --multimedia)
-      multimedia="yes"
+      multimedia="task-tisdk-multimedia-sourcetree"
       shift;
       ;;
     --machine)
@@ -327,10 +323,6 @@ while [ $# -gt 0 ]; do
     --force)
       shift
       force_host="yes";
-      ;;
-    --untar-fs)
-      shift
-      extract_fs="yes";
       ;;
      *)
       root_dir=$1;
@@ -371,17 +363,11 @@ export LD_LIBRARY_PATH=/tmp/install-tools/lib:$LD_LIBRARY_PATH
 export PATH=/tmp/install-tools/bin:$PATH
 
 test -z $machine && usage $0
-if [ ! -d $PWD/$machine ];  then
-  echo "$PWD/$machine does not exist"
-  exit 1;
-fi
-
-cd $PWD/$machine
 
 # install packages
 test -z $root_dir && usage $0
+mkdir -p ${root_dir}
 verify_cdrom
-echo "Starting installation machine=$machine, bsp=$bsp, multimedia=$multimedia, dsp=$dsp, root_dir=${root_dir}"
 start_install
 remove_glibc
 update_rules_make
@@ -395,16 +381,15 @@ generate_sw_manifest "Packages installed on the host machine:" "$root_dir" >> ${
 # if installer has copied rootfs tar then extract opkg control file for 
 # generating sw manifest
 if [ -f ${root_dir}/filesystem/arago-*image-*.tar.gz ]; then
-  tar zxf `ls -1 bsp/arago-*image-*.tar.gz` -C ${root_dir}/filesystem --wildcards *.control*
+  tar zxf `ls -1 base/arago-*image-*.tar.gz` -C ${root_dir}/filesystem --wildcards *.control*
   generate_sw_manifest "Packages installed on the target filesystem:" "$root_dir/filesystem" >> ${root_dir}/docs/software_manifest.htm;
   rm -rf ${root_dir}/filesystem/usr
-else
-  generate_sw_manifest "Packages installed on the target filesystem:" "$root_dir/filesystem" >> ${root_dir}/docs/software_manifest.htm;
 fi
 sw_manifest_footer >> ${root_dir}/docs/software_manifest.htm
 
 # move sourcetree in dvsdk style
 move_to_root_dir
+rm -rf ${root_dir}/.opkg.conf
 
 echo "Installation completed!"
 
