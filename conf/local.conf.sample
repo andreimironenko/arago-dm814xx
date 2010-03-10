@@ -14,7 +14,7 @@ SCRATCH ?= "${OEBASE}"
 DL_DIR = "${SCRATCH}/downloads"
 
 # Put resulting images and packages in deploy directory outside of temp
-DEPLOY_DIR = "${OEBASE}/arago-deploy"
+#DEPLOY_DIR = "${OEBASE}/arago-deploy"
 
 # Default TMPDIR is safe for multi-user environment
 TMPDIR = "${SCRATCH}/arago-tmp"
@@ -99,7 +99,7 @@ DISTRO = "angstrom-2008.1"
 
 # Set the distro name and version, since we now produce own SDK
 DISTRO_NAME = "Arago"
-DISTRO_VERSION = "2009.11"
+DISTRO_VERSION = "2010.03"
 BUILDNAME = "${DISTRO_NAME} ${DISTRO_VERSION}"
 
 # Add own mirrors

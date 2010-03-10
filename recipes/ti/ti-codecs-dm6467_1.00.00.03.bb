@@ -1,34 +1,33 @@
-DESCRIPTION = "TI Codecs (and Server Combo) for OMAP3530"
+DESCRIPTION = "TI Codecs (and Server Combo) for DM6467"
 HOMEPAGE = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent"
 SECTION = "multimedia"
 
 # TODO :: Move to common .inc (omap3 and omapl ready)
 
-PV = "1_00_01_44"
+PV = "1_00_00_03"
 
-SRC_URI[omap3codecsbin.md5sum] = "4db567252e6c43119e1c0aafe401a679"
-SRC_URI[omap3codecsbin.sha256sum] = "e042e1aad42a6728adf5c955dc38e4f8331fc0eacd833f1cd75d9cbb4faff0b5"
+SRC_URI[dm6467codecsbin.md5sum] = "c15085bd613a1df4f3634cc3ed0e04a5"
+SRC_URI[dm6467codecsbin.sha256sum] = "d10e221e53ca4420d72e13496ceabce9b2d0be8c08a5d622bee691ccfa98b8bd"
 
-PR = "r7"
+PR = "r2"
 
 require ti-paths.inc
 require ti-staging.inc
 require ti-eula-unpack.inc
 
-PROVIDES += "ti-codecs-omap3530-server"
-RREPLACES_${PN} = "ti-cs1-omap3530"
+PROVIDES += "ti-codecs-dm6467-server"
 
-S = "${WORKDIR}/dvsdk_3_00_02_44/cs1omap3530_1_00_01"
+S = "${WORKDIR}/dvsdk/dvsdk_3_10_00_11/cs2dm6467_1_00_00_03"
 
-SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/DVSDK_3_00/3_00_02_44/exports/cs1omap3530_setuplinux_1_00_01-44.bin;name=omap3codecsbin"
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/DVSDK_3_10/latest/exports/cs2dm6467_1_00_00_03_Setup.bin;name=dm6467codecsbin"
 
-BINFILE = "cs1omap3530_setuplinux_1_00_01-44.bin"
-TI_BIN_UNPK_CMDS = "Y:Y: qY:workdir"
+BINFILE = "cs2dm6467_1_00_00_03_Setup.bin"
+TI_BIN_UNPK_CMDS = "Y: qY:workdir:Y"
 
 DEPENDS = "ti-cgt6x ti-xdctools ti-dspbios ti-codec-engine ti-linuxutils"
 
 #generic codec
-DSPSUFFIX_omap3 = "x64P"
+DSPSUFFIX_dm6467 = "x64P"
 
 do_prepsources() {
 
@@ -83,5 +82,6 @@ do_install() {
     cp -pPrf ${S}/* ${D}${CODEC_INSTALL_DIR_RECIPE}
 }
 
-PACKAGES += "ti-codecs-omap3530-server"
-FILES_ti-codecs-omap3530-server = "${installdir}/ti-codecs-server/*"
+PACKAGES += "ti-codecs-dm6467-server"
+FILES_ti-codecs-dm6467-server = "${installdir}/ti-codecs-server/*"
+

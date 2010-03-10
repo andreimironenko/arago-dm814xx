@@ -1,7 +1,10 @@
 DESCRIPTION = "User space DMA module for DM355"
 SECTION = "devel"
 
-require ti-codecs-dm355.inc
+require ti-paths.inc
+require ti-staging.inc
+require ti-eula-unpack.inc
+
 inherit module
 
 PV = "1_13_000"
@@ -11,6 +14,7 @@ SRC_URI	= "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dv
 	      "
 S = "${WORKDIR}/dm355_codecs_${PV}"
 BINFILE="dm355_codecs_setuplinux_${PV}.bin"
+TI_BIN_UNPK_CMDS = "y:Y: qY:workdir"
 
 #This is a kernel module, don't set PR directly
 MACHINE_KERNEL_PR_append = "a"

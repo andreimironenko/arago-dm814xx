@@ -61,10 +61,14 @@ def base_chk_file_vars(parser, localpath, params, data):
         name = params["name"]
     except KeyError:
         return False
-    flagName = "%s.md5sum" % name
-    want_md5sum = bb.data.getVarFlag("SRC_URI", flagName, data)
-    flagName = "%s.sha256sum" % name
-    want_sha256sum = bb.data.getVarFlag("SRC_URI", flagName, data)
+    if name:
+        md5flag = "%s.md5sum" % name
+        sha256flag = "%s.sha256sum" % name
+    else:
+        md5flag = "md5sum"
+        sha256flag = "sha256sum"
+    want_md5sum = bb.data.getVarFlag("SRC_URI", md5flag, data)
+    want_sha256sum = bb.data.getVarFlag("SRC_URI", sha256flag, data)
 
     if (want_sha256sum == None and want_md5sum == None):
         # no checksums to check, nothing to do
@@ -504,7 +508,7 @@ def package_stagefile(file, d):
 package_stagefile_shell() {
 	if [ "$PSTAGING_ACTIVE" = "1" ]; then
 		srcfile=$1
-		destfile=`echo $srcfile | sed s#${DEPLOY_DIR}#${PSTAGE_TMPDIR_STAGE}#`
+		destfile=`echo $srcfile | sed s#${TMPDIR}#${PSTAGE_TMPDIR_STAGE}#`
 		destdir=`dirname $destfile`
 		mkdir -p $destdir
 		cp -dp $srcfile $destfile
@@ -702,12 +706,18 @@ python base_do_fetch() {
 	pn = bb.data.getVar('PN', d, True)
 
 	# Check each URI
+	first_uri = True
 	for url in src_uri.split():
 		localpath = bb.data.expand(bb.fetch.localpath(url, localdata), localdata)
 		(type,host,path,_,_,params) = bb.decodeurl(url)
 		uri = "%s://%s%s" % (type,host,path)
 		try:
 			if type in [ "http", "https", "ftp", "ftps" ]:
+				# We provide a default shortcut of plain [] for the first fetch uri
+				# Explicit names in any uri overrides this default.
+				if not "name" in params and first_uri:
+					first_uri = False
+					params["name"] = ""
 				if not (base_chk_file_vars(parser, localpath, params, d) or base_chk_file(parser, pn, pv,uri, localpath, d)):
 					if not bb.data.getVar("OE_ALLOW_INSECURE_DOWNLOADS", d, True):
 						bb.fatal("%s-%s: %s has no checksum defined, cannot check archive integrity" % (pn,pv,uri))
@@ -1155,6 +1165,14 @@ python do_populate_staging () {
     if legacy:
         bb.data.setVar("SYSROOT_DESTDIR", "", d)
         bb.note("Legacy staging mode for %s" % bb.data.getVar("FILE", d, True))
+
+        try:
+            file = open("%s/legacy-staging.log" % bb.data.getVar("TMPDIR", d, 1), "a")
+	    file.write("%s\n" % bb.data.getVar("FILE", d, True))
+	    file.close()
+        except:
+            pass
+
         if bb.data.getVarFlags('do_stage', d) is None:
             bb.fatal("This recipe (%s) has a do_stage_prepend or do_stage_append and do_stage now doesn't exist. Please rename this to do_stage()" % bb.data.getVar("FILE", d, True))
         lock = bb.utils.lockfile(lockfile)
@@ -1331,19 +1349,6 @@ def check_app_exists(app, d):
 	app = data.expand(app, d)
 	path = data.getVar('PATH', d, 1)
 	return len(which(path, app)) != 0
-
-def check_gcc3(data):
-	# Primarly used by qemu to make sure we have a workable gcc-3.4.x.
-	# Start by checking for the program name as we build it, was not
-	# all host-provided gcc-3.4's will work.
-
-	gcc3_versions = 'gcc-3.4.6 gcc-3.4.4 gcc34 gcc-3.4 gcc-3.4.7 gcc-3.3 gcc33 gcc-3.3.6 gcc-3.2 gcc32'
-
-	for gcc3 in gcc3_versions.split():
-		if check_app_exists(gcc3, data):
-			return gcc3
-	
-	return False
 
 # Patch handling
 inherit patch
