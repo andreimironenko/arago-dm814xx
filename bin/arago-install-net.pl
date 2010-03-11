@@ -15,13 +15,14 @@ my $protocol = "";
 my $protocol_default = "git";
 
 my $aragocommit_default        = "HEAD";
-my $aragooecommit_default      = "e3a9f623da78411882001db6ba6c67a4d818f49d";
+my $aragooecommit_default      = "bbcee8b2b17b496a331c824dce1cfbdd3f937539";
 my $aragobitbakecommit_default = "3dd225e5b648d6ebcccd60e9c1bb8dd8a6094d7d";
+my $aragogitrepository_default = "arago-project.org/git/people/brijesh/arago-dvsdk.git";
 
 my $auto_install = 0;
 
 my %git_repositories = (
-    "arago"         => [ "", "arago-project.org/git/people/aravindbr/arago-dsp.git" ],
+    "arago"         => [ "", "" ],
     "arago-bitbake" => [ "", "arago-project.org/git/arago-bitbake.git" ],
     "arago-oe-dev"  => [ "", "arago-project.org/git/arago-oe-dev.git" ],
 );
@@ -388,6 +389,41 @@ sub get_input
         }
         else {
             $installdir = $installdir_default;
+        }
+    }
+
+    if (!$git_repositories{ "arago" }[1]) {
+        print "From which git repository do you want to get Arago?\n";
+        print "[ $aragogitrepository_default ] ";
+        $input = <STDIN>;
+        $input =~ s/\s+$//;
+
+        if ($input) {
+            if ($input =~ m/(\w+):\/\//) {
+                $input =~ s/(\w+):\/\///;
+                $protocol_default = $1;
+            }
+            $git_repositories{ "arago" }[1] = $input;
+        }
+        else {
+            $git_repositories{ "arago" }[1] = $aragogitrepository_default;
+        }
+    }
+    if (!$git_repositories{ "arago" }[1]) {
+        print "From which git repository do you want to get Arago?\n";
+        print "[ $aragogitrepository_default ] ";
+        $input = <STDIN>;
+        $input =~ s/\s+$//;
+
+        if ($input) {
+            if ($input =~ m/(\w+):\/\//) {
+                $input =~ s/(\w+):\/\///;
+                $protocol_default = $1;
+            }
+            $git_repositories{ "arago" }[1] = $input;
+        }
+        else {
+            $git_repositories{ "arago" }[1] = $aragogitrepository_default;
         }
     }
 

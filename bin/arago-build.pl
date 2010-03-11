@@ -15,6 +15,7 @@ my $dsp_source = "task-tisdk-dsp-sourcetree";
 my $bsp_default = "yes";
 my $multimedia_default = "yes";
 my $dsp_default = "no";
+my $image;
 
 ################################################################################
 # main
@@ -29,9 +30,9 @@ if (! exists $ENV{'OEBASE'}) {
 }
 
 my $arago_dir = "$ENV{'OEBASE'}";
-my $arago_images_output_dir = "$arago_dir/arago-deploy/images";
+my $arago_images_output_dir = "$arago_dir/arago-tmp/deploy/images";
 my $arago_image_dir = "$arago_dir/arago/recipes/images";
-my $arago_ipk_dir = "$arago_dir/arago-deploy/ipk";
+my $arago_ipk_dir = "$arago_dir/arago-tmp/deploy/ipk";
 my $arago_machine_dir = "$arago_dir/arago/conf/machine";
 my $arago_tmp = "$arago_dir/arago-tmp";
 
@@ -48,7 +49,7 @@ get_input();
 
 validate_input();
 
-#build_image();
+build_image();
 
 copy_output();
 
@@ -91,10 +92,8 @@ sub copy_output
 		$march = "armv5te";
 	}
 
-	print "\nCopying ipk directory ...\n";
-
 	# create directories
-    $cmd = "mkdir -p $sdkpath/config/$machine/ $sdkpath/base";
+    $cmd = "mkdir -p $sdkpath/config/$machine/ $sdkpath/deploy/images/$machine $sdkpath/devel ";
 	$result = system($cmd);
 	
 	if ($result) {
@@ -102,8 +101,19 @@ sub copy_output
 		exit 1;
 	}
 
+	# copy ipk's
+	print "\nCopying ${arago_ipk_dir} ...";
+    $cmd = "cp -ar ${arago_ipk_dir} ${sdkpath}/deploy";
+    $result = system($cmd);
+
+	if ($result) {
+		print "\nERROR: Failed to execute command $cmd\n";
+		exit 1;
+	}
+
 	# copy image tar
-	$cmd = "cp $arago_images_output_dir/$machine/$packages[0]\-${machine}.tar.gz $sdkpath/base";
+	print "\nCopying $arago_images_output_dir/$machine/$image\-${machine}.tar.gz ...";
+	$cmd = "cp $arago_images_output_dir/$machine/$image\-${machine}.tar.gz $sdkpath/deploy/images/$machine";
 	$result = system($cmd);
 	
 	if ($result) {
@@ -112,6 +122,7 @@ sub copy_output
 	}
 
     # copy install.sh
+    print "\nCopying $arago_dir/arago/bin/install.sh ...";
     $cmd = "cp $arago_dir/arago/bin/install.sh $sdkpath";
     $result = system($cmd);
 
@@ -122,6 +133,7 @@ sub copy_output
 
     # copy opkg and fakeroot command on sdk cdrom, these commands will be
     # used by install.sh during installation.
+    print "\nCopying $arago_dir/arago/bin/install-tools.tgz  ...";
     $cmd = "cp $arago_dir/arago/bin/install-tools.tgz  $sdkpath";
 	
     $result = system($cmd);
@@ -132,6 +144,7 @@ sub copy_output
     }
 
     # copy platform specific opkg.conf needed during opkg installation.
+    print "\nCopying $arago_dir/arago/bin/$machine/opkg.conf  ...";
     $cmd = "cp $arago_dir/arago/bin/$machine/* $sdkpath/config/$machine/";
     $result = system($cmd);
 
@@ -147,7 +160,8 @@ sub copy_output
 		if ($machine =~ m/dm365-evm/ || $machine =~ m/dm6467-evm/ ||
 			$machine =~ m/dm355-evm/) {	
 
-			$cmd = "wget http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/DVSDK_3_10/latest/exports/linux-davinci-staging.tar.gz -P ${sdkpath}/base";
+    		print "\nCopying linux-davinci-staging.tar.gz ...\n";
+			$cmd = "wget http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/DVSDK_3_10/latest/exports/linux-davinci-staging.tar.gz -P ${sdkpath}/deploy/ipk/$machine/";
 			$result = system($cmd);
 			if ($result) {
 				print "\nERROR: Failed to execute command $cmd\n";
@@ -159,7 +173,8 @@ sub copy_output
 	# TODO: we don't have recipe to generate linuxlibs yet, until then wget
 	# linuxlibs tar ball from psp sdk
 	if ($march =~ m/armv5te/) {
-		$cmd = "wget http://arago-project.org/files/releases/davinci-psp_3.x.0.0-r32/sdk/linuxlibs-2009.11-armv5te.tar.gz -P ${sdkpath}/base";
+    	print "\nCopying linuxlibs-2009.11-armv5te.tar.gz ...\n";
+		$cmd = "wget http://arago-project.org/files/releases/davinci-psp_3.x.0.0-r32/sdk/linuxlibs-2009.11-armv5te.tar.gz -P ${sdkpath}/devel";
 
 		$result = system($cmd);
 		if ($result) {
@@ -167,15 +182,6 @@ sub copy_output
 			exit 1;
 		}
 	}
-
-    $cmd = "cp -ar ${arago_ipk_dir} ${sdkpath}";
-    $result = system($cmd);
-
-	if ($result) {
-		print "\nERROR: Failed to execute command $cmd\n";
-		exit 1;
-	}
-
 }
 
 ################################################################################
@@ -252,7 +258,6 @@ sub get_input
             $machine = $machine_hash{ 1 };
         }
 
-
     	if (!$image) {
         	print "\nAvailable Arago images:\n";
         	my @images = <$arago_image_dir/*.bb> or die
@@ -280,8 +285,6 @@ sub get_input
         	else {
             	$image = $image_hash{ 1 };
         	}
-
-			$packages[$index++] = $image;
     	}
 
     	if (!$bsp) {
@@ -301,10 +304,6 @@ sub get_input
         	else {
             	$bsp = $bsp_default;
         	}
-
-          	if ($bsp =~ m/yes/i) {
-				$packages[$index++] = $bsp_source;
-          	}
     	}
 
     	if (!$multimedia) {
@@ -324,10 +323,6 @@ sub get_input
         	else {
             	$multimedia = $multimedia_default;
         	}
-
-          	if ($multimedia =~ m/yes/i) {
-				$packages[$index++] = $multimedia_source;
-          	}
     	}
 
     	if (!$dsp) {
@@ -347,10 +342,6 @@ sub get_input
         	else {
             	$dsp = $dsp_default;
         	}
-
-          	if ($dsp =~ m/yes/i) {
-				$packages[$index++] = $dsp_source;
-          	}
     	}
 
     	if (!$sdkpath) {
@@ -367,9 +358,22 @@ sub get_input
         	else {
             	$sdkpath = "$arago_dir/$sdkpath_default";
         	}
-
-			$packages[$index++] = "ti-tisdk-makefile";
     	}
+
+		if ($bsp =~ m/yes/i) {
+			$packages[$index++] = $bsp_source;
+		}
+
+		if ($multimedia =~ m/yes/i) {
+			$packages[$index++] = $multimedia_source;
+		}
+
+		if ($dsp =~ m/yes/i) {
+			$packages[$index++] = $dsp_source;
+		}
+
+		$packages[$index++] = "ti-tisdk-makefile";
+		$packages[$index++] = $image;
     }
 }
 
@@ -409,7 +413,13 @@ sub parse_args
             next;
         }
 
-        if ($ARGV[0] eq '-o' || $ARGV[0] eq '--outpath') {
+        if ($ARGV[0] eq '-i' || $ARGV[0] eq '--image') {
+            shift(@ARGV);
+            $image = shift(@ARGV);
+            next;
+        }
+
+        if ($ARGV[0] eq '-p' || $ARGV[0] eq '--sdkpath') {
             shift(@ARGV);
             $sdkpath = shift(@ARGV);
             next;

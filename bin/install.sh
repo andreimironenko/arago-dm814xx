@@ -7,7 +7,7 @@
 #  Script to install TI SDK
 #
 
-VERSION="1.0"
+VERSION="1.1"
 DVSDK_VERSION="__<version>__"
 
 #
@@ -48,7 +48,7 @@ verify_cdrom ()
     echo "ERROR: arch.conf does not exist in current working directory"
     exit 1;
   fi
-  sed s=\${PWD}=$PWD= config/dm365-evm/opkg.conf > ${root_dir}/.opkg.conf
+  sed s=\${PWD}=$PWD/deploy= config/dm365-evm/opkg.conf > ${root_dir}/.opkg.conf
 }
 
 #
@@ -84,9 +84,9 @@ ipk_install()
 extract_tars()
 {
   # extract lsp source
-  if [ -f $1/linux-*staging*.tar.gz ]; then
+  if [ -f deploy/ipk/$machine/linux-*staging*.tar.gz ]; then
     mkdir -p $root_dir/psp/linux-kernel-source
-    lsp="`ls -1 $1/linux-*staging*.tar.gz`"
+    lsp="`ls -1 deploy/ipk/$machine/linux-*staging*.tar.gz`"
     execute "tar zxf ${lsp}  -C $root_dir/psp/linux-kernel-source"
   else
     echo "ERROR: failed to find linux kernel tarball"
@@ -94,20 +94,20 @@ extract_tars()
   fi
 
   # extract linuxlibs 
-  if [ ! -f $1/linuxlibs*.tar.gz ]; then
+  if [ ! -f devel/linuxlibs*.tar.gz ]; then
     echo "ERROR: failed to find linuxlibs tarball"
     exit 1
   fi
-  linuxlibs="`ls -1 $1/linuxlibs*.tar.gz`"
+  linuxlibs="`ls -1 devel/linuxlibs*.tar.gz`"
   execute "tar zxf ${linuxlibs} -C ${root_dir}"
   mv ${root_dir}/linuxlibs* ${root_dir}/linuxlibs
 
-  # extract rootfs tarball
-  if [ ! -f $1/arago-*image-*.tar.gz ]; then
+  # copy rootfs tarball
+  if [ ! -f deploy/images/$machine/arago-*image-*.tar.gz ]; then
     echo "ERROR: failed to find root filesystem image"
     exit 1
   fi
-  rootfs="`ls -1 $1/arago-*image-*.tar.gz`"
+  rootfs="`ls -1  deploy/images/$machine/arago-*image-*.tar.gz`"
 
   mkdir -p ${root_dir}/filesystem
   cp ${rootfs} ${root_dir}/filesystem
@@ -123,7 +123,7 @@ start_install()
   execute "opkg-cl --cache ${root_dir}/deploy/cache -o ${root_dir} -f ${root_dir}/.opkg.conf  update"
   execute "opkg-cl --cache ${root_dir}/deploy/cache -o ${root_dir} -f ${root_dir}/.opkg.conf install ti-tisdk-makefile ${bsp} ${multimedia} ${dsp} ${graphics}  "
 
-  test ! -z $bsp && extract_tars base
+  test ! -z $bsp && extract_tars
 }
 
 #
@@ -171,6 +171,16 @@ move_to_root_dir()
       echo " from ti-$name-tree => ${name}_${version}"
       mv ${root_dir}/usr/share/ti/ti-$name-tree ${root_dir}/${name}_${version}
     fi
+
+    # Handle the special case, where codec source directory is named as  
+    # "ti-codecs-tree" instead of ti-codecs-$machine-tree. 
+    case "$name" in
+      codecs-*) 
+        echo " from ti-codecs-tree => ${name}_${version}"
+        mv ${root_dir}/usr/share/ti/ti-codecs-tree ${root_dir}/${name}_${version}
+        ;;
+    esac
+
   done
   if [ -d ${root_dir}/usr/share/ti/ti-psp-tree ]; then
     echo " from ti-psp-tree => psp"
@@ -381,7 +391,7 @@ generate_sw_manifest "Packages installed on the host machine:" "$root_dir" >> ${
 # if installer has copied rootfs tar then extract opkg control file for 
 # generating sw manifest
 if [ -f ${root_dir}/filesystem/arago-*image-*.tar.gz ]; then
-  tar zxf `ls -1 base/arago-*image-*.tar.gz` -C ${root_dir}/filesystem --wildcards *.control*
+  tar zxf `ls -1 deploy/images/$machine/arago-*image-*.tar.gz` -C ${root_dir}/filesystem --wildcards *.control*
   generate_sw_manifest "Packages installed on the target filesystem:" "$root_dir/filesystem" >> ${root_dir}/docs/software_manifest.htm;
   rm -rf ${root_dir}/filesystem/usr
 fi
