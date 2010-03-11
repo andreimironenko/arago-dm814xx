@@ -1,4 +1,5 @@
 DESCRIPTION = "Package contain Makefile and Rule.make used for building DVSDK components"
+LICENSE = "TI"
 
 require ti-paths.inc
 

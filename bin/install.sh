@@ -221,16 +221,13 @@ echo "
   for i in $2/usr/lib/opkg/info/*.control; do
     package="`cat $i | grep Package: | awk {'print $2'}`"
     version="`cat $i | grep Version: | awk {'print $2'} | cut -f1-2 -d-`"
-    section="`cat $i | grep Section: | awk {'print $2'}`"
-    license="`cat $i | grep License: | awk {'print $2'}`"
+    license="`cat $i | grep License: | awk {'print $2,$3,$4'} `"
     source="`cat $i | grep Source: | awk {'print $2'}`"
-    if [ "$license" = "unknown" ]; then
-      highlight="bgcolor=yellow"
-    elif [ "$license" = "GPLv3" ]; then
-      highlight="bgcolor=red"
-    else
-      highlight=""
-    fi
+    case "$license" in 
+      *unknown*) highlight="bgcolor=yellow" ;;
+      *GPLv3*) highlight="bgcolor=yellow" ;;
+      *) highlight="" ;;
+    esac
 
     case "$source" in
       file://*) source="";;
