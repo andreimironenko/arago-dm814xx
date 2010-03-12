@@ -9,8 +9,11 @@ my @no_machines = ("arago", "include");
 my @packages;
 
 my $bsp_source = "task-tisdk-bsp-sourcetree";
+my $bsp_binary = "task-tisdk-bsp";
 my $multimedia_source = "task-tisdk-multimedia-sourcetree";
+my $multimedia_binary = "task-tisdk-multimedia";
 my $dsp_source = "task-tisdk-dsp-sourcetree";
+my $dsp_binary = "task-tisdk-dsp";
 
 my $bsp_default = "yes";
 my $multimedia_default = "yes";
@@ -363,14 +366,17 @@ sub get_input
 
     if ($bsp =~ m/yes/i) {
         $packages[$index++] = $bsp_source;
+        $packages[$index++] = $bsp_binary;
     }
 
     if ($multimedia =~ m/yes/i) {
         $packages[$index++] = $multimedia_source;
+        $packages[$index++] = $multimedia_binary;
     }
 
     if ($dsp =~ m/yes/i) {
         $packages[$index++] = $dsp_source;
+        $packages[$index++] = $dsp_binary;
     }
 
     $packages[$index++] = "ti-tisdk-makefile";
