@@ -63,15 +63,15 @@ sub build_image
     my $result;
     my $cmd;
 
-	foreach (@packages) {
-    	print "\nBuilding $_ for $machine\n";
+    foreach (@packages) {
+        print "\nBuilding $_ for $machine\n";
 
-    	$cmd = "MACHINE=$machine bitbake $_";
-    	$result = system($cmd);
-    	if ($result) {
-        	print "\nERROR: Failed to build $_ for $machine\n";
-        	exit 1;
-    	}
+        $cmd = "MACHINE=$machine bitbake $_";
+        $result = system($cmd);
+        if ($result) {
+            print "\nERROR: Failed to build $_ for $machine\n";
+            exit 1;
+        }
     }
 }
 
@@ -82,44 +82,44 @@ sub copy_output
 {
     my $result;
     my $cmd;
-	my $march;
+    my $march;
 
-	if ($machine =~ m/beagleboard/ || $machine =~ m/omap3evm/ ||
-		$machine =~ m/am3517-evm/) {
-		$march = "armv7a";
-	}
-	else {
-		$march = "armv5te";
-	}
+    if ($machine =~ m/beagleboard/ || $machine =~ m/omap3evm/ ||
+        $machine =~ m/am3517-evm/) {
+        $march = "armv7a";
+    }
+    else {
+        $march = "armv5te";
+    }
 
-	# create directories
+    # create directories
     $cmd = "mkdir -p $sdkpath/config/$machine/ $sdkpath/deploy/images/$machine $sdkpath/devel ";
-	$result = system($cmd);
-	
-	if ($result) {
-		print "\n ERROR: failed to execute $cmd";
-		exit 1;
-	}
+    $result = system($cmd);
+    
+    if ($result) {
+        print "\n ERROR: failed to execute $cmd";
+        exit 1;
+    }
 
-	# copy ipk's
-	print "\nCopying ${arago_ipk_dir} ...";
+    # copy ipk's
+    print "\nCopying ${arago_ipk_dir} ...";
     $cmd = "cp -ar ${arago_ipk_dir} ${sdkpath}/deploy";
     $result = system($cmd);
 
-	if ($result) {
-		print "\nERROR: Failed to execute command $cmd\n";
-		exit 1;
-	}
+    if ($result) {
+        print "\nERROR: Failed to execute command $cmd\n";
+        exit 1;
+    }
 
-	# copy image tar
-	print "\nCopying $arago_images_output_dir/$machine/$image\-${machine}.tar.gz ...";
-	$cmd = "cp $arago_images_output_dir/$machine/$image\-${machine}.tar.gz $sdkpath/deploy/images/$machine";
-	$result = system($cmd);
-	
-	if ($result) {
-		print "\n ERROR: failed to execute $cmd";
-		exit 1;
-	}
+    # copy image tar
+    print "\nCopying $arago_images_output_dir/$machine/$image\-${machine}.tar.gz ...";
+    $cmd = "cp $arago_images_output_dir/$machine/$image\-${machine}.tar.gz $sdkpath/deploy/images/$machine";
+    $result = system($cmd);
+    
+    if ($result) {
+        print "\n ERROR: failed to execute $cmd";
+        exit 1;
+    }
 
     # copy install.sh
     print "\nCopying $arago_dir/arago/bin/install.sh ...";
@@ -135,7 +135,7 @@ sub copy_output
     # used by install.sh during installation.
     print "\nCopying $arago_dir/arago/bin/install-tools.tgz  ...";
     $cmd = "cp $arago_dir/arago/bin/install-tools.tgz  $sdkpath";
-	
+    
     $result = system($cmd);
 
     if ($result) {
@@ -152,36 +152,36 @@ sub copy_output
         print "\n ERROR: failed to execute $cmd\n";
         exit 1;
     }
-	
-	# TODO: we don't have recipe for generating linux kernel source
-	# until then wget linux-davinci tar ball on supported platforms.
-			
-	if ($bsp) {
-		if ($machine =~ m/dm365-evm/ || $machine =~ m/dm6467-evm/ ||
-			$machine =~ m/dm355-evm/) {	
+    
+    # TODO: we don't have recipe for generating linux kernel source
+    # until then wget linux-davinci tar ball on supported platforms.
+            
+    if ($bsp) {
+        if ($machine =~ m/dm365-evm/ || $machine =~ m/dm6467-evm/ ||
+            $machine =~ m/dm355-evm/) { 
 
-    		print "\nCopying linux-davinci-staging.tar.gz ...\n";
-			$cmd = "wget http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/DVSDK_3_10/latest/exports/linux-davinci-staging.tar.gz -P ${sdkpath}/deploy/ipk/$machine/";
-			$result = system($cmd);
-			if ($result) {
-				print "\nERROR: Failed to execute command $cmd\n";
-				exit 1;
-			}
-		}
-	}
+            print "\nCopying linux-davinci-staging.tar.gz ...\n";
+            $cmd = "wget http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/DVSDK_3_10/latest/exports/linux-davinci-staging.tar.gz -P ${sdkpath}/deploy/ipk/$machine/";
+            $result = system($cmd);
+            if ($result) {
+                print "\nERROR: Failed to execute command $cmd\n";
+                exit 1;
+            }
+        }
+    }
 
-	# TODO: we don't have recipe to generate linuxlibs yet, until then wget
-	# linuxlibs tar ball from psp sdk
-	if ($march =~ m/armv5te/) {
-    	print "\nCopying linuxlibs-2009.11-armv5te.tar.gz ...\n";
-		$cmd = "wget http://arago-project.org/files/releases/davinci-psp_3.x.0.0-r32/sdk/linuxlibs-2009.11-armv5te.tar.gz -P ${sdkpath}/devel";
+    # TODO: we don't have recipe to generate linuxlibs yet, until then wget
+    # linuxlibs tar ball from psp sdk
+    if ($march =~ m/armv5te/) {
+        print "\nCopying linuxlibs-2009.11-armv5te.tar.gz ...\n";
+        $cmd = "wget http://arago-project.org/files/releases/davinci-psp_3.x.0.0-r32/sdk/linuxlibs-2009.11-armv5te.tar.gz -P ${sdkpath}/devel";
 
-		$result = system($cmd);
-		if ($result) {
-			print "\nERROR: Failed to execute command $cmd\n";
-			exit 1;
-		}
-	}
+        $result = system($cmd);
+        if ($result) {
+            print "\nERROR: Failed to execute command $cmd\n";
+            exit 1;
+        }
+    }
 }
 
 ################################################################################
@@ -224,7 +224,7 @@ sub compatible_machine
 sub get_input
 {
     my $input;
-	my $index = 0;
+    my $index = 0;
 
     if (!$machine) {
         print "\nAvailable Arago machine types:\n";
@@ -257,124 +257,124 @@ sub get_input
         else {
             $machine = $machine_hash{ 1 };
         }
-
-    	if (!$image) {
-        	print "\nAvailable Arago images:\n";
-        	my @images = <$arago_image_dir/*.bb> or die
-            	"Failed to read directory $arago_image_dir\n";
-        	my %image_hash = ();
-        	my $cnt = 1;
-        	foreach $x (@images) {
-            	if (compatible_machine($x, $machine)) {
-                	my $xs = $x;
-                	$xs =~ s/.*\/(.*).bb/$1/;
-                	$image_hash{ $cnt++ } = $xs;
-            	}
-        	}
-        	foreach $x (sort keys %image_hash) {
-            	print "    $x: $image_hash{ $x }\n";
-        	}
-        	print "\nWhich Arago image do you want to include in SDK?\n";
-        	print "[ 1 ] ";
-        	$input = <STDIN>;
-        	$input =~ s/\s+$//;
-
-        	if ($input) {
-            	$image = $image_hash{ $input };
-        	}
-        	else {
-            	$image = $image_hash{ 1 };
-        	}
-    	}
-
-    	if (!$bsp) {
-        	print "\nDo you want to add BSP packages in SDK? \n";
-        	print "[ $bsp_default ] ";
-        	$input = <STDIN>;
-        	$input =~ s/\s+$//;
-
-        	if ($input) {
-            	if ($input =~ m/y/i) {
-                	$bsp = "yes";
-            	}
-            	else {
-                	$bsp = "no";
-            	}
-        	}
-        	else {
-            	$bsp = $bsp_default;
-        	}
-    	}
-
-    	if (!$multimedia) {
-        	print "\nDo you want to add Multimedia packages in SDK? \n";
-        	print "[ $multimedia_default ] ";
-        	$input = <STDIN>;
-        	$input =~ s/\s+$//;
-
-        	if ($input) {
-            	if ($input =~ m/y/i) {
-                	$multimedia = "yes";
-            	}
-            	else {
-                	$multimedia = "no";
-            	}
-        	}
-        	else {
-            	$multimedia = $multimedia_default;
-        	}
-    	}
-
-    	if (!$dsp) {
-        	print "\nDo you want to add DSP packages in SDK? \n";
-        	print "[ $dsp_default ] ";
-        	$input = <STDIN>;
-        	$input =~ s/\s+$//;
-
-        	if ($input) {
-            	if ($input =~ m/y/i) {
-                	$dsp = "yes";
-            	}
-            	else {
-                	$dsp = "no";
-            	}
-        	}
-        	else {
-            	$dsp = $dsp_default;
-        	}
-    	}
-
-    	if (!$sdkpath) {
-        	$sdkpath_default = "sdk-cdrom";
-        	print "\nWhere do you want to copy Arago sdk ?\n";
-        	print "(Relative to $arago_dir)\n";
-        	print "[ $sdkpath_default ] ";
-        	$input = <STDIN>;
-        	$input =~ s/\s+$//;
-
-        	if ($input) {
-            	$sdkpath = "$arago_dir/$input";
-        	}
-        	else {
-            	$sdkpath = "$arago_dir/$sdkpath_default";
-        	}
-    	}
-
-		if ($bsp =~ m/yes/i) {
-			$packages[$index++] = $bsp_source;
-		}
-
-		if ($multimedia =~ m/yes/i) {
-			$packages[$index++] = $multimedia_source;
-		}
-
-		if ($dsp =~ m/yes/i) {
-			$packages[$index++] = $dsp_source;
-		}
-
-		$packages[$index++] = "ti-tisdk-makefile";
-		$packages[$index++] = $image;
     }
+
+    if (!$image) {
+        print "\nAvailable Arago images:\n";
+        my @images = <$arago_image_dir/*.bb> or die
+            "Failed to read directory $arago_image_dir\n";
+        my %image_hash = ();
+        my $cnt = 1;
+        foreach $x (@images) {
+            if (compatible_machine($x, $machine)) {
+                my $xs = $x;
+                $xs =~ s/.*\/(.*).bb/$1/;
+                $image_hash{ $cnt++ } = $xs;
+            }
+        }
+        foreach $x (sort keys %image_hash) {
+            print "    $x: $image_hash{ $x }\n";
+        }
+        print "\nWhich Arago image do you want to include in SDK?\n";
+        print "[ 1 ] ";
+        $input = <STDIN>;
+        $input =~ s/\s+$//;
+
+        if ($input) {
+            $image = $image_hash{ $input };
+        }
+        else {
+            $image = $image_hash{ 1 };
+        }
+    }
+
+    if (!$bsp) {
+        print "\nDo you want to add BSP packages in SDK? \n";
+        print "[ $bsp_default ] ";
+        $input = <STDIN>;
+        $input =~ s/\s+$//;
+
+        if ($input) {
+            if ($input =~ m/y/i) {
+                $bsp = "yes";
+            }
+            else {
+                $bsp = "no";
+            }
+        }
+        else {
+            $bsp = $bsp_default;
+        }
+    }
+
+    if (!$multimedia) {
+        print "\nDo you want to add Multimedia packages in SDK? \n";
+        print "[ $multimedia_default ] ";
+        $input = <STDIN>;
+        $input =~ s/\s+$//;
+
+        if ($input) {
+            if ($input =~ m/y/i) {
+                $multimedia = "yes";
+            }
+            else {
+                $multimedia = "no";
+            }
+        }
+        else {
+            $multimedia = $multimedia_default;
+        }
+    }
+
+    if (!$dsp) {
+        print "\nDo you want to add DSP packages in SDK? \n";
+        print "[ $dsp_default ] ";
+        $input = <STDIN>;
+        $input =~ s/\s+$//;
+
+        if ($input) {
+            if ($input =~ m/y/i) {
+                $dsp = "yes";
+            }
+            else {
+                $dsp = "no";
+            }
+        }
+        else {
+            $dsp = $dsp_default;
+        }
+    }
+
+    if (!$sdkpath) {
+        $sdkpath_default = "sdk-cdrom";
+        print "\nWhere do you want to copy Arago sdk ?\n";
+        print "(Relative to $arago_dir)\n";
+        print "[ $sdkpath_default ] ";
+        $input = <STDIN>;
+        $input =~ s/\s+$//;
+
+        if ($input) {
+            $sdkpath = "$arago_dir/$input";
+        }
+        else {
+            $sdkpath = "$arago_dir/$sdkpath_default";
+        }
+    }
+
+    if ($bsp =~ m/yes/i) {
+        $packages[$index++] = $bsp_source;
+    }
+
+    if ($multimedia =~ m/yes/i) {
+        $packages[$index++] = $multimedia_source;
+    }
+
+    if ($dsp =~ m/yes/i) {
+        $packages[$index++] = $dsp_source;
+    }
+
+    $packages[$index++] = "ti-tisdk-makefile";
+    $packages[$index++] = $image;
 }
 
 ################################################################################
