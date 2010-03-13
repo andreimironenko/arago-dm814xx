@@ -351,16 +351,17 @@ if [ ! -f install-tools.tgz ]; then
   echo "ERROR: failed to find install-tools.tgz"
   exit 1;
 fi
-execute "tar zxf install-tools.tgz -C /tmp"
+execute "mkdir -p ${install_dir}"
+execute "tar zxf install-tools.tgz -C ${install_dir}"
 
 # export opkg-cl commands
-if [ ! -d /tmp/install-tools/ ]; then
+if [ ! -d ${install_dir}/install-tools/ ]; then
   echo "ERROR: failed to find installation tool"
   exit 1;
 fi
 
-export LD_LIBRARY_PATH=/tmp/install-tools/lib:$LD_LIBRARY_PATH
-export PATH=/tmp/install-tools/bin:$PATH
+export LD_LIBRARY_PATH=${install_dir}/install-tools/lib:$LD_LIBRARY_PATH
+export PATH=${install_dir}/install-tools/bin:$PATH
 
 test -z $machine && usage $0
 
@@ -368,7 +369,7 @@ test -z $install_dir && usage $0
 mkdir -p ${install_dir}
 verify_cdrom
 
-# host ipk's on host
+# install sourcetree ipk's on host
 mkdir -p ${install_dir}/usr/lib/opkg
 ipk_install "${install_dir}" "$bsp_src $dsp_src $multimedia_src ti-tisdk-makefile"
 test ! -z $bsp_src && extract_tars
@@ -394,6 +395,7 @@ sw_manifest_footer >> ${install_dir}/docs/software_manifest.htm
 # move sourcetree in dvsdk style
 move_to_install_dir
 rm -rf ${install_dir}/.opkg.conf
+rm -rf ${install_dir}/install-tools
 
 echo "Installation completed!"
 
