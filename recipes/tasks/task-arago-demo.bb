@@ -73,6 +73,3 @@ RDEPENDS_${PN} = "\
     ${ARAGO_DEMO} \
     "
 
-RRECOMMENDS_${PN} = "\
-    kernel-modules \
-    "
