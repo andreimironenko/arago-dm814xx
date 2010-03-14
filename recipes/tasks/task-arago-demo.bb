@@ -1,5 +1,6 @@
 DESCRIPTION = "Extended task to get more basic and demo apps"
 PR = "r9"
+LICENSE="MIT"
 
 inherit task
 

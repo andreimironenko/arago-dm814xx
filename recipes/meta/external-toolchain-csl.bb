@@ -1,4 +1,6 @@
 PR = "r3"
+LICENSE="GPLv2"
+HOMEPAGE="http://www.codesourcery.com/sgpp/lite/arm/portal/release858"
 
 INHIBIT_DEFAULT_DEPS = "1"
 
