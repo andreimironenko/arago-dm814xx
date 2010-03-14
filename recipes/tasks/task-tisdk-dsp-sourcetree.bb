@@ -1,5 +1,6 @@
 DESCRIPTION = "Task to build and install packages needed for TISDK"
 PR = "r1"
+LICENSE="MIT"
 
 inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
