@@ -1,5 +1,6 @@
 DESCRIPTION = "Linux driver examples/test applications"
 HOMEPAGE = "http://arago-project.org/git/projects/?p=examples-davinci.git;a=summary"
+LICENSE="BSD"
 
 DEPENDS = "virtual/kernel"
 
