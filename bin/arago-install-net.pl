@@ -15,7 +15,7 @@ my $protocol = "";
 my $protocol_default = "git";
 
 my $aragocommit_default        = "HEAD";
-my $aragooecommit_default      = "bbcee8b2b17b496a331c824dce1cfbdd3f937539";
+my $aragooecommit_default      = "c7d05f4f2f07d977fc4d09bd4f5e9e9344222dd0";
 my $aragobitbakecommit_default = "3dd225e5b648d6ebcccd60e9c1bb8dd8a6094d7d";
 my $aragogitrepository_default = "arago-project.org/git/people/brijesh/arago-dvsdk.git";
 
