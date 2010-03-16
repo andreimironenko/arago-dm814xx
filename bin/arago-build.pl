@@ -114,6 +114,23 @@ sub copy_output
         exit 1;
     }
 
+    print "\n Deleting -dbg and -static packages to save disk space ...";
+    $cmd = "find ${sdkpath}/deploy/ipk -name *-dbg* | xargs rm -rf {}";
+    $result = system($cmd);
+
+    if ($result) {
+        print "\nERROR: Failed to execute command $cmd\n";
+        exit 1;
+    }
+
+    $cmd = "find ${sdkpath}/deploy/ipk -name *-static* | xargs rm -rf {}";
+    $result = system($cmd);
+
+    if ($result) {
+        print "\nERROR: Failed to execute command $cmd\n";
+        exit 1;
+    }
+
     # copy image tar
     print "\nCopying $arago_images_output_dir/$machine/$image\-${machine}.tar.gz ...";
     $cmd = "cp $arago_images_output_dir/$machine/$image\-${machine}.tar.gz $sdkpath/deploy/images/$machine";
@@ -124,7 +141,7 @@ sub copy_output
         exit 1;
     }
 
-    # copy install.sh
+    # copy install script
     print "\nCopying $arago_dir/arago/bin/install.sh ...";
     $cmd = "cp $arago_dir/arago/bin/install*.sh $sdkpath";
     $result = system($cmd);
