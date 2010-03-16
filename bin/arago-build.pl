@@ -3,17 +3,17 @@
 ################################################################################
 # Arago build script
 ################################################################################
-my $script_version = "0.5";
+my $script_version = "0.6";
 
 my @no_machines = ("arago", "include");
 my @packages;
 
-my $bsp_source = "task-tisdk-bsp-sourcetree";
-my $bsp_binary = "task-tisdk-bsp";
-my $multimedia_source = "task-tisdk-multimedia-sourcetree";
-my $multimedia_binary = "task-tisdk-multimedia";
-my $dsp_source = "task-tisdk-dsp-sourcetree";
-my $dsp_binary = "task-tisdk-dsp";
+my $bsp_source = "task-arago-tisdk-bsp-host";
+my $bsp_binary = "task-arago-tisdk-bsp-target";
+my $multimedia_source = "task-arago-tisdk-multimedia-host";
+my $multimedia_binary = "task-arago-tisdk-multimedia-target";
+my $dsp_source = "task-arago-tisdk-dsp-host";
+my $dsp_binary = "task-arago-tisdk-dsp-target";
 
 my $bsp_default = "yes";
 my $multimedia_default = "yes";
@@ -126,7 +126,7 @@ sub copy_output
 
     # copy install.sh
     print "\nCopying $arago_dir/arago/bin/install.sh ...";
-    $cmd = "cp $arago_dir/arago/bin/install.sh $sdkpath";
+    $cmd = "cp $arago_dir/arago/bin/install*.sh $sdkpath";
     $result = system($cmd);
 
     if ($result) {

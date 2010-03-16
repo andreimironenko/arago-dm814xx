@@ -44,11 +44,13 @@ version()
 #
 verify_cdrom ()
 {
+  echo "Verifying CDROM ..."
   if [ ! -f config/$machine/opkg.conf ]; then
-    echo "ERROR: arch.conf does not exist in current working directory"
+    echo "ERROR: opkg.conf does not exist for $machine"
     exit 1;
   fi
   sed s=\${PWD}=$PWD/deploy= config/dm365-evm/opkg.conf > ${install_dir}/.opkg.conf
+  opkg_conf="${install_dir}/.opkg.conf"
 }
 
 #
@@ -69,6 +71,7 @@ execute ()
 #
 extract_tars()
 {
+  echo "Extracting Linux kernel source tar ... "
   # extract lsp source
   if [ -f deploy/ipk/$machine/linux-*staging*.tar.gz ]; then
     mkdir -p $install_dir/psp/linux-kernel-source
@@ -80,6 +83,7 @@ extract_tars()
   fi
 
   # extract linuxlibs 
+  echo "Extracting linuxlibs tar ..."
   if [ ! -f devel/linuxlibs*.tar.gz ]; then
     echo "ERROR: failed to find linuxlibs tarball"
     exit 1
@@ -88,27 +92,6 @@ extract_tars()
   execute "tar zxf ${linuxlibs} -C ${install_dir}"
   mv ${install_dir}/linuxlibs* ${install_dir}/linuxlibs
 
-  # copy rootfs tarball
-  if [ ! -f deploy/images/$machine/arago-*image-*.tar.gz ]; then
-    echo "ERROR: failed to find root filesystem image"
-    exit 1
-  fi
-  rootfs="`ls -1  deploy/images/$machine/arago-*image-*.tar.gz`"
-
-  mkdir -p ${install_dir}/filesystem
-  cp ${rootfs} ${install_dir}/filesystem
-}
-
-
-#
-# install packages
-#
-ipk_install()
-{
-  root_dir=$1; shift
-
-  execute "opkg-cl --cache $root_dir/deploy/cache -o $root_dir -f ${install_dir}/.opkg.conf  update"
-  execute "opkg-cl --cache $root_dir/deploy/cache -o $root_dir -f ${install_dir}/.opkg.conf install  $*"
 }
 
 #
@@ -178,14 +161,6 @@ move_to_install_dir()
   rm -rf $install_dir/lib
   rm -rf $install_dir/etc
   rm -rf $install_dir/sbin
-}
-
-#
-# remove glibc packages from the host.
-#
-remove_glibc()
-{
- execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${install_dir}/.opkg.conf remove  -force-depends libc6 libgcc1 libstdc++6"
 }
 
 #
@@ -281,6 +256,91 @@ echo "
 "
 }
 
+# 
+# check supported host
+#
+host_check ()
+{
+  echo "Checking host ..."
+  if [ "$force_host" = "yes" ]; then
+    echo "Forcing installation on unsupported host"
+  else
+    lsb_release -a > /tmp/.log
+    if [ $? -ne 0 ]; then
+      echo "Unsupported host machine"
+      exit 1;
+    fi
+    host="`cat /tmp/.log | grep Codename: | awk {'print $2'}`"
+    if [ "$host" != "hardy" ]; then
+      echo "Unsupported host machine" ;
+      exit 1;
+    fi
+    echo " Found Ubuntu 8.04"
+  fi
+}
+
+#
+# prepare installer tools - this requires building opkg and fakeroot natively
+# 
+prepare_install ()
+{
+  echo "Preparing installation ..."
+
+  cwd=$PWD;
+  if [ ! -f install-tools.tgz ]; then
+    echo "ERROR: failed to find install-tools.tgz"
+    exit 1;
+  fi
+
+  execute "mkdir -p ${install_dir}"
+  execute "tar zxf install-tools.tgz -C ${install_dir}"
+  if [ ! -d ${install_dir}/install-tools/ ]; then
+    echo "ERROR: failed to find installation tool"
+    exit 1;
+  fi
+
+  execute "cd ${install_dir}/install-tools/"
+  execute "tar zxf fakeroot*.tar.gz"
+  execute "tar zxf opkg-src*.tar.gz"
+  execute "cd fakeroot*"
+  execute "./configure --prefix=${install_dir}/install-tools"
+  execute "make"
+  execute "make install"
+  execute "cd ../"
+  execute "cd opkg*"
+  execute "./autogen.sh --disable-curl --disable-gpg --prefix=${install_dir}/install-tools"
+  execute "make"
+  execute "make install"
+  export LD_LIBRARY_PATH=${install_dir}/install-tools/lib:$LD_LIBRARY_PATH
+  export PATH=${install_dir}/install-tools/bin:$PATH
+  cd $cwd
+}
+
+#
+# install sourcetree or devel packages on host
+#
+host_install ()
+{
+  echo "Installing packages on host ..."
+  mkdir -p ${install_dir}/usr/lib/opkg
+
+  execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_conf}  update"
+  execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_conf} install  $bsp_src $dsp_src $multimedia_src ti-tisdk-makefile"
+
+  # extract kernel and linuxlibs header tarballs
+  test ! -z $bsp_src && extract_tars
+
+  # TODO: figure out a ways to remove glibc depedency
+  # sourcetree packages installs libc6,  libgcc1, libstdc++6
+  # For now uninstall those extra packages
+  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6"
+
+  update_rules_make
+
+  generate_sw_manifest "Packages installed on the host machine:" "$install_dir" >> ${install_dir}/docs/software_manifest.htm;
+
+  move_to_install_dir
+}
 
 # Process command line...
 while [ $# -gt 0 ]; do
@@ -292,26 +352,26 @@ while [ $# -gt 0 ]; do
       version $0
       ;;
     --graphics)
-      graphics_src="task-tisdk-graphics-sourcetree";
-      graphics_bin="task-tisdk-graphics";
+      graphics_src="task-arago-tisdk-graphics-host";
+      graphics_bin="task-arago-tisdk-graphics-target";
       graphics="yes";
       shift;
       ;;
     --bsp)
-      bsp_src="task-tisdk-bsp-sourcetree";
-      bsp_bin="task-tisdk-bsp";
+      bsp_src="task-arago-tisdk-bsp-host";
+      bsp_bin="task-arago-tisdk-bsp-target";
       bsp="yes";
       shift;
       ;;
     --dsp)
-      dsp_src="task-tisdk-dsp-sourcetree";
-      dsp_bin="task-tisdk-dsp";
+      dsp_src="task-arago-tisdk-dsp-host";
+      dsp_bin="task-arago-tisdk-dsp-host";
       dsp="yes";
       shift;
       ;;
     --multimedia)
-      multimedia_src="task-tisdk-multimedia-sourcetree"
-      multimedia_bin="task-tisdk-multimedia"
+      multimedia_src="task-arago-tisdk-multimedia-host"
+      multimedia_bin="task-arago-tisdk-multimedia-target"
       multimedia="yes";
       shift;
       ;;
@@ -331,70 +391,40 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-if [ "$force_host" = "yes" ]; then
-  echo "Forcing installation on unsupported host"
-else
-  lsb_release -a > /tmp/.log
-  if [ $? -ne 0 ]; then
-    echo "Unsupported host machine"
-    exit 1;
-  fi
-  host="`cat /tmp/.log | grep Codename: | awk {'print $2'}`"
-  if [ "$host" != "hardy" ]; then
-    echo "Unsupported host machine" ;
-    exit 1;
-  fi
-  echo "Found Ubuntu 8.04"
-fi
-
-if [ ! -f install-tools.tgz ]; then
-  echo "ERROR: failed to find install-tools.tgz"
-  exit 1;
-fi
-execute "mkdir -p ${install_dir}"
-execute "tar zxf install-tools.tgz -C ${install_dir}"
-
-# export opkg-cl commands
-if [ ! -d ${install_dir}/install-tools/ ]; then
-  echo "ERROR: failed to find installation tool"
-  exit 1;
-fi
-
-export LD_LIBRARY_PATH=${install_dir}/install-tools/lib:$LD_LIBRARY_PATH
-export PATH=${install_dir}/install-tools/bin:$PATH
-
+# check if machine is defined.
 test -z $machine && usage $0
 
+# check if install_dir variable is set.
 test -z $install_dir && usage $0
-mkdir -p ${install_dir}
+execute "mkdir -p $install_dir"
+
+# verify if cdrom has architecture specific opkg.conf.
 verify_cdrom
 
-# install sourcetree ipk's on host
-mkdir -p ${install_dir}/usr/lib/opkg
-ipk_install "${install_dir}" "$bsp_src $dsp_src $multimedia_src ti-tisdk-makefile"
-test ! -z $bsp_src && extract_tars
+# prepare installation.
+prepare_install
 
-remove_glibc
-update_rules_make
-
-# create software manifest docs
-echo "Generating software manifest"
+# create software manifest header.
 mkdir -p $install_dir/docs
 sw_manifest_header > ${install_dir}/docs/software_manifest.htm
-generate_sw_manifest "Packages installed on the host machine:" "$install_dir" >> ${install_dir}/docs/software_manifest.htm;
 
-# if installer has copied rootfs tar then extract opkg control file for 
-# generating sw manifest
-if [ -f ${install_dir}/filesystem/arago-*image-*.tar.gz ]; then
-  tar zxf `ls -1 deploy/images/$machine/arago-*image-*.tar.gz` -C ${install_dir}/filesystem --wildcards *.control*
-  generate_sw_manifest "Packages installed on the target filesystem:" "$install_dir/filesystem" >> ${install_dir}/docs/software_manifest.htm;
-  rm -rf ${install_dir}/filesystem/usr
-fi
+# install sourcetree (or devel) ipk on host.
+host_install
+
+# install binary ipk on target.
+echo "Installing packages on target filesystem"
+mkdir -p ${install_dir}/filesystem
+cp deploy/images/$machine/* ${install_dir}/filesystem
+fakeroot ./install_rootfs.sh $install_dir $bsp_bin $multimedia_bin $graphics_bin
+
+tar zxf `ls -1 ${install_dir}/filesystem/*` -C $install_dir/filesystem --wildcards *.control*
+generate_sw_manifest "Packages installed on the target:" "$install_dir/filesystem" >> ${install_dir}/docs/software_manifest.htm
+rm -rf ${install_dir}/filesystem/usr
+
+# add manifest footer.
 sw_manifest_footer >> ${install_dir}/docs/software_manifest.htm
 
-# move sourcetree in dvsdk style
-move_to_install_dir
-rm -rf ${install_dir}/.opkg.conf
+rm -rf ${opkg_conf}
 rm -rf ${install_dir}/install-tools
 
 echo "Installation completed!"
