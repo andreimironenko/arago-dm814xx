@@ -1,11 +1,11 @@
-DESCRIPTION = "Task to build and install packages needed for TISDK"
+DESCRIPTION = "Task to build and install source (or development) packages on host"
 PR = "r1"
 LICENSE="MIT"
 
 inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-DSP_COMPONENTS = "\
+DSP_SOURCETREE = "\
     ti-cgt6x-sourcetree \
     ti-dspbios-sourcetree \
     ti-biosutils-sourcetree \
@@ -14,5 +14,5 @@ DSP_COMPONENTS = "\
     "
 
 RRECOMMENDS_${PN} = "\
-    ${DSP_COMPONENTS} \
+    ${DSP_SOURCETREE} \
     "

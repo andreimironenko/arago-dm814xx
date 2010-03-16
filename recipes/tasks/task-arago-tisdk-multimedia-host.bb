@@ -1,4 +1,4 @@
-DESCRIPTION = "Task to build and install packages needed for TISDK"
+DESCRIPTION = "Task to build and install source (or development header) packages on host"
 PR = "r3"
 LICENSE="MIT"
 

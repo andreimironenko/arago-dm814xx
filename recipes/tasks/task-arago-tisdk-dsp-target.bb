@@ -1,4 +1,4 @@
-DESCRIPTION = "Task to install C64x binaries on ${MACHINE}"
+DESCRIPTION = "Task to install dsp binaries on ${MACHINE}"
 PR = "r1"
 LICENSE="MIT"
 
@@ -8,7 +8,6 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 DSP_COMPONENTS = "\
     ti-dsplink-examples \
     "
-
-RRECOMMENDS_${PN} = "\
+RDEPENDS = "\
     ${DSP_COMPONENTS} \
-    "
+	"
