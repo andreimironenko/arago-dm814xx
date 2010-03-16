@@ -16,7 +16,7 @@ PROVIDES += "ti-dsplink-examples"
 
 # This package builds a kernel module, use kernel PR as base and append a local version
 PR = "${MACHINE_KERNEL_PR}"
-PR_append = "d"
+PR_append = "e"
 
 S = "${WORKDIR}/dsplink_linux_${PV}"
 
@@ -46,7 +46,7 @@ DSPLINKDSPCFG            ?= "<UNDEFINED_DSPLINKDSPCFG>"
 
 DSPLINKGPPOS_dm6446       = "DM6446LSP"
 DSPLINKGPPOS_dm6467       = "DM6467LSP"
-DSPLINKGPPOS_omapl137     = "MVL5G"
+DSPLINKGPPOS_omapl137     = "ARM"
 DSPLINKGPPOS_omapl138     = "ARM"
 DSPLINKGPPOS_omap3        = "OMAPLSP"
 DSPLINKGPPOS             ?= "<DEFINED_DSPLINKGPPOS>" 
