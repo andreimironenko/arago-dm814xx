@@ -330,10 +330,9 @@ host_install ()
   # extract kernel and linuxlibs header tarballs
   test ! -z $bsp_src && extract_tars
 
-  # TODO: figure out a ways to remove glibc depedency
-  # sourcetree packages installs libc6,  libgcc1, libstdc++6
-  # For now uninstall those extra packages
-  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6"
+  # TODO: figure out a ways to remove glibc, libasound depedency from 
+  # sourcetree packages.  For now uninstall those extra packages
+  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6 libasound2 alsa-conf-base sln"
 
   update_rules_make
 
