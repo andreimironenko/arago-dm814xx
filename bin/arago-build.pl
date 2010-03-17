@@ -3,7 +3,7 @@
 ################################################################################
 # Arago build script
 ################################################################################
-my $script_version = "0.6";
+my $script_version = "0.7";
 
 my @no_machines = ("arago", "include");
 my @packages;
@@ -15,10 +15,24 @@ my $multimedia_binary = "task-arago-tisdk-multimedia-target";
 my $dsp_source = "task-arago-tisdk-dsp-host";
 my $dsp_binary = "task-arago-tisdk-dsp-target";
 
-my $bsp_default = "yes";
-my $multimedia_default = "yes";
-my $dsp_default = "no";
 my $image;
+my $machine;
+
+my $sdkpath_default = "sdk-cdrom";
+my $machine_default = "dm6446-evm";
+
+my %machines = (
+    "dm365-evm"     => {
+        bsp_default         => "yes",
+        multimedia_default  => "yes",
+        dsp_default         => "no",
+    },
+    "dm6446-evm"    => {
+        bsp_default         => "yes",
+        multimedia_default  => "yes",
+        dsp_default         => "yes",
+    },
+);
 
 ################################################################################
 # main
@@ -248,35 +262,29 @@ sub get_input
 
     if (!$machine) {
         print "\nAvailable Arago machine types:\n";
-        my @machines = <$arago_machine_dir/*> or die
-            "Failed to read directory $arago_machine_dir\n";
-        my @machine_hash = ();
-        my $cnt = 1;
-        foreach $x (@machines) {
-            my $skip = 0;
-            my $xs = $x;
-            $xs =~ s/.*\/(.*).conf/$1/;
-            foreach $y (@no_machines) {
-                if ($xs =~ m/.*$y.*/) {
-                    $skip = 1;
-                }
-            }
-            if (not $skip) {
-                print "    $cnt: $xs \n";
-                $machine_hash{ $cnt++ } = $xs;
-            }
+        foreach $x (keys %machines) {
+            print "    $x\n";
         }
         print "\nWhich Arago machine type to you want to build for?\n";
-        print "[ 1 ] ";
+        print "[ $machine_default ] ";
         $input = <STDIN>;
         $input =~ s/\s+$//;
 
         if ($input) {
-            $machine = $machine_hash{ $input };
+            $machine = $input;
         }
         else {
-            $machine = $machine_hash{ 1 };
+            $machine = $machine_default;
         }
+    }
+
+    if ($machine =~ m/default/i) {
+        $machine = $machine_default;
+    }
+
+    if (! exists $machines{ $machine }) {
+        print "ERROR: Machine $machine is not a supported machine type\n";
+        exit 1;
     }
 
     if (!$image) {
@@ -308,9 +316,13 @@ sub get_input
         }
     }
 
+    if ($image =~ m/default/i) {
+        $image = $image_hash{ 1 };
+    }
+
     if (!$bsp) {
         print "\nDo you want to add BSP packages in SDK? \n";
-        print "[ $bsp_default ] ";
+        print "[ $machines{$machine}{'bsp_default'} ] ";
         $input = <STDIN>;
         $input =~ s/\s+$//;
 
@@ -323,13 +335,17 @@ sub get_input
             }
         }
         else {
-            $bsp = $bsp_default;
+            $bsp = $machines{$machine}{'bsp_default'};
         }
+    }
+
+    if ($bsp =~ m/default/i) {
+        $bsp = $machines{$machine}{'bsp_default'};
     }
 
     if (!$multimedia) {
         print "\nDo you want to add Multimedia packages in SDK? \n";
-        print "[ $multimedia_default ] ";
+        print "[ $machines{$machine}{'multimedia_default'} ] ";
         $input = <STDIN>;
         $input =~ s/\s+$//;
 
@@ -342,13 +358,17 @@ sub get_input
             }
         }
         else {
-            $multimedia = $multimedia_default;
+            $multimedia = $machines{$machine}{'multimedia_default'};
         }
+    }
+
+    if ($multimedia =~ m/default/i) {
+        $multimedia = $machines{$machine}{'multimedia_default'};
     }
 
     if (!$dsp) {
         print "\nDo you want to add DSP packages in SDK? \n";
-        print "[ $dsp_default ] ";
+        print "[ $machines{$machine}{'dsp_default'} ] ";
         $input = <STDIN>;
         $input =~ s/\s+$//;
 
@@ -361,12 +381,15 @@ sub get_input
             }
         }
         else {
-            $dsp = $dsp_default;
+            $dsp = $machines{$machine}{'dsp_default'};
         }
     }
 
+    if ($dsp =~ m/default/i) {
+        $dsp = $machines{$machine}{'dsp_default'};
+    }
+
     if (!$sdkpath) {
-        $sdkpath_default = "sdk-cdrom";
         print "\nWhere do you want to copy Arago sdk ?\n";
         print "(Relative to $arago_dir)\n";
         print "[ $sdkpath_default ] ";
@@ -379,6 +402,10 @@ sub get_input
         else {
             $sdkpath = "$arago_dir/$sdkpath_default";
         }
+    }
+
+    if ($sdkpath =~ m/default/i) {
+        $sdkpath = "$arago_dir/$sdkpath_default";
     }
 
     if ($bsp =~ m/yes/i) {
@@ -467,5 +494,7 @@ sub display_help
     print "    -e | --multimedia   Add Multimedia packages in SDK.\n";
     print "    -d | --dsp          Add DSP packages in SDK.\n";
     print "    -p | --sdkpath      Where to generate the Arago SDK\n";
-    print "\nIf an option is not given it will be queried interactively.\n\n";
+    print "\nIf an option is not given it will be queried interactively.\n";
+    print "If the value \"default\" is given for any parameter, the\n";
+    print "corresponding default value will be used to build the image\n\n";
 }
