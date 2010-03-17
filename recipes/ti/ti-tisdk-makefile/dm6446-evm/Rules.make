@@ -20,7 +20,7 @@ CE_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__codec-engine__>
 LINK_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__dsplink__>
 
 # Where the codecs are installed.
-CODEC_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__codecs-omap3530__>
+CODEC_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__codecs-dm6446__>
 
 # Where DMAI package is installed.
 DMAI_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__dmai__>

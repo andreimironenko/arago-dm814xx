@@ -1,11 +1,11 @@
 DESCRIPTION = "Task to install dsp binaries on ${MACHINE}"
-PR = "r1"
+PR = "r2"
 LICENSE="MIT"
 
 inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-DSP_COMPONENTS = "\
+DSP_COMPONENTS_dm6446 = "\
     ti-dsplink-examples \
     "
 RDEPENDS = "\

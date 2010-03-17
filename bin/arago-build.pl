@@ -178,7 +178,7 @@ sub copy_output
             
     if ($bsp) {
         if ($machine =~ m/dm365-evm/ || $machine =~ m/dm6467-evm/ ||
-            $machine =~ m/dm355-evm/) { 
+            $machine =~ m/dm355-evm/ || $machine =~ m/dm6446-evm/) { 
 
             print "\nCopying linux-davinci-staging.tar.gz ...\n";
             $cmd = "wget http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/DVSDK_3_10/latest/exports/linux-davinci-staging.tar.gz -P ${sdkpath}/deploy/ipk/$machine/";

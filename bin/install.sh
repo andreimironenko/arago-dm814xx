@@ -49,7 +49,7 @@ verify_cdrom ()
     echo "ERROR: opkg.conf does not exist for $machine"
     exit 1;
   fi
-  sed s=\${PWD}=$PWD/deploy= config/dm365-evm/opkg.conf > ${install_dir}/.opkg.conf
+  sed s=\${PWD}=$PWD/deploy= config/$machine/opkg.conf > ${install_dir}/.opkg.conf
   opkg_conf="${install_dir}/.opkg.conf"
 }
 
@@ -330,8 +330,8 @@ host_install ()
   # extract kernel and linuxlibs header tarballs
   test ! -z $bsp_src && extract_tars
 
-  # TODO: figure out a ways to remove glibc, libasound depedency from 
-  # sourcetree packages.  For now uninstall those extra packages
+  # TODO: figure out a ways to disable glibc, libasound, freetype depedencies
+  # from sourcetree packages.  For now uninstall those extra packages
   execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6 libasound2 alsa-conf-base sln"
 
   update_rules_make
@@ -364,7 +364,7 @@ while [ $# -gt 0 ]; do
       ;;
     --dsp)
       dsp_src="task-arago-tisdk-dsp-host";
-      dsp_bin="task-arago-tisdk-dsp-host";
+      dsp_bin="task-arago-tisdk-dsp-target";
       dsp="yes";
       shift;
       ;;
