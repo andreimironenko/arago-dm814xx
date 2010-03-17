@@ -2,32 +2,32 @@ include Rules.make
 
 DEFAULT_LINUXKERNEL_CONFIG=davinci_dm365_defconfig
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm365mm dm365mm_clean dm365mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm365mm dm365mm_clean dm365mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install irq irq_clean irq_install edma edma_clean edma_install install
 
 #==============================================================================
 # The default build target.
 #==============================================================================
-all:	cmem dm365mm
+all:	cmem dm365mm irq edma
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	cmem_clean dm365mm_clean
+clean:	cmem_clean dm365mm_clean irq_clean edma_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: linux psp_examples cmem dm365mm ceexamples dmai
+everything: linux psp_examples cmem dm365mm irq edma ceexamples dmai
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install dm365mm_install dmai_install psp_examples_install ceexamples_install
+install: linux_install cmem_install dm365mm_install dmai_install psp_examples_install ceexamples_install irq_install edma_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean dm365mm_clean
+clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean dm365mm_clean irq_clean edma_clean
 
 #==============================================================================
 # A help message target.
@@ -42,6 +42,14 @@ help:
 	@echo "    cmem                         : Build the CMEM kernel module"
 	@echo "    cmem_clean                   : Remove generated cmem files."
 	@echo "    cmem_install                 : Install cmemk module"
+	@echo
+	@echo "    irq                          : Build the irq kernel module"
+	@echo "    irq_clean                    : Remove generated irq files."
+	@echo "    irq_install                  : Install irqk module"
+	@echo
+	@echo "    edma                         : Build the edma kernel module"
+	@echo "    edma_clean                   : Remove generated edma files."
+	@echo "    edma_install                 : Install edmak module"
 	@echo
 	@echo "    dm365mm                      : Build the dm365mm kernel module"
 	@echo "    dm365mm_clean                : Remove generated dm365mm files"
@@ -133,6 +141,37 @@ cmem_clean:
 cmem_install:
 	install -d $(EXEC_DIR)/cmem
 	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/cmem
+
+#==============================================================================
+# Build the irq kernel module for the configured platform, and make sure the
+# kernel_binaries directory is kept in sync. Also, an explicit cleanup target
+# is defined.
+#==============================================================================
+irq:
+	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/irq/src/module
+
+irq_clean:
+	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module clean
+
+irq_install:
+	install -d $(EXEC_DIR)/irq
+	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/irq/src/module/irqk.ko $(EXEC_DIR)/irq
+
+#==============================================================================
+# Build the edma kernel module for the configured platform, and make sure the
+# kernel_binaries directory is kept in sync. Also, an explicit cleanup target
+# is defined.
+#==============================================================================
+edma:
+	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/interface
+	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/module
+
+edma_clean:
+	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/module clean
+
+edma_install:
+	install -d $(EXEC_DIR)/edma
+	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/module/edmak.ko $(EXEC_DIR)/edma
 
 #==============================================================================
 # Build the dm355mm kernel module (if the configured platform is dm355). Also,
