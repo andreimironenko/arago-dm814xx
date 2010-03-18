@@ -325,7 +325,7 @@ host_install ()
   mkdir -p ${install_dir}/usr/lib/opkg
 
   execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_conf}  update"
-  execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_conf} install  $bsp_src $dsp_src $multimedia_src ti-tisdk-makefile"
+  execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_conf} install  $bsp_src $dsp_src $multimedia_src $graphics_src ti-tisdk-makefile"
 
   # extract kernel and linuxlibs header tarballs
   test ! -z $bsp_src && extract_tars
@@ -414,7 +414,7 @@ host_install
 echo "Installing packages on target filesystem"
 mkdir -p ${install_dir}/filesystem
 cp deploy/images/$machine/* ${install_dir}/filesystem
-fakeroot ./install_rootfs.sh $install_dir $bsp_bin $multimedia_bin $graphics_bin
+fakeroot ./install_rootfs.sh $install_dir $bsp_bin $multimedia_bin $graphics_bin $dsp_bin 
 
 tar zxf `ls -1 ${install_dir}/filesystem/*` -C $install_dir/filesystem --wildcards *.control*
 generate_sw_manifest "Packages installed on the target:" "$install_dir/filesystem" >> ${install_dir}/docs/software_manifest.htm
