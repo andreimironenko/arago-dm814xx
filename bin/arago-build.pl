@@ -287,19 +287,20 @@ sub get_input
         exit 1;
     }
 
+    my @images = <$arago_image_dir/*.bb> or die
+        "Failed to read directory $arago_image_dir\n";
+    my %image_hash = ();
+    my $cnt = 1;
+    foreach $x (@images) {
+        if (compatible_machine($x, $machine)) {
+            my $xs = $x;
+            $xs =~ s/.*\/(.*).bb/$1/;
+            $image_hash{ $cnt++ } = $xs;
+        }
+    }
+
     if (!$image) {
         print "\nAvailable Arago images:\n";
-        my @images = <$arago_image_dir/*.bb> or die
-            "Failed to read directory $arago_image_dir\n";
-        my %image_hash = ();
-        my $cnt = 1;
-        foreach $x (@images) {
-            if (compatible_machine($x, $machine)) {
-                my $xs = $x;
-                $xs =~ s/.*\/(.*).bb/$1/;
-                $image_hash{ $cnt++ } = $xs;
-            }
-        }
         foreach $x (sort keys %image_hash) {
             print "    $x: $image_hash{ $x }\n";
         }
