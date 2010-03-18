@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install Board Support Package binaries on $MACHINE"
-PR = "r2"
+PR = "r3"
 LICENSE="MIT"
 
 inherit task
@@ -16,5 +16,6 @@ RDEPENDS_${PN} = "\
 RRECOMMENDS_${PN} = "\
     kernel-modules \
     kernel-image \
+    kernel-vmlinux \
 	"
 
