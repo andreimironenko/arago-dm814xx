@@ -3,7 +3,7 @@
 
 require arago-image.inc
 
-COMPATIBLE_MACHINE = "(dm365-evm|arago)"
+COMPATIBLE_MACHINE = "(dm365-evm|dm6446-evm|arago)"
 
 # The size of the uncompressed ramdisk is 32MB
 ROOTFS_SIZE = "32768"
