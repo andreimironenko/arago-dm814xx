@@ -115,7 +115,7 @@ sub copy_output
     }
 
     # create directories
-    $cmd = "mkdir -p $sdkpath/config/$machine/ $sdkpath/deploy/images/$machine $sdkpath/devel ";
+    $cmd = "mkdir -p $sdkpath/config/$machine/ $sdkpath/deploy/images/$machine $sdkpath/devel $sdkpath/deploy/ipk";
     $result = system($cmd);
     
     if ($result) {
@@ -124,8 +124,8 @@ sub copy_output
     }
 
     # copy ipk's
-    print "\nCopying ${arago_ipk_dir} ...";
-    $cmd = "cp -ar ${arago_ipk_dir} ${sdkpath}/deploy";
+    print "\nCopying ${arago_ipk_dir}/Package* ...";
+    $cmd = "cp -ar ${arago_ipk_dir}/Package* ${sdkpath}/deploy/ipk/";
     $result = system($cmd);
 
     if ($result) {
@@ -133,7 +133,43 @@ sub copy_output
         exit 1;
     }
 
-    print "\n Deleting -dbg and -static packages to save disk space ...";
+    print "\nCopying ${arago_ipk_dir}/all ...";
+    $cmd = "cp -ar ${arago_ipk_dir}/all ${sdkpath}/deploy/ipk/";
+    $result = system($cmd);
+
+    if ($result) {
+        print "\nERROR: Failed to execute command $cmd\n";
+        exit 1;
+    }
+
+    print "\nCopying ${arago_ipk_dir}/all ...";
+    $cmd = "cp -ar ${arago_ipk_dir}/all ${sdkpath}/deploy/ipk/";
+    $result = system($cmd);
+
+    if ($result) {
+        print "\nERROR: Failed to execute command $cmd\n";
+        exit 1;
+    }
+
+    print "\nCopying ${arago_ipk_dir}/$march ...";
+    $cmd = "cp -ar ${arago_ipk_dir}/$march ${sdkpath}/deploy/ipk/";
+    $result = system($cmd);
+
+    if ($result) {
+        print "\nERROR: Failed to execute command $cmd\n";
+        exit 1;
+    }
+
+    print "\nCopying ${arago_ipk_dir}/$machine ...";
+    $cmd = "cp -ar ${arago_ipk_dir}/$machine ${sdkpath}/deploy/ipk/";
+    $result = system($cmd);
+
+    if ($result) {
+        print "\nERROR: Failed to execute command $cmd\n";
+        exit 1;
+    }
+
+    print "\nDeleting -dbg and -static packages to save disk space ...";
     $cmd = "find ${sdkpath}/deploy/ipk -name *-dbg* | xargs rm -rf {}";
     $result = system($cmd);
 

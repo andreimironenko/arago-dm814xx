@@ -299,21 +299,40 @@ prepare_install ()
     exit 1;
   fi
 
-  execute "cd ${install_dir}/install-tools/"
-  execute "tar zxf fakeroot*.tar.gz"
-  execute "tar zxf opkg-src*.tar.gz"
-  execute "cd fakeroot*"
-  execute "./configure --prefix=${install_dir}/install-tools"
-  execute "make"
-  execute "make install"
-  execute "cd ../"
-  execute "cd opkg*"
-  execute "./autogen.sh --disable-curl --disable-gpg --prefix=${install_dir}/install-tools"
-  execute "make"
-  execute "make install"
-  export LD_LIBRARY_PATH=${install_dir}/install-tools/lib:$LD_LIBRARY_PATH
   export PATH=${install_dir}/install-tools/bin:$PATH
-  cd $cwd
+  
+  # verify if fakeroot command is present on host.
+  which fakeroot
+  if [ $? -ne 0 ]; then
+    # if force_host is passed then build the command natively
+    if [ "$force_host" = "yes" ]; then
+      cwd=$PWD;
+      execute "cd ${install_dir}/install-tools/"
+      execute "tar zxf fakeroot*.tar.gz"
+      execute "cd fakeroot*"
+      execute "./configure --prefix=${install_dir}/install-tools"
+      execute "make"
+      execute "make install"
+      export LD_LIBRARY_PATH=${install_dir}/install-tools/lib:$LD_LIBRARY_PATH
+      cd $cwd
+    else
+      echo "ERROR: failed to find fakeroot"
+      exit 1
+    fi
+  fi
+
+  # if force_host option is passed then natively build opkg-cl command.
+  if [ "$force_host" = "yes" ]; then
+    cwd=$PWD;
+    execute "cd ${install_dir}/install-tools/"
+    execute "tar zxf opkg-src*.tar.gz"
+    execute "cd opkg*"
+    execute "./autogen.sh --disable-curl --disable-gpg --prefix=${install_dir}/install-tools"
+    execute "make"
+    execute "make install"
+    export LD_LIBRARY_PATH=${install_dir}/install-tools/lib:$LD_LIBRARY_PATH
+    cd $cwd
+  fi
 }
 
 #
