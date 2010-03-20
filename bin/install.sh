@@ -77,9 +77,6 @@ extract_tars()
     mkdir -p $install_dir/psp/linux-kernel-source
     lsp="`ls -1 deploy/ipk/$machine/linux-*staging*.tar.gz`"
     execute "tar zxf ${lsp}  -C $install_dir/psp/linux-kernel-source"
-  else
-    echo "ERROR: failed to find linux kernel tarball"
-    exit 1
   fi
 
   # extract linuxlibs 

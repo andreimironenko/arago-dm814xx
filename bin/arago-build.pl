@@ -37,6 +37,11 @@ my %machines = (
         multimedia_default  => "yes",
         dsp_default         => "no",
     },
+    "da830-omapl137-evm"     => {
+        bsp_default         => "yes",
+        multimedia_default  => "yes",
+        dsp_default         => "yes",
+    },
 );
 
 ################################################################################
