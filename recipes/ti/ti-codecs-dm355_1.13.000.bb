@@ -10,7 +10,7 @@ PV = "1_13_000"
 SRC_URI[dm355codecsbin.md5sum] = "f6221188bea76b7aaf0c45e9bcf26329"
 SRC_URI[dm355codecsbin.sha256sum] = "f1a6dea51be9798903a0543fb50f463b0594b1f11b897bc50e40825fb7527c61"
 
-PR = "r17"
+PR = "r18"
 
 require ti-paths.inc
 require ti-staging.inc
@@ -21,6 +21,7 @@ PROVIDES += "ti-codecs-dm355-server"
 S = "${WORKDIR}/dm355_codecs_${PV}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/codecs/${BINFILE};name=dm355codecsbin \
+	   file://dm355mm.patch;patch=1 \
            file://mapdmaq \
 "
 
