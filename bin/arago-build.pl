@@ -32,6 +32,11 @@ my %machines = (
         multimedia_default  => "yes",
         dsp_default         => "yes",
     },
+    "dm355-evm"     => {
+        bsp_default         => "yes",
+        multimedia_default  => "yes",
+        dsp_default         => "no",
+    },
 );
 
 ################################################################################

@@ -10,6 +10,11 @@ MULTIMEDIA_dm365 = " \
     ti-codec-engine-examples \
     "
 
+MULTIMEDIA_dm355 = " \
+    ti-dmai-apps \
+    ti-codec-engine-examples \
+    "
+
 MULTIMEDIA_dm6446 = " \
     ti-dmai-apps \
     ti-codec-engine-examples \
