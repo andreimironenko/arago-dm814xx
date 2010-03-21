@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install source (or development header) packages on host"
-PR = "r6"
+PR = "r7"
 LICENSE="MIT"
 
 inherit task
@@ -61,6 +61,16 @@ MULTIMEDIA_SOURCETREE_da830-omapl137-evm = " \
     ti-framework-components-sourcetree \
     ti-codec-engine-sourcetree \
     ti-codecs-omapl137-sourcetree \
+    ti-linuxutils-sourcetree \
+    ti-xdctools-sourcetree \
+    ti-dmai-sourcetree \
+    ti-xdais-sourcetree \
+    "
+
+MULTIMEDIA_SOURCETREE_da850-omapl138-evm = " \
+    ti-framework-components-sourcetree \
+    ti-codec-engine-sourcetree \
+    ti-codecs-omapl138-sourcetree \
     ti-linuxutils-sourcetree \
     ti-xdctools-sourcetree \
     ti-dmai-sourcetree \

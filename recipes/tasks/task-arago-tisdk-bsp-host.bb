@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support package sources (or development header) packages on host"
-PR = "r5"
+PR = "r6"
 LICENSE="MIT"
 ALLOW_EMPTY = "1"
 
@@ -27,6 +27,10 @@ BSP_COMPONENTS_dm6467 = "\
     "
 
 BSP_COMPONENTS_da830-omapl137-evm = "\
+    linux-omapl1-sourcetree \
+    "
+
+BSP_COMPONENTS_da850-omapl138-evm = "\
     linux-omapl1-sourcetree \
     "
 
