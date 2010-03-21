@@ -20,7 +20,7 @@ CE_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__codec-engine__>
 LINK_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__dsplink__>
 
 # Where the codecs are installed.
-CODEC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__codecs-dm6446__>
+CODEC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__codecs-omapl137__>
 
 # Where DMAI package is installed.
 DMAI_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__dmai__>
@@ -55,9 +55,6 @@ PSP_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/psp
 
 # The directory that points to your kernel source directory.
 LINUXKERNEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__kernel__>
-
-# Where the local power manager is installed.
-LPM_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__local-power-manager__>
 
 # Where temporary Linux headers and libs are installed.
 LINUXLIBS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/linuxlibs

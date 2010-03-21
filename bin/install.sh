@@ -110,7 +110,7 @@ update_rules_make()
      $install_dir/usr/share/ti/Rules.make
   done
 
-  sed -i -e s=\<__kernel__\>=psp/linux-kernel-source/git= \
+  sed -i -e s=\<__kernel__\>=psp/linux-kernel-source= \
     $install_dir/usr/share/ti/Rules.make
   sed -i -e s=\<__SDK__INSTALL_DIR__\>=${install_dir}= \
     $install_dir/usr/share/ti/Rules.make
@@ -149,7 +149,7 @@ move_to_install_dir()
   done
   if [ -d ${install_dir}/usr/share/ti/ti-psp-tree ]; then
     echo " from ti-psp-tree => psp"
-    mv ${install_dir}/usr/share/ti/ti-psp-tree/* ${install_dir}/psp
+    mv ${install_dir}/usr/share/ti/ti-psp-tree ${install_dir}/psp
     rm -rf ${install_dir}/usr/share/ti/ti-psp-tree
   fi
 
@@ -348,7 +348,7 @@ host_install ()
 
   # TODO: figure out a ways to disable glibc, libasound, freetype depedencies
   # from sourcetree packages.  For now uninstall those extra packages
-  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6 libasound2 alsa-conf-base sln"
+  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6 libasound2 alsa-conf-base sln libfreetype6 libz1"
 
   update_rules_make
 
