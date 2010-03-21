@@ -4,6 +4,9 @@ LICENSE = "GPLv2"
 
 inherit kernel
 
+require ../ti/ti-staging.inc
+require ../ti/ti-paths.inc
+
 RPSRC = "http://www.rpsys.net/openzaurus/patches/archive"
 
 # Enable OABI compat for people stuck with obsolete userspace
@@ -201,5 +204,11 @@ pkg_postinst_kernel-devicetree () {
 
 pkg_postrm_kernel-devicetree () {
 	cd /${KERNEL_IMAGEDEST}; update-alternatives --remove devicetree devicetree-${KERNEL_VERSION} || true
+}
+
+do_install_append () {
+    	install -d ${D}/${installdir}/ti-psp-tree/linux-kernel-source/
+	cp -pPrf ${S}/* ${D}/${installdir}/ti-psp-tree/linux-kernel-source/
+
 }
 
