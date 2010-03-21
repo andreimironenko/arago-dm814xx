@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support package sources (or development header) packages on host"
-PR = "r4"
+PR = "r5"
 LICENSE="MIT"
 ALLOW_EMPTY = "1"
 
@@ -17,6 +17,11 @@ BSP_COMPONENTS_dm355 = "\
     "
 
 BSP_COMPONENTS_dm6446 = "\
+    ti-linux-driver-examples-sourcetree \
+    linux-davinci-staging-sourcetree \
+    "
+
+BSP_COMPONENTS_dm6467 = "\
     ti-linux-driver-examples-sourcetree \
     linux-davinci-staging-sourcetree \
     "
