@@ -232,23 +232,6 @@ sub copy_output
         print "\n ERROR: failed to execute $cmd\n";
         exit 1;
     }
-    
-    # TODO: we don't have recipe for generating linux kernel source
-    # until then wget linux-davinci tar ball on supported platforms.
-            
-    if ($bsp) {
-        if ($machine =~ m/dm365-evm/ || $machine =~ m/dm6467-evm/ ||
-            $machine =~ m/dm355-evm/ || $machine =~ m/dm6446-evm/) { 
-
-            print "\nCopying linux-davinci-staging.tar.gz ...\n";
-            $cmd = "wget http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/DVSDK_3_10/latest/exports/linux-davinci-staging.tar.gz -P ${sdkpath}/deploy/ipk/$machine/";
-            $result = system($cmd);
-            if ($result) {
-                print "\nERROR: Failed to execute command $cmd\n";
-                exit 1;
-            }
-        }
-    }
 
     # TODO: we don't have recipe to generate linuxlibs yet, until then wget
     # linuxlibs tar ball from psp sdk
