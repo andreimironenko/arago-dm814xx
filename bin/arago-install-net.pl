@@ -141,7 +141,7 @@ sub update_git
         "Failed to change directory to $_[1]/$_[0]\n";
  
     execute_cmd("git checkout master");
-    execute_cmd("git branch -d install");
+    execute_cmd("git branch -D install");
     execute_cmd("git pull");
     execute_cmd("git checkout $git_repositories{ $_[0] }[0] -b install");
 }
@@ -165,7 +165,7 @@ sub update_arago
     update_git("arago", $installdir);
 
     print "Updating arago-oe-dev..\n";
-    my $file="arago/bin/arago-oe-dev-commitid";
+    my $file="$installdir/arago/bin/arago-oe-dev-commitid";
     open FILE, "<$file" or die "Failed to open $file for reading\n";
     chomp($git_repositories{ "arago-oe-dev" }[0] = <FILE>);
     close FILE;
@@ -173,7 +173,7 @@ sub update_arago
     update_git("arago-oe-dev", $installdir);
 
     print "Updating arago-bitbake..\n";
-    my $file="arago/bin/arago-bitbake-commitid";
+    my $file="$installdir/arago/bin/arago-bitbake-commitid";
     open FILE, "<$file" or die "Failed to open $file for reading\n";
     chomp($git_repositories{ "arago-bitbake" }[0] = <FILE>);
     close FILE;
