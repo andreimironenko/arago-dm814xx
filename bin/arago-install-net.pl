@@ -132,21 +132,6 @@ sub execute_cmd
 }
 
 ################################################################################
-# update_git
-################################################################################
-sub update_git
-{
-    print "Changing directory to $_[1]/$_[0]\n";
-    chdir "$_[1]/$_[0]" or die
-        "Failed to change directory to $_[1]/$_[0]\n";
- 
-    execute_cmd("git checkout master");
-    execute_cmd("git pull");
-    execute_cmd("git checkout install");
-    execute_cmd("git merge master");
-}
-
-################################################################################
 # update_arago
 ################################################################################
 sub update_arago
@@ -162,7 +147,15 @@ sub update_arago
     my $installdir = $ENV{'OEBASE'};
 
     print "Updating arago..\n";
-    update_git("arago", $installdir);
+
+    print "Changing directory to $installdir/arago\n";
+    chdir "$installdir/arago" or die
+        "Failed to change directory to $installdir/arago\n";
+ 
+    execute_cmd("git checkout master");
+    execute_cmd("git pull");
+    execute_cmd("git checkout install");
+    execute_cmd("git merge master");
 
     print "Updating arago-oe-dev..\n";
     my $file="$installdir/arago/bin/arago-oe-dev-commitid";
@@ -170,7 +163,14 @@ sub update_arago
     chomp($git_repositories{ "arago-oe-dev" }[0] = <FILE>);
     close FILE;
 
-    update_git("arago-oe-dev", $installdir);
+    print "Changing directory to $installdir/arago-oe-dev\n";
+    chdir "$installdir/arago-oe-dev" or die
+        "Failed to change directory to $installdir/arago-oe-dev\n";
+ 
+    execute_cmd("git checkout master");
+    execute_cmd("git branch -D install");
+    execute_cmd("git pull");
+    execute_cmd("git checkout " . $git_repositories{"arago-oe-dev"}[0] . " -b install");
 
     print "Updating arago-bitbake..\n";
     $file="$installdir/arago/bin/arago-bitbake-commitid";
@@ -178,7 +178,14 @@ sub update_arago
     chomp($git_repositories{ "arago-bitbake" }[0] = <FILE>);
     close FILE;
 
-    update_git("arago-bitbake", $installdir);
+    print "Changing directory to $installdir/arago-bitbake\n";
+    chdir "$installdir/arago-bitbake" or die
+        "Failed to change directory to $installdir/arago-bitbake\n";
+ 
+    execute_cmd("git checkout master");
+    execute_cmd("git branch -D install");
+    execute_cmd("git pull");
+    execute_cmd("git checkout " . $git_repositories{"arago-bitbake"}[0] . " -b install");
 
     chdir $installdir or die "Failed to change directory to $installdir\n";
 
