@@ -3,7 +3,7 @@
 ################################################################################
 # Arago network installation script
 ################################################################################
-my $script_version = "0.6";
+my $script_version = "0.7";
 
 my $toolchain = "";
 my $toolchain_default = "$ENV{'HOME'}/arm-2009q1";
@@ -15,8 +15,6 @@ my $protocol = "";
 my $protocol_default = "git";
 
 my $aragocommit_default        = "HEAD";
-my $aragooecommit_default      = "6ae2b9cc72fd4e9ff99412688c7264bbead47fc1";
-my $aragobitbakecommit_default = "3dd225e5b648d6ebcccd60e9c1bb8dd8a6094d7d";
 my $aragogitrepository_default = "arago-project.org/git/people/brijesh/arago-dvsdk.git";
 
 my $auto_install = 0;
@@ -38,11 +36,6 @@ my %host_tools = (
     "flex"   => [ "flex",     "http://www.gnu.org/software/flex" ],
     "bison"  => [ "bison",    "http://www.gnu.org/software/bison" ],
 );
-
-my $tmpdir = "/tmp/arago";
-
-my $cstool_patch =
-    "http://arago-project.org/files/short-term/extras/arago-csl-sdk.tar.bz2";
 
 my $http_proxy;
 my $ftp_proxy;
@@ -79,8 +72,6 @@ print "Arago install script version $script_version\n\n";
 print "This script assumes you already have installed the CodeSourcery tool ";
 print "chain, see:\n\n";
 print "http://arago-project.org/wiki/index.php/Getting_CodeSourcery_Toolchain\n\n";
-print "Note that this script require write access to the toolchain, unless ";
-print "it has been previously patched for Arago.\n\n";
 print "If you are behind a firewall the \"http_proxy\" and \"ftp_proxy\" ";
 print "environment variables need to be set correctly, see:\n\n";
 print "http://arago-project.org/wiki/index.php/Proxy_Settings\n\n";
@@ -106,6 +97,10 @@ if ($git_proxy ne "N/A") {
 
 parse_args();
 
+if ($update) {
+    update_arago();
+}
+
 validate_host_tools();
 
 get_input();
@@ -114,7 +109,7 @@ validate_input();
 
 print "\n******************************** END INSTALL SCRIPT ****************************\n\n";
 
-fetch_git();
+fetch_arago();
 
 print "\n********************************** INSTALL SCRIPT ******************************\n\n";
 
@@ -122,6 +117,75 @@ create_env();
 
 print "\nArago successfully installed in $installdir.\n";
 print "\n******************************** END INSTALL SCRIPT ****************************\n\n";
+
+################################################################################
+# execute_cmd
+################################################################################
+sub execute_cmd
+{
+    print "Executing '$_[0]'\n";
+    my $result = system($_[0]);
+    if ($result) {
+        print "Failed to execute $_[0] ($result)\n";
+        exit 1;
+    }
+}
+
+################################################################################
+# update_git
+################################################################################
+sub update_git
+{
+    print "Changing directory to $_[1]/$_[0]\n";
+    chdir "$_[1]/$_[0]" or die
+        "Failed to change directory to $_[1]/$_[0]\n";
+ 
+    execute_cmd("git checkout master");
+    execute_cmd("git pull");
+    execute_cmd("git checkout install");
+    execute_cmd("git merge master");
+}
+
+################################################################################
+# update_arago
+################################################################################
+sub update_arago
+{
+    my $cmd;
+
+    if (! exists $ENV{'OEBASE'}) {
+        print "ERROR: Arago environment variables not set, did you ";
+        print "'source arago-setenv'?\n";
+        exit 1;
+    }
+
+    my $installdir = $ENV{'OEBASE'};
+
+    print "Updating arago..\n";
+    update_git("arago", $installdir);
+
+    print "Updating arago-oe-dev..\n";
+    my $file="$installdir/arago/bin/arago-oe-dev-commitid";
+    open FILE, "<$file" or die "Failed to open $file for reading\n";
+    chomp($git_repositories{ "arago-oe-dev" }[0] = <FILE>);
+    close FILE;
+
+    update_git("arago-oe-dev", $installdir);
+
+    print "Updating arago-bitbake..\n";
+    $file="$installdir/arago/bin/arago-bitbake-commitid";
+    open FILE, "<$file" or die "Failed to open $file for reading\n";
+    chomp($git_repositories{ "arago-bitbake" }[0] = <FILE>);
+    close FILE;
+
+    update_git("arago-bitbake", $installdir);
+
+    chdir $installdir or die "Failed to change directory to $installdir\n";
+
+    print "\nArago updated\n";
+
+    exit 0;
+}
 
 ################################################################################
 # test_ubuntu
@@ -148,21 +212,6 @@ sub test_ubuntu
     }
 
     return 0;
-}
-
-################################################################################
-# ubuntu_install
-################################################################################
-sub ubuntu_install
-{
-    my $result;
-
-    my $ubuntu_cmd = "sudo apt-get install $_[0]";
-    $result = system($ubuntu_cmd);
-    if ($result) {
-        print "Error: Failed to install $_[0]\n";
-        exit;
-    }
 }
 
 ################################################################################
@@ -193,7 +242,7 @@ sub validate_host_tools
             print "not found!\n";
             if ($supported) {
                 if ($auto_install) {
-                    ubuntu_install($host_tools{ $x }[0]);
+                    execute_cmd("sudo apt-get install $host_tools{ $x }[0]");
                 }
                 else {
                     print "Do you want to install $x ";
@@ -281,13 +330,10 @@ sub create_env
 }
 
 ################################################################################
-# fetch_git
+# fetch_arago
 ################################################################################
-sub fetch_git
+sub fetch_arago
 {
-    my $result;
-    my $cmd;
-
     if (! -d $installdir) {
         mkdir "$installdir", 0777 or die
             "Failed to create directory '$installdir'\n";
@@ -298,45 +344,58 @@ sub fetch_git
     }
 
     print "Changing directory to $installdir\n";
-    chdir $installdir;
+    chdir "$installdir" or die
+        "Failed to change directory to $installdir";
 
-    foreach my $repo (keys %git_repositories) {
-        $cmd = "git clone $protocol://$git_repositories{ $repo }[1] $repo";
-        print "Executing '$cmd'\n";
+    fetch_git("arago");
 
-        $result = system($cmd);
-        if ($result) {
-            print "'$cmd' failed ($result)\n";
-            if ($protocol eq "git") {
-                print "Trying http...\n";
-                $protocol = "http";
-                $cmd =
-                    "git clone $protocol://$git_repositories{ $repo }[1] $repo";
-                print "Executing '$cmd'\n";
+    my $file="$installdir/arago/bin/arago-oe-dev-commitid";
+    open FILE, "<$file" or die "Failed to open $file for reading\n";
+    chomp($git_repositories{ "arago-oe-dev" }[0] = <FILE>);
+    close FILE;
 
-                $result = system($cmd);
-                if ($result) {
-                    print "'$cmd' failed ($result)\n";
-                    exit;
-                }
-            }
-            else {
-                exit;
-            }
+    fetch_git("arago-oe-dev");
+
+    $file="$installdir/arago/bin/arago-bitbake-commitid";
+    open FILE, "<$file" or die "Failed to open $file for reading\n";
+    chomp($git_repositories{ "arago-bitbake" }[0] = <FILE>);
+    close FILE;
+
+    fetch_git("arago-bitbake");
+}
+
+################################################################################
+# fetch_git
+################################################################################
+sub fetch_git
+{
+    my $result;
+    my $cmd;
+
+    $cmd = "git clone $protocol://$git_repositories{ $repo }[1] $repo";
+    print "Executing '$cmd'\n";
+
+    $result = system($cmd);
+    if ($result) {
+        print "'$cmd' failed ($result)\n";
+        if ($protocol eq "git") {
+            print "Trying http...\n";
+            $protocol = "http";
+            execute_cmd("git clone $protocol://$git_repositories{ $repo }[1] $repo");
         }
-
-        chdir "$installdir/$repo";
-
-        $cmd = "git checkout $git_repositories{ $repo }[0] -b install";
-        print "Executing '$cmd'\n";
-        $result = system($cmd);
-        if ($result) {
-            print "'$cmd' failed ($result)\n";
-            exit;
+        else {
+            exit 1;
         }
-
-        chdir $installdir;
     }
+
+    print "Changing directory to $installdir/$repo\n";
+    chdir "$installdir/$repo" or die
+        "Failed to change directory to $installdir/$repo";
+    execute_cmd("git checkout $git_repositories{ $repo }[0] -b install");
+
+    print "Changing directory to $installdir\n";
+    chdir "$installdir" or die
+        "Failed to change directory to $installdir";
 }
 
 ################################################################################
@@ -409,23 +468,6 @@ sub get_input
             $git_repositories{ "arago" }[1] = $aragogitrepository_default;
         }
     }
-    if (!$git_repositories{ "arago" }[1]) {
-        print "From which git repository do you want to get Arago?\n";
-        print "[ $aragogitrepository_default ] ";
-        $input = <STDIN>;
-        $input =~ s/\s+$//;
-
-        if ($input) {
-            if ($input =~ m/(\w+):\/\//) {
-                $input =~ s/(\w+):\/\///;
-                $protocol_default = $1;
-            }
-            $git_repositories{ "arago" }[1] = $input;
-        }
-        else {
-            $git_repositories{ "arago" }[1] = $aragogitrepository_default;
-        }
-    }
 
     if (!$protocol) {
         print "Use the http, ssh or git protocol to fetch Arago?\n";
@@ -454,38 +496,6 @@ sub get_input
         }
         else {
             $git_repositories{ "arago" }[0] = $aragocommit_default;
-        }
-    }
-
-    if (!$git_repositories{ "arago-oe-dev" }[0]) {
-        print "Which 'commit id/tag' do you want to use for the Arago OE recipes?";
-        print " ('arago-oe-dev' directory)\n";
-        print "[ $aragooecommit_default ] ";
-
-        $input = <STDIN>;
-        $input =~ s/\s+$//;
-
-        if ($input) {
-            $git_repositories{ "arago-oe-dev" }[0] = $input;
-        }
-        else {
-            $git_repositories{ "arago-oe-dev" }[0] = $aragooecommit_default;
-        }
-    }
-
-    if (!$git_repositories{ "arago-bitbake" }[0]) {
-        print "Which 'commit id/tag' do you want to use for the Arago Bitbake recipes?";
-        print " ('arago-bitbake' directory)\n";
-        print "[ $aragobitbakecommit_default ] ";
-
-        $input = <STDIN>;
-        $input =~ s/\s+$//;
-
-        if ($input) {
-            $git_repositories{ "arago-bitbake" }[0] = $input;
-        }
-        else {
-            $git_repositories{ "arago-bitbake" }[0] = $aragobitbakecommit_default;
         }
     }
 }
@@ -537,21 +547,15 @@ sub parse_args
             next;
         }
 
-        if ($ARGV[0] eq '--oe-commit') {
-            shift(@ARGV);
-            $git_repositories{ "arago-oe-dev" }[0] = shift(@ARGV);
-            next;
-        }
-
-        if ($ARGV[0] eq '--bb-commit') {
-            shift(@ARGV);
-            $git_repositories{ "arago-bitbake" }[0] = shift(@ARGV);
-            next;
-        }
-
         if ($ARGV[0] eq '--install') {
             shift(@ARGV);
             $auto_install = 1;
+            next;
+        }
+
+        if ($ARGV[0] eq '--update') {
+            shift(@ARGV);
+            $update = 1;
             next;
         }
 
@@ -576,12 +580,11 @@ sub display_help
     print "    -g | --aragogit     The URL of the Arago GIT repository.\n";
     print "         --arago-commit The commit ID (SHA1 or tag) to set\n";
     print "                        arago to after checkout.\n";
-    print "         --oe-commit    The commit ID (SHA1 or tag) to set\n";
-    print "                        arago-oe-dev to after checkout\n";
-    print "         --bb-commit    The commit ID (SHA1 or tag) to set\n";
-    print "                        arago-bitbake to after checkout.\n";
-    print "       | --install      Install missing dependencies on Ubuntu\n";
+    print "         --install      Install missing dependencies on Ubuntu\n";
     print "                        8.04 LTS without asking (but sudo may\n";
     print "                        still block and ask for a password).\n";
+    print "         --update       Update your Arago installation. You need\n";
+    print "                        to 'source arago-setenv' from a previous\n";
+    print "                        install before using this option\n";
     print "\nIf an option is not given it will be queried interactively.\n\n";
 }
