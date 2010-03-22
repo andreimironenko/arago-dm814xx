@@ -379,7 +379,7 @@ sub fetch_git
     my $result;
     my $cmd;
 
-    $cmd = "git clone $protocol://$git_repositories{ $repo }[1] $repo";
+    $cmd = "git clone $protocol://$git_repositories{ $_[0] }[1] $_[0]";
     print "Executing '$cmd'\n";
 
     $result = system($cmd);
@@ -388,17 +388,17 @@ sub fetch_git
         if ($protocol eq "git") {
             print "Trying http...\n";
             $protocol = "http";
-            execute_cmd("git clone $protocol://$git_repositories{ $repo }[1] $repo");
+            execute_cmd("git clone $protocol://$git_repositories{ $_[0] }[1] $_[0]");
         }
         else {
             exit 1;
         }
     }
 
-    print "Changing directory to $installdir/$repo\n";
-    chdir "$installdir/$repo" or die
-        "Failed to change directory to $installdir/$repo";
-    execute_cmd("git checkout $git_repositories{ $repo }[0] -b install");
+    print "Changing directory to $installdir/$_[0]\n";
+    chdir "$installdir/$_[0]" or die
+        "Failed to change directory to $installdir/$_[0]";
+    execute_cmd("git checkout $git_repositories{ $_[0] }[0] -b install");
 
     print "Changing directory to $installdir\n";
     chdir "$installdir" or die
