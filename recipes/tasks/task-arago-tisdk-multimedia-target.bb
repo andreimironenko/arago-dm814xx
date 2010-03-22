@@ -35,6 +35,11 @@ MULTIMEDIA_dm6467-evm = " \
     ti-codec-engine-examples \
     "
 
+MULTIMEDIA_omap3 = " \
+    ti-dmai-apps \
+    ti-codec-engine-examples \
+    "
+
 RDEPENDS_${PN} = "\
     ${MULTIMEDIA} \
     "

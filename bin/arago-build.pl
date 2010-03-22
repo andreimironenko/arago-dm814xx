@@ -52,6 +52,11 @@ my %machines = (
         multimedia_default  => "yes",
         dsp_default         => "yes",
     },
+    "omap3evm"     => {
+        bsp_default         => "yes",
+        multimedia_default  => "yes",
+        dsp_default         => "yes",
+    },
 );
 
 ################################################################################

@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install dsp binaries on ${MACHINE}"
-PR = "r5"
+PR = "r6"
 LICENSE="MIT"
 
 inherit task
@@ -20,6 +20,12 @@ DSP_COMPONENTS_da830-omapl137-evm = "\
 DSP_COMPONENTS_da850-omapl138-evm = "\
     ti-dsplink-examples \
     "
+
+DSP_COMPONENTS_omap3 = "\
+    ti-dsplink-examples \
+    "
+
+DSP_COMPONENTS = ""
 
 RDEPENDS = "\
     ${DSP_COMPONENTS} \

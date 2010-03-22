@@ -37,6 +37,15 @@ DSP_SOURCETREE_da850-omapl138-evm = "\
     ti-edma3lld-sourcetree \
     "
 
+DSP_SOURCETREE_omap3 = "\
+    ti-cgt6x-sourcetree \
+    ti-dspbios-sourcetree \
+    ti-biosutils-sourcetree \
+    ti-dsplink-sourcetree \
+    ti-edma3lld-sourcetree \
+    "
+DSP_SOURCETREE = " "
+
 RRECOMMENDS_${PN} = "\
     ${DSP_SOURCETREE} \
     "

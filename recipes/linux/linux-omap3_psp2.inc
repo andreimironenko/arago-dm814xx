@@ -14,6 +14,15 @@ S = "${WORKDIR}/git"
 
 inherit kernel
 
+require ../ti/ti-staging.inc
+require ../ti/ti-paths.inc
+
 do_configure() {
 	make omap3_evm_defconfig
+}
+
+do_install_append () {
+    	install -d ${D}/${installdir}/ti-psp-tree/linux-kernel-source/
+	cp -pPrf ${S}/* ${D}/${installdir}/ti-psp-tree/linux-kernel-source/
+
 }

@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install source (or development header) packages on host"
-PR = "r7"
+PR = "r8"
 LICENSE="MIT"
 
 inherit task
