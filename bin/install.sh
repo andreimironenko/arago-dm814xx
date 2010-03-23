@@ -297,6 +297,7 @@ prepare_install ()
   fi
 
   export PATH=${install_dir}/install-tools/bin:$PATH
+  export LD_LIBRARY_PATH=${install_dir}/install-tools/lib:$LD_LIBRARY_PATH
   
   # verify if fakeroot command is present on host.
   which fakeroot
