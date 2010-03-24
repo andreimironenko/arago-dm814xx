@@ -150,6 +150,11 @@ move_to_install_dir()
   if [ -d ${install_dir}/usr/share/ti/ti-psp-tree ]; then
     echo " from ti-psp-tree => psp"
     mv ${install_dir}/usr/share/ti/ti-psp-tree ${install_dir}/psp
+
+    # copy prebuilt kernel image and uboot in psp/prebuilt directory
+    mkdir -p ${install_dir}/psp/prebuilt-images/
+    cp deploy/images/$machine/*.bin ${install_dir}/psp/prebuilt-images/    
+
     rm -rf ${install_dir}/usr/share/ti/ti-psp-tree
   fi
 
@@ -430,10 +435,10 @@ host_install
 # install binary ipk on target.
 echo "Installing packages on target filesystem"
 mkdir -p ${install_dir}/filesystem
-cp deploy/images/$machine/* ${install_dir}/filesystem
+cp deploy/images/$machine/*.tar.gz ${install_dir}/filesystem
 fakeroot ./install_rootfs.sh $install_dir $bsp_bin $multimedia_bin $graphics_bin $dsp_bin 
 
-tar zxf `ls -1 ${install_dir}/filesystem/*` -C $install_dir/filesystem --wildcards *.control*
+tar zxf `ls -1 ${install_dir}/filesystem/*.tar.gz` -C $install_dir/filesystem --wildcards *.control*
 generate_sw_manifest "Packages installed on the target:" "$install_dir/filesystem" >> ${install_dir}/docs/software_manifest.htm
 rm -rf ${install_dir}/filesystem/usr
 

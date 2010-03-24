@@ -216,6 +216,24 @@ sub copy_output
         exit 1;
     }
 
+    # copy u-boot and kernel binaries
+    print "\nCopying u-boot and uImage binaries ...";
+    $cmd = "cp $arago_images_output_dir/$machine/u-boot-$machine.bin $sdkpath/deploy/images/$machine";
+    $result = system($cmd);
+    
+    if ($result) {
+        print "\n ERROR: failed to execute $cmd";
+        exit 1;
+    }
+
+    $cmd = "cp $arago_images_output_dir/$machine/uImage-$machine.bin $sdkpath/deploy/images/$machine";
+    $result = system($cmd);
+    
+    if ($result) {
+        print "\n ERROR: failed to execute $cmd";
+        exit 1;
+    }
+    
     # copy install script
     print "\nCopying $arago_dir/arago/bin/install.sh ...";
     $cmd = "cp $arago_dir/arago/bin/install*.sh $sdkpath";
@@ -469,6 +487,7 @@ sub get_input
     }
 
     $packages[$index++] = "ti-tisdk-makefile";
+    $packages[$index++] = "task-arago-demo-dev";
     $packages[$index++] = $image;
 }
 

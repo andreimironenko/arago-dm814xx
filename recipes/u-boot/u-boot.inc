@@ -5,6 +5,9 @@ PRIORITY = "optional"
 LICENSE = "GPLv2"
 PROVIDES = "virtual/bootloader"
 
+require ../ti/ti-staging.inc
+require ../ti/ti-paths.inc
+
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 PARALLEL_MAKE=""
 
@@ -39,3 +42,9 @@ do_stage() {
 	install -d ${STAGING_BINDIR_NATIVE}
 	install -m 755 tools/mkimage ${STAGING_BINDIR_NATIVE}/
 }
+
+do_install_append() {
+    	install -d ${D}/${installdir}/ti-psp-tree/uboot-source/
+	cp -pPrf ${S}/* ${D}/${installdir}/ti-psp-tree/uboot-source/
+}
+

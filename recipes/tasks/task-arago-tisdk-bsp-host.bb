@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support package sources (or development header) packages on host"
-PR = "r7"
+PR = "r8"
 LICENSE="MIT"
 ALLOW_EMPTY = "1"
 
@@ -9,33 +9,40 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 BSP_COMPONENTS_dm365 = "\
     ti-linux-driver-examples-sourcetree \
     linux-davinci-staging-sourcetree \
+    u-boot-sourcetree \
     "
 
 BSP_COMPONENTS_dm355 = "\
     ti-linux-driver-examples-sourcetree \
     linux-davinci-staging-sourcetree \
+    u-boot-sourcetree \
     "
 
 BSP_COMPONENTS_dm6446 = "\
     ti-linux-driver-examples-sourcetree \
     linux-davinci-staging-sourcetree \
+    u-boot-sourcetree \
     "
 
 BSP_COMPONENTS_dm6467 = "\
     ti-linux-driver-examples-sourcetree \
     linux-davinci-staging-sourcetree \
+    u-boot-sourcetree \
     "
 
 BSP_COMPONENTS_da830-omapl137-evm = "\
     linux-omapl1-sourcetree \
+    u-boot-sourcetree \
     "
 
 BSP_COMPONENTS_da850-omapl138-evm = "\
     linux-omapl1-sourcetree \
+    u-boot-sourcetree \
     "
 
 BSP_COMPONENTS_omap3 = "\
     linux-omap3-sourcetree \
+    u-boot-sourcetree \
     "
 
 RRECOMMENDS_${PN} = "\
