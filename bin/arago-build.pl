@@ -487,7 +487,6 @@ sub get_input
     }
 
     $packages[$index++] = "ti-tisdk-makefile";
-    $packages[$index++] = "task-arago-demo-dev";
     $packages[$index++] = $image;
 }
 
