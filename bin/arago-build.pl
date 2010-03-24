@@ -223,7 +223,6 @@ sub copy_output
     
     if ($result) {
         print "\n ERROR: failed to execute $cmd";
-        exit 1;
     }
 
     $cmd = "cp $arago_images_output_dir/$machine/uImage-$machine.bin $sdkpath/deploy/images/$machine";
@@ -231,7 +230,6 @@ sub copy_output
     
     if ($result) {
         print "\n ERROR: failed to execute $cmd";
-        exit 1;
     }
     
     # copy install script
