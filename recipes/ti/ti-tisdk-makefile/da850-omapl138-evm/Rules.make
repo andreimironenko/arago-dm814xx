@@ -25,12 +25,6 @@ CODEC_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__codecs-omapl138__>
 # Where DMAI package is installed.
 DMAI_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__dmai__>
 
-# Where the SDK demos are installed
-DEMO_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__demo__>
-
-# Where the DVTB package is installed.
-DVTB_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__dvtb__>
-
 # Where the EDMA3 LLD package is installed.
 EDMA3_LLD_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__edma3lld__>
 
@@ -49,6 +43,9 @@ XDC_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__xdctools__>
 
 # Where the Code Gen is installed.
 CODEGEN_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__cgt6x__>
+
+# Where the PSP is installed.
+PSP_INSTALL_DIR=$(SDK_INSTALL_DIR)/psp
 
 # The directory that points to your kernel source directory.
 LINUXKERNEL_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__kernel__>
