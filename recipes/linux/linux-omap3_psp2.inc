@@ -22,7 +22,7 @@ do_configure() {
 }
 
 do_install_append () {
-    	install -d ${D}/${installdir}/ti-psp-tree/linux-kernel-source/
-	cp -pPrf ${S}/* ${D}/${installdir}/ti-psp-tree/linux-kernel-source/
+    	install -d ${D}/${LINUXKERNEL_SOURCE_DIR}
+	cp -pPrf ${S}/* ${D}/${LINUXKERNEL_SOURCE_DIR}
 
 }

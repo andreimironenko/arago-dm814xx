@@ -16,9 +16,9 @@ do_compile () {
 }
 do_install () {
   	cd ${S}/media_ti
-    install -d ${D}/${installdir}/ti-psp-tree/linux-driver-examples/
     make ${TARGET} EXEC_DIR=${D}/${installdir}/linux-driver-examples install
-    cp -ar ${S}/* ${D}/${installdir}/ti-psp-tree/linux-driver-examples
+    install -d ${D}/${LINUXEXAMPLE_SOURCE_DIR}
+    cp -ar ${S}/* ${D}/${LINUXEXAMPLE_SOURCE_DIR}
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"

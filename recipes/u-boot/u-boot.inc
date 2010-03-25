@@ -44,7 +44,7 @@ do_stage() {
 }
 
 do_install_append() {
-    	install -d ${D}/${installdir}/ti-psp-tree/uboot-source/
-	cp -pPrf ${S}/* ${D}/${installdir}/ti-psp-tree/uboot-source/
+    	install -d ${D}/${UBOOT_SOURCE_DIR}
+	cp -pPrf ${S}/* ${D}/${UBOOT_SOURCE_DIR}
 }
 
