@@ -266,15 +266,13 @@ sub copy_output
 
     # TODO: we don't have recipe to generate linuxlibs yet, until then wget
     # linuxlibs tar ball from psp sdk
-    if ($march =~ m/armv5te/) {
-        print "\nCopying linuxlibs-2009.11-armv5te.tar.gz ...\n";
-        $cmd = "wget http://arago-project.org/files/releases/davinci-psp_3.x.0.0-r32/sdk/linuxlibs-2009.11-armv5te.tar.gz -P ${sdkpath}/devel";
+    print "\nCopying linuxlibs-2009.11-armv5te.tar.gz ...\n";
+    $cmd = "wget http://arago-project.org/files/releases/davinci-psp_3.x.0.0-r32/sdk/linuxlibs-2009.11-armv5te.tar.gz -P ${sdkpath}/devel";
 
-        $result = system($cmd);
-        if ($result) {
-            print "\nERROR: Failed to execute command $cmd\n";
-            exit 1;
-        }
+    $result = system($cmd);
+    if ($result) {
+        print "\nERROR: Failed to execute command $cmd\n";
+        exit 1;
     }
 }
 
