@@ -15,8 +15,13 @@ export CMEM_INSTALL_DIR_RECIPE       = "${installdir}/ti-linuxutils-tree"
 export LINK_INSTALL_DIR_RECIPE       = "${installdir}/ti-dsplink-tree/packages"
 export LPM_INSTALL_DIR_RECIPE        = "${installdir}/ti-local-power-manager-tree"
 export DMAI_INSTALL_DIR_RECIPE       = "${installdir}/ti-dmai-tree"
+export DM365MM_INSTALL_DIR_RECIPE    = "${installdir}/ti-dm365mm-module-tree"
 export CODEC_INSTALL_DIR_RECIPE      = "${installdir}/ti-codecs-tree"
 export DSPLIB_INSTALL_DIR_RECIPE     = "${installdir}/ti-dsplib-tree"
+export LINUXKERNEL_SOURCE_DIR        = "${installdir}/ti-psp-tree/linux-kernel-source"
+export UBOOT_SOURCE_DIR              = "${installdir}/ti-psp-tree/u-boot-source"
+export LINUXEXAMPLE_SOURCE_DIR       = "${installdir}/ti-psp-tree/linux-driver-examples"
+export DVSDK_DEMOS_INSTALL_DIR_RECIPE = "${installdir}/ti-dvsdk-demos-tree"
 
 # This is where the tools will end up in staging provided PACKAGE_ARCH = ${MACHINE_ARCH} is set
 export CODEGEN_INSTALL_DIR    = "${STAGING_DIR}/${MULTIMACH_TARGET_SYS}${CODEGEN_INSTALL_DIR_RECIPE}"
