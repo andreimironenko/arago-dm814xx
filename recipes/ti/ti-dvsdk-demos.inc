@@ -3,15 +3,17 @@ SECTION = "multimedia"
 LICENSE = "TI"
 
 INC_PR = "r1"
-
+ 
 DEPENDS += "ti-dmai"
 DEPENDS += "alsa-lib libpng freetype jpeg"
 
+BASE_SRC_URI ?= "http://install.source.dir.local"
 SRC_URI = "${BASE_SRC_URI}/dvsdk_demos_${PV}.tar.gz;name=dvsdkdemostarball"
 
 S = "${WORKDIR}/dvsdk_demos_${PV}"
 
-require ti-multimedia-common.inc
+require ti-paths.inc
+require ti-staging.inc
 
 DEMOSPLATFORM_dm355    = "dm355"
 DEMOSPLATFORM_dm365    = "dm365"
@@ -49,6 +51,9 @@ do_compile () {
 }
 
 do_install () {
+        install -d ${D}${DVSDK_DEMOS_INSTALL_DIR_RECIPE}
+        cp -pPrf ${S}/* ${D}${DVSDK_DEMOS_INSTALL_DIR_RECIPE}
+
 	cd ${S}
 	make -e EXEC_DIR=${D}/${installdir}/dvsdk-demos \
 		PLATFORM=${DEMOSPLATFORM} \
@@ -61,8 +66,6 @@ RDEPENDS_ti-dvsdk-demos_dm355 += "ti-dm355mm-module ti-cmem-module alsa-lib libp
 RDEPENDS_ti-dvsdk-demos_dm365 += "ti-dm365mm-module ti-cmem-module alsa-lib libpng freetype jpeg"
 
 FILES_${PN} = "${installdir}/dvsdk-demos/*"
-
-BASE_SRC_URI ?= "http://install.source.dir.local"
 
 INHIBIT_PACKAGE_STRIP = "1"
 INSANE_SKIP_${PN} = "True"

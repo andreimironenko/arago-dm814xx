@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install source (or development header) packages on host"
-PR = "r8"
+PR = "r9"
 LICENSE="MIT"
 
 inherit task
@@ -34,6 +34,7 @@ MULTIMEDIA_SOURCETREE_dm365 = " \
     ti-dmai-sourcetree \
     ti-dm365mm-module-sourcetree \
     ti-xdais-sourcetree \
+    ti-dvsdk-demos-sourcetree \
     "
 
 MULTIMEDIA_SOURCETREE_dm6446 = " \
