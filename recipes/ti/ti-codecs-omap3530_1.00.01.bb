@@ -5,7 +5,7 @@ LICENSE = "TI"
 
 # TODO :: Move to common .inc (omap3 and omapl ready)
 
-PV = "1_00_01_44"
+PV = "1_00_01"
 
 SRC_URI[omap3codecsbin.md5sum] = "4db567252e6c43119e1c0aafe401a679"
 SRC_URI[omap3codecsbin.sha256sum] = "e042e1aad42a6728adf5c955dc38e4f8331fc0eacd833f1cd75d9cbb4faff0b5"

@@ -1,6 +1,6 @@
 DESCRIPTION = "Extended task to get more basic and demo apps"
-PR = "r10"
 LICENSE="MIT"
+PR = "r11"
 
 inherit task
 
@@ -18,6 +18,7 @@ ARAGO_ALSA_EXTRA = "\
     alsa-utils-iecset \
     alsa-utils-midi \
     alsa-utils-speakertest \
+    alsa-state \
     "
 
 ARAGO_TSLIB = "\
@@ -72,3 +73,10 @@ RDEPENDS_${PN} = "\
     ${ARAGO_DEMO} \
     "
 
+RDEPENDS_${PN}_append_omap3 = "\
+    omap-demo \
+    "
+
+RRECOMMENDS_${PN} = "\
+    kernel-modules \
+    "
