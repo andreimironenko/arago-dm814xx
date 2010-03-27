@@ -545,9 +545,8 @@ sub parse_args
             next;
         }
 
-        if ($ARGV[0] =~ /-.*/) {
-            print "Warning: Option $ARGV[0] not supported (ignored)\n";
-        }
+        print "Warning: Option $ARGV[0] not supported (ignored)\n";
+        shift(@ARGV);
     }
 }
 
