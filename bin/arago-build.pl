@@ -115,6 +115,14 @@ sub build_image
             exit 1;
         }
     }
+
+    print "\nBuilding meta-toolchain-base for $machine";
+    $cmd = "MACHINE=$machine META_SDK_PATH=/opt/arago-sdk bitbake meta-toolchain-arago";
+    $result = system($cmd);
+    if ($result) {
+        print "\n ERROR: failed to build sdk";
+        exit 1;
+    }
 }
 
 ################################################################################
@@ -264,11 +272,14 @@ sub copy_output
         exit 1;
     }
 
-    # TODO: we don't have recipe to generate linuxlibs yet, until then wget
-    # linuxlibs tar ball from psp sdk
-    print "\nCopying linuxlibs-2009.11-armv5te.tar.gz ...\n";
-    $cmd = "wget http://arago-project.org/files/releases/davinci-psp_3.x.0.0-r32/sdk/linuxlibs-2009.11-armv5te.tar.gz -P ${sdkpath}/devel";
+    $cmd = "$arago_dir/arago/bin/mkllibs.sh $arago_dir/arago-tmp/deploy/sdk/arago*$march-*sdk.tar.gz";    
+    $result = system($cmd);
+    if ($result) {
+        print "\nERROR: Failed to execute command $cmd\n";
+        exit 1;
+    }
 
+    $cmd = "mv linuxlib*.tar.gz $sdkpath/devel/ ";    
     $result = system($cmd);
     if ($result) {
         print "\nERROR: Failed to execute command $cmd\n";
