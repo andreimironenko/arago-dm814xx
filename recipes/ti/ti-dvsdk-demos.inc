@@ -7,8 +7,7 @@ INC_PR = "r1"
 DEPENDS += "ti-dmai"
 DEPENDS += "alsa-lib libpng freetype jpeg"
 
-BASE_SRC_URI ?= "http://install.source.dir.local"
-SRC_URI = "${BASE_SRC_URI}/dvsdk_demos_${PV}.tar.gz;name=dvsdkdemostarball"
+SRC_URI = "ftp://gtftp01.gt.design.ti.com/arago/dvsdk_demos_${PV}.tar.gz;name=dvsdkdemostarball"
 
 S = "${WORKDIR}/dvsdk_demos_${PV}"
 
