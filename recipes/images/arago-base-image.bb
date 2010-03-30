@@ -3,8 +3,8 @@
 
 require arago-image.inc
 
-# The size of the uncompressed ramdisk is 8MB
-ROOTFS_SIZE = "8192"
+# The size of the uncompressed ramdisk is 9MB
+ROOTFS_SIZE = "9216"
 
 IMAGE_INSTALL += "task-arago-base"
 
