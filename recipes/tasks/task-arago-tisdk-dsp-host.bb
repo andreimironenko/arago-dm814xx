@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install source (or development) packages on host"
-PR = "r5"
+PR = "r6"
 LICENSE="MIT"
 
 inherit task
@@ -27,6 +27,8 @@ DSP_SOURCETREE_da830-omapl137-evm = "\
     ti-biosutils-sourcetree \
     ti-dsplink-sourcetree \
     ti-edma3lld-sourcetree \
+    ti-biospsp-sourcetree \
+    ti-audio-soc-example-sourcetree \
     "
 
 DSP_SOURCETREE_da850-omapl138-evm = "\
@@ -35,6 +37,8 @@ DSP_SOURCETREE_da850-omapl138-evm = "\
     ti-biosutils-sourcetree \
     ti-dsplink-sourcetree \
     ti-edma3lld-sourcetree \
+    ti-biospsp-sourcetree \
+    ti-audio-soc-example-sourcetree \
     "
 
 DSP_SOURCETREE_omap3 = "\
