@@ -33,6 +33,7 @@ DVTB_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__dvtb__>
 
 # Where the EDMA3 LLD package is installed.
 EDMA3_LLD_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__edma3lld__>
+EDMA3LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR)
 
 # Where the Framework Components package is installed.
 FC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__framework-components__>

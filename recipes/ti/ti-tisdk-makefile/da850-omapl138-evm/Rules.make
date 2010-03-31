@@ -27,6 +27,10 @@ DMAI_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__dmai__>
 
 # Where the EDMA3 LLD package is installed.
 EDMA3_LLD_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__edma3lld__>
+EDMA3LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR)
+
+# Where the DSP-side BIOS PSP package is installed.
+BIOSPSP_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__biospsp__>
 
 # Where the Framework Components package is installed.
 FC_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__framework-components__>
