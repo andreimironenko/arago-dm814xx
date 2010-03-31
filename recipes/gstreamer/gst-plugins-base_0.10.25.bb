@@ -7,7 +7,7 @@ PR = "${INC_PR}.3"
 
 PROVIDES += "gst-plugins"
 
-EXTRA_OECONF += "--disable-tests --disable-examples --disable-x --disable-ogg --disable-vorbis --disable-pango --enable-alsa"
+EXTRA_OECONF += "--disable-tests --disable-examples --disable-x --disable-ogg --disable-vorbis --disable-pango --enable-alsa --disable-subparse"
 
 # gst-plugins-base only builds the alsa plugin
 # if alsa has been built and is present.  You will
