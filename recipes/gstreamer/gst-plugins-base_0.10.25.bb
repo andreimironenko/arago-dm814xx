@@ -3,11 +3,11 @@ require gst-plugins.inc
 SRC_URI += "file://fix-playbin2.patch;patch=1 \
 "
 
-PR = "${INC_PR}.2"
+PR = "${INC_PR}.3"
 
 PROVIDES += "gst-plugins"
 
-EXTRA_OECONF += "--disable-x --with-checklibname=check --disable-ogg --disable-pango --disable-vorbis --disable-examples --disable-gnome_vfs"
+EXTRA_OECONF += "--disable-tests --disable-examples --disable-x --disable-ogg --disable-vorbis --disable-pango --enable-alsa"
 
 # gst-plugins-base only builds the alsa plugin
 # if alsa has been built and is present.  You will

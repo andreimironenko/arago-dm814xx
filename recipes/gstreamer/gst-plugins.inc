@@ -1,6 +1,6 @@
 require gst-common.inc
 DESCRIPTION = "Plugins for GStreamer"
-DEPENDS = "gstreamer libmikmod liboil libogg tremor libvorbis"
+DEPENDS = "gstreamer liboil"
 DEPENDS += "${@base_conditional('ENTERPRISE_DISTRO', '1', '', 'libmad libid3tag', d)}"
 
 INC_PR = "r7"
