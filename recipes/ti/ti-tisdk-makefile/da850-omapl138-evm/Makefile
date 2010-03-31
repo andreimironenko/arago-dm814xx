@@ -87,11 +87,14 @@ help:
 	@echo
 	@echo "    linux			: Build Linux kernel uImage and module"
 	@echo "    linux_clean			: Remove generated Linux kernel files"
-	@echo "    linux_install		: Install kernel binary and  modules"
+	@echo "    linux_install		: Install kernel binary and modules"
 	@echo
 	@echo "    psp_examples			: Build Linux examples"
 	@echo "    psp_examples_clean		: Remove all generated PSP examples"
 	@echo "    psp_examples_install		: Install psp examples"
+	@echo
+	@echo "    audio_soc_example		: Build Audio Soc example app"
+	@echo "    audio_soc_example_clean	: Remove generated Audio Soc example files"
 	@echo
 	@echo "    install			: Install all the targets in "
 	@echo "				   $(EXEC_DIR)"
@@ -502,3 +505,35 @@ dsplink_install:
 	@for file in $(shell find $(LINK_INSTALL_DIR)/packages/dsplink/dsp/BUILD -name *.out); do \
 	cp $$file $(EXEC_DIR)/dsplink ; \
 	done
+
+##############################################################################
+#  Build audio soc examples
+##############################################################################
+audio_soc_example:
+	$(MAKE) -C ./audio-soc-example_* \
+	PLATFORM="$(PLATFORM)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	LINUXKERNEL_INSTALL_DIR="$(LINUXKERNEL_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	BIOSPSP_INSTALL_DIR="$(BIOSPSP_INSTALL_DIR)" \
+	EDMA3LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
+	all
+
+audio_soc_example_clean:
+	$(MAKE) -C ./audio-soc-example_* \
+	PLATFORM="$(PLATFORM)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	LINUXKERNEL_INSTALL_DIR="$(LINUXKERNEL_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	BIOSPSP_INSTALL_DIR="$(BIOSPSP_INSTALL_DIR)" \
+	EDMA3LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
+	clean
+
