@@ -3,7 +3,7 @@ include Rules.make
 DEFAULT_LINUXKERNEL_CONFIG=davinci_dm644x_defconfig
 DEFAULT_UBOOT_CONFIG=davinci_dvevm_config
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install
 
 #==============================================================================
 # The default build target.
@@ -18,17 +18,17 @@ clean:	cmem_clean lpm_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: u-boot linux psp_examples cmem lpm dsplink codecs ceexamples dmai
+everything: u-boot linux psp_examples cmem lpm dsplink codecs ceexamples dmai u-boot
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: u-boot_install linux_install cmem_install dmai_install psp_examples_install ceexamples_install codecs_install lpm_install dsplink_install
+install: u-boot_install linux_install cmem_install dmai_install psp_examples_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber:    u-boot_clean linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean codecs_clean lpm_clean dsplink_clean
+clobber:    u-boot_clean linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean codecs_clean lpm_clean dsplink_clean u-boot_clean
 
 #==============================================================================
 # A help message target.
@@ -111,22 +111,22 @@ help:
 # Build the Linux kernel. Also, an explicit cleanup target is defined.
 #==============================================================================
 linux:	u-boot
-	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_LINUXKERNEL_CONFIG)
-	PATH="$(PATH):psp/u-boot-source/tools" $(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
-	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) CROSS_COMPILE=$(CSTOOL_PREFIX) modules
+	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_LINUXKERNEL_CONFIG)
+	PATH="$(PATH):psp/u-boot-source/tools" $(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
+	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) modules
 linux_clean:
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) mrproper
-	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) CROSS_COMPILE=$(CSTOOL_PREFIX) clean
+	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) clean
 
 linux_install:
 	install -d $(EXEC_DIR)/boot
 	install  $(LINUXKERNEL_INSTALL_DIR)/arch/arm/boot/uImage $(EXEC_DIR)/boot
 	install  $(LINUXKERNEL_INSTALL_DIR)/vmlinux $(EXEC_DIR)/boot
 	install  $(LINUXKERNEL_INSTALL_DIR)/System.map $(EXEC_DIR)/boot
-	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) CROSS_COMPILE=$(CSTOOL_PREFIX) INSTALL_MOD_PATH=$(EXEC_DIR)/ modules_install
+	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) INSTALL_MOD_PATH=$(EXEC_DIR)/ modules_install
 
 #==============================================================================
-# Build u-boot kernel. Also, an explicit cleanup target is defined.
+# Build u-boot. Also, an explicit cleanup target is defined.
 #==============================================================================
 u-boot:
 	$(MAKE) -C psp/u-boot-source CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_UBOOT_CONFIG)
@@ -137,8 +137,8 @@ u-boot_clean:
 
 u-boot_install:
 	install -d $(EXEC_DIR)/boot
-	install u-boot-source/u-boot.bin $(EXEC_DIR)/boot
-	install u-boot-source/u-boot.map $(EXEC_DIR)/boot
+	install psp/u-boot-source/u-boot.bin $(EXEC_DIR)/boot
+	install psp/u-boot-source/u-boot.map $(EXEC_DIR)/boot
 
 #==============================================================================
 # Build the PSP Linux examples. Also, an explicit cleanup target is defined.
