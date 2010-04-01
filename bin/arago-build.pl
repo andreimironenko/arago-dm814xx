@@ -77,6 +77,7 @@ my $arago_image_dir = "$arago_dir/arago/recipes/images";
 my $arago_ipk_dir = "$arago_dir/arago-tmp/deploy/ipk";
 my $arago_machine_dir = "$arago_dir/arago/conf/machine";
 my $arago_tmp = "$arago_dir/arago-tmp";
+my $arago_staging = "$arago_dir/arago-tmp/staging/x86_64-linux";
 
 if (! -d "$arago_machine_dir") {
     print "ERROR: $arago_dir/arago/conf/machine not found! Either your ";
@@ -143,7 +144,7 @@ sub copy_output
     }
 
     # create directories
-    $cmd = "mkdir -p $sdkpath/config/$machine/ $sdkpath/deploy/images/$machine $sdkpath/devel $sdkpath/deploy/ipk";
+    $cmd = "mkdir -p $sdkpath/config/$machine/ $sdkpath/deploy/images/$machine $sdkpath/devel $sdkpath/deploy/ipk $sdkpath/deploy/ipk/usr/lib/opkg";
     $result = system($cmd);
     
     if ($result) {
@@ -151,9 +152,8 @@ sub copy_output
         exit 1;
     }
 
-    # copy ipk's
-    print "\nCopying ${arago_ipk_dir}/Package* ...";
-    $cmd = "cp -ar ${arago_ipk_dir}/Package* ${sdkpath}/deploy/ipk/";
+    # Copy the depends ipk's
+    $cmd = "$arago_staging/usr/bin/opkg-cl -f $arago_staging/etc/opkg.conf -o $sdkpath/deploy/ipk update";
     $result = system($cmd);
 
     if ($result) {
@@ -161,57 +161,82 @@ sub copy_output
         exit 1;
     }
 
-    print "\nCopying ${arago_ipk_dir}/all ...";
-    $cmd = "cp -ar ${arago_ipk_dir}/all ${sdkpath}/deploy/ipk/";
+    $cmd = "$arago_staging/usr/bin/opkg-cl -f $arago_staging/etc/opkg.conf -o $sdkpath/deploy/ipk install --noaction @packages";
+    open(OUT, "$cmd |");
+    while (<OUT>) {
+        if ($_ =~m/Downloading file:/) {
+            my $unused;
+            my $name;
+
+            ($unused, $name)  = split(/:/, $_);
+
+            $name =~ s/^\s+|\s+$//g;
+            chop($name);
+
+            if ($name =~m/_all.ipk/) {
+                $dir = "all";
+            }
+            elsif ($name =~m/_any.ipk/) {
+                $dir = "any";
+            }
+            elsif ($name =~m/_noarch.ipk/) {
+                $dir = "noarch";
+            }
+            elsif ($name =~m/_arm.ipk/) {
+                $dir = "arm";
+            }
+            elsif ($name =~m/_armv4.ipk/) {
+                $dir = "armv4";
+            }
+            elsif ($name =~m/_armv4t.ipk/) {
+                $dir = "armv4t";
+            }
+            elsif ($name =~m/_armv5te.ipk/) {
+                $dir = "armv5te";
+            }
+            elsif ($name =~m/_armv7a.ipk/) {
+                $dir = "armv7a";
+            }
+            elsif ($name =~m/\_$machine.ipk/) {
+                $dir = "$machine";
+            }
+
+            print "Copying $name. \n";
+            my $copycmd = "mkdir -p $sdkpath/deploy/ipk/$dir ; cp $name $sdkpath/deploy/ipk/$dir";
+            $result = system($copycmd);
+            if ($result) {
+                print "Failed to execute $copycmd\n";
+                exit 1;
+            }
+        }
+    }
+
+    close(OUT);
+
+    $cmd = "rm -rf $sdkpath/deploy/ipk/usr";
     $result = system($cmd);
 
     if ($result) {
         print "\nERROR: Failed to execute command $cmd\n";
         exit 1;
     }
+   
+    opendir(DIR, "$sdkpath/deploy/ipk");
+    my @dirs = readdir(DIR);
 
-    print "\nCopying ${arago_ipk_dir}/all ...";
-    $cmd = "cp -ar ${arago_ipk_dir}/all ${sdkpath}/deploy/ipk/";
-    $result = system($cmd);
+    for my $dir (@dirs) {
+        if ($dir =~m/\.\./) {
+            next;
+        }
+    
+        $cmd = "touch $sdkpath/deploy/ipk/$dir/Packages; $arago_staging/usr/bin/ipkg-make-index -r $sdkpath/deploy/ipk/$dir/Packages -p $sdkpath/deploy/ipk/$dir/Packages -l $sdkpath/deploy/ipk/$dir/Packages.filelist -m $sdkpath/deploy/ipk/$dir";
 
-    if ($result) {
-        print "\nERROR: Failed to execute command $cmd\n";
-        exit 1;
-    }
+        $result = system($cmd);
 
-    print "\nCopying ${arago_ipk_dir}/$march ...";
-    $cmd = "cp -ar ${arago_ipk_dir}/$march ${sdkpath}/deploy/ipk/";
-    $result = system($cmd);
-
-    if ($result) {
-        print "\nERROR: Failed to execute command $cmd\n";
-        exit 1;
-    }
-
-    print "\nCopying ${arago_ipk_dir}/$machine ...";
-    $cmd = "cp -ar ${arago_ipk_dir}/$machine ${sdkpath}/deploy/ipk/";
-    $result = system($cmd);
-
-    if ($result) {
-        print "\nERROR: Failed to execute command $cmd\n";
-        exit 1;
-    }
-
-    print "\nDeleting -dbg and -static packages to save disk space ...";
-    $cmd = "find ${sdkpath}/deploy/ipk -name *-dbg* | xargs rm -rf {}";
-    $result = system($cmd);
-
-    if ($result) {
-        print "\nERROR: Failed to execute command $cmd\n";
-        exit 1;
-    }
-
-    $cmd = "find ${sdkpath}/deploy/ipk -name *-static* | xargs rm -rf {}";
-    $result = system($cmd);
-
-    if ($result) {
-        print "\nERROR: Failed to execute command $cmd\n";
-        exit 1;
+        if ($result) {
+            print "\nERROR: Failed to execute command $cmd\n";
+            exit 1;
+        }
     }
 
     # copy image tar
