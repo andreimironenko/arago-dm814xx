@@ -19,7 +19,7 @@ PROVIDES += "gstreamer-ti-demo-script"
 
 PV = "svnr${SRCREV}"
 # Rebuild on kernel change since it links statically to ti-dmai, ti-codec-engine, etc
-PR = "r51+${MACHINE_KERNEL_PR}"
+PR = "r52+${MACHINE_KERNEL_PR}"
 
 
 S = "${WORKDIR}/gstreamer_ti/ti_build/ticodecplugin"
@@ -40,9 +40,10 @@ SRC_URI = "svn://gforge.ti.com/svn/gstreamer_ti/trunk;module=gstreamer_ti;proto=
            file://${GST_TI_RC_SCRIPT} \
 "
 
-SRC_URI_append_omap3 = " \
-           file://gstreamer-ti-add-omapfb.patch;patch=1 \
-"
+# TODO: to compile this patch you need to add x11 dependency.
+#SRC_URI_append_omap3 = " \
+#           file://gstreamer-ti-add-omapfb.patch;patch=1 \
+#"
 
 SRC_URI_append_omapl137 = " \
            file://gstreamer-ti-omapl137.patch;patch=1 \
