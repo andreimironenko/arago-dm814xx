@@ -18,7 +18,7 @@ PROVIDES += "gstreamer-ti-demo-script"
 
 PV = "svnr${SRCREV}"
 # Rebuild on kernel change since it links statically to ti-dmai, ti-codec-engine, etc
-PR = "r49+${MACHINE_KERNEL_PR}"
+PR = "r50+${MACHINE_KERNEL_PR}"
 
 
 S = "${WORKDIR}/gstreamer_ti/ti_build/ticodecplugin"
@@ -55,7 +55,7 @@ SRC_URI_append_dm6467 = " \
            file://gstreamer-ti-dm6467-usesinglecsserver.patch;patch=1 \
 "
 
-DEPENDS = "ti-dmai gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly"
+DEPENDS = "ti-dmai gstreamer gst-plugins-base"
 
 # gstreamer_ti picks up some config variables from the environment
 # - variables are used in the gstreamer makefile
