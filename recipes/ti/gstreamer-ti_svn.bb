@@ -1,6 +1,7 @@
 DESCRIPTION = "GSTREAMER Plugin (gstreamer-ti) for TI ARM/DSP processors"
 HOMEPAGE = "https://gforge.ti.com/gf/project/gstreamer_ti/"
 SECTION = "multimedia"
+LICENSE = "LGPL"
 
 # TODO :: Replace omapl137 with official support in GST (currently linking to omapl138)
 # TODO :: Codec Server Environment Variables shouldn't be required
@@ -18,7 +19,7 @@ PROVIDES += "gstreamer-ti-demo-script"
 
 PV = "svnr${SRCREV}"
 # Rebuild on kernel change since it links statically to ti-dmai, ti-codec-engine, etc
-PR = "r50+${MACHINE_KERNEL_PR}"
+PR = "r51+${MACHINE_KERNEL_PR}"
 
 
 S = "${WORKDIR}/gstreamer_ti/ti_build/ticodecplugin"
