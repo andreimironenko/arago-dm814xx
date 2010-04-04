@@ -117,7 +117,7 @@ sub build_image
         }
     }
 
-    print "\nBuilding meta-toolchain-base for $machine";
+    print "\nBuilding meta-toolchain-base for $machine\n";
     $cmd = "MACHINE=$machine META_SDK_PATH=/opt/arago-sdk bitbake meta-toolchain-arago";
     $result = system($cmd);
     if ($result) {
