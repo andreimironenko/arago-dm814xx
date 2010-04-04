@@ -220,7 +220,18 @@ sub copy_output
         print "\nERROR: Failed to execute command $cmd\n";
         exit 1;
     }
-   
+
+    # TODO: Even if build for omap or davinci platform, opkg.conf may have 
+    # entries for both armv5te and armv7a arch. creating temporary directory.
+    $cmd = "mkdir -p $sdkpath/deploy/ipk/armv5te $sdkpath/deploy/ipk/armv7a";
+    $result = system($cmd);
+
+    if ($result) {
+        print "\nERROR: Failed to execute command $cmd\n";
+        exit 1;
+    }
+
+    # Create the package index files
     opendir(DIR, "$sdkpath/deploy/ipk");
     my @dirs = readdir(DIR);
 
@@ -287,9 +298,9 @@ sub copy_output
         exit 1;
     }
 
-    # copy platform specific opkg.conf needed during opkg installation.
-    print "\nCopying $arago_dir/arago/bin/$machine/opkg.conf  ...";
-    $cmd = "cp $arago_dir/arago/bin/$machine/* $sdkpath/config/$machine/";
+    # copy opkg.conf needed during opkg installation.
+    print "\nCopying $arago_staging/etc/opkg.conf  ...";
+    $cmd = "cp $arago_staging/etc/opkg.conf $sdkpath/config/$machine/";
     $result = system($cmd);
 
     if ($result) {

@@ -49,7 +49,8 @@ verify_cdrom ()
     echo "ERROR: opkg.conf does not exist for $machine"
     exit 1;
   fi
-  sed s=\${PWD}=$PWD/deploy= config/$machine/opkg.conf > ${install_dir}/.opkg.conf
+  echo "Configuring opkg.conf ..."
+  sed  "s|file:\(..*\)ipk|file:$PWD/deploy/ipk|g" config/$machine/opkg.conf > ${install_dir}/.opkg.conf
   opkg_conf="${install_dir}/.opkg.conf"
 }
 
