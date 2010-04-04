@@ -209,6 +209,8 @@ pkg_postrm_kernel-devicetree () {
 do_install_append () {
     	install -d ${D}/${LINUXKERNEL_SOURCE_DIR}
 	cp -pPrf ${S}/* ${D}/${LINUXKERNEL_SOURCE_DIR}
+        cd ${D}/${LINUXKERNEL_SOURCE_DIR} 
+        make distclean
 
 }
 

@@ -46,5 +46,7 @@ do_stage() {
 do_install_append() {
     	install -d ${D}/${UBOOT_SOURCE_DIR}
 	cp -pPrf ${S}/* ${D}/${UBOOT_SOURCE_DIR}
+	cd ${D}/${UBOOT_SOURCE_DIR}
+	make distclean
 }
 
