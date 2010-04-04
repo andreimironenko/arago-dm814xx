@@ -437,7 +437,7 @@ host_install
 echo "Installing packages on target filesystem"
 mkdir -p ${install_dir}/filesystem
 cp deploy/images/$machine/*.tar.gz ${install_dir}/filesystem
-fakeroot ./install_rootfs.sh $install_dir $bsp_bin $multimedia_bin $graphics_bin $dsp_bin 
+fakeroot install_rootfs.sh $install_dir $bsp_bin $multimedia_bin $graphics_bin $dsp_bin 
 
 tar zxf `ls -1 ${install_dir}/filesystem/*.tar.gz` -C $install_dir/filesystem --wildcards *.control*
 generate_sw_manifest "Packages installed on the target:" "$install_dir/filesystem" >> ${install_dir}/docs/software_manifest.htm
