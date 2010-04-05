@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support package sources (or development header) packages on host"
-PR = "r8"
+PR = "r9"
 LICENSE="MIT"
 ALLOW_EMPTY = "1"
 
@@ -7,12 +7,14 @@ inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 BSP_COMPONENTS_dm365 = "\
+    ti-board-utilities \
     ti-linux-driver-examples-sourcetree \
     linux-davinci-staging-sourcetree \
     u-boot-sourcetree \
     "
 
 BSP_COMPONENTS_dm355 = "\
+    ti-board-utilities \
     ti-linux-driver-examples-sourcetree \
     linux-davinci-staging-sourcetree \
     u-boot-sourcetree \
@@ -25,6 +27,7 @@ BSP_COMPONENTS_dm6446 = "\
     "
 
 BSP_COMPONENTS_dm6467 = "\
+    ti-board-utilities \
     ti-linux-driver-examples-sourcetree \
     linux-davinci-staging-sourcetree \
     u-boot-sourcetree \
