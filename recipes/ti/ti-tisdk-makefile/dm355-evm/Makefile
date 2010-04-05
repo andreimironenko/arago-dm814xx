@@ -44,6 +44,9 @@ help:
 	@echo "    demos_clean                  : Remove generated DVSDK demo files."
 	@echo "    demos_install                : Install DVSDK demos"
 	@echo
+	@echo "    dvtb                         : Build DVTB for $(PLATFORM)"
+	@echo "    dvtb_clean                   : Remove generated DVTB files"
+	@echo
 	@echo "    cmem                         : Build the CMEM kernel module"
 	@echo "    cmem_clean                   : Remove generated cmem files."
 	@echo "    cmem_install                 : Install cmemk module"
@@ -110,6 +113,18 @@ demos_clean:
 demos_install:
 	install -d $(EXEC_DIR)/dvsdk-demos
 	$(MAKE) -C $(DEMO_INSTALL_DIR) install DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) EXEC_DIR=$(EXEC_DIR)/dvsdk-demos PLATFORM=$(PLATFORM)
+
+#==============================================================================
+# Build the Digital Video Test Bench for the configured platform. Also, an
+# explicit cleanup target is defined.
+#==============================================================================
+dvtb:
+	$(MAKE) -C $(DVTB_INSTALL_DIR) $(PLATFORM) CODECS=TSPA
+	@echo
+	@echo "dvtb can be found under $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/$(PLATFORM)/bin"
+
+dvtb_clean:
+	$(MAKE) -C $(DVTB_INSTALL_DIR) clean
 
 #==============================================================================
 # Build the Linux kernel. Also, an explicit cleanup target is defined.
