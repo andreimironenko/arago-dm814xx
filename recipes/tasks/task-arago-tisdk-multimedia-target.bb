@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r9"
+PR = "r10"
 LICENSE="MIT"
 
 inherit task
@@ -9,6 +9,8 @@ MULTIMEDIA_dm365 = " \
     ti-dmai-apps \
     ti-codec-engine-examples \
     ti-dvsdk-demos \
+    gstreamer-ti \
+    gstreamer-ti-demo-script \
     "
 
 MULTIMEDIA_dm355 = " \
