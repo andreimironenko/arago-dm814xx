@@ -308,14 +308,8 @@ sub copy_output
         exit 1;
     }
 
-    $cmd = "$arago_dir/arago/bin/mkllibs.sh $arago_dir/arago-tmp/deploy/sdk/arago*$march-*sdk.tar.gz";    
-    $result = system($cmd);
-    if ($result) {
-        print "\nERROR: Failed to execute command $cmd\n";
-        exit 1;
-    }
-
-    $cmd = "mv linuxlib*.tar.gz $sdkpath/devel/ ";    
+    print "\nCopying sdk tarball  ...";
+    $cmd = "cp $arago_dir/arago-tmp/deploy/sdk/arago*$march-*sdk.tar.gz $sdkpath/devel/ ";    
     $result = system($cmd);
     if ($result) {
         print "\nERROR: Failed to execute command $cmd\n";

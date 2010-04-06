@@ -350,9 +350,6 @@ host_install ()
   execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_conf}  update"
   execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_conf} install  $bsp_src $dsp_src $multimedia_src $graphics_src ti-tisdk-makefile"
 
-  # extract kernel and linuxlibs header tarballs
-  test ! -z $bsp_src && extract_tars
-
   # TODO: figure out a ways to disable glibc, libasound, freetype depedencies
   # from sourcetree packages.  For now uninstall those extra packages
   execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6 libasound2 alsa-conf-base sln libfreetype6 libz1"
@@ -362,6 +359,34 @@ host_install ()
   generate_sw_manifest "Packages installed on the host machine:" "$install_dir" >> ${install_dir}/docs/software_manifest.htm;
 
   move_to_install_dir
+}
+
+#
+# install arago sdk
+#
+install_arago_sdk ()
+{
+  echo "Installing arago sdk ..."
+  if [ ! -f devel/arago*.tar.gz ]; then
+    echo "ERROR: failed to find arago sdk tarball"
+    exit 1
+  fi
+  arago_sdk="`ls -1 devel/arago*.tar.gz`"
+  execute "tar zxf ${arago_sdk} -C ${install_dir}"
+  
+  echo "Running demangle_libtool.sh to fix *.la files ..."
+  execute "demangle_libtool.sh $install_dir/opt/arago-sdk/arm-none-linux-gnueabi/usr/lib/*.la"
+  
+  echo "Updating SDK_PATH env ..."        
+  sed -i "1{s|SDK_PATH\(..*\)|SDK_PATH=$install_dir/opt/arago-sdk/|g}" $install_dir/opt/arago-sdk/environment-setup
+
+  echo "Updating linuxlibs path in rules.make ..."
+  sed -i -e s=linuxlibs=opt/arago-sdk/arm-none-linux-gnueabi/usr= \
+    $install_dir/Rules.make
+
+  echo "Updating prefix in libtoolize ..."
+  sed -i -e "s|/opt/arago-sdk|$install_dir/opt/arago-sdk|g" \
+    $install_dir/opt/arago-sdk/bin/libtoolize 
 }
 
 # Process command line...
@@ -442,6 +467,13 @@ fakeroot install_rootfs.sh $install_dir $bsp_bin $multimedia_bin $graphics_bin $
 tar zxf `ls -1 ${install_dir}/filesystem/*.tar.gz` -C $install_dir/filesystem --wildcards *.control*
 generate_sw_manifest "Packages installed on the target:" "$install_dir/filesystem" >> ${install_dir}/docs/software_manifest.htm
 rm -rf ${install_dir}/filesystem/usr
+
+# install arago sdk
+install_arago_sdk
+
+generate_sw_manifest "Packages installed on arago-sdk host side:" "$install_dir/opt/arago-sdk" >> ${install_dir}/docs/software_manifest.htm
+
+generate_sw_manifest "Packages installed on arago-sdk target side:" "$install_dir/opt/arago-sdk/arm-none-linux-gnueabi" >> ${install_dir}/docs/software_manifest.htm
 
 # add manifest footer.
 sw_manifest_footer >> ${install_dir}/docs/software_manifest.htm
