@@ -141,6 +141,16 @@ do_populate_sdk() {
 	echo 'export SDK_PATH=${SDKPATH}' >> $script
 	echo 'export TOOLCHAIN_PATH=${TOOLCHAIN_PATH}' >> $script
 	echo 'export TARGET_SYS=${TARGET_SYS}' >> $script
+	echo 'export CC=${TARGET_PREFIX}gcc' >> $script	
+	echo 'export CPP="${TARGET_PREFIX}gcc -E"' >> $script	
+	echo 'export NM=${TARGET_PREFIX}nm' >> $script	
+	echo 'export RANLIB=${TARGET_PREFIX}ranlib' >> $script	
+	echo 'export OBJCOPY=${TARGET_PREFIX}objcopy' >> $script	
+	echo 'export STRIP=${TARGET_PREFIX}strip' >> $script	
+	echo 'export AS=${TARGET_PREFIX}as' >> $script	
+	echo 'export AR=${TARGET_PREFIX}ar' >> $script	
+	echo 'export OBJDUMP=${TARGET_PREFIX}objdump' >> $script	
+	echo 'export PKG_CONFIG_ALLOW_SYSTEM_LIBS=1' >> $script
 	echo 'export PATH=$SDK_PATH/bin:$TOOLCHAIN_PATH/bin:$PATH' >> $script
 	echo 'export CPATH=$SDK_PATH/$TARGET_SYS/usr/include:$CPATH' >> $script
 	echo 'export LIBTOOL_SYSROOT_PATH=$SDK_PATH/$TARGET_SYS' >> $script
@@ -149,6 +159,7 @@ do_populate_sdk() {
 	echo 'export CONFIG_SITE=$SDK_PATH/site-config' >> $script
 	echo 'alias opkg="LD_LIBRARY_PATH=$SDK_PATH/lib $SDK_PATH/bin/opkg-cl -f $SDK_PATH${sysconfdir}/opkg-sdk.conf -o $SDK_PATH"' >> $script
 	echo 'alias opkg-target="LD_LIBRARY_PATH=$SDK_PATH/lib $SDK_PATH/bin/opkg-cl -f $SDK_PATH/$TARGET_SYS${sysconfdir}/opkg.conf -o $SDK_PATH/$TARGET_SYS"' >> $script
+	echo "export PS1=\"\[\e[32;1m\][arago-sdk]\[\e[0m\]:\w> \"" >> $script
 
 	# Add version information
 	versionfile=${SDK_OUTPUT}/${SDKPATH}/version
