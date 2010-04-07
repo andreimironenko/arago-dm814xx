@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r9"
+PR = "r10"
 LICENSE="MIT"
 
 inherit task
@@ -9,12 +9,14 @@ MULTIMEDIA_dm365 = " \
     ti-dmai-apps \
     ti-codec-engine-examples \
     ti-dvsdk-demos \
+    ti-data \
     "
 
 MULTIMEDIA_dm355 = " \
     ti-dmai-apps \
     ti-codec-engine-examples \
     ti-dvsdk-demos \
+    ti-data \
     "
 
 MULTIMEDIA_dm6446 = " \
@@ -36,6 +38,7 @@ MULTIMEDIA_dm6467-evm = " \
     ti-dmai-apps \
     ti-codec-engine-examples \
     ti-dvsdk-demos \
+    ti-data \
     "
 
 MULTIMEDIA_omap3 = " \
