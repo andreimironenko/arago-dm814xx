@@ -1,6 +1,6 @@
 DESCRIPTION = "Extended task to get more basic and demo apps"
 LICENSE="MIT"
-PR = "r11"
+PR = "r12"
 
 inherit task
 
@@ -79,4 +79,6 @@ RDEPENDS_${PN}_append_omap3 = "\
 
 RRECOMMENDS_${PN} = "\
     kernel-modules \
+    ksymoops \
+    oprofile \
     "
