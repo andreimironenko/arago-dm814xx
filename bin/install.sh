@@ -352,7 +352,7 @@ host_install ()
 
   # TODO: figure out a ways to disable glibc, libasound, freetype depedencies
   # from sourcetree packages.  For now uninstall those extra packages
-  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6 libasound2 alsa-conf-base sln libfreetype6 libz1"
+  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6 libasound2 alsa-conf-base sln libfreetype6 libz1 libpng12 libjpeg62"
 
   update_rules_make
 
@@ -375,18 +375,18 @@ install_arago_sdk ()
   execute "tar zxf ${arago_sdk} -C ${install_dir}"
   
   echo "Running demangle_libtool.sh to fix *.la files ..."
-  execute "demangle_libtool.sh $install_dir/opt/arago-sdk/arm-none-linux-gnueabi/usr/lib/*.la"
+  execute "demangle_libtool.sh $install_dir/linux-devkit/arm-none-linux-gnueabi/usr/lib/*.la"
   
   echo "Updating SDK_PATH env ..."        
-  sed -i "1{s|SDK_PATH\(..*\)|SDK_PATH=$install_dir/opt/arago-sdk/|g}" $install_dir/opt/arago-sdk/environment-setup
+  sed -i "1{s|SDK_PATH\(..*\)|SDK_PATH=$install_dir/linux-devkit/|g}" $install_dir/linux-devkit/environment-setup
 
   echo "Updating linuxlibs path in rules.make ..."
-  sed -i -e s=linuxlibs=opt/arago-sdk/arm-none-linux-gnueabi/usr= \
+  sed -i -e s=linuxlibs=linux-devkit/arm-none-linux-gnueabi/usr= \
     $install_dir/Rules.make
 
   echo "Updating prefix in libtoolize ..."
-  sed -i -e "s|/opt/arago-sdk|$install_dir/opt/arago-sdk|g" \
-    $install_dir/opt/arago-sdk/bin/libtoolize 
+  sed -i -e "s|/linux-devkit|$install_dir/linux-devkit|g" \
+    $install_dir/linux-devkit/bin/libtoolize 
 }
 
 # Process command line...
@@ -471,9 +471,9 @@ rm -rf ${install_dir}/filesystem/usr
 # install arago sdk
 install_arago_sdk
 
-generate_sw_manifest "Packages installed on arago-sdk host side:" "$install_dir/opt/arago-sdk" >> ${install_dir}/docs/software_manifest.htm
+generate_sw_manifest "Packages installed on arago-sdk host side:" "$install_dir/linux-devkit" >> ${install_dir}/docs/software_manifest.htm
 
-generate_sw_manifest "Packages installed on arago-sdk target side:" "$install_dir/opt/arago-sdk/arm-none-linux-gnueabi" >> ${install_dir}/docs/software_manifest.htm
+generate_sw_manifest "Packages installed on arago-sdk target side:" "$install_dir/linux-devkit/arm-none-linux-gnueabi" >> ${install_dir}/docs/software_manifest.htm
 
 # add manifest footer.
 sw_manifest_footer >> ${install_dir}/docs/software_manifest.htm
