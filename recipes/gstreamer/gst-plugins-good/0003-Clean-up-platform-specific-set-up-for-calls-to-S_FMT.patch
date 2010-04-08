@@ -1,0 +1,61 @@
+From e241261cc4c4d952e8e1b9decbac4342915a4412 Mon Sep 17 00:00:00 2001
+From: Don Darling <don.osc2@gmail.com>
+Date: Tue, 23 Mar 2010 10:30:43 -0500
+Subject: [PATCH 3/9] Clean-up platform-specific set-up for calls to S_FMT.
+
+---
+ sys/v4l2/gstv4l2object.c |   34 +++++++++++++++-------------------
+ 1 files changed, 15 insertions(+), 19 deletions(-)
+
+diff --git a/sys/v4l2/gstv4l2object.c b/sys/v4l2/gstv4l2object.c
+index 1aad474..290b767 100644
+--- a/sys/v4l2/gstv4l2object.c
++++ b/sys/v4l2/gstv4l2object.c
+@@ -1847,29 +1847,25 @@ gst_v4l2_object_set_format (GstV4l2Object * v4l2object, guint32 pixelformat,
+   /* request whole frames; change when gstreamer supports interlaced video
+    * (INTERLACED mode returns frames where the fields have already been
+    *  combined, there are other modes for requesting fields individually) */
+-#if defined(DAVINCI_LSP_WORKAROUND) && !defined(Platform_dm6467)
+   format.fmt.pix.field = V4L2_FIELD_INTERLACED;
+-#endif
+ 
+-#if defined(DAVINCI_LSP_WORKAROUND)
+-  v4l2object->bytesused = format.fmt.pix.sizeimage;
+-#endif
++  #if defined(DAVINCI_LSP_WORKAROUND) 
++    v4l2object->bytesused = format.fmt.pix.sizeimage;
++  #endif
+ 
+-#if defined(DAVINCI_LSP_WORKAROUND) && defined(Platform_dm365)
+-  if(v4l2object->input_src) {
+-    if (!strcmp(v4l2object->input_src, "component"))
+-        format.fmt.pix.field = V4L2_FIELD_NONE;
+-    else
+-        format.fmt.pix.field = V4L2_FIELD_INTERLACED;
+-  }
+-  else
++  /* The base plugin code tries to initialize the capture device in interlaced
++   * mode first, then if that fails it tries deinterlaced mode.  On some LSPs
++   * that support component capture, it is important that pix.field is set
++   * correctly the first time we call S_FMT, based on the capture device we are
++   * using.  Override settings here where appropriate.
++   */
++  #if defined(DAVINCI_LSP_WORKAROUND) && defined(Platform_dm365)
++    if(!v4l2object->input_src || !strcmp(v4l2object->input_src, "component")) {
+         format.fmt.pix.field = V4L2_FIELD_NONE;
+-
+-  if (v4l2_ioctl (fd, VIDIOC_TRY_FMT, &format) < 0) {
+-    if (errno != EINVAL)
+-      goto set_fmt_failed;
+-  }
+-#endif
++    }
++  #elif defined(Platform_dm6467) || defined(Platform_dm6467t)
++    format.fmt.pix.field = V4L2_FIELD_NONE;
++  #endif
+ 
+   if (v4l2_ioctl (fd, VIDIOC_S_FMT, &format) < 0) {
+     if (errno != EINVAL)
+-- 
+1.6.3.3
+

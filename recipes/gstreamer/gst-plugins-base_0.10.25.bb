@@ -1,6 +1,6 @@
 require gst-plugins.inc
 
-SRC_URI += "file://fix-playbin2.patch;patch=1 \
+SRC_URI += "file://0001-Fix-for-playbin2.patch;patch=1 \
 "
 
 PR = "${INC_PR}.3"
