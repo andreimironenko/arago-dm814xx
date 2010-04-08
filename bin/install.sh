@@ -8,7 +8,6 @@
 #
 
 VERSION="1.1"
-DVSDK_VERSION="__<version>__"
 
 #
 # Display program usage
@@ -68,31 +67,6 @@ execute ()
 }
 
 #
-# Extract tar balls from BSP directory
-#
-extract_tars()
-{
-  echo "Extracting Linux kernel source tar ... "
-  # extract lsp source
-  if [ -f deploy/ipk/$machine/linux-*staging*.tar.gz ]; then
-    mkdir -p $install_dir/psp/linux-kernel-source
-    lsp="`ls -1 deploy/ipk/$machine/linux-*staging*.tar.gz`"
-    execute "tar zxf ${lsp}  -C $install_dir/psp/linux-kernel-source"
-  fi
-
-  # extract linuxlibs 
-  echo "Extracting linuxlibs tar ..."
-  if [ ! -f devel/linuxlibs*.tar.gz ]; then
-    echo "ERROR: failed to find linuxlibs tarball"
-    exit 1
-  fi
-  linuxlibs="`ls -1 devel/linuxlibs*.tar.gz`"
-  execute "tar zxf ${linuxlibs} -C ${install_dir}"
-  mv ${install_dir}/linuxlibs* ${install_dir}/linuxlibs
-
-}
-
-#
 # update sdk Rules.make
 #
 update_rules_make()
@@ -114,6 +88,8 @@ update_rules_make()
   sed -i -e s=\<__kernel__\>=psp/linux-kernel-source= \
     $install_dir/usr/share/ti/Rules.make
   sed -i -e s=\<__SDK__INSTALL_DIR__\>=${install_dir}= \
+    $install_dir/usr/share/ti/Rules.make
+  sed -i -e s=\<__CROSS_COMPILER_PATH__\>=${TOOLCHAIN_PATH}= \
     $install_dir/usr/share/ti/Rules.make
 }
 
@@ -379,6 +355,7 @@ install_arago_sdk ()
   
   echo "Updating SDK_PATH env ..."        
   sed -i "1{s|SDK_PATH\(..*\)|SDK_PATH=$install_dir/linux-devkit/|g}" $install_dir/linux-devkit/environment-setup
+  sed -i "2{s|TOOLCHAIN_PATH\(..*\)|TOOLCHAIN_PATH=${TOOLCHAIN_PATH}|g}" $install_dir/linux-devkit/environment-setup
 
   echo "Updating linuxlibs path in rules.make ..."
   sed -i -e s=linuxlibs=linux-devkit/arm-none-linux-gnueabi/usr= \
