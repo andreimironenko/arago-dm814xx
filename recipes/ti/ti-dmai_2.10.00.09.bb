@@ -1,14 +1,14 @@
 require ti-dmai.inc
 
 PV = "2_10_00_09"
-PR = "r0"
+PR = "r1"
  
 COMPATIBLE_MACHINE = "(dm365-evm|dm355-evm|dm6467-evm)"
 
 SRC_URI_append = "file://doxygen_templates.tar.gz \
                   file://arago-tdox"
 
-SRCREV         = "441"
+SRCREV         = "443"
 DMAIBRANCH     = "branches/GITPSP_INT_101009"
 
 do_install_prepend () {
