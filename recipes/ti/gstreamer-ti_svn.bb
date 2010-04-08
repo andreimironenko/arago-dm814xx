@@ -32,6 +32,9 @@ GST_TI_RC_SCRIPT_dm365    = "gstreamer-ti-dm365-rc.sh"
 GST_TI_RC_SCRIPT_omapl137 = "gstreamer-ti-omapl137-rc.sh"
 GST_TI_RC_SCRIPT_omapl138 = "gstreamer-ti-omapl138-rc.sh"
 
+SRCREV_dm365 = "612"
+
+# TODO: need to clean DSPLINK packaging on other recipe before moving to use latest gst-ti
 SRCREV = "573"
 
 SRC_URI = "svn://gforge.ti.com/svn/gstreamer_ti/trunk;module=gstreamer_ti;proto=https;user=anonymous;pswd='' \
