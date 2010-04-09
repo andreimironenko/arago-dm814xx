@@ -43,12 +43,12 @@ version()
 #
 verify_cdrom ()
 {
-  echo "Verifying CDROM ..."
+  echo "Checking $machine config"
   if [ ! -f config/$machine/opkg.conf ]; then
     echo "ERROR: opkg.conf does not exist for $machine"
     exit 1;
   fi
-  echo "Configuring opkg.conf ..."
+  echo "Updating opkg.conf "
   sed  "s|file:\(..*\)ipk|file:$PWD/deploy/ipk|g" config/$machine/opkg.conf > ${install_dir}/.opkg.conf
   opkg_conf="${install_dir}/.opkg.conf"
 }
@@ -58,7 +58,7 @@ verify_cdrom ()
 #
 execute ()
 {
-  echo "$*"
+  #echo "$*"
   $*
   if [ $? -ne 0 ]; then
     echo "ERROR: failed to execute $*"
@@ -71,7 +71,7 @@ execute ()
 #
 update_rules_make()
 {
-  echo "Updating Rules.make ..."
+  echo "Updating Rules.make"
   for i in ${install_dir}/usr/lib/opkg/info/*sourcetree*.control; do
     # we are not greping package name because the name contains ti-*-sourcetree
     name="`cat $i | grep OE | awk {'print $2'} | cut -f2-5 -d-`"
@@ -98,7 +98,7 @@ update_rules_make()
 #
 move_to_install_dir()
 {
-  echo "Moving sourcetree ..."
+  echo "Moving sourcetree"
   for i in ${install_dir}/usr/lib/opkg/info/*.control; do
     # we are not greping package name because the name contains ti-*-sourcetree
     name="`cat $i | grep OE | awk {'print $2'} | cut -f2-5 -d-`"
@@ -264,7 +264,6 @@ host_check ()
 prepare_install ()
 {
   echo "Preparing installation ..."
-
   cwd=$PWD;
   if [ ! -f install-tools.tgz ]; then
     echo "ERROR: failed to find install-tools.tgz"
@@ -320,9 +319,8 @@ prepare_install ()
 #
 host_install ()
 {
-  echo "Installing packages on host ..."
   mkdir -p ${install_dir}/usr/lib/opkg
-
+  echo "Install $bsp_src $dsp_src $multimedia_src $graphics_src ti-tisdk-makefile"
   execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_conf}  update"
   execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_conf} install  $bsp_src $dsp_src $multimedia_src $graphics_src ti-tisdk-makefile"
 
@@ -342,26 +340,26 @@ host_install ()
 #
 install_arago_sdk ()
 {
-  echo "Installing arago sdk ..."
   if [ ! -f devel/arago*.tar.gz ]; then
     echo "ERROR: failed to find arago sdk tarball"
     exit 1
   fi
   arago_sdk="`ls -1 devel/arago*.tar.gz`"
+  echo "Installing linux-devkit ($arago_sdk)"
   execute "tar zxf ${arago_sdk} -C ${install_dir}"
   
-  echo "Running demangle_libtool.sh to fix *.la files ..."
+  echo "Running demangle_libtool.sh to fix *.la files"
   execute "demangle_libtool.sh $install_dir/linux-devkit/arm-none-linux-gnueabi/usr/lib/*.la"
   
-  echo "Updating SDK_PATH env ..."        
+  echo "Updating SDK_PATH env"        
   sed -i "1{s|SDK_PATH\(..*\)|SDK_PATH=$install_dir/linux-devkit/|g}" $install_dir/linux-devkit/environment-setup
   sed -i "2{s|TOOLCHAIN_PATH\(..*\)|TOOLCHAIN_PATH=${TOOLCHAIN_PATH}|g}" $install_dir/linux-devkit/environment-setup
 
-  echo "Updating linuxlibs path in rules.make ..."
+  echo "Updating linuxlibs path in rules.make "
   sed -i -e s=linuxlibs=linux-devkit/arm-none-linux-gnueabi/usr= \
     $install_dir/Rules.make
 
-  echo "Updating prefix in libtoolize ..."
+  echo "Updating prefix in libtoolize "
   sed -i -e "s|/linux-devkit|$install_dir/linux-devkit|g" \
     $install_dir/linux-devkit/bin/libtoolize 
 }
@@ -436,9 +434,10 @@ sw_manifest_header > ${install_dir}/docs/software_manifest.htm
 host_install
 
 # install binary ipk on target.
-echo "Installing packages on target filesystem"
+echo "Installing target filesystem (`ls -1 deploy/images/$machine/*.tar.gz `)"
 mkdir -p ${install_dir}/filesystem
 cp deploy/images/$machine/*.tar.gz ${install_dir}/filesystem
+echo "Install  $install_dir $bsp_bin $multimedia_bin $graphics_bin $dsp_bin"
 fakeroot install_rootfs.sh $install_dir $bsp_bin $multimedia_bin $graphics_bin $dsp_bin 
 
 tar zxf `ls -1 ${install_dir}/filesystem/*.tar.gz` -C $install_dir/filesystem --wildcards *.control*
