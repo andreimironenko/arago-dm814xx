@@ -2,12 +2,14 @@ DESCRIPTION = "DVSDK Demo applications for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-INC_PR = "r1"
+INC_PR = "r2"
  
 DEPENDS += "ti-dmai"
 DEPENDS += "alsa-lib libpng freetype jpeg"
 
 SRC_URI = "ftp://gtftp01.gt.design.ti.com/arago/dvsdk_demos_${PV}.tar.gz;name=dvsdkdemostarball"
+
+SRC_URI_append_dm365 = " file://dm365-demos-with-new-data-paths.patch;patch=1;pnum=0"
 
 S = "${WORKDIR}/dvsdk_demos_${PV}"
 
