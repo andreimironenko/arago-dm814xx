@@ -174,20 +174,20 @@ cmem_install:
 # target is defined.
 #==============================================================================
 lpm:
-	$(MAKE) -C $(LPM_INSTALL_DIR)/packages/ti/bios/power/modules/dm6446/lpm \
+	$(MAKE) -C $(LPM_INSTALL_DIR)/packages/ti/bios/power/modules/omap3530/lpm \
 		LINUXKERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
 		MVTOOL_PREFIX=$(CSTOOL_PREFIX) \
 		DSPLINK_REPO=$(LINK_INSTALL_DIR)/packages
 
 lpm_clean:
-	$(MAKE)  -C $(LPM_INSTALL_DIR)/packages/ti/bios/power/modules/dm6446/lpm \
+	$(MAKE)  -C $(LPM_INSTALL_DIR)/packages/ti/bios/power/modules/omap3530/lpm \
 	LINUXKERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
 	MVTOOL_PREFIX=$(CSTOOL_PREFIX) \
 	DSPLINK_REPO=$(LINK_INSTALL_DIR)/packages clean
 
 lpm_install:
 	install -d $(EXEC_DIR)/lpm
-	install $(LPM_INSTALL_DIR)/packages/ti/bios/power/modules/dm6446/lpm/lpm_dm6446.ko $(EXEC_DIR)/lpm
+	install $(LPM_INSTALL_DIR)/packages/ti/bios/power/modules/omap3530/lpm/lpm_omap3530.ko $(EXEC_DIR)/lpm
 
 
 #==============================================================================
