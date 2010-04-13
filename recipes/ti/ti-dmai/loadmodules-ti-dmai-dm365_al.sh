@@ -1,4 +1,5 @@
 #!/bin/sh
+depmod -a
 rmmod cmemk 2>/dev/null
 rmmod irqk 2>/dev/null
 rmmod edmak 2>/dev/null
