@@ -34,6 +34,9 @@
 # 20 4K buffers, 10 128K buffers  and two 1MB buffers
 CMEM_MODPARAMS="phys_start=0x87800000 phys_end=0x88000000 pools=20x4096,10x131072,2x1048576"
 
+depmod -a
+
+rmmod cmemk
 if [ -e cmemk.ko ]
     then
         insmod cmemk.ko $CMEM_MODPARAMS

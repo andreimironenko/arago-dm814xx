@@ -12,7 +12,7 @@ require ti-staging.inc
 
 PROVIDES += "ti-codec-engine-examples"
 
-PR = "r5"
+PR = "r6"
 
 S = "${WORKDIR}/codec_engine_${PV}"
 
