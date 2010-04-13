@@ -2,12 +2,12 @@ DESCRIPTION = "DVTB for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-PR = "r1"
+PR = "r2"
  
 #DEPENDS += "ti-codecs ti-codec-engine ti-linuxutils ti-xdais"
 DEPENDS += "alsa-lib jpeg"
 
-SRC_URI = "ftp://gtftp01.gt.design.ti.com/arago/dvtb_${PV}.tar.gz;name=dvtbtarball"
+SRC_URI = "http://gt_tspa_dev.gt.design.ti.com/dev/DVSDK/310_DVSDK/3_10_00/dvtb_${PV}.tar.gz;name=dvtbtarball"
 
 S = "${WORKDIR}/dvtb_${PV}"
 
@@ -19,38 +19,36 @@ DVTBPLATFORM_dm365    = "dm365"
 DVTBPLATFORM_dm6467   = "dm6467"
 
 do_compile () {
-#Currently DVTB does not compile
 	cd ${S}
-#	make -e clean
-#	make -e PLATFORM=${DVTBPLATFORM} \
-#		VERBOSE="true" \
-#		DMAI_INSTALL_DIR="${DMAI_INSTALL_DIR}" \
-#		XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
-#		CE_INSTALL_DIR="${CE_INSTALL_DIR}" \
-#		FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
-#		CODEC_INSTALL_DIR="${CODEC_INSTALL_DIR}" \
-#		CODEGEN_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
-#		BIOS_INSTALL_DIR="${BIOS_INSTALL_DIR}"\
-#		CROSS_COMPILE="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
-#		XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
-#		LINK_INSTALL_DIR="${LINK_INSTALL_DIR}" \
-#		CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
-#		LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
-#		LINUXKERNEL_INSTALL_DIR="${STAGING_KERNEL_DIR}" \
-#		LINUXLIBS_INSTALL_DIR="${STAGING_DIR_TARGET}/usr" \
-#		MVTOOL_DIR="${TOOLCHAIN_PATH}" \
-#		${DVTBPLATFORM}
+	make clean
+	make PLATFORM=${DVTBPLATFORM} \
+		VERBOSE="true" \
+		DMAI_INSTALL_DIR="${DMAI_INSTALL_DIR}" \
+		XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
+		CE_INSTALL_DIR="${CE_INSTALL_DIR}" \
+		FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
+		CODEC_INSTALL_DIR="${CODEC_INSTALL_DIR}" \
+		CODEGEN_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
+		BIOS_INSTALL_DIR="${BIOS_INSTALL_DIR}"\
+		CROSS_COMPILE="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+		XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
+		LINK_INSTALL_DIR="${LINK_INSTALL_DIR}" \
+		CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
+		LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
+		LINUXKERNEL_INSTALL_DIR="${STAGING_KERNEL_DIR}" \
+		LINUXLIBS_INSTALL_DIR="${STAGING_DIR_TARGET}/usr" \
+		MVTOOL_DIR="${TOOLCHAIN_PATH}" \
+		MVTOOL_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+		${DVTBPLATFORM}
 }
 
 do_install () {
         install -d ${D}${DVTB_INSTALL_DIR_RECIPE}
         cp -pPrf ${S}/* ${D}${DVTB_INSTALL_DIR_RECIPE}
 
-# DVTB does not currently support make install
-#	cd ${S}
-#	make -e EXEC_DIR=${D}/${installdir}/dvtb \
-#		PLATFORM=${DVTBPLATFORM} \
-#		install
+        # DVTB does not currently support make install, so copying files manually.
+        install -d ${D}/${installdir}/dvtb
+        cp ${S}/packages/ti/sdo/dvtb/dm365/bin/* ${D}/${installdir}/dvtb
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
