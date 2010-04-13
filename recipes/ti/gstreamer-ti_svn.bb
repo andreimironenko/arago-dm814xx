@@ -10,7 +10,7 @@ LICENSE = "LGPL"
 # TODO :: Remove ENCODE/DECODE combo exports - these are not used anymore (check?)
 
 inherit autotools
-inherit update-rc.d
+#inherit update-rc.d
 
 require ti-paths.inc
 require ti-staging.inc
@@ -19,7 +19,7 @@ PROVIDES += "gstreamer-ti-demo-script"
 
 PV = "svnr${SRCREV}"
 # Rebuild on kernel change since it links statically to ti-dmai, ti-codec-engine, etc
-PR = "r52+${MACHINE_KERNEL_PR}"
+PR = "r53+${MACHINE_KERNEL_PR}"
 
 
 S = "${WORKDIR}/gstreamer_ti/ti_build/ticodecplugin"
@@ -40,7 +40,7 @@ SRCREV = "573"
 SRC_URI = "svn://gforge.ti.com/svn/gstreamer_ti/trunk;module=gstreamer_ti;proto=https;user=anonymous;pswd='' \
            file://gstreamer-ti-tracker-462.patch;patch=1 \
            file://gstreamer-ti-remove-mp3-decode-support-from-auddec1.patch;patch=1 \
-           file://${GST_TI_RC_SCRIPT} \
+#           file://${GST_TI_RC_SCRIPT} \
 "
 
 # TODO: to compile this patch you need to add x11 dependency.
@@ -135,11 +135,14 @@ do_install_prepend () {
         if [ "${PLATFORM}" = "omap3530" ]; then
             echo "modprobe sdmak" >> ${D}/${installdir}/gst/${PLATFORM}/loadmodules.sh
         fi
+        
+        # add depmod -a after #!/bin/sh  
+        sed -i '/#!\/bin\/sh/a\depmod -a' ${D}/${installdir}/gst/${PLATFORM}/loadmodules.sh
     fi
 
     chmod 0755 ${D}/${installdir}/gst -R
     install -d ${D}${sysconfdir}/init.d/
-    install -m 0755  ${WORKDIR}/${GST_TI_RC_SCRIPT} ${D}${sysconfdir}/init.d/gstti-init
+#    install -m 0755  ${WORKDIR}/${GST_TI_RC_SCRIPT} ${D}${sysconfdir}/init.d/gstti-init
 }
 
 RRECOMMENDS_${PN}_append_dm6446    += "ti-codecs-dm6446-server   ti-cmem-module ti-dsplink-module"
@@ -163,6 +166,6 @@ pkg_postinst_gstreamer-ti-demo-script () {
         ln -sf ${installdir}/ti-codecs-server/* ${installdir}/gst/${PLATFORM}/
 }
 
-INITSCRIPT_NAME = "gstti-init"
-INITSCRIPT_PARAMS = "start 30 5 2 . stop 40 0 1 6 ."
+#INITSCRIPT_NAME = "gstti-init"
+#INITSCRIPT_PARAMS = "start 30 5 2 . stop 40 0 1 6 ."
 
