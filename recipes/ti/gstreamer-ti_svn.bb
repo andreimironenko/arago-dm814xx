@@ -19,7 +19,7 @@ PROVIDES += "gstreamer-ti-demo-script"
 
 PV = "svnr${SRCREV}"
 # Rebuild on kernel change since it links statically to ti-dmai, ti-codec-engine, etc
-PR = "r53+${MACHINE_KERNEL_PR}"
+PR = "r54+${MACHINE_KERNEL_PR}"
 
 
 S = "${WORKDIR}/gstreamer_ti/ti_build/ticodecplugin"
@@ -163,7 +163,9 @@ RDEPENDS_gstreamer-ti-demo-script = "${PN}"
 FILES_gstreamer-ti-demo-script = "${installdir}/gst/*"
 
 pkg_postinst_gstreamer-ti-demo-script () {
+	if [ -d ${installdir}/ti-codecs-server/ ]; then
         ln -sf ${installdir}/ti-codecs-server/* ${installdir}/gst/${PLATFORM}/
+	fi
 }
 
 #INITSCRIPT_NAME = "gstti-init"
