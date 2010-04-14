@@ -1,5 +1,7 @@
 #!/usr/bin/perl -w
 
+use POSIX;
+
 ################################################################################
 # Arago build script
 ################################################################################
@@ -77,7 +79,8 @@ my $arago_image_dir = "$arago_dir/arago/recipes/images";
 my $arago_ipk_dir = "$arago_dir/arago-tmp/deploy/ipk";
 my $arago_machine_dir = "$arago_dir/arago/conf/machine";
 my $arago_tmp = "$arago_dir/arago-tmp";
-my $arago_staging = "$arago_dir/arago-tmp/staging/x86_64-linux";
+my ($sysname, $nodename, $release, $version, $mtype) = POSIX::uname();
+my $arago_staging = "$arago_dir/arago-tmp/staging/$mtype-linux";
 
 if (! -d "$arago_machine_dir") {
     print "ERROR: $arago_dir/arago/conf/machine not found! Either your ";
