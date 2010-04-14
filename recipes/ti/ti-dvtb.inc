@@ -5,7 +5,7 @@ LICENSE = "TI"
 PR = "r2"
  
 #DEPENDS += "ti-codecs ti-codec-engine ti-linuxutils ti-xdais"
-DEPENDS += "alsa-lib jpeg"
+DEPENDS += "alsa-lib jpeg ncurses"
 
 SRC_URI = "http://gt_tspa_dev.gt.design.ti.com/dev/DVSDK/310_DVSDK/3_10_00/dvtb_${PV}.tar.gz;name=dvtbtarball"
 
