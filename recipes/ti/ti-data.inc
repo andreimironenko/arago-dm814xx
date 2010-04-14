@@ -2,7 +2,7 @@ DESCRIPTION = "Media files for TI DVSDK"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-PR = "r1"
+PR = "r2"
 
 S = "${WORKDIR}/${DEMOSPLATFORM}"
 
@@ -22,7 +22,7 @@ do_compile () {
 
 do_install () {
        install -d ${D}/${installdir}
-       cp -pPrf ${S}/* ${D}/${installdir}
+       cp -pPrf ${S}/data ${D}/${installdir}
 }
 
 FILES_${PN} = "${installdir}/*"
