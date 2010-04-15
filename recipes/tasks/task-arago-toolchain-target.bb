@@ -1,6 +1,6 @@
 DESCRIPTION = "Target packages for a standalone Arago SDK or external toolchain"
 ALLOW_EMPTY = "1"
-PR = "r6"
+PR = "r7"
 
 PACKAGES = "${PN}"
 
@@ -31,9 +31,4 @@ RDEPENDS_${PN} = "\
     ncurses-dev \
     opkg-nogpg-nocurl-dev \
 #    sysvinit-dev \
-    gstreamer-dev \
-    gst-plugins-base-dev \ 
-    gst-plugins-good-dev \
-    gst-plugins-ugly-dev \
-    gst-plugins-bad-dev \
     "

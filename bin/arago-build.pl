@@ -14,6 +14,7 @@ my $bsp_source = "task-arago-tisdk-bsp-host";
 my $bsp_binary = "task-arago-tisdk-bsp-target";
 my $multimedia_source = "task-arago-tisdk-multimedia-host";
 my $multimedia_binary = "task-arago-tisdk-multimedia-target";
+my $multimedia_sdk_header ="task-arago-tisdk-multimedia-toolchain-target";
 my $dsp_source = "task-arago-tisdk-dsp-host";
 my $dsp_binary = "task-arago-tisdk-dsp-target";
 
@@ -519,6 +520,7 @@ sub get_input
     if ($multimedia =~ m/yes/i) {
         $packages[$index++] = $multimedia_source;
         $packages[$index++] = $multimedia_binary;
+        $packages[$index++] = $multimedia_sdk_header;
     }
 
     if ($dsp =~ m/yes/i) {

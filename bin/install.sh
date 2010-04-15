@@ -353,7 +353,15 @@ install_arago_sdk ()
   arago_sdk="`ls -1 devel/arago*.tar.gz`"
   echo "Installing linux-devkit ($arago_sdk)"
   execute "tar zxf ${arago_sdk} -C ${install_dir}"
-  
+
+  execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  update"
+
+  ! test -z $graphics && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  install $graphics_sdk_target "
+  ! test -z $multimedia && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  install $multimedia_sdk_target "
+
+  # remove these packages (see arago/meta/meta-toolchain-target.bb)
+  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir}/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf} remove  -force-depends     libc6 libc6-dev glibc-extra-nss libgcc1 linux-libc-headers-dev libthread-db1 sln"
+
   echo "Running demangle_libtool.sh to fix *.la files"
   execute "demangle_libtool.sh $install_dir/linux-devkit/arm-none-linux-gnueabi/usr/lib/*.la"
   
@@ -382,6 +390,7 @@ while [ $# -gt 0 ]; do
     --graphics)
       graphics_src="task-arago-tisdk-graphics-host";
       graphics_bin="task-arago-tisdk-graphics-target";
+      graphics_sdk_target="task-arago-tisdk-graphics-toolchain-target";
       graphics="yes";
       shift;
       ;;
@@ -400,6 +409,7 @@ while [ $# -gt 0 ]; do
     --multimedia)
       multimedia_src="task-arago-tisdk-multimedia-host"
       multimedia_bin="task-arago-tisdk-multimedia-target"
+      multimedia_sdk_target="task-arago-tisdk-multimedia-toolchain-target";
       multimedia="yes";
       shift;
       ;;
