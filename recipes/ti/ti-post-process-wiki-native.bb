@@ -1,6 +1,6 @@
 DESCRIPTION = "Script for generating a pdf from a TI wiki topic"
 LICENSE = "MIT"
-PR = "r0"
+PR = "r1"
 
 PV = "1.0"
 

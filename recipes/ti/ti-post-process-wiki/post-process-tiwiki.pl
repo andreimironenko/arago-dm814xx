@@ -57,6 +57,18 @@ sub remove_footer
 }
 
 ################################################################################
+# remove_cdata
+################################################################################
+sub remove_cdata
+{
+    my $lines = $_[0];
+
+    for (my $cnt = 0; $cnt < scalar @$lines; $cnt++) {
+        @$lines[$cnt] =~ s/\/\*<\!\[CDATA\[\*\///i;
+    }
+}
+
+################################################################################
 # remove_link
 ################################################################################
 sub remove_link
@@ -108,9 +120,8 @@ sub insert_header
     my $lines = $_[0];
 
     for (my $cnt = 0; $cnt < scalar @$lines; $cnt++) {
-        if (@$lines[$cnt] =~ m/(.*)<h3(.*)From Texas Instruments Embedded Processors Wiki(.*)/i) {
-            @$lines[$cnt] = "$1<h3$2This is a hard copy generated from the <a href=\"http://wiki.davincidsp.com\">Texas Instruments Embedded Processors Wiki$3\n";
-        }
+        @$lines[$cnt] =~ s/(.*)<h3(.*)From Texas Instruments Embedded Processors Wiki(.*)/$1<h3$2This is a snapshot generated from the <a href=\"http:\/\/wiki.davincidsp.com\">Texas Instruments Embedded Processors Wiki$3/;
+        @$lines[$cnt] =~ s/<h3.*Ap-fpdsp-swapps<\/h3>//;
     }
 }
 
@@ -122,7 +133,7 @@ sub change_title
     my $lines = $_[0];
 
     for (my $cnt = 0; $cnt < scalar @$lines; $cnt++) {
-        if (@$lines[$cnt] =~ m/(.*)<title>(.*) - Texas Instruments Embedded Processors Wiki<\/title>(.*)/i) {
+        if (@$lines[$cnt] =~ m/(.*)<title>(.*) -.*<\/title>(.*)/i) {
             @$lines[$cnt] = "$1<title>$2<\/title>$3\n";
         }
     }
@@ -153,6 +164,8 @@ sub process_page
     remove_script(\@lines, "\"text/javascript\"");
 
     remove_footer(\@lines);
+
+    remove_cdata(\@lines);
 
     insert_header(\@lines);
 

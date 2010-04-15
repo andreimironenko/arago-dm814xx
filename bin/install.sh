@@ -135,6 +135,12 @@ move_to_install_dir()
     rm -rf ${install_dir}/usr/share/ti/ti-psp-tree
   fi
 
+  if [ -d ${install_dir}/usr/share/ti/ti-docs-tree ]; then
+    echo " from ti-docs-tree => docs"
+    mv ${install_dir}/usr/share/ti/ti-docs-tree/* ${install_dir}/docs/
+    rmdir ${install_dir}/usr/share/ti/ti-docs-tree
+  fi
+
   mv ${install_dir}/usr/share/ti/* ${install_dir}/
   rm -rf $install_dir/usr
   rm -rf $install_dir/lib
