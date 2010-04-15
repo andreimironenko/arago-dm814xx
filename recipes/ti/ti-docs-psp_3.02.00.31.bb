@@ -1,6 +1,6 @@
 require ti-docs-psp.inc
 
-PR = "r0"
+PR = "r1"
 PV = "03.02.00.31"
 
 COMPATIBLE_MACHINE = "dm6467-evm"

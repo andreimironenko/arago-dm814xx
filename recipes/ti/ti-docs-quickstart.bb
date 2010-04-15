@@ -24,7 +24,7 @@ do_install () {
     install -d ${D}/${installdir}/ti-docs-tree
 
     htmlfiles=`ls ${WORKDIR}/${P}/${TOPICFILE}/index.php/*.html`
-    post-process-tiwiki.pl $htmlfiles
+    post-process-tiwiki.pl ${TOPICURL} $htmlfiles
     htmldoc --webpage -f ${D}/${installdir}/ti-docs-tree/${TOPICFILE}.pdf $htmlfiles
 }
 

@@ -33,17 +33,17 @@ do_install () {
 	install -d ${D}/${installdir}/ti-psp-tree
     if [ -n "${RELNOTESTOPIC}" ]; then
         htmlfiles=`ls ${WORKDIR}/${P}/${RELNOTESFILE}/*.html`
-        post-process-tiwiki.pl $htmlfiles
+        post-process-tiwiki.pl ${RELNOTESURL} $htmlfiles
         htmldoc --webpage --landscape -f ${D}/${installdir}/ti-psp-tree/${RELNOTESFILE}.pdf $htmlfiles
     fi
     if [ -n "${USERGUIDETOPIC}" ]; then
 	htmlfiles=`ls ${WORKDIR}/${P}/${USERGUIDEFILE}/*.html`
-        post-process-tiwiki.pl $htmlfiles
+        post-process-tiwiki.pl ${USERGUIDEURL} $htmlfiles
 	htmldoc --webpage --landscape -f ${D}/${installdir}/ti-psp-tree/${USERGUIDEFILE}.pdf $htmlfiles
     fi
     if [ -n "${DATASHEETTOPIC}" ]; then
 	htmlfiles=`ls ${WORKDIR}/${P}/${DATASHEETFILE}/*.html`
-	post-process-tiwiki.pl $htmlfiles
+	post-process-tiwiki.pl ${DATASHEETURL} $htmlfiles
 	htmldoc --webpage --landscape -f ${D}/${installdir}/ti-psp-tree/${DATASHEETFILE}.pdf $htmlfiles
     fi
 }

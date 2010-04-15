@@ -2,6 +2,9 @@
 
 use HTML::Parser ();
 
+my $url = $ARGV[0];
+shift (@ARGV);
+
 foreach my $file (@ARGV) {
     process_page($file);
 }
@@ -120,7 +123,7 @@ sub insert_header
     my $lines = $_[0];
 
     for (my $cnt = 0; $cnt < scalar @$lines; $cnt++) {
-        @$lines[$cnt] =~ s/(.*)<h3(.*)From Texas Instruments Embedded Processors Wiki(.*)/$1<h3$2This is a snapshot generated from the <a href=\"http:\/\/wiki.davincidsp.com\">Texas Instruments Embedded Processors Wiki$3/;
+        @$lines[$cnt] =~ s/(.*)<h3(.*)From Texas Instruments Embedded Processors Wiki(.*)/$1<h3$2This is a snapshot generated from the <a href=\"$url\">Texas Instruments Embedded Processors Wiki$3/;
         @$lines[$cnt] =~ s/<h3.*Ap-fpdsp-swapps<\/h3>//;
     }
 }
