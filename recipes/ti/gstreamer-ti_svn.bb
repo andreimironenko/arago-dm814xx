@@ -19,7 +19,7 @@ PROVIDES += "gstreamer-ti-demo-script"
 
 PV = "svnr${SRCREV}"
 # Rebuild on kernel change since it links statically to ti-dmai, ti-codec-engine, etc
-PR = "r54+${MACHINE_KERNEL_PR}"
+PR = "r55+${MACHINE_KERNEL_PR}"
 
 
 S = "${WORKDIR}/gstreamer_ti/ti_build/ticodecplugin"
@@ -139,6 +139,8 @@ do_install_prepend () {
         # add depmod -a after #!/bin/sh  
         sed -i '/#!\/bin\/sh/a\depmod -a' ${D}/${installdir}/gst/${PLATFORM}/loadmodules.sh
     fi
+
+    find ${D}/${installdir}/gst -name .svn -type d | xargs rm -rf
 
     chmod 0755 ${D}/${installdir}/gst -R
     install -d ${D}${sysconfdir}/init.d/
