@@ -9,9 +9,9 @@ RELNOTESFILE = "${@bb.data.getVar('RELNOTESTOPIC', d, 1).replace('/','_')}"
 USERGUIDEFILE = "${@bb.data.getVar('USERGUIDETOPIC', d, 1).replace('/','_')}"
 DATASHEETFILE = "${@bb.data.getVar('DATASHEETTOPIC', d, 1).replace('/','_')}"
 
-RELNOTESURL = "http://wiki.davincidsp.com/index.php?title=${RELNOTESTOPIC}"
-USERGUIDEURL = "http://wiki.davincidsp.com/index.php?title=${USERGUIDETOPIC}"
-DATASHEETURL = "http://wiki.davincidsp.com/index.php?title=${DATASHEETTOPIC}"
+RELNOTESURL = "http://processors.wiki.ti.com/index.php?title=${RELNOTESTOPIC}"
+USERGUIDEURL = "http://processors.wiki.ti.com/index.php?title=${USERGUIDETOPIC}"
+DATASHEETURL = "http://processors.wiki.ti.com/index.php?title=${DATASHEETTOPIC}"
 
 
 do_fetch () {
