@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support package sources (or development header) packages on host"
-PR = "r12"
+PR = "r13"
 LICENSE="MIT"
 ALLOW_EMPTY = "1"
 
@@ -7,6 +7,7 @@ inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 BSP_COMPONENTS_dm365 = "\
+    ti-docs-sdg \
     ti-docs-quickstart \
     ti-docs-psp \
     ti-board-utilities \
