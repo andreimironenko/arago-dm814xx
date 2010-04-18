@@ -5,9 +5,9 @@ require ti-paths.inc
 
 DEPENDS = "ti-post-process-wiki-native"
 
-PR = "r0"
+PR = "r1"
 
-COMPATIBLE_MACHINE = "(dm365-evm|dm355-evm)"
+COMPATIBLE_MACHINE = "dm365-evm"
 
 TOPIC = "TMS320DM365_EVM_Quick_Start_Guide"
 TOPICFILE = "${@bb.data.getVar('TOPIC', d, 1).replace('/','_')}"
