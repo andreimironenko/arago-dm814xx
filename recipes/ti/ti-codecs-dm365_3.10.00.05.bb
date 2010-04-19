@@ -4,7 +4,7 @@ LICENSE = "TI"
 
 PV = "03_10_00_05"
 
-SRC_URI = "ftp://gtftp01.gt.design.ti.com/arago/dm365_codecs_${PV}.tar.gz;name=dm365codecs \
+SRC_URI = "http://gt_tspa_dev.gt.design.ti.com/dev/DVSDK/310_DVSDK/3_10_00/dm365_codecs_${PV}.tar.gz;name=dm365codecs \
            file://mapdmaq"
 
 SRC_URI[dm365codecs.md5sum] = "f5c34de13f1942a73ef258f2cc95313b"
