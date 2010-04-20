@@ -1,12 +1,13 @@
 require ti-dmai.inc
 
 PV = "2_10_00_10"
-PR = "r1"
+PR = "r2"
  
 COMPATIBLE_MACHINE = "(dm365-evm|dm355-evm|dm6467-evm)"
 
-SRC_URI_append = "file://doxygen_templates.tar.gz \
-                  file://arago-tdox"
+SRC_URI_append = "file://0001-Correct-DMAI-s-Resize-module-for-DM365.patch;patch=3 \
+	file://doxygen_templates.tar.gz \
+        file://arago-tdox"
 
 SRCREV         = "452"
 DMAIBRANCH     = "branches/GITPSP_INT_101009"

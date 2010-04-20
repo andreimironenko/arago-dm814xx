@@ -1,23 +1,23 @@
-From e3d1c8decb0b09b5c34cf06a876034b04a299162 Mon Sep 17 00:00:00 2001
+From 671424f95eef0dcfe3694a716c462616d54b5489 Mon Sep 17 00:00:00 2001
 From: Don Darling <don.osc2@gmail.com>
 Date: Tue, 16 Mar 2010 15:16:00 -0500
-Subject: [PATCH 7/9] Update gst_v4l2_get_norm to handle DM6467T properly.
+Subject: [PATCH 10/12] Update gst_v4l2_get_norm to handle DM6467T and DM365 properly.
 
-DM6467T uses the QUERYSTD ioctl to detect the standard in use by the
+DM6467T and DM365 use the QUERYSTD ioctl to detect the standard in use by the
 connected component.
 ---
  sys/v4l2/v4l2_calls.c |   35 +++++++++++++++++++++++++++++++++++
  1 files changed, 35 insertions(+), 0 deletions(-)
 
 diff --git a/sys/v4l2/v4l2_calls.c b/sys/v4l2/v4l2_calls.c
-index 1d0447a..1cad5e6 100644
+index be567eb..5d486fa 100644
 --- a/sys/v4l2/v4l2_calls.c
 +++ b/sys/v4l2/v4l2_calls.c
-@@ -586,8 +586,43 @@ gst_v4l2_get_norm (GstV4l2Object * v4l2object, v4l2_std_id * norm)
+@@ -613,8 +613,43 @@ gst_v4l2_get_norm (GstV4l2Object * v4l2object, v4l2_std_id * norm)
    if (!GST_V4L2_IS_OPEN (v4l2object))
      return FALSE;
  
-+  #if defined (Platform_dm6467t)
++  #if defined(Platform_dm6467t) || defined(Platform_dm365)
 +  /* It might take a few tries to detect the signal -- try up to 300 times */
 +  {
 +    int retries = 300;

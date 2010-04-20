@@ -1,7 +1,7 @@
-From bd40d3030eb06711c1ba5c85324b260a3c1a0c80 Mon Sep 17 00:00:00 2001
+From 1d5540ff2f030ea2c1ced93b9d94d5a1db186307 Mon Sep 17 00:00:00 2001
 From: Don Darling <don.osc2@gmail.com>
 Date: Thu, 11 Mar 2010 13:07:19 -0600
-Subject: [PATCH 1/9] Fix OSS support to handle all supported sample rates.
+Subject: [PATCH 02/12] Fix OSS support to handle all supported sample rates.
 
 Converted from plugins_good1_0_10_16.patch
 ---

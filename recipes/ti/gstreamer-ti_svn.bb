@@ -19,7 +19,7 @@ PROVIDES += "gstreamer-ti-demo-script"
 
 PV = "svnr${SRCREV}"
 # Rebuild on kernel change since it links statically to ti-dmai, ti-codec-engine, etc
-PR = "r55+${MACHINE_KERNEL_PR}"
+PR = "r56+${MACHINE_KERNEL_PR}"
 
 
 S = "${WORKDIR}/gstreamer_ti/ti_build/ticodecplugin"
@@ -38,10 +38,14 @@ SRCREV_dm365 = "612"
 SRCREV = "573"
 
 SRC_URI = "svn://gforge.ti.com/svn/gstreamer_ti/trunk;module=gstreamer_ti;proto=https;user=anonymous;pswd='' \
-           file://gstreamer-ti-tracker-462.patch;patch=1 \
-           file://gstreamer-ti-remove-mp3-decode-support-from-auddec1.patch;patch=1 \
+#           file://gstreamer-ti-tracker-462.patch;patch=1 \
+#	    file://gstreamer-ti-tracker-462.patch;patch=1 
 #           file://${GST_TI_RC_SCRIPT} \
 "
+
+
+SRC_URI_append_dm365 = "file://gstreamer-ti-tracker-1055.patch;patch=1 \
+	file://loadmodules_dm365.sh "
 
 # TODO: to compile this patch you need to add x11 dependency.
 #SRC_URI_append_omap3 = " \
@@ -77,6 +81,8 @@ PLATFORM_omapl137      = "omapl137"
 PLATFORM_omapl138      = "omapl138"
 PLATFORM              ?= "<UNDEFINED_PLATFORM>"
 
+GST_TI_PLATFORM_dm365 = "dm365"
+
 XDC_PLATFORM_dm6446    = "ti.platforms.evmDM6446"
 XDC_PLATFORM_dm6467    = "ti.platforms.evmDM6467"
 XDC_PLATFORM_omap3     = "ti.platforms.evm3530"
@@ -87,6 +93,7 @@ XDC_PLATFORM_omapl138  = "ti.platforms.evmOMAPL138"
 XDC_PLATFORM          ?= "<UNDEFINED_XDC_PLATFORM>"
 
 export PLATFORM
+export GST_TI_PLATFORM
 export XDC_PLATFORM
 export XDC_TARGET      = "gnu.targets.arm.GCArmv5T"
 export PLATFORM_XDC    = ${XDC_PLATFORM}
@@ -124,6 +131,11 @@ do_install_prepend () {
     # install gstreamer demo scripts
     install -d ${D}/${installdir}/gst
     cp -r ${WORKDIR}/gstreamer_ti/gstreamer_demo/shared ${D}/${installdir}/gst
+
+    # TODO: use temporary loadmodule_dm365.sh 
+    if [ -f ${WORKDIR}/loadmodules_dm365.sh ]; then
+       cp ${WORKDIR}/loadmodules_dm365.sh ${WORKDIR}/gstreamer_ti/gstreamer_demo/${PLATFORM}/loadmodules.sh
+    fi
 
     if [ -d ${WORKDIR}/gstreamer_ti/gstreamer_demo/${PLATFORM} ] ; then
         cp -r ${WORKDIR}/gstreamer_ti/gstreamer_demo/${PLATFORM} ${D}/${installdir}/gst

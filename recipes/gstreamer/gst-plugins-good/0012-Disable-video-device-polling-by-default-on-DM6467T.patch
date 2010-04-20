@@ -1,7 +1,7 @@
-From a7448083dcaa02bd3203f290a3ad0f2ee48cc19d Mon Sep 17 00:00:00 2001
+From ac060d366afc01edcdc5d22b3f793afb9a1bec53 Mon Sep 17 00:00:00 2001
 From: Don Darling <don.osc2@gmail.com>
 Date: Wed, 24 Mar 2010 11:15:29 -0500
-Subject: [PATCH 9/9] Disable video device polling by default on DM6467T.
+Subject: [PATCH 12/12] Disable video device polling by default on DM6467T.
 
 It blocks forever if used.
 ---
@@ -9,10 +9,10 @@ It blocks forever if used.
  1 files changed, 4 insertions(+), 0 deletions(-)
 
 diff --git a/sys/v4l2/v4l2_calls.c b/sys/v4l2/v4l2_calls.c
-index 9b43125..ea30940 100644
+index 6fb9bfa..1902c13 100644
 --- a/sys/v4l2/v4l2_calls.c
 +++ b/sys/v4l2/v4l2_calls.c
-@@ -478,6 +478,10 @@ gst_v4l2_open (GstV4l2Object * v4l2object)
+@@ -502,6 +502,10 @@ gst_v4l2_open (GstV4l2Object * v4l2object)
  
    v4l2object->can_poll_device = TRUE;
  

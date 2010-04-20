@@ -332,7 +332,7 @@ host_install ()
 
   # TODO: figure out a ways to disable glibc, libasound, freetype depedencies
   # from sourcetree packages.  For now uninstall those extra packages
-  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6 libasound2 alsa-conf-base sln libfreetype6 libz1 libpng12 libjpeg62"
+  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6 libasound2 alsa-conf-base sln libfreetype6 libz1 libpng12 libjpeg62 ncurses libpng12-0"
 
   update_rules_make
 
