@@ -130,7 +130,7 @@ move_to_install_dir()
 
     # copy prebuilt kernel image and uboot in psp/prebuilt directory
     mkdir -p ${install_dir}/psp/prebuilt-images/
-    cp deploy/images/$machine/*.bin ${install_dir}/psp/prebuilt-images/    
+    cp deploy/images/$machine/*.bin ${install_dir}/psp/prebuilt-images/
 
     rm -rf ${install_dir}/usr/share/ti/ti-psp-tree
   fi
@@ -450,9 +450,10 @@ sw_manifest_header > ${install_dir}/docs/software_manifest.htm
 host_install
 
 # install binary ipk on target.
-echo "Installing target filesystem (`ls -1 deploy/images/$machine/*.tar.gz `)"
+echo "Installing target filesystem "
 mkdir -p ${install_dir}/filesystem
 cp deploy/images/$machine/*.tar.gz ${install_dir}/filesystem
+export DVSDK_INSTALL_MACHINE="$machine"
 echo "Install  $install_dir $bsp_bin $multimedia_bin $graphics_bin $dsp_bin"
 fakeroot install_rootfs.sh $install_dir $bsp_bin $multimedia_bin $graphics_bin $dsp_bin 
 
