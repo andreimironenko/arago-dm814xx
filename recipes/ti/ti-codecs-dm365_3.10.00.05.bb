@@ -7,8 +7,8 @@ PV = "03_10_00_05"
 SRC_URI = "http://gt_tspa_dev.gt.design.ti.com/dev/DVSDK/310_DVSDK/3_10_00/dm365_codecs_${PV}.tar.gz;name=dm365codecs \
            file://mapdmaq"
 
-SRC_URI[dm365codecs.md5sum] = "f5c34de13f1942a73ef258f2cc95313b"
-SRC_URI[dm365codecs.sha256sum] = "9441c39ea6aa17c942b9bc827a0a102da26efd2bc9d2b4fea82e5a2058e2e822"
+SRC_URI[dm365codecs.md5sum] = "c336e76101340b7a4f19214401824efe"
+SRC_URI[dm365codecs.sha256sum] = "3ad43dcaf1b965c99a286f30cea928cf887308f7433ec0e6fd814954d91d0512"
 
 S = "${WORKDIR}/dm365_codecs_${PV}"
 
