@@ -60,7 +60,7 @@ ARAGO_DVSDK_PREREQ = "\
     "
 
 # cppstub is needed to install libstdc++ in the image
-ARAGO_DEMO = "\
+ARAGO_CONSOLE = "\
     ${ARAGO_ALSA_EXTRA} \
     ${ARAGO_TSLIB} \
     ${ARAGO_NCURSES} \
@@ -70,7 +70,7 @@ ARAGO_DEMO = "\
     "
 
 RDEPENDS_${PN} = "\
-    ${ARAGO_DEMO} \
+    ${ARAGO_CONSOLE} \
     "
 
 RRECOMMENDS_${PN} = "\
