@@ -29,7 +29,7 @@ my %machines = (
         bsp_default         => "yes",
         multimedia_default  => "yes",
         dsp_default         => "no",
-        dvsdk_factory_default => "no",
+        dvsdk_factory_default => "yes",
     },
     "dm6446-evm"    => {
         bsp_default         => "yes",
