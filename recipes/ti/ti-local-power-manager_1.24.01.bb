@@ -3,8 +3,6 @@ require ti-local-power-manager.inc
 PV = "1_24_01"
 PE = "2"
 
-SRC_URI_append = " file://fix-dsplink-1.65-compilation.patch;patch=1"
-
 SRC_URI_append = " file://lpm-1_24_01-replace-define-OPT.patch;patch=1"
 
 SRC_URI[lpmtarball.md5sum] = "6699861c8d0195654c539798ec428124"
