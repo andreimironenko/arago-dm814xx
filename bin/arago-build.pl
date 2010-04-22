@@ -558,9 +558,14 @@ sub get_input
         }
     }
 
+    if ($dvsdk_factory_default =~ m/default/i) {
+        $dvsdk_factory_default = $machines{$machine}{'dvsdk_factory_default'};
+    }
+
     if ($dvsdk_factory_default =~ m/yes/i) {
         $packages[$index++] = "dvsdk-factory-image";
     }
+
 }
 
 ################################################################################
