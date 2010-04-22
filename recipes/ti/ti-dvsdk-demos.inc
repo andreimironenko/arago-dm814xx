@@ -2,7 +2,7 @@ DESCRIPTION = "DVSDK Demo applications for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-INC_PR = "r3"
+INC_PR = "r4"
  
 DEPENDS += "ti-dmai"
 DEPENDS += "alsa-lib libpng freetype jpeg"
@@ -61,8 +61,8 @@ do_install () {
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-RDEPENDS_ti-dvsdk-demos_dm355 += "ti-dm355mm-module ti-cmem-module alsa-lib libpng freetype jpeg"
-RDEPENDS_ti-dvsdk-demos_dm365 += "ti-dm365mm-module ti-cmem-module alsa-lib libpng freetype jpeg"
+RDEPENDS_ti-dvsdk-demos_dm355 += "ti-dm355mm-module ti-cmem-module alsa-lib libpng freetype jpeg libpng12"
+RDEPENDS_ti-dvsdk-demos_dm365 += "ti-dm365mm-module ti-cmem-module alsa-lib libpng freetype jpeg ti-codecs-dm365 ti-edma-module ti-irq-module libpng12"
 
 FILES_${PN} = "${installdir}/dvsdk-demos/*"
 
