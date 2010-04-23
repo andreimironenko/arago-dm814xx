@@ -12,6 +12,7 @@ DSP_SOURCETREE_dm6446 = "\
     ti-dsplink-sourcetree \
     ti-edma3lld-sourcetree \
     ti-dsplib-c64p-sourcetree \
+    ti-vicplib-sourcetree \
     "
 
 DSP_SOURCETREE_dm6467 = "\
