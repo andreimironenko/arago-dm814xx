@@ -10,7 +10,7 @@ PV = "1_20"
 SRC_URI[dsplibgz.md5sum] = "cecbb20089843baf9393f2875f101767"
 SRC_URI[dsplibgz.sha256sum] = "cb7d3a33f1b3de4b3d030095d2ea14211a0ed2bd6f66d2848ea323eb6bc7a649"
 
-PR = "r1"
+PR = "r2"
 
 require ti-paths.inc
 require ti-staging.inc
@@ -31,40 +31,6 @@ python do_unpack () {
     bb.build.exec_func('base_do_unpack', d)
     bb.build.exec_func('ti_pretar_do_unpack', d)
     bb.build.exec_func('ti_bin_do_unpack', d)
-}
-
-python ti_pretar_do_unpack() {
-
-    import os
-
-    localdata = bb.data.createCopy(d)
-    bb.data.update_data(localdata)
-
-    # Change to the working directory
-    save_cwd = os.getcwd()
-    workdir  = bb.data.getVar('WORKDIR', localdata)
-    workdir  = bb.data.expand(workdir, localdata)
-    os.chdir(workdir)
-
-    # Expand the tarball that was created if required
-    tarfile  = bb.data.getVar('PRETARFILE', localdata)    
-    if bool(tarfile) == True:
-        tarfile  = bb.data.expand(tarfile, localdata)
-        tcmd = 'tar x --no-same-owner -f %s -C %s' % (tarfile, workdir)
-        os.system(tcmd)
-
-    # Return to the previous directory
-    os.chdir(save_cwd)
-}
-
-do_prepsources() {
-    echo "Do Nothing for Now" 
-}
-
-addtask prepsources after do_configure before do_compile
-
-do_compile() {
-    echo "Do Nothing for Now"
 }
 
 do_install() {

@@ -10,7 +10,7 @@ PV = "2_10"
 SRC_URI[dsplibgz.md5sum] = "0e9f0fc05b17d8eefc6117f36ecd576e"
 SRC_URI[dsplibgz.sha256sum] = "96e320a3dcb8b238e5245a36b26c2f7f1d00a8467ab65d6c5c93f5f57c891252"
 
-PR = "r2"
+PR = "r3"
 
 require ti-paths.inc
 require ti-staging.inc
@@ -33,47 +33,9 @@ python do_unpack () {
     bb.build.exec_func('ti_bin_do_unpack', d)
 }
 
-python ti_pretar_do_unpack() {
-
-    import os
-
-    localdata = bb.data.createCopy(d)
-    bb.data.update_data(localdata)
-
-    # Change to the working directory
-    save_cwd = os.getcwd()
-    workdir  = bb.data.getVar('WORKDIR', localdata)
-    workdir  = bb.data.expand(workdir, localdata)
-    os.chdir(workdir)
-
-    # Expand the tarball that was created if required
-    tarfile  = bb.data.getVar('PRETARFILE', localdata)    
-    if bool(tarfile) == True:
-        tarfile  = bb.data.expand(tarfile, localdata)
-        tcmd = 'tar x --no-same-owner -f %s -C %s' % (tarfile, workdir)
-        os.system(tcmd)
-
-    # Return to the previous directory
-    os.chdir(save_cwd)
-}
-
-do_prepsources() {
-    echo "Do Nothing for Now" 
-}
-
-addtask prepsources after do_configure before do_compile
-
-do_compile() {
-    echo "Do Nothing for Now"
-}
-
 do_install() {
 
     install -d ${D}${DSPLIB_C64P_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${DSPLIB_C64P_INSTALL_DIR_RECIPE}
 }
-
-
-
-
 

@@ -60,3 +60,27 @@ python ti_bin_do_unpack() {
     os.chdir(save_cwd)
 }
 
+python ti_pretar_do_unpack() {
+
+    import os
+
+    localdata = bb.data.createCopy(d)
+    bb.data.update_data(localdata)
+
+    # Change to the working directory
+    save_cwd = os.getcwd()
+    workdir  = bb.data.getVar('WORKDIR', localdata)
+    workdir  = bb.data.expand(workdir, localdata)
+    os.chdir(workdir)
+
+    # Expand the tarball that was created if required
+    tarfile  = bb.data.getVar('PRETARFILE', localdata)    
+    if bool(tarfile) == True:
+        tarfile  = bb.data.expand(tarfile, localdata)
+        tcmd = 'tar x --no-same-owner -f %s -C %s' % (tarfile, workdir)
+        os.system(tcmd)
+
+    # Return to the previous directory
+    os.chdir(save_cwd)
+}
+
