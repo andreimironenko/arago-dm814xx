@@ -17,9 +17,13 @@ my $multimedia_binary = "task-arago-tisdk-multimedia-target";
 my $multimedia_sdk_header ="task-arago-tisdk-multimedia-toolchain-target";
 my $dsp_source = "task-arago-tisdk-dsp-host";
 my $dsp_binary = "task-arago-tisdk-dsp-target";
+my $multimedia_sdk_target ="task-arago-tisdk-multimedia-toolchain-target";
+my $graphics_binary = "task-arago-tisdk-graphics-target";
+my $graphics_sdk_target ="task-arago-tisdk-graphics-toolchain-target";
 
 my $image;
 my $machine;
+my $index = 0;
 
 my $sdkpath_default = "sdk-cdrom";
 my $machine_default = "dm6446-evm";
@@ -30,42 +34,49 @@ my %machines = (
         multimedia_default  => "yes",
         dsp_default         => "no",
         dvsdk_factory_default => "yes",
+        graphics_default    => "yes",
     },
     "dm6446-evm"    => {
         bsp_default         => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         dvsdk_factory_default => "no",
+        graphics_default    => "no",
     },
     "dm355-evm"     => {
         bsp_default         => "yes",
         multimedia_default  => "yes",
         dsp_default         => "no",
         dvsdk_factory_default => "no",
+        graphics_default    => "no",
     },
     "da830-omapl137-evm"     => {
         bsp_default         => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         dvsdk_factory_default => "no",
+        graphics_default    => "no",
     },
     "dm6467-evm"     => {
         bsp_default         => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         dvsdk_factory_default => "no",
+        graphics_default    => "no",
     },
     "da850-omapl138-evm"     => {
         bsp_default         => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         dvsdk_factory_default => "no",
+        graphics_default    => "no",
     },
     "omap3evm"     => {
         bsp_default         => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         dvsdk_factory_default => "no",
+        graphics_default    => "no",
     },
 );
 
@@ -124,6 +135,16 @@ sub build_image
         $result = system($cmd);
         if ($result) {
             print "\nERROR: Failed to build $_ for $machine\n";
+            exit 1;
+        }
+    }
+
+    if ($graphics =~ m/yes/i) {
+        print "\nBuilding  qt4-tools-sdk for $machine\n";
+        $cmd = "MACHINE=$machine META_SDK_PATH=/linux-devkit bitbake qt4-tools-sdk";
+        $result = system($cmd);
+        if ($result) {
+            print "\n ERROR: failed to build sdk";
             exit 1;
         }
     }
@@ -224,6 +245,41 @@ sub copy_output
 
     close(OUT);
 
+    if ($graphics =~ m/yes/i) {
+        $cmd = "$arago_staging/usr/bin/opkg-cl -f $arago_staging/etc/opkg-sdk.conf -o $sdkpath/deploy/ipk update";
+        $result = system($cmd);
+
+        if ($result) {
+            print "\nERROR: Failed to execute command $cmd\n";
+            exit 1;
+        }
+
+        $cmd = "$arago_staging/usr/bin/opkg-cl -f $arago_staging/etc/opkg-sdk.conf -o $sdkpath/deploy/ipk install --noaction qt4-tools-sdk";
+        open(OUT, "$cmd |");
+        while (<OUT>) {
+            if ($_ =~m/Downloading file:/) {
+                my $unused;
+                my $name;
+
+                ($unused, $name)  = split(/:/, $_);
+
+                $name =~ s/^\s+|\s+$//g;
+                chop($name);
+
+                if ($name =~m/_$mtype-$march-sdk.ipk/) {
+                    $dir = "$mtype-$march-sdk";
+                }
+                print "Copying $name. \n";
+                my $copycmd = "mkdir -p $sdkpath/deploy/ipk/$dir ; cp $name $sdkpath/deploy/ipk/$dir";
+                $result = system($copycmd);
+                if ($result) {
+                    print "Failed to execute $copycmd\n";
+                   exit 1;
+                }
+            }
+        }
+    }
+
     $cmd = "rm -rf $sdkpath/deploy/ipk/usr";
     $result = system($cmd);
 
@@ -234,7 +290,7 @@ sub copy_output
 
     # TODO: Even if build for omap or davinci platform, opkg.conf may have 
     # entries for both armv5te and armv7a arch. creating temporary directory.
-    $cmd = "mkdir -p $sdkpath/deploy/ipk/armv5te $sdkpath/deploy/ipk/armv7a";
+    $cmd = "mkdir -p $sdkpath/deploy/ipk/armv5te $sdkpath/deploy/ipk/armv7a  $sdkpath/deploy/ipk/$mtype-armv5te-sdk";
     $result = system($cmd);
 
     if ($result) {
@@ -311,7 +367,7 @@ sub copy_output
 
     # copy opkg.conf needed during opkg installation.
     print "\nCopying $arago_staging/etc/opkg.conf  ...";
-    $cmd = "cp $arago_staging/etc/opkg.conf $sdkpath/config/$machine/";
+    $cmd = "cp $arago_staging/etc/opkg*.conf $sdkpath/config/$machine/";
     $result = system($cmd);
 
     if ($result) {
@@ -368,7 +424,6 @@ sub compatible_machine
 sub get_input
 {
     my $input;
-    my $index = 0;
 
     if (!$machine) {
         print "\nAvailable Arago machine types:\n";
@@ -500,6 +555,29 @@ sub get_input
         $dsp = $machines{$machine}{'dsp_default'};
     }
 
+    if (!$graphics) {
+        print "\nDo you want to add Graphics packages in SDK? \n";
+        print "[ $machines{$machine}{'graphics_default'} ] ";
+        $input = <STDIN>;
+        $input =~ s/\s+$//;
+
+        if ($input) {
+            if ($input =~ m/y/i) {
+                $graphics = "yes";
+            }
+            else {
+                $graphics = "no";
+            }
+        }
+        else {
+            $graphics = $machines{$machine}{'graphics_default'};
+        }
+    }
+
+    if ($graphics =~ m/default/i) {
+        $graphics = $machines{$machine}{'graphics_default'};
+    }
+
     if (!$sdkpath) {
         print "\nWhere do you want to copy Arago sdk ?\n";
         print "(Relative to $arago_dir)\n";
@@ -533,6 +611,11 @@ sub get_input
     if ($dsp =~ m/yes/i) {
         $packages[$index++] = $dsp_source;
         $packages[$index++] = $dsp_binary;
+    }
+
+    if ($graphics =~ m/yes/i) {
+        $packages[$index++] = $graphics_binary;
+        $packages[$index++] = $graphics_sdk_target;
     }
 
     $packages[$index++] = "ti-tisdk-makefile";
@@ -610,6 +693,12 @@ sub parse_args
             next;
         }
 
+        if ($ARGV[0] eq '-g' || $ARGV[0] eq '--graphics') {
+            shift(@ARGV);
+            $graphics = shift(@ARGV);
+            next;
+        }
+
         if ($ARGV[0] eq '-f' || $ARGV[0] eq '--factory') {
             shift(@ARGV);
             $dvsdk_factory_default = shift(@ARGV);
@@ -640,6 +729,7 @@ sub display_help
     print "    -e | --multimedia   Add Multimedia packages in SDK.\n";
     print "    -d | --dsp          Add DSP packages in SDK.\n";
     print "    -f | --factory      Build DVSDK factory image.\n";
+    print "    -g | --graphics     Add Graphics packages in SDK.\n";
     print "    -p | --sdkpath      Where to generate the Arago SDK\n";
     print "\nIf an option is not given it will be queried interactively.\n";
     print "If the value \"default\" is given for any parameter, the\n";

@@ -50,7 +50,9 @@ verify_cdrom ()
   fi
   echo "Updating opkg.conf "
   sed  "s|file:\(..*\)ipk|file:$PWD/deploy/ipk|g" config/$machine/opkg.conf > ${install_dir}/.opkg.conf
+  sed  "s|file:\(..*\)ipk|file:$PWD/deploy/ipk|g" config/$machine/opkg-sdk.conf > ${install_dir}/.opkg-sdk.conf
   opkg_conf="${install_dir}/.opkg.conf"
+  opkg_sdk_conf="${install_dir}/.opkg-sdk.conf"
 }
 
 #
@@ -269,7 +271,6 @@ host_check ()
 # 
 prepare_install ()
 {
-  echo "Preparing installation ..."
   cwd=$PWD;
   if [ ! -f install-tools.tgz ]; then
     echo "ERROR: failed to find install-tools.tgz"
@@ -332,13 +333,40 @@ host_install ()
 
   # TODO: figure out a ways to disable glibc, libasound, freetype depedencies
   # from sourcetree packages.  For now uninstall those extra packages
-  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6 libasound2 alsa-conf-base sln libfreetype6 libz1 libpng12 libjpeg62 ncurses libpng12-0"
+  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6 libasound2 alsa-conf-base sln libfreetype6 libz1 libpng12 libjpeg62 ncurses libpng12-0  libjpeg62 libglib-2.0-0 libgthread-2.0-0 libpng12-0"
 
   update_rules_make
 
   generate_sw_manifest "Packages installed on the host machine:" "$install_dir" >> ${install_dir}/docs/software_manifest.htm;
 
   move_to_install_dir
+}
+
+install_graphics_sdk_host ()
+{
+  script="$install_dir/linux-devkit/environment-setup"
+  execute "mkdir -p $install_dir/usr"
+  execute "cp -ar $install_dir/linux-devkit/usr/lib $install_dir/usr"
+  execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_sdk_conf}  update"
+  ! test -z $graphics && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_sdk_conf}  install --nodeps $graphics_sdk_host "
+  execute "cp -ar $install_dir/usr/lib $install_dir/linux-devkit/usr/"
+  execute "rm -rf $install_dir/usr"
+  echo 'export OE_QMAKE_CC=${TARGET_SYS}-gcc' >> $script
+  echo 'export OE_QMAKE_CXX=${TARGET_SYS}-g++' >> $script
+  echo 'export OE_QMAKE_LINK=${TARGET_SYS}-g++' >> $script
+  echo 'export OE_QMAKE_AR=${TARGET_SYS}-ar' >> $script
+  echo 'export OE_QMAKE_LIBDIR_QT=${SDK_PATH}/${TARGET_SYS}/usr/lib' >> $script
+  echo 'export OE_QMAKE_INCDIR_QT=${SDK_PATH}/${TARGET_SYS}/usr/include/qtopia' >> $script
+  echo 'export OE_QMAKE_MOC=${SDK_PATH}/bin/moc4' >> $script
+  echo 'export OE_QMAKE_UIC=${SDK_PATH}/bin/uic4' >> $script
+  echo 'export OE_QMAKE_UIC3=${SDK_PATH}/bin/uic34' >> $script
+  echo 'export OE_QMAKE_RCC=${SDK_PATH}/bin/rcc4' >> $script
+  echo 'export OE_QMAKE_QDBUSCPP2XML=${SDK_PATH}/bin/qdbuscpp2xml4' >> $script
+  echo 'export OE_QMAKE_QDBUSXML2CPP=${SDK_PATH}/bin/qdbusxml2cpp4' >> $script
+  echo 'export OE_QMAKE_QT_CONFIG=${SDK_PATH}/${TARGET_SYS}/usr/share/qtopia/mkspecs/qconfig.pri' >> $script
+  echo 'export QMAKESPEC=${SDK_PATH}/${TARGET_SYS}/usr/share/qtopia/mkspecs/linux-g++' >> $script
+  echo 'export OE_QMAKE_LDFLAGS="-L${SDK_PATH}/${TARGET_SYS}/usr/lib -Wl,-rpath-link,${SDK_PATH}/${TARGET_SYS}/usr/lib -Wl,-O1 -Wl,--hash-style=gnu"' >> $script
+
 }
 
 #
@@ -361,6 +389,8 @@ install_arago_sdk ()
 
   # remove these packages (see arago/meta/meta-toolchain-target.bb)
   execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir}/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf} remove  -force-depends     libc6 libc6-dev glibc-extra-nss libgcc1 linux-libc-headers-dev libthread-db1 sln"
+
+  ! test -z $graphics && install_graphics_sdk_host 
 
   echo "Running demangle_libtool.sh to fix *.la files"
   execute "demangle_libtool.sh $install_dir/linux-devkit/arm-none-linux-gnueabi/usr/lib/*.la"
@@ -391,6 +421,7 @@ while [ $# -gt 0 ]; do
       graphics_src="task-arago-tisdk-graphics-host";
       graphics_bin="task-arago-tisdk-graphics-target";
       graphics_sdk_target="task-arago-tisdk-graphics-toolchain-target";
+      graphics_sdk_host="qt4-tools-sdk";
       graphics="yes";
       shift;
       ;;
@@ -450,7 +481,6 @@ sw_manifest_header > ${install_dir}/docs/software_manifest.htm
 host_install
 
 # install binary ipk on target.
-echo "Installing target filesystem "
 mkdir -p ${install_dir}/filesystem
 cp deploy/images/$machine/*.tar.gz ${install_dir}/filesystem
 export DVSDK_INSTALL_MACHINE="$machine"
@@ -472,6 +502,7 @@ generate_sw_manifest "Packages installed on arago-sdk target side:" "$install_di
 sw_manifest_footer >> ${install_dir}/docs/software_manifest.htm
 
 rm -rf ${opkg_conf}
+rm -rf ${opkg_sdk_conf}
 rm -rf ${install_dir}/install-tools
 
 echo "Installation completed!"
