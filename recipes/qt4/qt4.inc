@@ -1,6 +1,6 @@
 inherit qmake_base
 
-DEPENDS += "qt4-tools-native freetype jpeg libpng zlib glib-2.0"
+DEPENDS += "qt4-tools-native freetype jpeg libpng zlib glib-2.0 gst-plugins-good"
 
 require qt4_arch.inc
 QT_ARCH := "${@qt_arch(d)}"
