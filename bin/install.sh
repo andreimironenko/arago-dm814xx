@@ -398,6 +398,7 @@ install_arago_sdk ()
   echo "Updating SDK_PATH env"        
   sed -i "1{s|SDK_PATH\(..*\)|SDK_PATH=$install_dir/linux-devkit/|g}" $install_dir/linux-devkit/environment-setup
   sed -i "2{s|TOOLCHAIN_PATH\(..*\)|TOOLCHAIN_PATH=${TOOLCHAIN_PATH}|g}" $install_dir/linux-devkit/environment-setup
+  echo "export PS1=\"\[\e[32;1m\][linux-devkit]\[\e[0m\]:\w> \"" >> $install_dir/linux-devkit/environment-setup
 
   echo "Updating linuxlibs path in rules.make "
   sed -i -e s=linuxlibs=linux-devkit/arm-none-linux-gnueabi/usr= \
