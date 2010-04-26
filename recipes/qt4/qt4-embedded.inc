@@ -28,7 +28,6 @@ S = "${WORKDIR}/qt-embedded-linux-opensource-src-${PV}"
 
 QT_CONFIG_FLAGS += " \
     -qtlibinfix ${QT_LIBINFIX} \
-    -qt-decoration-styled -plugin-decoration-default -plugin-decoration-windows \
     -plugin-gfx-transformed -plugin-gfx-qvfb -plugin-gfx-vnc \
     -plugin-mouse-tslib -qt-mouse-pc -qt-mouse-qvfb \
     -qt-kbd-tty \
