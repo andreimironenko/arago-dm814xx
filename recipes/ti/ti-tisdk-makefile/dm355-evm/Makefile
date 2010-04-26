@@ -67,23 +67,6 @@ help:
 	@echo "    ceexamples                   : Build CE codecs, extensions, servers and apps"
 	@echo "    ceexamples_clean             : Remove generated CE example files."
 	@echo
-	@echo "    ceexample_app                : Build CE examples app"
-	@echo "    ceexample_app_clean          : Remove generated CE example app files."
-	@echo "    ceexample_app_install        : Install CE example apps"
-
-	@echo
-	@echo "    ceexample_codecs             : Build CE examples codecs"
-	@echo "    ceexample_codecs_clean       : Remove generated CE example codecs files."
-	@echo "    ceexample_codecs_install     : Install CE example codecs"
-	@echo
-	@echo "    ceexample_extensions         : Build CE examples extensions"
-	@echo "    ceexample_extensions_clean   : Remove generated CE example extensions files."
-	@echo "    ceexample_extensions_install : Install CE example extensions"
-	@echo
-	@echo "    ceexample_servers            : Build CE examples servers"
-	@echo "    ceexample_extensions_clean   : Remove generated CE example servers files."
-	@echo "    ceexample_extensions_install : Install CE example servers"
-	@echo
 	@echo "    linux                        : Build Linux kernel uImage and module"
 	@echo "    linux_clean                  : Remove generated Linux kernel files"
 	@echo "    linux_install                : Install kernel binary and  modules"
