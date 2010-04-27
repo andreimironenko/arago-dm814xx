@@ -2,7 +2,7 @@ DESCRIPTION = "DVTB for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-PR = "r4"
+PR = "r5"
  
 DEPENDS = "virtual/kernel alsa-lib ti-framework-components ti-codec-engine ti-xdctools ti-linuxutils alsa-lib jpeg ncurses ti-xdais "
 

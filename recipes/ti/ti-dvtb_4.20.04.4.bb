@@ -2,7 +2,7 @@ require ti-dvtb.inc
 
 PV = "4_20_04_4"
 
-SRC_URI_append = " file://remove-include-rules.make.patch;patch=1 \
+SRC_URI_append = " file://make-include-rules.make-conditional.patch;patch=1 \
 	file://loadmodules-ti-dvtb-dm365.sh \
 	file://loadmodules-ti-dvtb-dm6467.sh \
 	file://loadmodules-ti-dvtb-dm355.sh \
