@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r15"
+PR = "r16"
 LICENSE="MIT"
 
 inherit task
@@ -13,7 +13,6 @@ MULTIMEDIA_dm365 = " \
     ti-dvtb \
     task-arago-gst \
     gstreamer-ti \
-    gstreamer-ti-demo-script \
     "
 
 MULTIMEDIA_dm355 = " \
@@ -29,7 +28,6 @@ MULTIMEDIA_dm6446 = " \
     ti-codec-engine-examples \
     task-arago-gst \
     gstreamer-ti \
-    gstreamer-ti-demo-script \
     "
 
 MULTIMEDIA_da830-omapl137-evm = " \
@@ -50,7 +48,6 @@ MULTIMEDIA_dm6467-evm = " \
 #    ti-dvtb \
     task-arago-gst \
     gstreamer-ti \
-    gstreamer-ti-demo-script \
     "
 
 MULTIMEDIA_omap3 = " \
@@ -58,7 +55,6 @@ MULTIMEDIA_omap3 = " \
     ti-codec-engine-examples \
     task-arago-gst \
     gstreamer-ti \
-    gstreamer-ti-demo-script \
     "
 
 RDEPENDS_${PN} = "\

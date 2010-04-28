@@ -15,22 +15,12 @@ inherit update-rc.d
 require ti-paths.inc
 require ti-staging.inc
 
-PROVIDES += "gstreamer-ti-demo-script"
-
 PV = "svnr${SRCREV}"
 # Rebuild on kernel change since it links statically to ti-dmai, ti-codec-engine, etc
-PR = "r57+${MACHINE_KERNEL_PR}"
+PR = "r58+${MACHINE_KERNEL_PR}"
 
 
 S = "${WORKDIR}/gstreamer_ti/ti_build/ticodecplugin"
-
-GST_TI_RC_SCRIPT_dm6446   = "gstreamer-ti-dm6446-rc.sh"
-GST_TI_RC_SCRIPT_dm6467   = "gstreamer-ti-dm6467-rc.sh"
-GST_TI_RC_SCRIPT_omap3    = "gstreamer-ti-omap3530-rc.sh"
-GST_TI_RC_SCRIPT_dm355    = "gstreamer-ti-dm355-rc.sh"
-GST_TI_RC_SCRIPT_dm365    = "gstreamer-ti-dm365-rc.sh"
-GST_TI_RC_SCRIPT_omapl137 = "gstreamer-ti-omapl137-rc.sh"
-GST_TI_RC_SCRIPT_omapl138 = "gstreamer-ti-omapl138-rc.sh"
 
 SRCREV_dm365 = "612"
 
@@ -38,14 +28,14 @@ SRCREV_dm365 = "612"
 SRCREV = "573"
 
 SRC_URI = "svn://gforge.ti.com/svn/gstreamer_ti/trunk;module=gstreamer_ti;proto=https;user=anonymous;pswd='' \
-#           file://gstreamer-ti-tracker-462.patch;patch=1 \
-#	    file://gstreamer-ti-tracker-462.patch;patch=1 
-           file://${GST_TI_RC_SCRIPT} \
+  file://gstreamer-ti-rc.sh \
+  file://gst-ti.sh \
 "
 
-
+# apply tracker 1055 patch - this apply applies on top of 612 rev
 SRC_URI_append_dm365 = "file://gstreamer-ti-tracker-1055.patch;patch=1 \
-	file://loadmodules_dm365.sh "
+ file://loadmodules.sh \
+"
 
 # TODO: to compile this patch you need to add x11 dependency.
 #SRC_URI_append_omap3 = " \
@@ -53,15 +43,18 @@ SRC_URI_append_dm365 = "file://gstreamer-ti-tracker-1055.patch;patch=1 \
 #"
 
 SRC_URI_append_omapl137 = " \
-           file://gstreamer-ti-omapl137.patch;patch=1 \
+ file://gstreamer-ti-omapl137.patch;patch=1 \
+ file://loadmodules.sh \
 "
 
 SRC_URI_append_omapl138 = " \
-           file://gstreamer-ti-omapl138.patch;patch=1 \
+ file://gstreamer-ti-omapl138.patch;patch=1 \
+ file://loadmodules.sh \
 "
 
 SRC_URI_append_dm6467 = " \
-           file://gstreamer-ti-dm6467-usesinglecsserver.patch;patch=1 \
+ file://gstreamer-ti-dm6467-usesinglecsserver.patch;patch=1 \
+ file://loadmodules.sh \
 "
 
 DEPENDS = "ti-dmai gstreamer gst-plugins-base"
@@ -132,9 +125,11 @@ do_install_prepend () {
     install -d ${D}/${installdir}/gst
     cp -r ${WORKDIR}/gstreamer_ti/gstreamer_demo/shared ${D}/${installdir}/gst
 
-    # TODO: use temporary loadmodule_dm365.sh 
-    if [ -f ${WORKDIR}/loadmodules_dm365.sh ]; then
-       cp ${WORKDIR}/loadmodules_dm365.sh ${WORKDIR}/gstreamer_ti/gstreamer_demo/${PLATFORM}/loadmodules.sh
+    # If we have loadmodule.sh in WORKDIR then give preference to this over
+    # the default gst-ti loadmdules.sh
+    if [ -f ${WORKDIR}/loadmodules.sh ]; then
+       mkdir -p ${WORKDIR}/gstreamer_ti/gstreamer_demo/${PLATFORM}
+       cp ${WORKDIR}/loadmodules.sh ${WORKDIR}/gstreamer_ti/gstreamer_demo/${PLATFORM}/loadmodules.sh
     fi
 
     if [ -d ${WORKDIR}/gstreamer_ti/gstreamer_demo/${PLATFORM} ] ; then
@@ -155,8 +150,11 @@ do_install_prepend () {
     find ${D}/${installdir}/gst -name .svn -type d | xargs rm -rf
 
     chmod 0755 ${D}/${installdir}/gst -R
+
     install -d ${D}${sysconfdir}/init.d/
-    install -m 0755  ${WORKDIR}/${GST_TI_RC_SCRIPT} ${D}${sysconfdir}/init.d/gstti-init
+    install -m 0755  ${WORKDIR}/gstreamer-ti-rc.sh ${D}${sysconfdir}/init.d/gstti-init
+     install -d ${D}${sysconfdir}/profile.d/
+     install -m 0755 ${WORKDIR}/gst-ti.sh ${D}${sysconfdir}/profile.d/
 }
 
 RRECOMMENDS_${PN}_append_dm6446    += "ti-codecs-dm6446-server   ti-cmem-module ti-dsplink-module"
@@ -167,20 +165,16 @@ RRECOMMENDS_${PN}_append_dm365     += "ti-codecs-dm365           ti-cmem-module 
 RRECOMMENDS_${PN}_append_omapl137  += "ti-codecs-omapl137-server ti-cmem-module ti-dsplink-module"
 RRECOMMENDS_${PN}_append_omapl138  += "ti-codecs-omapl138-server ti-cmem-module ti-dsplink-module"
 
-FILES_${PN}     += "${libdir}/gstreamer-0.10/*.so ${sysconfdir}"
+FILES_${PN}     += "${libdir}/gstreamer-0.10/*.so ${sysconfdir} ${installdir}"
 FILES_${PN}-dev += "${libdir}/gstreamer-0.10/*.a ${libdir}/gstreamer-0.10/*.la"
 FILES_${PN}-dbg += "${libdir}/gstreamer-0.10/.debug"
 
-PACKAGES += "gstreamer-ti-demo-script"
-RDEPENDS_gstreamer-ti-demo-script = "${PN}"
-
-FILES_gstreamer-ti-demo-script = "${installdir}/gst/*"
-
-pkg_postinst_gstreamer-ti-demo-script () {
+pkg_postinst_${PN} () {
 	if [ -d ${installdir}/ti-codecs-server/ ]; then
         ln -sf ${installdir}/ti-codecs-server/* ${installdir}/gst/${PLATFORM}/
 	fi
 }
+
 
 INITSCRIPT_NAME = "gstti-init"
 INITSCRIPT_PARAMS = "start 30 5 2 . stop 40 0 1 6 ."
