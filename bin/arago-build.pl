@@ -62,7 +62,7 @@ my %machines = (
         multimedia_default  => "yes",
         dsp_default         => "yes",
         dvsdk_factory_default => "no",
-        graphics_default    => "yes",
+        graphics_default    => "no",
     },
     "da850-omapl138-evm"     => {
         bsp_default         => "yes",
