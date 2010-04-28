@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install Board Support Package binaries on $MACHINE"
-PR = "r7"
+PR = "r8"
 LICENSE="MIT"
 ALLOW_EMPTY = "1"
 
@@ -32,5 +32,6 @@ RRECOMMENDS_${PN} = "\
     kernel-modules \
     kernel-image \
     kernel-vmlinux \
+    u-boot \
 	"
 

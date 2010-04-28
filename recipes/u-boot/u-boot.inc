@@ -38,6 +38,8 @@ do_install () {
 		install -m 755 ${S}/tools/env/fw_printenv ${D}${base_sbindir}/fw_printenv
 		install -m 755 ${S}/tools/env/fw_printenv ${D}${base_sbindir}/fw_setenv
 	fi
+	install -d ${D}/boot
+	install -m 755  ${S}/${UBOOT_BINARY} ${D}/boot
 }
 
 do_deploy () {
@@ -64,4 +66,6 @@ do_install_append() {
 	cd ${D}/${UBOOT_SOURCE_DIR}
 	make distclean
 }
+
+FILES_${PN} = "/boot/*"
 
