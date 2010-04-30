@@ -3,32 +3,32 @@ include Rules.make
 DEFAULT_LINUXKERNEL_CONFIG=davinci_dm365_defconfig
 DEFAULT_UBOOT_CONFIG=davinci_dm365_evm_config
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm365mm dm365mm_clean dm365mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install irq irq_clean irq_install edma edma_clean edma_install install demos demos_clean demos_install u-boot u-boot_clean u-boot_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm365mm dm365mm_clean dm365mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install irq irq_clean irq_install edma edma_clean edma_install install demos demos_clean demos_install u-boot u-boot_clean u-boot_install dvtb_install
 
 #==============================================================================
-# The default build target.
+# The default build target builds non-relocatable components.
 #==============================================================================
-all:	cmem dm365mm irq edma demos
+all:	linux
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	cmem_clean dm365mm_clean irq_clean edma_clean demos_clean
+clean:	linux_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: linux psp_examples cmem dm365mm irq edma ceexamples dmai demos u-boot
+everything: linux psp_examples cmem dm365mm irq edma ceexamples dmai demos u-boot dvtb
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install dm365mm_install dmai_install psp_examples_install ceexamples_install irq_install edma_install demos_install u-boot_install
+install: linux_install cmem_install dm365mm_install dmai_install psp_examples_install ceexamples_install irq_install edma_install demos_install u-boot_install dvtb_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean dm365mm_clean irq_clean edma_clean demos_clean u-boot_clean
+clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean dm365mm_clean irq_clean edma_clean demos_clean u-boot_clean dvtb_clean
 
 #==============================================================================
 # A help message target.
@@ -46,6 +46,7 @@ help:
 	@echo
 	@echo "    dvtb                         : Build DVTB for $(PLATFORM)"
 	@echo "    dvtb_clean                   : Remove generated DVTB files"
+	@echo "    dvtb_install                 : Install dvtb"
 	@echo
 	@echo "    cmem                         : Build the CMEM kernel module"
 	@echo "    cmem_clean                   : Remove generated cmem files."
@@ -116,6 +117,12 @@ dvtb:
 
 dvtb_clean:
 	$(MAKE) -C $(DVTB_INSTALL_DIR) clean
+
+dvtb_install:
+	install -d $(EXEC_DIR)/dvtb/scripts
+	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/$(PLATFORM)/bin/* $(EXEC_DIR)/dvtb
+	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/scripts/$(PLATFORM)/* $(EXEC_DIR)/dvtb/scripts
+	install $(DEMO_INSTALL_DIR)/$(PLATFORM)/loadmodules_hd.sh $(EXEC_DIR)/dvtb/loadmodules.sh
 
 #==============================================================================
 # Build the Linux kernel. Also, an explicit cleanup target is defined.
