@@ -24,6 +24,13 @@ PLATFORM_da850-omapl138-evm = "omapl138"
 BOARD_da830-omapl137-evm =  "evmOMAPL137"
 BOARD_da850-omapl138-evm =  "evmOMAPL138"
  
+do_configure() {
+    cd ${S}/gpp
+
+    # Fix Makefile to find DSPLink paths
+    sed -i Makefile -e s:/\packages::g
+}
+
 do_compile() {
     # Build gpp sample application
     cd ${S}
@@ -59,6 +66,10 @@ do_compile() {
 do_install() {
     install -d ${D}${AUDIO_SOC_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${AUDIO_SOC_INSTALL_DIR_RECIPE}
+
+    sed -i ${D}${AUDIO_SOC_INSTALL_DIR_RECIPE}/gpp/Makefile -e s:dsplink\/:packages\/dsplink\/:g
+    sed -i ${D}${AUDIO_SOC_INSTALL_DIR_RECIPE}/dsp/makefile -e s:dsplink:packages\/dsplink:g
+    sed -i ${D}${AUDIO_SOC_INSTALL_DIR_RECIPE}/dsp/${BOARD}/makefile -e s:dsplink\/:packages\/dsplink\/:g
 
     install -d ${D}/${installdir}/ti-audio-soc-example
     cp -rf ${S}/gpp/${BOARD} ${D}/${installdir}/ti-audio-soc-example
