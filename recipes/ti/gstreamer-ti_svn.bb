@@ -1,46 +1,18 @@
-DESCRIPTION = "GSTREAMER Plugin (gstreamer-ti) for TI ARM/DSP processors"
-HOMEPAGE = "https://gforge.ti.com/gf/project/gstreamer_ti/"
-SECTION = "multimedia"
-LICENSE = "LGPL"
-
-# TODO :: Replace omapl137 with official support in GST (currently linking to omapl138)
-# TODO :: Codec Server Environment Variables shouldn't be required
-# TODO :: Add (and check) rc scripts for all targets (just copied for now) (365,6467,omapl137)
-# TODO :: Check if CPPFLAGS_append is still required
-# TODO :: Remove ENCODE/DECODE combo exports - these are not used anymore (check?)
-
-inherit autotools
-inherit update-rc.d
-
-require ti-paths.inc
-require ti-staging.inc
+require gstreamer-ti.inc
 
 PV = "svnr${SRCREV}"
-# Rebuild on kernel change since it links statically to ti-dmai, ti-codec-engine, etc
-PR = "r59+${MACHINE_KERNEL_PR}"
-
 
 S = "${WORKDIR}/gstreamer_ti/ti_build/ticodecplugin"
 
-SRCREV_dm365 = "612"
-
-# TODO: need to clean DSPLINK packaging on other recipe before moving to use latest gst-ti
-SRCREV = "573"
+SRCREV = "612"
 
 SRC_URI = "svn://gforge.ti.com/svn/gstreamer_ti/trunk;module=gstreamer_ti;proto=https;user=anonymous;pswd='' \
+  file://gstreamer-ti-tracker-1055.patch;patch=1 \
   file://gstreamer-ti-rc.sh \
   file://gst-ti.sh \
 "
 
-# apply tracker 1055 patch - this apply applies on top of 612 rev
-SRC_URI_append_dm365 = "file://gstreamer-ti-tracker-1055.patch;patch=1 \
- file://loadmodules.sh \
-"
-
-# TODO: to compile this patch you need to add x11 dependency.
-#SRC_URI_append_omap3 = " \
-#           file://gstreamer-ti-add-omapfb.patch;patch=1 \
-#"
+SRC_URI_append_dm365 = "file://loadmodules.sh"
 
 SRC_URI_append_omapl137 = " \
  file://gstreamer-ti-omapl137.patch;patch=1 \
@@ -52,127 +24,5 @@ SRC_URI_append_omapl138 = " \
  file://loadmodules.sh \
 "
 
-SRC_URI_append_dm6467 = " file://gstreamer-ti-dm6467-usesinglecsserver.patch;patch=1 "
-
-DEPENDS = "ti-dmai gstreamer gst-plugins-base"
-
-# gstreamer_ti picks up some config variables from the environment
-# - variables are used in the gstreamer makefile
-#   - PLATFORM, XDC_PLATFORM, XDC_TARGET, MVTOOL_DIR  
-# - others used by config.bld (which it gets from the dmai config.bld)
-#   - CROSS_COMPILE, PLATFORM_XDC
-
-PLATFORM_dm6446        = "dm6446"
-PLATFORM_dm6467        = "dm6467"
-PLATFORM_omap3         = "omap3530"
-PLATFORM_dm355         = "dm355"
-PLATFORM_dm365         = "dm365"
-PLATFORM_omapl137      = "omapl137"
-PLATFORM_omapl138      = "omapl138"
-PLATFORM              ?= "<UNDEFINED_PLATFORM>"
-
-GST_TI_PLATFORM_dm365 = "dm365"
-
-XDC_PLATFORM_dm6446    = "ti.platforms.evmDM6446"
-XDC_PLATFORM_dm6467    = "ti.platforms.evmDM6467"
-XDC_PLATFORM_omap3     = "ti.platforms.evm3530"
-XDC_PLATFORM_dm355     = "ti.platforms.evmDM355"
-XDC_PLATFORM_dm365     = "ti.platforms.evmDM365"
-XDC_PLATFORM_omapl137  = "ti.platforms.evmOMAPL137"
-XDC_PLATFORM_omapl138  = "ti.platforms.evmOMAPL138"
-XDC_PLATFORM          ?= "<UNDEFINED_XDC_PLATFORM>"
-
-export PLATFORM
-export GST_TI_PLATFORM
-export XDC_PLATFORM
-export XDC_TARGET      = "gnu.targets.arm.GCArmv5T"
-export PLATFORM_XDC    = ${XDC_PLATFORM}
-export MVTOOL_DIR      = "${TOOLCHAIN_PATH}"
-export CROSS_COMPILE   = "${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}"
-
-# Makefile also expects to be able to find the kernel headers from the envirionment
-export LINUXKERNEL_INSTALL_DIR = ${STAGING_KERNEL_DIR} 
-
-# export codec combo (or server) locations
-# Why do we need to do this?? - These will get picked up from CODEC_INSTALL_DIR?
-# Sould only need this if we change from default server
-
-export HMJCP_COMBO     = "${installdir}/ti-codecs-server/hmjcp.accel"
-export CODEC_SERVER    = "${installdir}/ti-codecs-server/cs.x64P"
-
-# TODO :: These 2 can be removed now since dm6467 uses single CS server (like omap/omapl)
-export ENCODE_COMBO    = "${installdir}/ti-codecs-server/encodeCombo.x64P"
-export DECODE_COMBO    = "${installdir}/ti-codecs-server/decodeCombo.x64P"
-
-CPPFLAGS_append = " -DPlatform_${PLATFORM}"
-
-do_configure_prepend() {
-    sed -i -e 's:(LINK_INSTALL_DIR)/packages:(LINK_INSTALL_DIR):g' ${S}/src/Makefile.am
-
-    # TODO :: Is this still true?
-    # PSP kernel is based on older DSS. we need to replace linux/omapfb.h with mach/omapfb.h
-    if ! [ -e ${STAGING_KERNEL_DIR}/include/linux/omapfb.h ] ; then
-         sed -i -e s:linux/omapfb:mach/omapfb:g ${S}/src/omapfb.h || true
-    fi
-}
-
-do_install_prepend () {
-
-    # install gstreamer demo scripts
-    install -d ${D}/${installdir}/gst
-    cp -r ${WORKDIR}/gstreamer_ti/gstreamer_demo/shared ${D}/${installdir}/gst
-
-    # If we have loadmodule.sh in WORKDIR then give preference to this over
-    # the default gst-ti loadmdules.sh
-    if [ -f ${WORKDIR}/loadmodules.sh ]; then
-       mkdir -p ${WORKDIR}/gstreamer_ti/gstreamer_demo/${PLATFORM}
-       cp ${WORKDIR}/loadmodules.sh ${WORKDIR}/gstreamer_ti/gstreamer_demo/${PLATFORM}/loadmodules.sh
-    fi
-
-    if [ -d ${WORKDIR}/gstreamer_ti/gstreamer_demo/${PLATFORM} ] ; then
-        cp -r ${WORKDIR}/gstreamer_ti/gstreamer_demo/${PLATFORM} ${D}/${installdir}/gst
-        
-        # default loadmodules script is hard-coded for insmod, change to modprobe
-        sed -i 's/insmod/modprobe/g' ${D}/${installdir}/gst/${PLATFORM}/loadmodules.sh
-        sed -i 's/.ko//g' ${D}/${installdir}/gst/${PLATFORM}/loadmodules.sh
-
-        if [ "${PLATFORM}" = "omap3530" ]; then
-            echo "modprobe sdmak" >> ${D}/${installdir}/gst/${PLATFORM}/loadmodules.sh
-        fi
-        
-        # add depmod -a after #!/bin/sh  
-        sed -i '/#!\/bin\/sh/a\depmod -a' ${D}/${installdir}/gst/${PLATFORM}/loadmodules.sh
-    fi
-
-    find ${D}/${installdir}/gst -name .svn -type d | xargs rm -rf
-
-    chmod 0755 ${D}/${installdir}/gst -R
-
-    install -d ${D}${sysconfdir}/init.d/
-    install -m 0755  ${WORKDIR}/gstreamer-ti-rc.sh ${D}${sysconfdir}/init.d/gstti-init
-     install -d ${D}${sysconfdir}/profile.d/
-     install -m 0755 ${WORKDIR}/gst-ti.sh ${D}${sysconfdir}/profile.d/
-}
-
-RRECOMMENDS_${PN}_append_dm6446    += "ti-codecs-dm6446-server   ti-cmem-module ti-dsplink-module"
-RRECOMMENDS_${PN}_append_dm6467    += "ti-codecs-dm6467          ti-cmem-module ti-dsplink-module"
-RRECOMMENDS_${PN}_append_omap3     += "ti-codecs-omap3530-server ti-cmem-module ti-dsplink-module ti-lpm-module ti-sdma-module"
-RRECOMMENDS_${PN}_append_dm355     += "ti-codecs-dm355           ti-cmem-module ti-dm355mm-module"
-RRECOMMENDS_${PN}_append_dm365     += "ti-codecs-dm365           ti-cmem-module ti-dm365mm-module ti-edma-module ti-irq-module"
-RRECOMMENDS_${PN}_append_omapl137  += "ti-codecs-omapl137-server ti-cmem-module ti-dsplink-module"
-RRECOMMENDS_${PN}_append_omapl138  += "ti-codecs-omapl138-server ti-cmem-module ti-dsplink-module"
-
-FILES_${PN}     += "${libdir}/gstreamer-0.10/*.so ${sysconfdir} ${installdir}"
-FILES_${PN}-dev += "${libdir}/gstreamer-0.10/*.a ${libdir}/gstreamer-0.10/*.la"
-FILES_${PN}-dbg += "${libdir}/gstreamer-0.10/.debug"
-
-pkg_postinst_${PN} () {
-	if [ -d ${installdir}/ti-codecs-server/ ]; then
-        ln -sf ${installdir}/ti-codecs-server/* ${installdir}/gst/${PLATFORM}/
-	fi
-}
-
-
-INITSCRIPT_NAME = "gstti-init"
-INITSCRIPT_PARAMS = "start 30 5 2 . stop 40 0 1 6 ."
+SRC_URI_append_dm6467 = "file://gstreamer-ti-dm6467-usesinglecsserver.patch;patch=1"
 

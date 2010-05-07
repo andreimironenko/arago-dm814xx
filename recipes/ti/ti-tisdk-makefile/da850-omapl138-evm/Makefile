@@ -162,7 +162,7 @@ codecs:
 	$(MAKE) -C $(CODEC_INSTALL_DIR) \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	LINK_INSTALL_DIR=$(LINK_INSTALL_DIR)/packages \
+	LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
@@ -209,7 +209,7 @@ dmai:
 	LINUXKERNEL_INSTALL_DIR_$(PLATFORM)_al=$(LINUXKERNEL_INSTALL_DIR) \
 	CROSS_COMPILE_$(PLATFORM)_al=$(CSTOOL_PREFIX) \
 	XDC_INSTALL_DIR_$(PLATFORM)_al=$(XDC_INSTALL_DIR) \
-	LINK_INSTALL_DIR_$(PLATFORM)_al=$(LINK_INSTALL_DIR)/packages \
+	LINK_INSTALL_DIR_$(PLATFORM)_al=$(LINK_INSTALL_DIR) \
 	VERBOSE=true \
 	all
 	
@@ -233,7 +233,7 @@ ceexamples_apps:
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR)/packages \
+	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
@@ -253,7 +253,7 @@ ceexamples_apps_clean:
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR)/packages \
+	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
@@ -279,7 +279,7 @@ ceexamples_extensions:
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR)/packages \
+	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
@@ -299,7 +299,7 @@ ceexamples_extensions_clean:
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR)/packages \
+	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
@@ -326,7 +326,7 @@ ceexamples_servers:
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR)/packages \
+	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
@@ -347,7 +347,7 @@ ceexamples_servers_clean:
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR)/packages \
+	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
@@ -375,7 +375,7 @@ ceexamples_codecs:
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR)/packages \
+	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
@@ -396,7 +396,7 @@ ceexamples_codecs_clean:
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR)/packages \
+	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
@@ -424,14 +424,14 @@ ceexamples_install: ceexamples_codecs_install ceexamples_extensions_install ceex
 
 
 dsplink_cfg:
-	DSPLINK=$(LINK_INSTALL_DIR)/packages/dsplink \
-	perl $(LINK_INSTALL_DIR)/packages/dsplink/config/bin/dsplinkcfg.pl \
+	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
+	perl $(LINK_INSTALL_DIR)/dsplink/config/bin/dsplinkcfg.pl \
 	--platform=OMAPL1XX  --nodsp=1 --dspcfg_0=OMAPL1XXGEMSHMEM \
 	--dspos_0=DSPBIOS5XX --gppos=ARM --comps=ponslrmc
 
 dsplink_arm_clean:
-	DSPLINK=$(LINK_INSTALL_DIR)/packages/dsplink \
-	$(MAKE) -C $(LINK_INSTALL_DIR)/packages/dsplink/gpp/src \
+	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
+	$(MAKE) -C $(LINK_INSTALL_DIR)/dsplink/gpp/src \
 	CROSS_COMPILE=$(CSTOOL_PREFIX) \
 	CC=$(CSTOOL_PREFIX)gcc \
 	AR=$(CSTOOL_PREFIX)ar \
@@ -443,8 +443,8 @@ dsplink_arm_clean:
 	clean 
 
 dsplink_arm: dsplink_cfg
-	DSPLINK=$(LINK_INSTALL_DIR)/packages/dsplink \
-	$(MAKE) -C $(LINK_INSTALL_DIR)/packages/dsplink/gpp/src \
+	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
+	$(MAKE) -C $(LINK_INSTALL_DIR)/dsplink/gpp/src \
 	CROSS_COMPILE=$(CSTOOL_PREFIX) \
 	CC=$(CSTOOL_PREFIX)gcc \
 	COMPILER=$(CSTOOL_PREFIX)gcc \
@@ -456,22 +456,22 @@ dsplink_arm: dsplink_cfg
 	all
 
 dsplink_dsp_clean:
-	DSPLINK=$(LINK_INSTALL_DIR)/packages/dsplink \
-	$(MAKE) -C $(LINK_INSTALL_DIR)/packages/dsplink/dsp/src \
+	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
+	$(MAKE) -C $(LINK_INSTALL_DIR)/dsplink/dsp/src \
 	BASE_CGTOOLS=$(CODEGEN_INSTALL_DIR) \
 	BASE_SABIOS=$(BIOS_INSTALL_DIR) \
 	clean 
 
 dsplink_dsp: dsplink_cfg
-	DSPLINK=$(LINK_INSTALL_DIR)/packages/dsplink \
-	$(MAKE) -C $(LINK_INSTALL_DIR)/packages/dsplink/dsp/src \
+	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
+	$(MAKE) -C $(LINK_INSTALL_DIR)/dsplink/dsp/src \
 	BASE_CGTOOLS=$(CODEGEN_INSTALL_DIR) \
 	BASE_SABIOS=$(BIOS_INSTALL_DIR) \
 	all
 
 dsplink_samples_clean:
-	DSPLINK=$(LINK_INSTALL_DIR)/packages/dsplink \
-	$(MAKE)	-C $(LINK_INSTALL_DIR)/packages/dsplink/gpp/src/samples \
+	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
+	$(MAKE)	-C $(LINK_INSTALL_DIR)/dsplink/gpp/src/samples \
 	BASE_TOOLCHAIN=$(CSTOOL_DIR) \
 	BASE_CGTOOLS=${CSTOOL_DIR}/bin \
 	OSINC_PLATFORM="$(CSTOOL_PREFIX)/lib/gcc/arm-none-linux-gnueabi/$($(CSTOOL_PREFIX) --dumversion)/include" \
@@ -486,8 +486,8 @@ dsplink_samples_clean:
 	clean
 	
 dsplink_samples:
-	DSPLINK=$(LINK_INSTALL_DIR)/packages/dsplink \
-	$(MAKE)	-C $(LINK_INSTALL_DIR)/packages/dsplink/gpp/src/samples \
+	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
+	$(MAKE)	-C $(LINK_INSTALL_DIR)/dsplink/gpp/src/samples \
 	BASE_TOOLCHAIN=$(CSTOOL_DIR) \
 	BASE_CGTOOLS=${CSTOOL_DIR}/bin \
 	OSINC_PLATFORM="$(CSTOOL_PREFIX)/lib/gcc/arm-none-linux-gnueabi/$($(CSTOOL_PREFIX) --dumversion)/include" \
@@ -507,9 +507,9 @@ dsplink_clean: dsplink_arm_clean dsplink_dsp_clean dsplink_samples_clean
 
 dsplink_install:
 	install -d $(EXEC_DIR)/dsplink
-	install $(LINK_INSTALL_DIR)/packages/dsplink/gpp/export/BIN/Linux/DAVINCI/RELEASE/dsplinkk.ko $(EXEC_DIR)/dsplink
+	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/DAVINCI/RELEASE/dsplinkk.ko $(EXEC_DIR)/dsplink
 	cp ${LINK_INSTALL_DIR}/packages/dsplink/gpp/export/BIN/Linux/DAVINCI/RELEASE/*gpp $(EXEC_DIR)/dsplink
-	@for file in $(shell find $(LINK_INSTALL_DIR)/packages/dsplink/dsp/BUILD -name *.out); do \
+	@for file in $(shell find $(LINK_INSTALL_DIR)/dsplink/dsp/BUILD -name *.out); do \
 	cp $$file $(EXEC_DIR)/dsplink ; \
 	done
 

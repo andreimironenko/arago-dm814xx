@@ -60,21 +60,7 @@ USER_XDC_PATH = "${CE_INSTALL_DIR}/examples"
 
 PARALLEL_MAKE = ""
 
-do_configure () {
-
-    sed -i -e 's:(LINK_INSTALL_DIR)/packages:(LINK_INSTALL_DIR):g' ${S}/dmai/packages/ti/sdo/dmai/apps/Makefile.app
-    sed -i -e 's:(LINK_INSTALL_DIR)/packages:(LINK_INSTALL_DIR):g' ${S}/dmai/packages/ti/sdo/dmai/Makefile
-
-    # TODO :: Is this still true?
-    # PSP kernel is based on older DSS. we need to replace linux/omapfb.h with mach/omapfb.h 
-    if ! [ -e ${STAGING_KERNEL_DIR}/include/linux/omapfb.h ] ; then 
-        sed -i -e s:linux/omapfb:mach/omapfb:g ${S}/dmai/packages/ti/sdo/dmai/linux/Display_fbdev.c
-        sed -i -e s:linux/omapfb:mach/omapfb:g ${S}/dmai/packages/ti/sdo/dmai/linux/priv/_Display.h
-    fi
-}
-
 do_prepsources() {
-
     # TODO :: Why do we do this?
     unset DMAI_INSTALL_DIR
     cd ${S}
@@ -155,17 +141,6 @@ PACKAGES += "ti-dmai-tests"
 FILES_ti-dmai-tests = "${installdir}/ti-dmai-tests/*"
 INSANE_SKIP_ti-dmai-tests = True
 
-# TODO :: Thes could be inherited from ti-dmai-apps
-RDEPENDS_ti-dmai-tests_dm6446   += "ti-codecs-dm6446-server   ti-cmem-module ti-dsplink-module"
-RDEPENDS_ti-dmai-tests_dm6467   += "ti-codecs-dm6467          ti-cmem-module ti-dsplink-module"
-RDEPENDS_ti-dmai-tests_omap3    += "ti-codecs-omap3530-server ti-cmem-module ti-dsplink-module ti-lpm-module ti-sdma-module"
-RDEPENDS_ti-dmai-tests_dm355    += "ti-codecs-dm355           ti-cmem-module ti-dm355mm-module"
-RDEPENDS_ti-dmai-tests_dm365    += "ti-codecs-dm365           ti-cmem-module ti-dm365mm-module ti-edma-module ti-irq-module"
-RDEPENDS_ti-dmai-tests_omapl137 += "ti-codecs-omapl137-server ti-cmem-module ti-dsplink-module"
-RDEPENDS_ti-dmai-tests_omapl138 += "ti-codecs-omapl138-server ti-cmem-module ti-dsplink-module"
-
-pkg_postinst_ti-dmai-tests () {
-	ln -sf ${installdir}/ti-codecs-server/*.${DSPSUFFIX} ${installdir}/ti-dmai-tests/
-}
-
+# To make dependency more simpler we just depend on ti-dmai-apps
+RDEPENDS_ti-dmai-tests   += "ti-dmai-apps"
 
