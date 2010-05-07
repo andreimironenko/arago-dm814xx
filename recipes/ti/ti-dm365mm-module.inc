@@ -30,5 +30,5 @@ do_install () {
     cp -pPrf ${S}/* ${D}${DM365MM_INSTALL_DIR_RECIPE}
 }
 
-INHIBIT_PACKAGE_STRIP = "1"
+PACKAGE_STRIP = "no"
 INSANE_SKIP_${PN} = True

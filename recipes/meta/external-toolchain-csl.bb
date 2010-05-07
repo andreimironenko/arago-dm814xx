@@ -1,6 +1,6 @@
-PR = "r3"
 LICENSE="GPLv2"
 HOMEPAGE="http://www.codesourcery.com/sgpp/lite/arm/portal/release858"
+PR = "r4"
 
 INHIBIT_DEFAULT_DEPS = "1"
 
@@ -26,7 +26,6 @@ PROVIDES = "\
 	linux-libc-headers \
 "
 
-RPROVIDES = "glibc-utils libsegfault glibc-thread-db"
 RPROVIDES_glibc-dev += "libc-dev"
 PACKAGES_DYNAMIC += "glibc-gconv-*"
 PACKAGES_DYNAMIC += "glibc-locale-*"

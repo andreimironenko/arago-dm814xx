@@ -66,5 +66,7 @@ RDEPENDS_ti-dvsdk-demos_dm365 += "ti-dm365mm-module ti-cmem-module alsa-lib libp
 
 FILES_${PN} = "${installdir}/dvsdk-demos/*"
 
-INHIBIT_PACKAGE_STRIP = "1"
+BASE_SRC_URI ?= "http://install.source.dir.local"
+
+PACKAGE_STRIP = "no"
 INSANE_SKIP_${PN} = "True"
