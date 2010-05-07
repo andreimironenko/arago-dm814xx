@@ -20,7 +20,6 @@ MULTIMEDIA_dm355 = " \
     ti-codec-engine-examples \
     ti-dvsdk-demos \
     ti-data \
-#    ti-dvtb \
     "
 
 MULTIMEDIA_dm6446 = " \
@@ -45,7 +44,6 @@ MULTIMEDIA_dm6467-evm = " \
     ti-codec-engine-examples \
     ti-dvsdk-demos \
     ti-data \
-#    ti-dvtb \
     task-arago-gst \
     gstreamer-ti \
     "
