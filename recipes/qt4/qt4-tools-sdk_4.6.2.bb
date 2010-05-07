@@ -16,6 +16,9 @@ SRC_URI = "ftp://ftp.trolltech.com/qt/source/qt-everywhere-opensource-src-${PV}.
 
 S = "${WORKDIR}/qt-everywhere-opensource-src-${PV}"
 
+SRC_URI[md5sum] = "eb651ee4b157c01696aa56777fc6e0e5"
+SRC_URI[sha256sum] = "176f51ddb06dce67ab4b2efc6b327dc21ed8f764c5d97acc15ff1f907c2affae"
+
 
 # FIXME: make it work with "${STAGING_BINDIR_NATIVE}/pkg-config --cflags dbus-1"
 EXTRA_OECONF = "-prefix ${prefix} \
@@ -71,5 +74,13 @@ do_install() {
     for i in moc uic uic3 rcc lrelease lupdate qdbuscpp2xml qdbusxml2cpp; do
         install -m 0755 bin/${i} ${D}${bindir}/${i}4
     done
+}
+
+do_install_append() {
+	(cd ${D}${bindir}; \
+	ln -s qmake2 qmake; \
+	for i in moc uic uic3 rcc lrelease lupdate qdbuscpp2xml qdbusxml2cpp; do \
+		ln -s ${i}4 ${i}; \
+	done)
 }
 
