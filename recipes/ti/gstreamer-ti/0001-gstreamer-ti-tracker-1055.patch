@@ -1,7 +1,30 @@
-diff --git ticodecplugin/Makefile.external ticodecplugin/Makefile.external
+From 455900e8cbb7a88d3ec05cba5393f4ca0bf22adc Mon Sep 17 00:00:00 2001
+From: Brijesh Singh <bksingh@ti.com>
+Date: Sun, 9 May 2010 05:21:19 -0500
+Subject: [PATCH] gstreamer ti tracker 1055
+
+---
+ Makefile.external                |   49 +++++++---
+ src/Makefile.am                  |    4 +-
+ src/gstticodecplugin_dm355.cfg   |  143 ++++++++++++-----------------
+ src/gstticodecplugin_dm365.cfg   |  185 ++++++++++++++++++--------------------
+ src/gstticodecplugin_dm6467t.cfg |   34 +++++++
+ src/gstticodecs_dm355.c          |   11 +--
+ src/gstticodecs_dm365.c          |   23 ++++--
+ src/gstticodecs_dm6467.c         |    2 +-
+ src/gstticodecs_dm6467t.c        |   69 ++++++++++++++
+ src/gsttidmaivideosink.c         |   25 ++++-
+ src/gsttividdec2.c               |   73 ++++++++-------
+ src/gsttividenc1.c               |   10 ++-
+ src/gsttividresize.c             |    4 +
+ 13 files changed, 380 insertions(+), 252 deletions(-)
+ create mode 100644 src/gstticodecplugin_dm6467t.cfg
+ create mode 100644 src/gstticodecs_dm6467t.c
+
+diff --git a/Makefile.external b/Makefile.external
 index ca14b49..1f67783 100644
---- ticodecplugin/Makefile.external
-+++ ticodecplugin/Makefile.external
+--- a/Makefile.external
++++ b/Makefile.external
 @@ -3,8 +3,7 @@
  #
  # The only customization required below is defining the DVSDK_PATH
@@ -110,10 +133,10 @@ index ca14b49..1f67783 100644
  dm355: Makefile
  	$(MAKE) -f Makefile
  
-diff --git ticodecplugin/src/Makefile.am ticodecplugin/src/Makefile.am
+diff --git a/src/Makefile.am b/src/Makefile.am
 index 231beb0..95973a8 100644
---- ticodecplugin/src/Makefile.am
-+++ ticodecplugin/src/Makefile.am
+--- a/src/Makefile.am
++++ b/src/Makefile.am
 @@ -1,6 +1,6 @@
  # plugindir is set in configure
  
@@ -131,10 +154,10 @@ index 231beb0..95973a8 100644
  
  %/compiler.opt %/linker.cmd : %.cfg
  	XDCPATH="$(XDC_PATH)" $(CONFIGURO) -c $(MVTOOL_DIR) -o  $(XDC_CONFIG_BASENAME) -t $(XDC_TARGET) -p $(XDC_PLATFORM) -b $(DMAI_INSTALL_DIR)/packages/config.bld $<
-diff --git ticodecplugin/src/gstticodecplugin_dm355.cfg ticodecplugin/src/gstticodecplugin_dm355.cfg
+diff --git a/src/gstticodecplugin_dm355.cfg b/src/gstticodecplugin_dm355.cfg
 index 7ceae4f..bf533f0 100644
---- ticodecplugin/src/gstticodecplugin_dm355.cfg
-+++ ticodecplugin/src/gstticodecplugin_dm355.cfg
+--- a/src/gstticodecplugin_dm355.cfg
++++ b/src/gstticodecplugin_dm355.cfg
 @@ -1,84 +1,59 @@
 -/*
 - * Copyright (C) $year Texas Instruments Incorporated - http://www.ti.com/
@@ -279,10 +302,10 @@ index 7ceae4f..bf533f0 100644
 +/* Load support for the 'Davinci Multimedia Application Interface' modules */
 +var DMAI = xdc.loadPackage('ti.sdo.dmai');
 +
-diff --git ticodecplugin/src/gstticodecplugin_dm365.cfg ticodecplugin/src/gstticodecplugin_dm365.cfg
+diff --git a/src/gstticodecplugin_dm365.cfg b/src/gstticodecplugin_dm365.cfg
 index 6442dce..0e94a35 100644
---- ticodecplugin/src/gstticodecplugin_dm365.cfg
-+++ ticodecplugin/src/gstticodecplugin_dm365.cfg
+--- a/src/gstticodecplugin_dm365.cfg
++++ b/src/gstticodecplugin_dm365.cfg
 @@ -1,99 +1,86 @@
 -/*
 - * Copyright (C) $year Texas Instruments Incorporated - http://www.ti.com/
@@ -469,11 +492,11 @@ index 6442dce..0e94a35 100644
 +EDMA3CHAN.trace = true;
 +EDMA3CHAN.debug = true;
 +*/
-diff --git ticodecplugin/src/gstticodecplugin_dm6467t.cfg ticodecplugin/src/gstticodecplugin_dm6467t.cfg
+diff --git a/src/gstticodecplugin_dm6467t.cfg b/src/gstticodecplugin_dm6467t.cfg
 new file mode 100644
 index 0000000..686cfeb
 --- /dev/null
-+++ ticodecplugin/src/gstticodecplugin_dm6467t.cfg
++++ b/src/gstticodecplugin_dm6467t.cfg
 @@ -0,0 +1,34 @@
 +/*  ============================================================================
 + *   Copyright (c)  Texas Instruments Incorporated 2009
@@ -509,10 +532,10 @@ index 0000000..686cfeb
 +
 +/* Load support for the 'Davinci Multimedia Application Interface' modules */
 +var DMAI = xdc.loadPackage('ti.sdo.dmai');
-diff --git ticodecplugin/src/gstticodecs_dm355.c ticodecplugin/src/gstticodecs_dm355.c
+diff --git a/src/gstticodecs_dm355.c b/src/gstticodecs_dm355.c
 index a372b06..9d4325b 100644
---- ticodecplugin/src/gstticodecs_dm355.c
-+++ ticodecplugin/src/gstticodecs_dm355.c
+--- a/src/gstticodecs_dm355.c
++++ b/src/gstticodecs_dm355.c
 @@ -22,8 +22,7 @@
  #include "gstticodecs.h"
  
@@ -553,10 +576,10 @@ index a372b06..9d4325b 100644
      },
  
      { NULL }
-diff --git ticodecplugin/src/gstticodecs_dm365.c ticodecplugin/src/gstticodecs_dm365.c
+diff --git a/src/gstticodecs_dm365.c b/src/gstticodecs_dm365.c
 index 9572403..cf81e6f 100644
---- ticodecplugin/src/gstticodecs_dm365.c
-+++ ticodecplugin/src/gstticodecs_dm365.c
+--- a/src/gstticodecs_dm365.c
++++ b/src/gstticodecs_dm365.c
 @@ -22,8 +22,7 @@
  #include "gstticodecs.h"
  
@@ -609,10 +632,10 @@ index 9572403..cf81e6f 100644
      },
  
      { NULL }
-diff --git ticodecplugin/src/gstticodecs_dm6467.c ticodecplugin/src/gstticodecs_dm6467.c
+diff --git a/src/gstticodecs_dm6467.c b/src/gstticodecs_dm6467.c
 index b9b0499..cbb6520 100644
---- ticodecplugin/src/gstticodecs_dm6467.c
-+++ ticodecplugin/src/gstticodecs_dm6467.c
+--- a/src/gstticodecs_dm6467.c
++++ b/src/gstticodecs_dm6467.c
 @@ -1,5 +1,5 @@
  /*
 - * gstticodecs_dm6446.c
@@ -620,11 +643,11 @@ index b9b0499..cbb6520 100644
   *
   * This file provides information for available codecs on the DM6446 platform.
   *
-diff --git ticodecplugin/src/gstticodecs_dm6467t.c ticodecplugin/src/gstticodecs_dm6467t.c
+diff --git a/src/gstticodecs_dm6467t.c b/src/gstticodecs_dm6467t.c
 new file mode 100644
 index 0000000..fe597d5
 --- /dev/null
-+++ ticodecplugin/src/gstticodecs_dm6467t.c
++++ b/src/gstticodecs_dm6467t.c
 @@ -0,0 +1,69 @@
 +/*
 + * gstticodecs_dm6467t.c
@@ -695,10 +718,10 @@ index 0000000..fe597d5
 +    { NULL }
 +};
 +
-diff --git ticodecplugin/src/gsttidmaivideosink.c ticodecplugin/src/gsttidmaivideosink.c
+diff --git a/src/gsttidmaivideosink.c b/src/gsttidmaivideosink.c
 index 5f6a5b3..81bdac7 100644
---- ticodecplugin/src/gsttidmaivideosink.c
-+++ ticodecplugin/src/gsttidmaivideosink.c
+--- a/src/gsttidmaivideosink.c
++++ b/src/gsttidmaivideosink.c
 @@ -32,11 +32,12 @@
  /* Define sink (input) pad capabilities.
   *
@@ -790,10 +813,10 @@ index 5f6a5b3..81bdac7 100644
          default:
              GST_ERROR("unsupported fourcc\n");
              return FALSE;
-diff --git ticodecplugin/src/gsttividdec2.c ticodecplugin/src/gsttividdec2.c
+diff --git a/src/gsttividdec2.c b/src/gsttividdec2.c
 index 0804065..79b28a5 100644
---- ticodecplugin/src/gsttividdec2.c
-+++ ticodecplugin/src/gsttividdec2.c
+--- a/src/gsttividdec2.c
++++ b/src/gsttividdec2.c
 @@ -674,16 +674,8 @@ static gboolean gst_tividdec2_set_source_caps(
         given buffer */
      BufferGfx_getDimensions(hBuf, &dim);
@@ -888,10 +911,10 @@ index 0804065..79b28a5 100644
      }
  
      GST_LOG("opening video decoder \"%s\"\n", viddec2->codecName);
-diff --git ticodecplugin/src/gsttividenc1.c ticodecplugin/src/gsttividenc1.c
+diff --git a/src/gsttividenc1.c b/src/gsttividenc1.c
 index f9c6f1a..2e1fb31 100644
---- ticodecplugin/src/gsttividenc1.c
-+++ ticodecplugin/src/gsttividenc1.c
+--- a/src/gsttividenc1.c
++++ b/src/gsttividenc1.c
 @@ -133,6 +133,11 @@ static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE(
           "framerate=(fraction)[ 0, MAX ], "
           "width=(int)[ 1, MAX ], "
@@ -930,10 +953,10 @@ index f9c6f1a..2e1fb31 100644
                  case GST_MAKE_FOURCC('Y', '8', 'C', '8'):
                      videnc1->colorSpace = ColorSpace_YUV422PSEMI;
                      break;
-diff --git ticodecplugin/src/gsttividresize.c ticodecplugin/src/gsttividresize.c
+diff --git a/src/gsttividresize.c b/src/gsttividresize.c
 index 5757705..c200787 100644
---- ticodecplugin/src/gsttividresize.c
-+++ ticodecplugin/src/gsttividresize.c
+--- a/src/gsttividresize.c
++++ b/src/gsttividresize.c
 @@ -90,6 +90,7 @@ static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE(
      GST_PAD_ALWAYS,
      GST_STATIC_CAPS
@@ -966,3 +989,6 @@ index 5757705..c200787 100644
          case GST_MAKE_FOURCC('Y', '8', 'C', '8'):
              return ColorSpace_YUV422PSEMI;
          case GST_MAKE_FOURCC('N', 'V', '1', '2'):
+-- 
+1.5.4.3
+

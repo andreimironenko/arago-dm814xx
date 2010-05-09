@@ -10,6 +10,3 @@ modprobe cmemk phys_start=0xC2200000 phys_end=0xC3200000 \
 
 modprobe dsplinkk
 
-rm -f /dev/dsplink
-mknod /dev/dsplink c `awk "\\$2==\"dsplink\" {print \\$1}" /proc/devices` 0
-
