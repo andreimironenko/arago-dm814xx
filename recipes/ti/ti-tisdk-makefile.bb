@@ -7,7 +7,7 @@ SRC_URI = "\
 	file://Makefile \
   	file://Rules.make \
 "
-PR = "r18"
+PR = "r19"
 
 do_install () {
 	install -d ${D}/${installdir}
