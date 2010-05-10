@@ -6,7 +6,7 @@ PRIORITY = "optional"
 
 SRCREV = "56"
 PV = "1.0"
-PR = "r5+svnr${SRCPV}"
+PR = "r6+svnr${SRCPV}"
 
 # Skip the QA for browser binary (temporary)
 INSANE_SKIP_${PN} = "True"
@@ -36,7 +36,6 @@ MATRIX_EXTRA_BINS = " \
 	standby \
 	sysSettings \
 	taskInfo \
-
 	browser \
 "
 
