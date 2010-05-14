@@ -426,7 +426,7 @@ ceexamples_install: ceexamples_codecs_install ceexamples_extensions_install ceex
 dsplink_cfg:
 	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
 	perl $(LINK_INSTALL_DIR)/dsplink/config/bin/dsplinkcfg.pl \
-	--platform=OMAPL1XX  --nodsp=1 --dspcfg_0=OMAPL1XXGEMSHMEM \
+	--platform=OMAPL138  --nodsp=1 --dspcfg_0=OMAPL138GEMSHMEM \
 	--dspos_0=DSPBIOS5XX --gppos=ARM --comps=ponslrmc
 
 dsplink_arm_clean:
