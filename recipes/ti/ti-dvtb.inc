@@ -2,13 +2,13 @@ DESCRIPTION = "DVTB for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-PR = "r5"
+PR = "r6"
  
 DEPENDS = "virtual/kernel alsa-lib ti-framework-components ti-codec-engine ti-xdctools ti-linuxutils alsa-lib jpeg ncurses ti-xdais "
 
 DEPENDS_append_dm365 = "ti-codecs-dm365"
 
-SRC_URI = "http://gt_tspa_dev.gt.design.ti.com/dev/DVSDK/310_DVSDK/3_10_00/dvtb_${PV}.tar.gz;name=dvtbtarball"
+SRC_URI = "http://tigt_dev.gt.design.ti.com/dev/DVSDK/310_DVSDK/3_10_00/dvtb_${PV}.tar.gz;name=dvtbtarball"
 
 S = "${WORKDIR}/dvtb_${PV}"
 
