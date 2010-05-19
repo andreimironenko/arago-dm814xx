@@ -2,7 +2,7 @@ require ti-board-utilities.inc
 
 PV = 3.x.0.0-r35
 
-SRC_URI[boardutilitiestarball.md5sum] = "768998b24ad8bd2f3f52af6c6559c80d"
-SRC_URI[boardutilitiestarball.sha256sum] = "9d5be10d3b730e70c36fa31314923366d0186816bab6e010f43753f365362217"
+SRC_URI[boardutilitiestarball.md5sum] = "47f189ea86f13e0f72ac2bcca6d93798"
+SRC_URI[boardutilitiestarball.sha256sum] = "23d26f3eaa1719f409f2350b5415894f20ab75847a822edfb416c38d8baa4247"
 
-PR = "r1"
+PR = "r2"

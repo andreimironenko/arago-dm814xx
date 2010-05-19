@@ -3,7 +3,7 @@ include Rules.make
 DEFAULT_LINUXKERNEL_CONFIG=davinci_dm355_defconfig
 DEFAULT_UBOOT_CONFIG=davinci_dm355evm_config
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm355mm dm355mm_clean dm355mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install edma_install install demos demos_clean demos_install u-boot u-boot_clean u-boot_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm355mm dm355mm_clean dm355mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install edma_install install demos demos_clean demos_install u-boot u-boot_clean u-boot_install ubl ubl_clean ubl_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -18,17 +18,17 @@ clean:	linux_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: linux psp_examples cmem dm355mm ceexamples dmai demos u-boot
+everything: linux psp_examples cmem dm355mm ceexamples dmai demos u-boot ubl
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install dm355mm_install dmai_install psp_examples_install ceexamples_install demos_install u-boot_install
+install: linux_install cmem_install dm355mm_install dmai_install psp_examples_install ceexamples_install demos_install u-boot_install ubl_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean dm355mm_clean demos_clean u-boot_clean
+clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean dm355mm_clean demos_clean u-boot_clean ubl_clean
 
 #==============================================================================
 # A help message target.
@@ -66,6 +66,10 @@ help:
 	@echo "    linux                        : Build Linux kernel uImage and module"
 	@echo "    linux_clean                  : Remove generated Linux kernel files"
 	@echo "    linux_install                : Install kernel binary and  modules"
+	@echo
+	@echo "    ubl                          : Build the ubl boot loader"
+	@echo "    ubl_clean                    : Remove generated ubl files"
+	@echo "    ubl_install                  : Install the ubl image"
 	@echo
 	@echo "    u-boot                       : Build the u-boot boot loader"
 	@echo "    u-boot_clean                 : Remove generated u-boot files"
@@ -126,6 +130,24 @@ linux_install:
 	install  $(LINUXKERNEL_INSTALL_DIR)/vmlinux $(EXEC_DIR)/boot
 	install  $(LINUXKERNEL_INSTALL_DIR)/System.map $(EXEC_DIR)/boot
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) INSTALL_MOD_PATH=$(EXEC_DIR)/ modules_install
+
+#==============================================================================
+# Build ubl. Also, an explicit cleanup target is defined.
+#==============================================================================
+ubl:
+	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM35x/GNU
+	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM35x_Rev_C/GNU
+
+ubl_clean:
+	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM35x/GNU clean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM35x_Rev_C/GNU clean
+
+ubl_install:
+	install -d $(EXEC_DIR)/boot
+	install -d $(EXEC_DIR)/boot/DM35x
+	install -d $(EXEC_DIR)/boot/DM35x_Rev_C
+	install $(PSP_INSTALL_DIR)/board-utilities/DM35x/GNU/ubl/*.bin $(EXEC_DIR)/boot/DM35x
+	install $(PSP_INSTALL_DIR)/board-utilities/DM35x_Rev_C/GNU/ubl/*.bin $(EXEC_DIR)/boot/DM35x_Rev_C
 
 #==============================================================================
 # Build u-boot. Also, an explicit cleanup target is defined.

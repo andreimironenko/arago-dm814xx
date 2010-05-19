@@ -3,7 +3,7 @@ include Rules.make
 DEFAULT_LINUXKERNEL_CONFIG=davinci_dm646x_1ghz_defconfig
 DEFAULT_UBOOT_CONFIG=davinci_dm6467_evm_config
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install install codecs codecs_clean codecs_install demos demos_clean demos_install u-boot u-boot_clean u-boot_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install install codecs codecs_clean codecs_install demos demos_clean demos_install u-boot u-boot_clean u-boot_install ubl ubl_clean ubl_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -18,17 +18,17 @@ clean:	linux_clean dsplink_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: linux psp_examples cmem dsplink codecs ceexamples dmai demos u-boot
+everything: linux psp_examples cmem dsplink codecs ceexamples dmai demos u-boot ubl
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install dmai_install psp_examples_install ceexamples_install codecs_install dsplink_install demos_install u-boot_install
+install: linux_install cmem_install dmai_install psp_examples_install ceexamples_install codecs_install dsplink_install demos_install u-boot_install ubl_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean codecs_clean dsplink_clean demos_clean u-boot_clean
+clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean codecs_clean dsplink_clean demos_clean u-boot_clean ubl_clean
 
 #==============================================================================
 # A help message target.
@@ -78,6 +78,10 @@ help:
 	@echo "    linux                        : Build Linux kernel uImage and module"
 	@echo "    linux_clean                  : Remove generated Linux kernel files"
 	@echo "    linux_install                : Install kernel binary and  modules"
+	@echo
+	@echo "    ubl                          : Build the ubl boot loader"
+	@echo "    ubl_clean                    : Remove generated ubl files"
+	@echo "    ubl_install                  : Install the ubl image"
 	@echo
 	@echo "    u-boot                       : Build the u-boot boot loader"
 	@echo "    u-boot_clean                 : Remove generated u-boot files"
@@ -167,6 +171,19 @@ cmem_clean:
 cmem_install:
 	install -d $(EXEC_DIR)/cmem
 	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/cmem
+
+#==============================================================================
+# Build ubl. Also, an explicit cleanup target is defined.
+#==============================================================================
+ubl:
+	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM646x/GNU
+
+ubl_clean:
+	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM646x/GNU clean
+
+ubl_install:
+	install -d $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/board-utilities/DM646x/GNU/ubl/*.bin $(EXEC_DIR)/boot
 
 #==============================================================================
 # Build u-boot. Also, an explicit cleanup target is defined.

@@ -3,11 +3,13 @@ LICENSE = "TI"
 
 require ti-paths.inc
 
-COMPATIBLE_MACHINE = "(dm365-evm|dm355-evm|dm6467-evm)"
+SRC_URI = "http://arago-project.org/files/releases/davinci-psp_${PV}/sources/flash-utils-davinci.tar.gz;name=boardutilitiestarball"
 
-SRC_URI = "http://install.source.dir.local/board_utilities_${PV}.tar.gz;name=boardutilitiestarball"
+S = "${WORKDIR}/flash_utils"
 
-S = "${WORKDIR}/board_utilities"
+do_compile () {
+	cd ${S}
+}
 
 do_install () {
 	install -d ${D}/${installdir}/ti-psp-tree/board-utilities
@@ -17,3 +19,6 @@ do_install () {
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 FILES_${PN} = "${installdir}/*"
+PACKAGE_STRIP = "no"
+INSANE_SKIP_${PN} = True
+
