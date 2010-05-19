@@ -6,9 +6,6 @@ test -x "$matrixgui" || exit 0
 
 case "$1" in
   start)
-    # switch to component 480p mode
-    echo 480P-60 > /sys/class/davinci_display/ch0/mode
-    echo COMPONENT > /sys/class/davinci_display/ch0/output
     echo -n "Starting Matrix GUI application"
     start-stop-daemon --start --quiet --background --pidfile /var/run/matrix-gui.pid --exec $matrixgui -- $GUI_OPTS
     echo "."
