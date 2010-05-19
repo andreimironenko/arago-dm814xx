@@ -1,6 +1,7 @@
 DESCRIPTION = "TI DSPLIB Optimised DSP Library for C674x devices"
 HOMEPAGE = "http://focus.ti.com/docs/toolsw/folders/print/sprc906b.html"
 SECTION = "multimedia"
+LICENSE = "TI"
 
 # TODO : Add variants for 67x/674x/etc
 # TODO : Add compile step to enable rebuild
@@ -10,7 +11,7 @@ PV = "1_20"
 SRC_URI[dsplibgz.md5sum] = "cecbb20089843baf9393f2875f101767"
 SRC_URI[dsplibgz.sha256sum] = "cb7d3a33f1b3de4b3d030095d2ea14211a0ed2bd6f66d2848ea323eb6bc7a649"
 
-PR = "r2"
+PR = "r3"
 
 require ti-paths.inc
 require ti-staging.inc

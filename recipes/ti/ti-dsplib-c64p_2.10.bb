@@ -1,6 +1,7 @@
 DESCRIPTION = "TI DSPLIB Optimised DSP Library of C64x+ devices"
 HOMEPAGE = "http://focus.ti.com/docs/toolsw/folders/print/sprc265.html"
 SECTION = "multimedia"
+LICENSE = "TI"
 
 # TODO : Add variants for 67x/674x/etc
 # TODO : Add compile step to enable rebuild
@@ -10,7 +11,7 @@ PV = "2_10"
 SRC_URI[dsplibgz.md5sum] = "0e9f0fc05b17d8eefc6117f36ecd576e"
 SRC_URI[dsplibgz.sha256sum] = "96e320a3dcb8b238e5245a36b26c2f7f1d00a8467ab65d6c5c93f5f57c891252"
 
-PR = "r3"
+PR = "r4"
 
 require ti-paths.inc
 require ti-staging.inc
