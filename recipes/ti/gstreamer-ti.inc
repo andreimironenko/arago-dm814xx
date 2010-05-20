@@ -15,7 +15,7 @@ require ti-paths.inc
 require ti-staging.inc
 
 # Rebuild on kernel change since it links statically to ti-dmai, ti-codec-engine, etc
-PR = "r58+${MACHINE_KERNEL_PR}"
+PR = "r59+${MACHINE_KERNEL_PR}"
 
 DEPENDS = "ti-dmai gstreamer gst-plugins-base"
 
@@ -60,6 +60,10 @@ export LINK_XDC_ROOT   = "${LINK_INSTALL_DIR}"
 
 export CODEC_SERVER  = "${installdir}/ti-codecs-server/cs.x64P"
 CPPFLAGS_append = " -DPlatform_${PLATFORM}"
+
+# We are still using encode/decode combo for DM6446
+export ENCODE_COMBO    = "${installdir}/ti-codecs-server/encodeCombo.x64P"
+export DECODE_COMBO    = "${installdir}/ti-codecs-server/decodeCombo.x64P"
 
 do_install_prepend () {
 
