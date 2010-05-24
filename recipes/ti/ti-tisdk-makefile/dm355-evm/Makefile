@@ -135,12 +135,12 @@ linux_install:
 # Build ubl. Also, an explicit cleanup target is defined.
 #==============================================================================
 ubl:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM35x/GNU
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM35x_Rev_C/GNU
+	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM35x/GNU/ubl
+	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM35x_Rev_C/GNU/ubl
 
 ubl_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM35x/GNU clean
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM35x_Rev_C/GNU clean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM35x/GNU/ubl clean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM35x_Rev_C/GNU/ubl clean
 
 ubl_install:
 	install -d $(EXEC_DIR)/boot

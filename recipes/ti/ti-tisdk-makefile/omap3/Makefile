@@ -118,10 +118,10 @@ linux_install:
 # Build ubl. Also, an explicit cleanup target is defined.
 #==============================================================================
 ubl:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP35xx/GNU
+	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP35xx/GNU/ubl
 
 ubl_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP35xx/GNU clean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP35xx/GNU/ubl clean
 
 ubl_install:
 	install -d $(EXEC_DIR)/boot
