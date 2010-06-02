@@ -161,11 +161,11 @@ PV_dm6467t-evm       = "2009.08+${PR}+gitr${SRCREV}"
 # OMAPL1 da380-omapl137/da850-omapl138-evm - PSP 3.20.0.12
 
 SRC_URI_da830-omapl137-evm = "git://arago-project.org/git/projects/u-boot-omapl1.git;protocol=git"
-SRCREV_da830-omapl137-evm  = "bb3bcfa2426cc6a0aecec7270e3ee67ca843a125"
+SRCREV_da830-omapl137-evm  = "5f16b8551b125f16cd8d58f278cb25b94272fd9f"
 PV_da830-omapl137-evm      = "2009.11+${PR}+gitr${SRCREV}"
 
 SRC_URI_da850-omapl138-evm = "git://arago-project.org/git/projects/u-boot-omapl1.git;protocol=git"
-SRCREV_da850-omapl138-evm  = "bb3bcfa2426cc6a0aecec7270e3ee67ca843a125"
+SRCREV_da850-omapl138-evm  = "5f16b8551b125f16cd8d58f278cb25b94272fd9f"
 PV_da850-omapl138-evm      = "2009.11+${PR}+gitr${SRCREV}"
 
 # hawkboard - master branch (hawk still .07beta)
