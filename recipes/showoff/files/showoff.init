@@ -2,10 +2,10 @@
 
 set -e
 
-DAEMON=/usr/bin/freondemo
-NAME=freondemo
-PIDFILE=/var/run/freondemo.pid
-DESC="Freon Demo"
+DAEMON=/usr/bin/showoff
+NAME=showoff
+PIDFILE=/var/run/showoff.pid
+DESC="ShowOff Demo"
 PARAMS=""
 
 test -x $DAEMON || exit 0
@@ -24,7 +24,7 @@ start_it_up()
 
   echo -n "Starting $DESC: "
   start-stop-daemon --start --exec $DAEMON -- $PARAMS
-  pidof FreonDemo > $PIDFILE
+  pidof ShowOff > $PIDFILE
   echo "$NAME."
 }
 
