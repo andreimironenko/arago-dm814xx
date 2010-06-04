@@ -1,18 +1,18 @@
-From 91c9b245de3b5fe47aa2960186da7d3c18b60cd2 Mon Sep 17 00:00:00 2001
+From ff069b7e224a565dd610da714cca8d9c7912c4ef Mon Sep 17 00:00:00 2001
 From: Don Darling <don.osc2@gmail.com>
 Date: Wed, 14 Apr 2010 20:01:45 -0500
-Subject: [PATCH 06/12] Support NV12 capture on DM365 using the IPIPE in on-the-fly mode.
+Subject: [PATCH 07/14] v4l2src: support NV12 capture on DM365 using the IPIPE in on-the-fly mode
 
 ---
  sys/v4l2/Makefile.am        |    2 +
  sys/v4l2/Makefile.in        |   10 +
- sys/v4l2/gstv4l2object.c    |   20 ++-
+ sys/v4l2/gstv4l2object.c    |   27 ++
  sys/v4l2/gstv4l2object.h    |   13 +
- sys/v4l2/v4l2_calls.c       |   25 +-
+ sys/v4l2/v4l2_calls.c       |   15 ++
  sys/v4l2/v4l2_dm365_ipipe.c |  548 +++++++++++++++++++++++++++++++++++++++++++
  sys/v4l2/v4l2_dm365_ipipe.h |   63 +++++
  sys/v4l2/v4l2src_mvl_lsp.h  |    6 +-
- 8 files changed, 667 insertions(+), 20 deletions(-)
+ 8 files changed, 681 insertions(+), 3 deletions(-)
  create mode 100644 sys/v4l2/v4l2_dm365_ipipe.c
  create mode 100644 sys/v4l2/v4l2_dm365_ipipe.h
 
@@ -78,7 +78,7 @@ index dea048f..9f6a55b 100644
  @am__fastdepCC_TRUE@	$(LIBTOOL) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -MT libgstvideo4linux2_la-v4l2src_mvl_lsp.lo -MD -MP -MF $(DEPDIR)/libgstvideo4linux2_la-v4l2src_mvl_lsp.Tpo -c -o libgstvideo4linux2_la-v4l2src_mvl_lsp.lo `test -f 'v4l2src_mvl_lsp.c' || echo '$(srcdir)/'`v4l2src_mvl_lsp.c
  @am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libgstvideo4linux2_la-v4l2src_mvl_lsp.Tpo $(DEPDIR)/libgstvideo4linux2_la-v4l2src_mvl_lsp.Plo
 diff --git a/sys/v4l2/gstv4l2object.c b/sys/v4l2/gstv4l2object.c
-index c9c4fed..03d3cca 100644
+index da1ed41..9b4a5f8 100644
 --- a/sys/v4l2/gstv4l2object.c
 +++ b/sys/v4l2/gstv4l2object.c
 @@ -45,6 +45,8 @@
@@ -105,26 +105,39 @@ index c9c4fed..03d3cca 100644
    return v4l2object;
  }
  
-@@ -1831,12 +1841,12 @@ gst_v4l2_object_set_format (GstV4l2Object * v4l2object, guint32 pixelformat,
+@@ -396,6 +406,16 @@ gst_v4l2_object_destroy (GstV4l2Object * v4l2object)
+     g_free (v4l2object->input_src);
+   }
+ 
++  #if defined(USE_DM365_IPIPE)
++  if (v4l2object->davinci_resizer_dev) {
++    g_free (v4l2object->davinci_resizer_dev);
++  }
++
++  if (v4l2object->davinci_previewer_dev) {
++    g_free (v4l2object->davinci_previewer_dev);
++  }
++  #endif
++
+   g_free (v4l2object);
+ }
+ 
+@@ -1838,6 +1858,13 @@ gst_v4l2_object_set_format (GstV4l2Object * v4l2object, guint32 pixelformat,
    GST_V4L2_CHECK_OPEN (v4l2object);
    GST_V4L2_CHECK_NOT_ACTIVE (v4l2object);
  
--#if defined(MVL_LSP) && defined(Platform_dm365)
--  if (pixelformat != V4L2_PIX_FMT_NV12) {
--    GST_INFO("closing ipipe module\n");
--    dm365_resize_destroy(v4l2object);
 +  #if defined (USE_DM365_IPIPE)
 +    if (pixelformat != V4L2_PIX_FMT_NV12) {
 +      GST_INFO("closing ipipe module\n");
 +      gst_v4l2_dm365_ipipe_close(v4l2object);
-   }
--#endif
++  }
 +  #endif
- 
++
    memset (&format, 0x00, sizeof (struct v4l2_format));
    format.type = v4l2object->type;
+ 
 diff --git a/sys/v4l2/gstv4l2object.h b/sys/v4l2/gstv4l2object.h
-index 39b5674..433394d 100644
+index 9aabdfa..37314d1 100644
 --- a/sys/v4l2/gstv4l2object.h
 +++ b/sys/v4l2/gstv4l2object.h
 @@ -51,6 +51,9 @@
@@ -155,7 +168,7 @@ index 39b5674..433394d 100644
    guint8 **buffer;
  
 diff --git a/sys/v4l2/v4l2_calls.c b/sys/v4l2/v4l2_calls.c
-index 1871779..be567eb 100644
+index f6084f5..ee52f21 100644
 --- a/sys/v4l2/v4l2_calls.c
 +++ b/sys/v4l2/v4l2_calls.c
 @@ -54,6 +54,9 @@
@@ -168,42 +181,32 @@ index 1871779..be567eb 100644
  /* Those are ioctl calls */
  #ifndef V4L2_CID_HCENTER
  #define V4L2_CID_HCENTER V4L2_CID_HCENTER_DEPRECATED
-@@ -440,13 +443,12 @@ gst_v4l2_open (GstV4l2Object * v4l2object)
+@@ -446,6 +449,13 @@ gst_v4l2_open (GstV4l2Object * v4l2object)
    int libv4l2_fd;
    GstPollFD pollfd = GST_POLL_FD_INIT;
  
--#if defined(MVL_LSP) && defined(Platform_dm365)
--   GST_DEBUG_OBJECT(v4l2object->element, 
--        "Opening IPIPE module (rsz+prev) to enable NV12\n");
--   if (dm365_resize_create(v4l2object) < 0) {
--     GST_ERROR("failed to create ipipe handle\n");
--   }
--#endif
 +  #if defined (USE_DM365_IPIPE)
 +    if (gst_v4l2_dm365_ipipe_open(v4l2object) < 0)
 +      GST_ERROR("failed to open IPIPE\n");
 +    if (gst_v4l2_dm365_ipipe_init(v4l2object) < 0)
 +      GST_ERROR("failed to initialize IPIPE\n");
 +  #endif
- 
++
    GST_DEBUG_OBJECT (v4l2object->element, "Trying to open device %s",
        v4l2object->videodev);
-@@ -586,11 +588,10 @@ gst_v4l2_close (GstV4l2Object * v4l2object)
+ 
+@@ -584,6 +594,11 @@ gst_v4l2_close (GstV4l2Object * v4l2object)
    gst_poll_remove_fd (v4l2object->poll, &pollfd);
    v4l2object->video_fd = -1;
  
--#if defined(MVL_LSP) && defined(Platform_dm365)
--  if (dm365_resize_destroy(v4l2object) < 0) {
--    GST_LOG("failed to close ipipe module\n");
--  }
--#endif
 +  #if defined (USE_DM365_IPIPE)
 +    if (gst_v4l2_dm365_ipipe_close(v4l2object) < 0)
 +      GST_ERROR("failed to close IPIPE\n");
 +  #endif
- 
++
    /* empty lists */
    gst_v4l2_empty_lists (v4l2object);
+ 
 diff --git a/sys/v4l2/v4l2_dm365_ipipe.c b/sys/v4l2/v4l2_dm365_ipipe.c
 new file mode 100644
 index 0000000..3fe9f82

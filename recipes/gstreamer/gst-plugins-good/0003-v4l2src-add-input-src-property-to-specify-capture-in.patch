@@ -1,16 +1,32 @@
-From 7949736b42263c07f47c403881f91b1c5232b712 Mon Sep 17 00:00:00 2001
+From 2b523c13c8b0ad08cf3922f34d8cf72b055596dc Mon Sep 17 00:00:00 2001
 From: Don Darling <don.osc2@gmail.com>
 Date: Thu, 15 Apr 2010 16:07:29 -0500
-Subject: [PATCH 01/12] Add input-src property to specify capture input.
+Subject: [PATCH 03/14] v4l2src: add input-src property to specify capture input
 
 This property specifies which capture input to use when multiple inputs
 are present on a capture device.
 ---
+ sys/v4l2/gstv4l2object.c |    4 ++++
  sys/v4l2/gstv4l2object.h |    1 +
  sys/v4l2/gstv4l2src.c    |   14 +++++++++++++-
  sys/v4l2/v4l2_calls.c    |   26 ++++++++++++++++++++++++++
- 3 files changed, 40 insertions(+), 1 deletions(-)
+ 4 files changed, 44 insertions(+), 1 deletions(-)
 
+diff --git a/sys/v4l2/gstv4l2object.c b/sys/v4l2/gstv4l2object.c
+index f94236c..6e38fbc 100644
+--- a/sys/v4l2/gstv4l2object.c
++++ b/sys/v4l2/gstv4l2object.c
+@@ -389,6 +389,10 @@ gst_v4l2_object_destroy (GstV4l2Object * v4l2object)
+     gst_v4l2_object_clear_format_list (v4l2object);
+   }
+ 
++  if (v4l2object->input_src) {
++    g_free (v4l2object->input_src);
++  }
++
+   g_free (v4l2object);
+ }
+ 
 diff --git a/sys/v4l2/gstv4l2object.h b/sys/v4l2/gstv4l2object.h
 index 4aac3a5..81669b9 100644
 --- a/sys/v4l2/gstv4l2object.h

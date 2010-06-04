@@ -1,7 +1,7 @@
-From 4bd9d5a0b61c2b41e7805c570f1a2fe3a3bc5b4c Mon Sep 17 00:00:00 2001
+From 234926e586ddd9bee2415574e6bf58b16970d556 Mon Sep 17 00:00:00 2001
 From: Don Darling <don.osc2@gmail.com>
 Date: Mon, 12 Apr 2010 13:07:24 -0500
-Subject: [PATCH 03/12] Add support for DaVinci platforms with MontaVista-based Linux kernels.
+Subject: [PATCH 06/14] v4l2src: add support for DaVinci platforms using MVL-based kernels
 
 The following files add support for device-specific hand-shaking with the
 capture drivers for DaVinci platforms that use MontaVista-based Linux kernels:
@@ -23,14 +23,14 @@ is defined by the TI GStreamer build system where appropriate.
  sys/v4l2/Makefile.in         |   10 ++
  sys/v4l2/gstv4l2bufferpool.c |    4 +
  sys/v4l2/gstv4l2bufferpool.h |    3 +
- sys/v4l2/gstv4l2object.c     |   56 +++++++++-
+ sys/v4l2/gstv4l2object.c     |   39 +++++++-
  sys/v4l2/gstv4l2object.h     |    8 ++
- sys/v4l2/gstv4l2src.c        |   22 ++++
- sys/v4l2/v4l2_calls.c        |   18 +++
+ sys/v4l2/gstv4l2src.c        |   26 +++++
+ sys/v4l2/v4l2_calls.c        |    4 +
  sys/v4l2/v4l2src_calls.c     |   14 +++
- sys/v4l2/v4l2src_mvl_lsp.c   |  263 ++++++++++++++++++++++++++++++++++++++++++
- sys/v4l2/v4l2src_mvl_lsp.h   |   52 ++++++++
- 11 files changed, 452 insertions(+), 2 deletions(-)
+ sys/v4l2/v4l2src_mvl_lsp.c   |  234 ++++++++++++++++++++++++++++++++++++++++++
+ sys/v4l2/v4l2src_mvl_lsp.h   |   52 +++++++++
+ 11 files changed, 396 insertions(+), 2 deletions(-)
  create mode 100644 sys/v4l2/v4l2src_mvl_lsp.c
  create mode 100644 sys/v4l2/v4l2src_mvl_lsp.h
 
@@ -126,7 +126,7 @@ index 36a4220..975c3df 100644
  
  struct _GstV4l2Buffer {
 diff --git a/sys/v4l2/gstv4l2object.c b/sys/v4l2/gstv4l2object.c
-index f73ce21..50d7204 100644
+index 6e38fbc..da1ed41 100644
 --- a/sys/v4l2/gstv4l2object.c
 +++ b/sys/v4l2/gstv4l2object.c
 @@ -41,6 +41,9 @@
@@ -139,7 +139,7 @@ index f73ce21..50d7204 100644
  
  GST_DEBUG_CATEGORY_EXTERN (v4l2_debug);
  #define GST_CAT_DEFAULT v4l2_debug
-@@ -673,6 +676,9 @@ static const guint32 gst_v4l2_formats[] = {
+@@ -677,6 +680,9 @@ static const guint32 gst_v4l2_formats[] = {
  #ifdef V4L2_PIX_FMT_YVYU
    V4L2_PIX_FMT_YVYU,
  #endif
@@ -149,7 +149,7 @@ index f73ce21..50d7204 100644
  };
  
  #define GST_V4L2_FORMAT_COUNT (G_N_ELEMENTS (gst_v4l2_formats))
-@@ -1004,6 +1010,9 @@ gst_v4l2_object_v4l2fourcc_to_structure (guint32 fourcc)
+@@ -1008,6 +1014,9 @@ gst_v4l2_object_v4l2fourcc_to_structure (guint32 fourcc)
  #ifdef V4L2_PIX_FMT_YVYU
      case V4L2_PIX_FMT_YVYU:
  #endif
@@ -159,7 +159,7 @@ index f73ce21..50d7204 100644
      case V4L2_PIX_FMT_YUV411P:{
        guint32 fcc = 0;
  
-@@ -1046,6 +1055,11 @@ gst_v4l2_object_v4l2fourcc_to_structure (guint32 fourcc)
+@@ -1050,6 +1059,11 @@ gst_v4l2_object_v4l2fourcc_to_structure (guint32 fourcc)
            fcc = GST_MAKE_FOURCC ('Y', 'V', 'Y', 'U');
            break;
  #endif
@@ -171,7 +171,7 @@ index f73ce21..50d7204 100644
          default:
            g_assert_not_reached ();
            break;
-@@ -1200,8 +1214,14 @@ gst_v4l2_object_get_caps_info (GstV4l2Object * v4l2object, GstCaps * caps,
+@@ -1204,8 +1218,14 @@ gst_v4l2_object_get_caps_info (GstV4l2Object * v4l2object, GstCaps * caps,
          break;
        case GST_MAKE_FOURCC ('N', 'V', '1', '2'):
          fourcc = V4L2_PIX_FMT_NV12;
@@ -186,7 +186,7 @@ index f73ce21..50d7204 100644
          break;
        case GST_MAKE_FOURCC ('N', 'V', '2', '1'):
          fourcc = V4L2_PIX_FMT_NV21;
-@@ -1493,9 +1513,11 @@ sort_by_frame_size (GstStructure * s1, GstStructure * s2)
+@@ -1497,9 +1517,11 @@ sort_by_frame_size (GstStructure * s1, GstStructure * s2)
  }
  #endif
  
@@ -198,7 +198,7 @@ index f73ce21..50d7204 100644
  
  GstCaps *
  gst_v4l2_object_probe_caps_for_format (GstV4l2Object * v4l2object,
-@@ -1651,6 +1673,12 @@ default_frame_sizes:
+@@ -1655,6 +1677,12 @@ default_frame_sizes:
      gint min_w, max_w, min_h, max_h, fix_num = 0, fix_denom = 0;
  
      /* This code is for Linux < 2.6.19 */
@@ -211,7 +211,7 @@ index f73ce21..50d7204 100644
      min_w = min_h = 1;
      max_w = max_h = GST_V4L2_MAX_SIZE;
      if (!gst_v4l2_object_get_nearest_size (v4l2object, pixelformat, &min_w,
-@@ -1665,7 +1693,8 @@ default_frame_sizes:
+@@ -1669,7 +1697,8 @@ default_frame_sizes:
            "Could not probe maximum capture size for pixelformat %"
            GST_FOURCC_FORMAT, GST_FOURCC_ARGS (pixelformat));
      }
@@ -221,7 +221,7 @@ index f73ce21..50d7204 100644
      /* Since we can't get framerate directly, try to use the current norm */
      if (v4l2object->norm && v4l2object->norms) {
        GList *norms;
-@@ -1678,8 +1707,10 @@ default_frame_sizes:
+@@ -1682,8 +1711,10 @@ default_frame_sizes:
        }
        /* If it's possible, set framerate to that (discrete) value */
        if (norm) {
@@ -232,7 +232,7 @@ index f73ce21..50d7204 100644
        }
      }
  
-@@ -1709,6 +1740,7 @@ default_frame_sizes:
+@@ -1713,6 +1744,7 @@ default_frame_sizes:
    }
  }
  
@@ -240,7 +240,7 @@ index f73ce21..50d7204 100644
  static gboolean
  gst_v4l2_object_get_nearest_size (GstV4l2Object * v4l2object,
      guint32 pixelformat, gint * width, gint * height)
-@@ -1783,6 +1815,7 @@ gst_v4l2_object_get_nearest_size (GstV4l2Object * v4l2object,
+@@ -1790,6 +1822,7 @@ gst_v4l2_object_get_nearest_size (GstV4l2Object * v4l2object,
  
    return TRUE;
  }
@@ -248,21 +248,7 @@ index f73ce21..50d7204 100644
  
  
  gboolean
-@@ -1798,6 +1831,13 @@ gst_v4l2_object_set_format (GstV4l2Object * v4l2object, guint32 pixelformat,
-   GST_V4L2_CHECK_OPEN (v4l2object);
-   GST_V4L2_CHECK_NOT_ACTIVE (v4l2object);
- 
-+#if defined(MVL_LSP) && defined(Platform_dm365)
-+  if (pixelformat != V4L2_PIX_FMT_NV12) {
-+    GST_INFO("closing ipipe module\n");
-+    dm365_resize_destroy(v4l2object);
-+  }
-+#endif
-+
-   memset (&format, 0x00, sizeof (struct v4l2_format));
-   format.type = v4l2object->type;
- 
-@@ -1813,6 +1853,20 @@ gst_v4l2_object_set_format (GstV4l2Object * v4l2object, guint32 pixelformat,
+@@ -1821,6 +1854,10 @@ gst_v4l2_object_set_format (GstV4l2Object * v4l2object, guint32 pixelformat,
     *  combined, there are other modes for requesting fields individually) */
    format.fmt.pix.field = V4L2_FIELD_INTERLACED;
  
@@ -270,24 +256,14 @@ index f73ce21..50d7204 100644
 +    v4l2object->bytesused = format.fmt.pix.sizeimage;
 +  #endif
 +
-+  /* The base plugin code tries to initialize the capture device in interlaced
-+   * mode first, then if that fails it tries deinterlaced mode.  On some LSPs
-+   * that support component capture, it is important that pix.field is set
-+   * correctly the first time we call S_FMT, based on the capture device we are
-+   * using.  Override settings here where appropriate.
-+   */
-+  #if defined(Platform_dm6467) || defined(Platform_dm365)
-+    format.fmt.pix.field = V4L2_FIELD_NONE;
-+  #endif
-+
    if (v4l2_ioctl (fd, VIDIOC_S_FMT, &format) < 0) {
      if (errno != EINVAL)
        goto set_fmt_failed;
 diff --git a/sys/v4l2/gstv4l2object.h b/sys/v4l2/gstv4l2object.h
-index 81669b9..39b5674 100644
+index 853e6ac..9aabdfa 100644
 --- a/sys/v4l2/gstv4l2object.h
 +++ b/sys/v4l2/gstv4l2object.h
-@@ -119,6 +119,14 @@ struct _GstV4l2Object {
+@@ -120,6 +120,14 @@ struct _GstV4l2Object {
    GstV4l2GetInOutFunction  get_in_out_func;
    GstV4l2SetInOutFunction  set_in_out_func;
    GstV4l2UpdateFpsFunction update_fps_func;
@@ -303,7 +279,7 @@ index 81669b9..39b5674 100644
  
  struct _GstV4l2ObjectClassHelper {
 diff --git a/sys/v4l2/gstv4l2src.c b/sys/v4l2/gstv4l2src.c
-index 0b0e62c..742b7d1 100644
+index e7c83f0..ac9ccc0 100644
 --- a/sys/v4l2/gstv4l2src.c
 +++ b/sys/v4l2/gstv4l2src.c
 @@ -80,6 +80,9 @@ enum
@@ -329,7 +305,7 @@ index 0b0e62c..742b7d1 100644
  
    basesrc_class->get_caps = GST_DEBUG_FUNCPTR (gst_v4l2src_get_caps);
    basesrc_class->set_caps = GST_DEBUG_FUNCPTR (gst_v4l2src_set_caps);
-@@ -285,6 +294,9 @@ gst_v4l2src_init (GstV4l2Src * v4l2src, GstV4l2SrcClass * klass)
+@@ -285,10 +294,17 @@ gst_v4l2src_init (GstV4l2Src * v4l2src, GstV4l2SrcClass * klass)
  
    v4l2src->is_capturing = FALSE;
    v4l2src->v4l2object->input_src = NULL;
@@ -337,9 +313,17 @@ index 0b0e62c..742b7d1 100644
 +  v4l2src->v4l2object->force_720p_30 = FALSE;
 +#endif
  
-   gst_base_src_set_format (GST_BASE_SRC (v4l2src), GST_FORMAT_TIME);
-   gst_base_src_set_live (GST_BASE_SRC (v4l2src), TRUE);
-@@ -335,6 +347,11 @@ gst_v4l2src_set_property (GObject * object,
+   /* Set the default input ID on a per-target basis */
+   #if defined (Platform_dm365)
++    #if defined(MVL_LSP)
++      v4l2src->v4l2object->input_id = 4;  /* Component (MVL) */
++    #else
+       v4l2src->v4l2object->input_id = 2;  /* Component */
++    #endif
+   #elif defined (Platform_dm6467t) || defined (Platform_dm6467)
+       v4l2src->v4l2object->input_id = 1;  /* Component */
+   #else
+@@ -344,6 +360,11 @@ gst_v4l2src_set_property (GObject * object,
          v4l2src->v4l2object->input_src =
            g_ascii_strup(g_value_get_string(value), -1);
          break;
@@ -351,7 +335,7 @@ index 0b0e62c..742b7d1 100644
        default:
          G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
          break;
-@@ -361,6 +378,11 @@ gst_v4l2src_get_property (GObject * object,
+@@ -370,6 +391,11 @@ gst_v4l2src_get_property (GObject * object,
        case PROP_INPUT_SRC:
          g_value_set_string(value, v4l2src->v4l2object->input_src);
          break;
@@ -364,7 +348,7 @@ index 0b0e62c..742b7d1 100644
          G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
          break;
 diff --git a/sys/v4l2/v4l2_calls.c b/sys/v4l2/v4l2_calls.c
-index b98bae7..1871779 100644
+index d72a160..f6084f5 100644
 --- a/sys/v4l2/v4l2_calls.c
 +++ b/sys/v4l2/v4l2_calls.c
 @@ -50,6 +50,10 @@
@@ -378,34 +362,6 @@ index b98bae7..1871779 100644
  /* Those are ioctl calls */
  #ifndef V4L2_CID_HCENTER
  #define V4L2_CID_HCENTER V4L2_CID_HCENTER_DEPRECATED
-@@ -436,6 +440,14 @@ gst_v4l2_open (GstV4l2Object * v4l2object)
-   int libv4l2_fd;
-   GstPollFD pollfd = GST_POLL_FD_INIT;
- 
-+#if defined(MVL_LSP) && defined(Platform_dm365)
-+   GST_DEBUG_OBJECT(v4l2object->element, 
-+        "Opening IPIPE module (rsz+prev) to enable NV12\n");
-+   if (dm365_resize_create(v4l2object) < 0) {
-+     GST_ERROR("failed to create ipipe handle\n");
-+   }
-+#endif
-+
-   GST_DEBUG_OBJECT (v4l2object->element, "Trying to open device %s",
-       v4l2object->videodev);
- 
-@@ -574,6 +586,12 @@ gst_v4l2_close (GstV4l2Object * v4l2object)
-   gst_poll_remove_fd (v4l2object->poll, &pollfd);
-   v4l2object->video_fd = -1;
- 
-+#if defined(MVL_LSP) && defined(Platform_dm365)
-+  if (dm365_resize_destroy(v4l2object) < 0) {
-+    GST_LOG("failed to close ipipe module\n");
-+  }
-+#endif
-+
-   /* empty lists */
-   gst_v4l2_empty_lists (v4l2object);
- 
 diff --git a/sys/v4l2/v4l2src_calls.c b/sys/v4l2/v4l2src_calls.c
 index d8e365f..f5e8270 100644
 --- a/sys/v4l2/v4l2src_calls.c
@@ -447,10 +403,10 @@ index d8e365f..f5e8270 100644
      }
 diff --git a/sys/v4l2/v4l2src_mvl_lsp.c b/sys/v4l2/v4l2src_mvl_lsp.c
 new file mode 100644
-index 0000000..a347b99
+index 0000000..d06d339
 --- /dev/null
 +++ b/sys/v4l2/v4l2src_mvl_lsp.c
-@@ -0,0 +1,263 @@
+@@ -0,0 +1,234 @@
 +/*
 + * v4l2src_mvl_lsp.c
 + *
@@ -524,35 +480,6 @@ index 0000000..a347b99
 +  v4l2_std_id  std;
 +  gint failCount = 0, ret;
 +  
-+  #if defined(Platform_dm365) 
-+  struct v4l2_input  v4l2Input;
-+  int input, queryInput, idx;
-+  char *strings[6] = {"RAW", "RAW-1", "COMPOSITE", "SVIDEO", "COMPONENT" };
-+
-+  v4l2Input.type = V4L2_INPUT_TYPE_CAMERA;
-+  v4l2Input.index = 0;
-+  GST_LOG ("Enumerating video inputs\n");
-+  do {
-+    idx = v4l2Input.index;
-+    if (ioctl(fd, VIDIOC_ENUMINPUT, &v4l2Input) < 0) {
-+        if (errno == EINVAL || errno == ENOTTY)
-+            break;
-+    }
-+
-+    if (v4l2object->input_src && !strcmp(v4l2object->input_src, strings[idx])) {
-+        break;
-+    }
-+    v4l2Input.index++;
-+
-+  }while(1);
-+
-+  input = v4l2Input.index;
-+  GST_LOG("setting index=%d, name=%s\n", v4l2Input.index, v4l2Input.name);
-+
-+  ioctl(fd, VIDIOC_S_INPUT, &input);
-+  ioctl(fd, VIDIOC_G_INPUT, &queryInput);
-+  #endif  
-+
 +  do {
 +    ret = ioctl(fd, VIDIOC_QUERYSTD, &std);
 +    if (ret == -1 && errno == EAGAIN) {
