@@ -4,15 +4,15 @@ PV = "svnr${SRCREV}"
 
 S = "${WORKDIR}/gstreamer_ti/ti_build/ticodecplugin"
 
-SRCREV = "612"
+SRCREV = "680"
 
 SRC_URI = "svn://gforge.ti.com/svn/gstreamer_ti/trunk;module=gstreamer_ti;proto=https;user=anonymous;pswd='' \
   file://0001-gstreamer-ti-tracker-1055.patch;patch=1 \
   file://0002-add-omapl138-support.patch;patch=1 \
-  file://0003-add-omapl137-support.patch;patch=1 \
-  file://0004-gstreamer-ti-dm6467-usesinglecsserver.patch;patch=1 \
-  file://0005-remove-mp3-mime-type.patch;patch=1 \
-  file://0006-gstreamer-ti-tracker-462.patch;patch=1 \
+  file://0003-add-RTCodecThread-property.patch;patch=1 \
+  file://0004-add-omapl137-support.patch;patch=1 \
+  file://0005-gstreamer-ti-dm6467-usesinglecsserver.patch;patch=1 \
+  file://0006-remove-mp3-mime-type.patch;patch=1 \
   file://gstreamer-ti-rc.sh \
   file://gst-ti.sh \
 "

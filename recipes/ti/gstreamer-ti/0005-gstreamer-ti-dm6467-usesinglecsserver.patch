@@ -1,4 +1,4 @@
-From 35f013c24fb78d6ae7257abb4b4ed5f356cac36b Mon Sep 17 00:00:00 2001
+From d3c28f84d63829b7b4f560212e491efcf36f314a Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
 Date: Sun, 9 May 2010 05:27:41 -0500
 Subject: [PATCH] gstreamer ti dm6467 usesinglecsserver
@@ -8,7 +8,7 @@ Subject: [PATCH] gstreamer ti dm6467 usesinglecsserver
  1 files changed, 7 insertions(+), 17 deletions(-)
 
 diff --git a/src/gstticodecplugin_dm6467.cfg b/src/gstticodecplugin_dm6467.cfg
-index a141f03..9e64775 100644
+index 46e24fa..5d39f60 100644
 --- a/src/gstticodecplugin_dm6467.cfg
 +++ b/src/gstticodecplugin_dm6467.cfg
 @@ -29,25 +29,15 @@ TraceUtil.attrs = TraceUtil.SOCRATES_TRACING;

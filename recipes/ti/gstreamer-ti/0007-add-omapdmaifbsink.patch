@@ -1,6 +1,6 @@
-From 6bd18e8107d55a5900bb9b9efa40c9f099d16942 Mon Sep 17 00:00:00 2001
+From 54f692308d659b4751ca5a1ab4aa21fa2fd2560f Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
-Date: Sun, 9 May 2010 08:46:18 -0500
+Date: Sat, 5 Jun 2010 13:59:23 -0500
 Subject: [PATCH] add omapdmaifbsink
 
 ---
@@ -53,7 +53,7 @@ index 95973a8..acbad81 100644
  # XDC Configuration
  CONFIGURO     = $(XDC_INSTALL_DIR)/xs xdc.tools.configuro
 diff --git a/src/gstticodecplugin.c b/src/gstticodecplugin.c
-index e98832d..8f8e938 100644
+index 575916b..1961217 100644
 --- a/src/gstticodecplugin.c
 +++ b/src/gstticodecplugin.c
 @@ -47,6 +47,7 @@
@@ -1091,7 +1091,7 @@ index 0000000..0fb4eef
 +}
 diff --git a/src/omapfb.h b/src/omapfb.h
 new file mode 100644
-index 0000000..6103b49
+index 0000000..70f5bd6
 --- /dev/null
 +++ b/src/omapfb.h
 @@ -0,0 +1,142 @@
@@ -1128,7 +1128,7 @@ index 0000000..6103b49
 +#include <X11/Xutil.h>
 +
 +#include <linux/fb.h>
-+#include <linux/omapfb.h>
++#include <mach/omapfb.h>
 +
 +
 +G_BEGIN_DECLS
