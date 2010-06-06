@@ -10,7 +10,7 @@ DEPENDS = "dbus dbus-glib gstreamer readline"
 RDEPENDS_${PN} = "dbus dbus-glib gstreamer gst-plugins-base"
 RRECOMENDS_${PN} = "gstreamer-ti"
 
-SRCREV = "f3e22c93f4fd7ca47d6309b8450788127550ecb9"
+SRCREV = "5812b0c97f45d0d11eb9ba36ffc4209a07277fe6"
 
 PV = "1.0"
 PR = "r14"
