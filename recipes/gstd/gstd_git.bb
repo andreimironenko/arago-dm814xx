@@ -6,14 +6,14 @@ PRIORITY = "optional"
 
 inherit autotools pkgconfig
 
-DEPENDS = "dbus dbus-glib gstreamer"
+DEPENDS = "dbus dbus-glib gstreamer readline"
 RDEPENDS_${PN} = "dbus dbus-glib gstreamer gst-plugins-base"
 RRECOMENDS_${PN} = "gstreamer-ti"
 
 SRCREV = "f3e22c93f4fd7ca47d6309b8450788127550ecb9"
 
 PV = "1.0"
-PR = "r13"
+PR = "r14"
 PR_append = "+gitr${SRCREV}"
 
 SRC_URI = "git://gstd.git.sourceforge.net/gitroot/gstd/gstd;protocol=git \
