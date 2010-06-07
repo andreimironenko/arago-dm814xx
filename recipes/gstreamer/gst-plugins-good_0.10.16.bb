@@ -26,7 +26,7 @@ file://0014-v4l2src-disable-video-device-polling-by-default-on-D.patch;patch=1 \
 
 "
 
-PR = "r5"
+PR = "r6"
 
 OE_ALLOW_INSECURE_DOWNLOADS = "1"
 
@@ -35,15 +35,10 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DEPENDS += "gst-plugins-base virtual/kernel"
 
-PLATFORM_dm6446        = "dm6446"
-PLATFORM_dm6467        = "dm6467"
-PLATFORM_omap3         = "omap3530"
-PLATFORM_dm355         = "dm355"
-PLATFORM_dm365         = "dm365"
-PLATFORM_omapl137      = "omapl137"
-PLATFORM_omapl138      = "omapl138"
-PLATFORM              ?= "<UNDEFINED_PLATFORM>"
-CPPFLAGS_append = " -DPlatform_${PLATFORM} -I${STAGING_KERNEL_DIR}/include"
+CPPFLAGS_dm6467_append = " -DPlatform_dm6467 -I${STAGING_KERNEL_DIR}/include"
+CPPFLAGS_dm365_append = " -DPlatform_dm365 -I${STAGING_KERNEL_DIR}/include"
+CPPFLAGS_dm355_append = " -DPlatform_dm355 -I${STAGING_KERNEL_DIR}/include"
+CPPFLAGS_dm6467t_append = " -DPlatform_dm6467t -I${STAGING_KERNEL_DIR}/include"
 
 EXTRA_OECONF += "--disable-esd --disable-annodex --disable-x " 
 
