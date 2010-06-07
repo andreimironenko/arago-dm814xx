@@ -1,17 +1,17 @@
-From 76415654f420d218540d0ae899e16483eecc3e92 Mon Sep 17 00:00:00 2001
+From 2590d15f19eb755ff79e193644b7a1712b6a6476 Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
-Date: Sat, 5 Jun 2010 13:50:04 -0500
+Date: Mon, 7 Jun 2010 12:29:39 -0500
 Subject: [PATCH] add "RTCodecThread" property
 
 ---
- src/gsttiauddec1.c |   21 ++++++++++++++++++---
+ src/gsttiauddec1.c |   26 +++++++++++++++++++++++---
  src/gsttiauddec1.h |    1 +
  src/gsttividdec2.c |   26 +++++++++++++++++++++++---
  src/gsttividdec2.h |    1 +
- 4 files changed, 43 insertions(+), 6 deletions(-)
+ 4 files changed, 48 insertions(+), 6 deletions(-)
 
 diff --git a/src/gsttiauddec1.c b/src/gsttiauddec1.c
-index 55aac43..38eed1f 100644
+index 55aac43..1c5cfa1 100644
 --- a/src/gsttiauddec1.c
 +++ b/src/gsttiauddec1.c
 @@ -73,7 +73,8 @@ enum
@@ -59,7 +59,19 @@ index 55aac43..38eed1f 100644
      gst_tiauddec1_init_env(auddec1);
  }
  
-@@ -882,8 +897,8 @@ static gboolean gst_tiauddec1_init_audio(GstTIAuddec1 * auddec1)
+@@ -472,6 +487,11 @@ static void gst_tiauddec1_set_property(GObject *object, guint prop_id,
+             GST_LOG("setting \"genTimeStamps\" to \"%s\"\n",
+                 auddec1->genTimeStamps ? "TRUE" : "FALSE");
+             break;
++        case PROP_RTCODECTHREAD:
++            auddec1->rtCodecThread = g_value_get_boolean(value);
++            GST_LOG("setting \"RTCodecThread\" to \"%s\"\n",
++                auddec1->rtCodecThread ? "TRUE" : "FALSE");
++            break;
+         default:
+             G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+             break;
+@@ -882,8 +902,8 @@ static gboolean gst_tiauddec1_init_audio(GstTIAuddec1 * auddec1)
      }
  
      /* Create decoder thread */

@@ -1,4 +1,4 @@
-From d3c28f84d63829b7b4f560212e491efcf36f314a Mon Sep 17 00:00:00 2001
+From 7f8c1d4f1129c43d28b560a6de0b8aa9f3d4fbee Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
 Date: Sun, 9 May 2010 05:27:41 -0500
 Subject: [PATCH] gstreamer ti dm6467 usesinglecsserver

@@ -1,13 +1,13 @@
-From 9b7035aa48c22c9ca7cc83ce2bf4f80ad6dc422a Mon Sep 17 00:00:00 2001
+From ed5ca5d6448871102674289c8fda779dbc25ac62 Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
-Date: Sat, 5 Jun 2010 13:48:27 -0500
-Subject: [PATCH] add initial omapl138 support
+Date: Mon, 7 Jun 2010 14:28:39 -0500
+Subject: [PATCH] add omapl138 support
 
 ---
- src/gstticodecplugin_omapl138.cfg |   41 +++++++++++++++++++
- src/gstticodecs_omapl138.c        |   81 +++++++++++++++++++++++++++++++++++++
+ src/gstticodecplugin_omapl138.cfg |   41 ++++++++++++++++++
+ src/gstticodecs_omapl138.c        |   83 +++++++++++++++++++++++++++++++++++++
  src/gsttividenc1.c                |    3 +
- 3 files changed, 125 insertions(+), 0 deletions(-)
+ 3 files changed, 127 insertions(+), 0 deletions(-)
  create mode 100644 src/gstticodecplugin_omapl138.cfg
  create mode 100644 src/gstticodecs_omapl138.c
 
@@ -60,10 +60,10 @@ index 0000000..af1ad41
 +var DMAI = xdc.loadPackage('ti.sdo.dmai');
 diff --git a/src/gstticodecs_omapl138.c b/src/gstticodecs_omapl138.c
 new file mode 100644
-index 0000000..edab54f
+index 0000000..25a40d6
 --- /dev/null
 +++ b/src/gstticodecs_omapl138.c
-@@ -0,0 +1,81 @@
+@@ -0,0 +1,83 @@
 +/*
 + * gstticodecs_omapl138.c
 + *
@@ -93,14 +93,14 @@ index 0000000..edab54f
 +/* NULL terminated list of speech decoders in the engine to use in the demo */
 +GstTICodec gst_ticodec_codecs[] = {
 +
-+    /* Audio Decoders */
++    /* Audio Codecs */
 +    {
 +        "AAC Audio Decoder",     /* String name of codec used by plugin      */
 +        "aachedec",              /* String name of codec used by CE          */
 +        codecServer              /* Engine that contains this codec          */
 +    },
 +
-+    /* Video Decoders */
++    /* Video Codecs */
 +    {
 +        "H.264 Video Decoder",   /* String name of codec used by plugin      */
 +        "h264dec",               /* String name of codec used by CE          */
@@ -109,6 +109,18 @@ index 0000000..edab54f
 +        "MPEG4 Video Decoder",   /* String name of codec used by plugin      */
 +        "mpeg4dec",              /* String name of codec used by CE          */
 +        codecServer              /* Engine that contains this codec          */
++    }, {
++        "MPEG2 Video Decoder",   /* String name of codec used by plugin      */
++        "mpeg2dec",              /* String name of codec used by CE          */
++        codecServer              /* Engine that contains this codec          */
++    }, {
++        "H.264 Video Encoder",   /* String name of codec used by plugin      */
++        "h264enc",               /* String name of codec used by CE          */
++        codecServer              /* Engine that contains this codec          */
++    }, {
++        "MPEG4 Video Encoder",   /* String name of codec used by plugin      */
++        "mpeg4enc",               /* String name of codec used by CE          */
++        codecServer              /* Engine that contains this codec          */
 +    },
 +
 +    /* Image Decoders */
@@ -116,17 +128,7 @@ index 0000000..edab54f
 +        "JPEG Image Decoder",    /* String name of codec used by plugin      */
 +        "jpegdec",               /* String name of codec used by CE          */
 +        codecServer              /* Engine that contains this codec          */
-+    },
-+
-+    /* Video Encoders */
-+    {
-+        "H.264 Video Encoder",   /* String name of codec used by plugin      */
-+        "h264enc",               /* String name of codec used by CE          */
-+        codecServer              /* Engine that contains this codec          */
-+    },
-+
-+    /* Image Encoders */
-+    {
++    }, {
 +        "JPEG Image Encoder",    /* String name of codec used by plugin      */
 +        "jpegenc",               /* String name of codec used by CE          */
 +        codecServer              /* Engine that contains this codec          */
