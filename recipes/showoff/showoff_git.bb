@@ -12,10 +12,11 @@ RRECOMMENDS_${PN} = "qt4-embedded-plugin-mousedriver-tslib gstreamer-ti showoff-
 SRCREV=e907feb5b484000914690225e9502f10c3c8b442
 
 PV = "1.0"
-PR = "r21"
+PR = "r22"
 PR_append= "+gitr${SRCREV}"
 
 SRC_URI = "git://showoff.git.sourceforge.net/gitroot/showoff/showoff;protocol=git \
+	file://0001-set-RTCodecThread-FALSE-and-use-ffmpegcolorspace-unt.patch;patch=1\
            file://showoff \
            file://showoff.init \
            "

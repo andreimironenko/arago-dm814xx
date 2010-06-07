@@ -1,0 +1,77 @@
+From 91f51265baeccf93e3dbe85ce8677c3df8a4aeaf Mon Sep 17 00:00:00 2001
+From: Brijesh Singh <bksingh@ti.com>
+Date: Mon, 7 Jun 2010 14:36:35 -0500
+Subject: [PATCH] set RTCodecThread=FALSE and use ffmpegcolorspace until we get the right color coversion module.
+
+---
+ mainwindow.cpp |   16 +++++++++-------
+ 1 files changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/mainwindow.cpp b/mainwindow.cpp
+index 594c3fd..0903a8c 100644
+--- a/mainwindow.cpp
++++ b/mainwindow.cpp
+@@ -361,9 +361,9 @@ void mainWindow::on_playButton_clicked()
+ 
+ /*
+  *   Called when the stop button, or the eos signal arrives:
+- * 	- Stop the stream
+- * 	- Destroy the pipe
+- * 	- Rebuild the pipe (to put the pipe on position zero)
++ *  - Stop the stream
++ *  - Destroy the pipe
++ *  - Rebuild the pipe (to put the pipe on position zero)
+  *    (yes, I know, we can do better, see comments below)
+  */
+ 
+@@ -536,6 +536,7 @@ void mainWindow::completePipe(QString fileSelected)
+         pipelineDesc.append(" ! TIAuddec1 ");
+         pipelineDesc.append(" codecName  = aachedec ");
+         pipelineDesc.append(" engineName = codecServer ");
++        pipelineDesc.append(" RTCodecThread = FALSE ");
+         pipelineDesc.append(" ! audioconvert ");
+ #else
+         pipelineDesc.append(" ! decodebin");
+@@ -550,6 +551,7 @@ void mainWindow::completePipe(QString fileSelected)
+         pipelineDesc.append(" ! TIAuddec1 ");
+         pipelineDesc.append(" codecName  = aachedec ");
+         pipelineDesc.append(" engineName = codecServer ");
++        pipelineDesc.append(" RTCodecThread = FALSE ");
+         pipelineDesc.append(" ! audioconvert ");
+ #else
+         pipelineDesc.append(" ! decodebin");
+@@ -563,11 +565,11 @@ void mainWindow::completePipe(QString fileSelected)
+ #ifdef __ARMEL__
+         pipelineDesc.append(" demux.video_00");
+         pipelineDesc.append(" ! queue max-size-time = 0");
+-        pipelineDesc.append(" ! TIViddec2 ! dt_colorspace");
++        pipelineDesc.append(" ! TIViddec2 RTCodecThread=FALSE ! ffmpegcolorspace");
+         pipelineDesc.append(" ! ipcsink max-lateness=100000000 name = ipcsink");
+         pipelineDesc.append(" demux.audio_00 ");
+         pipelineDesc.append(" ! queue max-size-time = 0 ");
+-        pipelineDesc.append(" ! TIAuddec1");
++        pipelineDesc.append(" ! TIAuddec1 RTCodecThread=FALSE ");
+         pipelineDesc.append(" ! audioconvert ! alsasink");
+ #else
+         pipelineDesc.append(" demux.video_00 ");
+@@ -583,7 +585,7 @@ void mainWindow::completePipe(QString fileSelected)
+ 
+ #ifdef __ARMEL__
+         pipelineDesc.append(" demux.video_00 ");
+-        pipelineDesc.append(" ! TIViddec2 ");
++        pipelineDesc.append(" ! TIViddec2 RTCodecThread=FALSE");
+         pipelineDesc.append(" ! queue ! videoscale ! dt_colorspace ");
+ #else
+         pipelineDesc.append(" demux.video_00 ");
+@@ -598,7 +600,7 @@ void mainWindow::completePipe(QString fileSelected)
+ 
+ #ifdef __ARMEL__
+         pipelineDesc.append(" ! queue max-size-time = 0 ");
+-        pipelineDesc.append(" ! TIViddec2 ! dt_colorspace ");
++        pipelineDesc.append(" ! TIViddec2 RTCodecThread=FALSE ! ffmpegcolorspace ");
+         pipelineDesc.append(" ! video/x-raw-rgb, width=320, height=240 ! ipcsink max-lateness=100000000 name=ipcsink");
+         pipelineDesc.append(" demux.audio_00 ");
+         pipelineDesc.append(" ! queue ! mad ! audioconvert ! alsasink ");
+-- 
+1.5.4.3
+
