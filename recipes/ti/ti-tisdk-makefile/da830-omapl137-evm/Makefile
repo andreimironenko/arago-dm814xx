@@ -3,6 +3,8 @@ include Rules.make
 DEFAULT_LINUXKERNEL_CONFIG=da830_omapl137_defconfig
 DEFAULT_UBOOT_CONFIG=da830_omapl137_evm_config
 
+DMAI_PLATFORM = ol137
+
 .PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install ubl ubl_clean ubl_install
 
 #==============================================================================
@@ -214,28 +216,29 @@ codecs_install:
 # platform. Also, an explicit cleanup target is defined.
 #==============================================================================
 dmai:
-	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(PLATFORM)_al \
-	CE_INSTALL_DIR_$(PLATFORM)_al=$(CE_INSTALL_DIR) \
-	CODEC_INSTALL_DIR_$(PLATFORM)_al=$(CODEC_INSTALL_DIR) \
-	CMEM_INSTALL_DIR_$(PLATFORM)_al=$(CMEM_INSTALL_DIR) \
-	FC_INSTALL_DIR_$(PLATFORM)_al=$(FC_INSTALL_DIR) \
-	XDAIS_INSTALL_DIR_$(PLATFORM)_al=$(XDAIS_INSTALL_DIR) \
-	LINUXLIBS_INSTALL_DIR_$(PLATFORM)_al=$(LINUXLIBS_INSTALL_DIR) \
-	LINUXKERNEL_INSTALL_DIR_$(PLATFORM)_al=$(LINUXKERNEL_INSTALL_DIR) \
-	CROSS_COMPILE_$(PLATFORM)_al=$(CSTOOL_PREFIX) \
-	XDC_INSTALL_DIR_$(PLATFORM)_al=$(XDC_INSTALL_DIR) \
-	LINK_INSTALL_DIR_$(PLATFORM)_al=$(LINK_INSTALL_DIR) \
+	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM)_al \
+	CE_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(CE_INSTALL_DIR) \
+	CODEC_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(CODEC_INSTALL_DIR) \
+	CMEM_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(CMEM_INSTALL_DIR) \
+	FC_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(FC_INSTALL_DIR) \
+	XDAIS_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(XDAIS_INSTALL_DIR) \
+	LINUXLIBS_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(LINUXLIBS_INSTALL_DIR) \
+	LINUXKERNEL_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(LINUXKERNEL_INSTALL_DIR) \
+	CROSS_COMPILE_$(DMAI_PLATFORM)_al=$(CSTOOL_PREFIX) \
+	XDC_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(XDC_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(CODEGEN_INSTALL_DIR) \
+	LINK_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(LINK_INSTALL_DIR) \
 	VERBOSE=true \
 	all
 	
 dmai_clean:
-	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(PLATFORM)_al \
-	XDC_INSTALL_DIR_$(PLATFORM)_al=$(XDC_INSTALL_DIR) \
+	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM)_al \
+	XDC_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(XDC_INSTALL_DIR) \
 	clean
 
 dmai_install:
-	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(PLATFORM)_al \
-	EXEC_DIR_$(PLATFORM)_al=$(EXEC_DIR)/dmai \
+	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM)_al \
+	EXEC_DIR_$(DMAI_PLATFORM)_al=$(EXEC_DIR)/dmai \
 	install
 
 ###############################################################################
