@@ -42,9 +42,9 @@ python ti_bin_do_unpack() {
     filename = "HOME=%s ./%s --mode console" % (workdir, binfile)
     
     # Test executable by printing installer version
-    if os.system(filename + " --version") != 0:
-        print "ERROR: ti-eula-unpack: failed to execute binary installer"
-        raise bb.build.FuncFailed()
+    # if os.system(filename + " --version") != 0:
+    #    print "ERROR: ti-eula-unpack: failed to execute binary installer"
+    #    raise bb.build.FuncFailed()
  
     f = os.popen(filename,'w')
     for cmd in cmd_list:
