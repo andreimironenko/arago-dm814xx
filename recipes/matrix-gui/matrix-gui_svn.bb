@@ -1,6 +1,6 @@
 DESCRIPTION = "Matrix GUI"
 HOMEPAGE = "https://gforge.ti.com/gf/project/matrix_gui/"
-LICENSE = "Apache"
+LICENSE = "BSD"
 SECTION = "multimedia"
 PRIORITY = "optional"
 

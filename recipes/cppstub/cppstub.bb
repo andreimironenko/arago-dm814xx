@@ -1,6 +1,6 @@
 DESCRIPTION = "C++ stub to link against libstdc++"
-PR = "r3"
-LICENSE="GPLv2"
+LICENSE = "BSD"
+PR = "r4"
 
 SRC_URI = "file://cppstub.cpp"
 

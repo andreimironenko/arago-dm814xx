@@ -1,5 +1,5 @@
-DESCRIPTION = "Extended task to get more basic and demo apps"
-LICENSE="MIT"
+DESCRIPTION = "Extended task to get more basic and console apps"
+LICENSE = "MIT"
 PR = "r14"
 
 inherit task

@@ -1,6 +1,6 @@
 DESCRIPTION = "Initscripts for telnetd"
-PR ="r1"
-LICENSE="MIT"
+LICENSE = "MIT"
+PR ="r2"
 
 SRC_URI = "file://telnetd"
 

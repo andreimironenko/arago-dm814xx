@@ -64,6 +64,8 @@ CPPFLAGS_append = " -DPlatform_${PLATFORM}"
 # We are still using encode/decode combo for DM6446
 export ENCODE_COMBO    = "${installdir}/ti-codecs-server/encodeCombo.x64P"
 export DECODE_COMBO    = "${installdir}/ti-codecs-server/decodeCombo.x64P"
+# Makefile also expects to be able to find the kernel headers from the envirionment
+export LINUXKERNEL_INSTALL_DIR = "${STAGING_KERNEL_DIR}"
 
 do_install_prepend () {
 
