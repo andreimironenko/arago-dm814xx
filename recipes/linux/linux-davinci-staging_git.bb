@@ -7,9 +7,9 @@ COMPATIBLE_MACHINE = "(dm6446-evm|dm6467-evm|dm6467t-evm|dm355-evm|dm365-evm)"
 
 DEFAULT_PREFERENCE = "1"
 
-BRANCH = "r35"
-SRCREV = "11ddad0028e146215b0a0c1443405a49f4c101f8"
-KVER = "2.6.31+2.6.32-rc1"
+BRANCH = "r36"
+SRCREV = "fbc8b2b59279ba6e3599cabefd676b871c087e0b"
+KVER = "2.6.31+2.6.32-rc2"
 
 PV = "${KVER}-${PR}+gitr${SRCREV}"
 
