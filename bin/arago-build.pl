@@ -99,7 +99,7 @@ my $arago_ipk_dir = "$arago_dir/arago-tmp/deploy/ipk";
 my $arago_machine_dir = "$arago_dir/arago/conf/machine";
 my $arago_tmp = "$arago_dir/arago-tmp";
 my ($sysname, $nodename, $release, $version, $mtype) = POSIX::uname();
-my $arago_staging = "$arago_dir/arago-tmp/staging/$mtype-linux";
+my $arago_staging = "$arago_dir/arago-tmp/sysroots/$mtype-linux";
 
 if (! -d "$arago_machine_dir") {
     print "ERROR: $arago_dir/arago/conf/machine not found! Either your ";
