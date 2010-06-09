@@ -26,7 +26,7 @@ file://0014-v4l2src-disable-video-device-polling-by-default-on-D.patch;patch=1 \
 
 "
 
-PR = "r6"
+PR = "r7"
 
 OE_ALLOW_INSECURE_DOWNLOADS = "1"
 
