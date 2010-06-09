@@ -1,17 +1,40 @@
 DESCRIPTION = "DVSDK 4.00 Release Notes"
 LICENSE = "CC-BY-SA"
 
-PR="r0"
+PR="r1"
+
+DEPENDS = "ti-post-process-wiki-native"
+
+RELNOTESTOPIC = "DVSDK_4.00_Release_Notes"
+RELNOTESURL = "http://ap-fpdsp-swapps.dal.design.ti.com/index.php/${RELNOTESTOPIC}"
+
+SDK_PLATFORM_dm365 = "TMS320DM365"
+SDK_PLATFORM_omapl138 = "TMS320DM365"
 
 require ti-paths.inc
 
-SRC_URI = "http://install.source.dir.local/DVSDK_4.00_Release_Notes.pdf;name=relnotes"
-SRC_URI[relnotes.md5sum] = "c97c9dd98006a2c7114c45e1b35fb8d9"
-SRC_URI[relnotes.sha256sum] = "d4a66276818540154320adfe341b058c6a40b46723fce4cc1d652c4faad7b054"
+do_fetch () {
+    mkdir -p ${WORKDIR}/${P}
+    cd ${WORKDIR}/${P}
+
+    wget --directory-prefix=${WORKDIR}/${P}/${RELNOTESTOPIC} --html-extension --convert-links --page-requisites --no-host-directories ${RELNOTESURL}
+}
 
 do_install () {
-    mkdir -p ${D}/${installdir}
-    cp ${WORKDIR}/DVSDK_4.00_Release_Notes.pdf ${D}/${installdir}/
+    if [ ! -n "${SDK_VERSION}" ]; then
+        export SDK_VERSION="test_build"
+    fi
+
+    install -d ${D}/${installdir}
+    htmlfiles=`ls ${WORKDIR}/${P}/${RELNOTESTOPIC}/index.php/*.html`
+    post-process-tiwiki.pl ${RELNOTESURL} $htmlfiles
+
+    for file in $htmlfiles; do
+        sed -i "s/__SDK_VERSION__/${SDK_VERSION}/g" $file
+        sed -i "s/__SDK_PLATFORM__/${SDK_PLATFORM}/g" $file
+    done
+
+    htmldoc --webpage -f ${D}/${installdir}/DVSDK_${SDK_VERSION}_${MACHINE_ARCH}_Release_Notes.pdf $htmlfiles
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
