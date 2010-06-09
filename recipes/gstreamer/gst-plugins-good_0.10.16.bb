@@ -39,6 +39,7 @@ CPPFLAGS_dm6467_append = " -DPlatform_dm6467 -I${STAGING_KERNEL_DIR}/include"
 CPPFLAGS_dm365_append = " -DPlatform_dm365 -I${STAGING_KERNEL_DIR}/include"
 CPPFLAGS_dm355_append = " -DPlatform_dm355 -I${STAGING_KERNEL_DIR}/include"
 CPPFLAGS_dm6467t_append = " -DPlatform_dm6467t -I${STAGING_KERNEL_DIR}/include"
+CPPFLAGS_omapl138_append = " -DPlatform_omapl138"
 
 EXTRA_OECONF += "--disable-esd --disable-annodex --disable-x " 
 
