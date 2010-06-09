@@ -5,6 +5,8 @@ LICENSE="MIT"
 inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
+MULTIMEDIA_SOURCETREE = ""
+
 MULTIMEDIA_SOURCETREE_omap3 = " \
     ti-framework-components-sourcetree \
     ti-codec-engine-sourcetree \

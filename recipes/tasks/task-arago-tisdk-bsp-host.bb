@@ -57,6 +57,11 @@ BSP_COMPONENTS_omap3 = "\
     u-boot-sourcetree \
     "
 
+BSP_COMPONENTS_dm3730-am3715-evm = "\
+    linux-omap3-sourcetree \
+    u-boot-sourcetree \
+    "
+
 RRECOMMENDS_${PN} = "\
     ${BSP_COMPONENTS} \
     "

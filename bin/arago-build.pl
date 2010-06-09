@@ -78,6 +78,13 @@ my %machines = (
         dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
+    "dm3730-am3715-evm"     => {
+        bsp_default         => "yes",
+        multimedia_default  => "yes",
+        dsp_default         => "yes",
+        dvsdk_factory_default => "no",
+        graphics_default    => "yes",
+    },
 );
 
 ################################################################################

@@ -5,6 +5,8 @@ LICENSE="MIT"
 inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
+MULTIMEDIA = ""
+
 MULTIMEDIA_dm365 = " \
     ti-dmai-apps \
     ti-codec-engine-examples \
