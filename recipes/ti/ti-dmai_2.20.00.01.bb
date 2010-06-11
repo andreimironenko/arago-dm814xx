@@ -1,6 +1,6 @@
 require ti-dmai.inc
 
-PV = "2_20_00_00"
+PV = "2_20_00_01"
 PR = "r0"
  
 COMPATIBLE_MACHINE = "(da850-omapl138-evm|da830-omapl137-evm)"
@@ -10,8 +10,8 @@ SRC_URI_append = " \
         file://arago-tdox \
 "
 
-SRCREV         = "464"
-DMAIBRANCH     = "tags/TAG_2_20_00_00"
+SRCREV         = "481"
+DMAIBRANCH     = "tags/TAG_2_20_00_01"
 
 do_install_prepend () {
     find ${S} -name .svn -type d | xargs rm -rf
@@ -21,3 +21,4 @@ do_install_prepend () {
     chmod a+x ${S}/tdox
     ${S}/release.sh ${PV}
 }
+
