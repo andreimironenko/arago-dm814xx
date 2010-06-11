@@ -4,7 +4,7 @@ PV = "svnr${SRCREV}"
 
 S = "${WORKDIR}/gstreamer_ti/ti_build/ticodecplugin"
 
-SRCREV = "680"
+SRCREV = "690"
 
 SRC_URI = "svn://gforge.ti.com/svn/gstreamer_ti/trunk;module=gstreamer_ti;proto=https;user=anonymous;pswd='' \
   file://0001-gstreamer-ti-tracker-1055.patch;patch=1 \
