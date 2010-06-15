@@ -46,6 +46,7 @@ DSP_SOURCETREE_da850-omapl138-evm = "\
     ti-audio-soc-example-sourcetree \
     ti-dsplib-c64p-sourcetree \
     ti-dsplib-c674-sourcetree \
+    ti-c6accel-sourcetree \
     "
 
 DSP_SOURCETREE_omap3 = "\
