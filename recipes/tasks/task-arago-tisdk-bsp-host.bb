@@ -53,6 +53,7 @@ BSP_COMPONENTS_da850-omapl138-evm = "\
     ti-docs-psp \
     linux-omapl1-sourcetree \
     u-boot-sourcetree \
+    ti-board-utilities \
     "
 
 BSP_COMPONENTS_omap3 = "\
