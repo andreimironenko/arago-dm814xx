@@ -15,7 +15,7 @@ require ti-paths.inc
 require ti-staging.inc
 
 # Rebuild on kernel change since it links statically to ti-dmai, ti-codec-engine, etc
-PR = "r61+${MACHINE_KERNEL_PR}"
+PR = "r63+${MACHINE_KERNEL_PR}"
 
 DEPENDS = "ti-dmai gstreamer gst-plugins-base"
 
@@ -121,7 +121,6 @@ pkg_postinst_${PN} () {
 	fi
 }
 
-
 INITSCRIPT_NAME = "gstti-init"
-INITSCRIPT_PARAMS = "start 30 5 2 . stop 40 0 1 6 ."
+INITSCRIPT_PARAMS = "defaults 99"
 
