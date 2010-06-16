@@ -6,7 +6,7 @@ PRIORITY = "optional"
 
 SRCREV = "58"
 PV = "1.0"
-PR = "r8+svnr${SRCPV}"
+PR = "r9+svnr${SRCPV}"
 
 PLATFORM_da850-omapl138-evm = "omapl138"
 PLATFORM ?= "dm3730-am3715-evm"
@@ -17,6 +17,7 @@ INSANE_SKIP_${PN} = "True"
 SRC_URI = "svn://gforge.ti.com/svn/matrix_gui/;module=trunk;proto=https;user=anonymous;pswd='' \
 file://0001-matrix_gui-update-the-icon-font-spacing-to-look-goo.patch \
 file://0002-matrix-gui-move-the-data-files-html-bin-in-platfo.patch \
+file://0003-matrix-gui-add-script-to-launch-qtdemo-browser-from.patch \
 "
 
 S = "${WORKDIR}/trunk"
