@@ -1,0 +1,65 @@
+From 57766c3185afa753fb4ab507a7e7297d25250151 Mon Sep 17 00:00:00 2001
+From: Brijesh Singh <bksingh@ti.com>
+Date: Mon, 14 Jun 2010 20:10:06 -0500
+Subject: [PATCH] matrix_gui: update the icon/font/spacing to look good on omapl138 platform.
+
+---
+ buttonfactory.cpp |   19 +++++++++++++++++++
+ 1 files changed, 19 insertions(+), 0 deletions(-)
+
+diff --git a/buttonfactory.cpp b/buttonfactory.cpp
+index b252acc..7f20168 100755
+--- a/buttonfactory.cpp
++++ b/buttonfactory.cpp
+@@ -133,19 +133,31 @@ QObject * ButtonFactory::create(const QString &mimeType, const QUrl &url, const
+     QWidget * pWidget = new QWidget(m_pView);
+     pWidget->setStyleSheet("color: white; border-color: black; border-style: none; background-color: black; selection-color: black; selection-background-color: black");
+ 
++    #if !defined(Platform_omapl138)
+     pWidget->setMinimumSize(QSize(150, 160));
+     pWidget->setMaximumSize(QSize(150, 160));
++    #endif
+ 
+     // A tool button allows an icon image.
+     QToolButton * pButton = new QToolButton();
++
++    #if defined(Platform_omapl138)
++    pButton->setMinimumSize(QSize(80, 80));
++    pButton->setIconSize(QSize(80, 80));
++    #else
+     pButton->setMinimumSize(QSize(120, 120));
+     pButton->setIconSize(QSize(100, 100));
++    #endif
+ 
+     // Load an icon image from the specified file and place it on the tool button.
+     QIcon icon;
+     icon.addFile(iconName, QSize(), QIcon::Normal, QIcon::Off);
+     pButton->setIcon(icon);
+ 
++    #if defined(Platform_omapl138)
++    QLabel * pLabel = new QLabel();
++    pLabel->setText(iconLabel);
++    #else
+     QTextEdit * pLabel = new QTextEdit();
+     pLabel->setMinimumSize(QSize(120, 80));
+     pLabel->setMaximumSize(QSize(120, 80));
+@@ -153,9 +165,16 @@ QObject * ButtonFactory::create(const QString &mimeType, const QUrl &url, const
+     pLabel->setReadOnly(true);
+     pLabel->setAlignment(Qt::AlignCenter);
+     pLabel->setText(iconLabel);
++    #endif
+ 
+     QVBoxLayout * pLayout = new QVBoxLayout();
++
++    #if defined(Platform_omapl138)
++    pLayout->setSpacing(30);
++    #else
+     pLayout->setSpacing(70);
++    #endif
++
+     pLayout->setContentsMargins(0, 0, 0, 0);
+     pLayout->addWidget(pButton);
+     pLayout->addWidget(pLabel);
+-- 
+1.5.4.3
+
