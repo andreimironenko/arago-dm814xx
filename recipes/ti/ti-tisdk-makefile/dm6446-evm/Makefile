@@ -117,7 +117,7 @@ linux_install:
 # Build ubl. Also, an explicit cleanup target is defined.
 #==============================================================================
 ubl:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM644x/GNU/ubl
+	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM644x/GNU/ubl CROSS_COMPILE=$(CSTOOL_PREFIX) CC=$(CSTOOL_PREFIX)gcc
 
 ubl_clean:
 	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM644x/GNU/ubl clean
