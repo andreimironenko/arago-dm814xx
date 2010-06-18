@@ -146,13 +146,16 @@ u-boot_install:
 # Build the PSP Linux examples. Also, an explicit cleanup target is defined.
 #==============================================================================
 psp_examples:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) all
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/vpif KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR) CROSS_COMPILE=$(CSTOOL_PREFIX)
 
 psp_examples_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) clean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/vpif KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR) CROSS_COMPILE=$(CSTOOL_PREFIX) clean
 
 psp_examples_install:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) EXEC_DIR=$(EXEC_DIR)/psp-examples install
+	install -d  $(EXE_DIR)/linux-driver-examples 
+	cp $(PSP_INSTALL_DIR)/linux-driver-examples/vpif/vpif_test_disply $(EXEC_DIR)/psp-examples
+	cp $(PSP_INSTALL_DIR)/linux-driver-examples/vpif/vpif_test_mmap_loopback $(EXEC_DIR)/psp-examples
+	cp $(PSP_INSTALL_DIR)/linux-driver-examples/vpif/vpif_test_userptr_loopback $(EXEC_DIR)/psp-examples
 	
 #==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the
