@@ -24,6 +24,10 @@ BSP_COMPONENTS_dm6467 = "\
     ti-linux-driver-examples \
     "
 
+BSP_COMPONENTS_da850-omapl138-evm = "\
+    ti-linux-driver-examples-omapl \
+    "
+
 RDEPENDS_${PN} = "\
     ${BSP_COMPONENTS} \
     "

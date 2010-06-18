@@ -54,6 +54,7 @@ BSP_COMPONENTS_da850-omapl138-evm = "\
     linux-omapl1-sourcetree \
     u-boot-sourcetree \
     ti-board-utilities \
+    ti-linux-driver-examples-omapl-sourcetree \
     "
 
 BSP_COMPONENTS_omap3 = "\
