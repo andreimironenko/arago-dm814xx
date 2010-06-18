@@ -6,12 +6,20 @@ LICENSE = "TI TSPA"
 
 require ti-paths.inc
 require ti-staging.inc
+require ti-eula-unpack.inc
+
 
 COMPATIBLE_MACHINE = "(da850-omapl138-evm)"
 
-PR = "r1"
+PR = "r2"
 
-S = "${WORKDIR}/c6accel_${PV}"
+S = "${WORKDIR}/Texas\ Instruments/c6accel_${PV}/c6accel_${PV}"
+
+SRC_URI = "https://gforge01.dal.design.ti.com/gf/download/frsrelease/397/3619/C6Accel_${PV}_Linux-x86_Setup.bin;name=c6accelbin"
+
+
+BINFILE="C6Accel_${PV}_Linux-x86_Setup.bin"
+TI_BIN_UNPK_CMDS="Y:workdir"
 
 DEPENDS = "ti-dsplink ti-dspbios ti-codec-engine ti-linuxutils ti-xdais"
 DEPENDS += "ti-cgt6x ti-xdctools"
