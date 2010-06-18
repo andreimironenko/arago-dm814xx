@@ -4,23 +4,21 @@ LICENSE = "BSD"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-SRCREV = "58"
+SRCREV = "64"
 PV = "1.0"
 PR = "r9+svnr${SRCPV}"
 
+PLATFORM_dm365 = "dm365"
 PLATFORM_da850-omapl138-evm = "omapl138"
 PLATFORM ?= "dm3730-am3715-evm"
 
 # Skip the QA for browser binary (temporary)
 INSANE_SKIP_${PN} = "True"
 
-SRC_URI = "svn://gforge.ti.com/svn/matrix_gui/;module=trunk;proto=https;user=anonymous;pswd='' \
-file://0001-matrix_gui-update-the-icon-font-spacing-to-look-goo.patch \
-file://0002-matrix-gui-move-the-data-files-html-bin-in-platfo.patch \
-file://0003-matrix-gui-add-script-to-launch-qtdemo-browser-from.patch \
+SRC_URI = "svn://gforge.ti.com/svn/matrix_gui/;module=branches/BRANCH_BRIJESH;proto=https;user=anonymous;pswd='' \
 "
 
-S = "${WORKDIR}/trunk"
+S = "${WORKDIR}/branches/BRANCH_BRIJESH"
 
 INITSCRIPT_NAME = "matrix-gui"
 INITSCRIPT_PARAMS = "defaults 99"
