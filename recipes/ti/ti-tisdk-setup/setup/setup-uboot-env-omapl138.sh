@@ -8,7 +8,8 @@ echo "--------------------------------------------------------------------------
 echo "This step will set up the u-boot variables for booting the EVM."
 
 ipdefault=`ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1 }'`
-platform=`grep PLATFORM= $cwd/../../Rules.make | cut -d= -f2`
+platform=`grep PLATFORM= $cwd/../Rules.make | cut -d= -f2`
+prompt=" >"
 
 echo "Autodetected the following ip address of your host, correct it if necessary"
 read -p "[ $ipdefault ] " ip
@@ -18,8 +19,8 @@ if [ ! -n "$ip" ]; then
     ip=$ipdefault
 fi
 
-if [ -f $cwd/../../.targetfs ]; then
-    rootpath=`cat $cwd/../../.targetfs`
+if [ -f $cwd/../.targetfs ]; then
+    rootpath=`cat $cwd/../.targetfs`
 else
     echo "Where is your target filesystem extracted?"
     read -p "[ ${HOME}/targetfs ]" rootpath
@@ -30,13 +31,14 @@ else
     echo
 fi
 
-uimagesrc=`ls -1 $cwd/../../psp/prebuilt-images/uImage*.bin`
+uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
-prompt="EVM >"
 
 baseargs="console=ttyS0,115200n8 rw mem=59M"
-videoargs1="video=davincifb:vid0=OFF:vid1=OFF:osd0=720x576x16,4050K"
-videoargs2="dm365_imp.oper_mode=0 davinci_capture.device_type=4"
+videoargs1="video=davincifb:vid0=OFF:vid1=OFF:osd0=720x480x16,2025K"
+videoargs2="dm365_imp.oper_mode=0 davinci_enc_mngr.ch0_output=COMPOSITE"
+videoargs3="davinci_enc_mngr.ch0_mode=ntsc"
+videoargs="$videoargs1 $videoargs2 $videoargs3"
 fsflashargs="root=/dev/mtdblock4 rootfstype=jffs2"
 fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath"
 
@@ -62,6 +64,12 @@ if [ ! -n "$fs" ]; then
 fi
 
 if [ "$kernel" -eq "1" ]; then
+    echo
+    echo "Available kernel images in /tftproot:"
+    for file in /tftpboot/*; do
+        basefile=`basename $file`
+        echo "    $basefile"
+    done
     echo
     echo "Which kernel image do you want to boot from TFTP?"
     read -p "[ $uimagedefault ] " uimage
@@ -136,7 +144,7 @@ fi
 
 if [ "$minicom" == "y" ]; then
     minicomfile=setup_$platform_$cfg.minicom
-    minicomfilepath=$cwd/../../$minicomfile
+    minicomfilepath=$cwd/../$minicomfile
 
     if [ -f $minicomfilepath ]; then
         echo "Moving existing $minicomfile to $minicomfile.old"
@@ -152,9 +160,11 @@ if [ "$minicom" == "y" ]; then
     do_expect "\"$prompt\"" "send \"setenv bootdelay 4\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
+#    do_expect "\"$prompt\"" "send \"setenv oldbootargs \$bootargs \c\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs \c\"" $minicomfilepath
     echo "send \"$videoargs1 \c\"" >> $minicomfilepath
     echo "send \"$videoargs2 \c\"" >> $minicomfilepath
+    echo "send \"$videoargs3 \c\"" >> $minicomfilepath
     if [ "$fs" -eq "1" ]; then
         echo "send \"$fsnfsargs \c\"" >> $minicomfilepath
         echo "send \"ip=dhcp\"" >> $minicomfilepath
@@ -164,9 +174,12 @@ if [ "$minicom" == "y" ]; then
     fi
     if [ "$kernel" -eq "1" ]; then
         do_expect "\"$prompt\"" "send \"setenv autoload no\"" $minicomfilepath
+#        do_expect "\"$prompt\"" "send \"setenv oldserverip \$serverip\"" $minicomfilepath
         do_expect "\"$prompt\"" "send \"$serverip\"" $minicomfilepath
+#        do_expect "\"$prompt\"" "send \"setenv oldbootfile \$bootfile\"" $minicomfilepath
         do_expect "\"$prompt\"" "send \"$bootfile\"" $minicomfilepath
     fi
+    do_expect "\"$prompt\"" "send \"setenv oldbootcmd \$bootcmd\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"$bootcmd\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"saveenv\"" $minicomfilepath
     do_expect "\"$prompt\"" "! killall -s SIGHUP minicom" $minicomfilepath
@@ -189,7 +202,7 @@ if [ "$minicom" == "y" ]; then
     fi
 
     if [ "$minicomsetup" == "y" ]; then
-        pushd $cwd/../..
+        pushd $cwd/..
         check_status
         minicom -S $minicomfile
         popd >> /dev/null

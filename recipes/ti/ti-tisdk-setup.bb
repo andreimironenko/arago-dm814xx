@@ -3,6 +3,9 @@ LICENSE = "TI"
 
 require ti-paths.inc
 
+UBOOT_ENV_dm365 = "setup-uboot-env-dm365.sh"
+UBOOT_ENV_omapl138 = "setup-uboot-env-omapl138.sh"
+
 SRC_URI = "\
 	file://setup/setup.sh \
   	file://setup/common.sh \
@@ -11,9 +14,10 @@ SRC_URI = "\
   	file://setup/setup-package-install.sh \
   	file://setup/setup-targetfs-nfs.sh \
   	file://setup/setup-tftp.sh \
-  	file://setup/setup-uboot-env.sh \
+  	file://setup/setup-uboot-env-dm365.sh \
+  	file://setup/setup-uboot-env-omapl138.sh \
 "
-PR = "r0"
+PR = "r1"
 
 do_install () {
 	install -d ${D}/${installdir}
@@ -25,7 +29,7 @@ do_install () {
         cp -pPf ${WORKDIR}/setup/setup-package-install.sh ${D}/${installdir}/bin
         cp -pPf ${WORKDIR}/setup/setup-targetfs-nfs.sh ${D}/${installdir}/bin
         cp -pPf ${WORKDIR}/setup/setup-tftp.sh ${D}/${installdir}/bin
-        cp -pPf ${WORKDIR}/setup/setup-uboot-env.sh ${D}/${installdir}/bin
+        cp -pPf ${WORKDIR}/setup/${UBOOT_ENV} ${D}/${installdir}/bin/setup-uboot-env.sh
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"

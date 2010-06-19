@@ -27,11 +27,30 @@ else
     sudo mkdir -p $dst
     check_status
 
-    fstar=`ls -1 $cwd/../../filesystem/dvsdk*rootfs.tar.gz`
+    fstar=`ls -1 $cwd/../filesystem/dvsdk*rootfs.tar.gz`
     sudo tar xzf $fstar -C $dst
     check_status
 fi
-echo $dst > $cwd/../../.targetfs
+echo $dst > $cwd/../.targetfs
+echo "--------------------------------------------------------------------------------"
+
+platform=`grep PLATFORM= $cwd/../Rules.make | cut -d= -f2`
+echo
+echo "--------------------------------------------------------------------------------"
+echo "This step will set up the DVSDK to install binaries in to:"
+echo "    $dst/home/root/$platform"
+echo
+echo "The files will be available from /home/root/$platform on the target."
+echo
+echo "This setting can be changed later by editing Rules.make and changing the"
+echo "EXEC_DIR variable."
+echo
+read -p "Press return to continue"
+
+sed -i "s=EXEC_DIR\=.*$=EXEC_DIR\=$dst/home/root/$platform=g" $cwd/../Rules.make
+check_status
+
+echo "Rules.make edited successfully.."
 echo "--------------------------------------------------------------------------------"
 
 echo

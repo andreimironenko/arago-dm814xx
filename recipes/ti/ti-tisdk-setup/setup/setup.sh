@@ -9,18 +9,25 @@ echo "Parts of this script require administrator priviliges (sudo access)."
 echo "--------------------------------------------------------------------------------"
 
 cwd=`dirname $0`
+. $cwd/bin/common.sh
 
 $cwd/bin/setup-host-check.sh
+check_status
 
 $cwd/bin/setup-package-install.sh
+check_status
 
 $cwd/bin/setup-targetfs-nfs.sh
+check_status
 
 $cwd/bin/setup-tftp.sh
+check_status
 
 $cwd/bin/setup-minicom.sh
+check_status
 
 $cwd/bin/setup-uboot-env.sh
+check_status
 
 echo
 echo "DVSDK setup completed!"

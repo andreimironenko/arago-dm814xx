@@ -2,7 +2,7 @@
 
 . `dirname $0`/common.sh
 
-cmd="sudo apt-get install xinetd tftpd nfs-kernel-server"
+cmd="sudo apt-get install xinetd tftpd nfs-kernel-server minicom build-essential"
 echo "--------------------------------------------------------------------------------"
 echo "This step will make sure you have the proper host support packages installed"
 echo "using the following command: $cmd"
