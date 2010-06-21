@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r18"
+PR = "r19"
 LICENSE="MIT"
 
 inherit task
@@ -43,6 +43,7 @@ MULTIMEDIA_da850-omapl138-evm = " \
     ti-codec-engine-examples \
     task-arago-gst \
     gstreamer-ti \
+    ti-data \
 	showoff \
     "
 
