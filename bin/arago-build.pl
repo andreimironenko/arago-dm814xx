@@ -175,7 +175,7 @@ sub copy_output
     my $march;
 
     if ($machine =~ m/beagleboard/ || $machine =~ m/omap3evm/ ||
-        $machine =~ m/am3517-evm/) {
+        $machine =~ m/am3517-evm/ || $machine =~ m/dm3730/) {
         $march = "armv7a";
     }
     else {
