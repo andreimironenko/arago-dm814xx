@@ -12,7 +12,7 @@ RRECOMMENDS_${PN} = "qt4-embedded-plugin-mousedriver-tslib gstreamer-ti"
 SRCREV=e907feb5b484000914690225e9502f10c3c8b442
 
 PV = "1.0"
-PR = "r23"
+PR = "r24"
 PR_append= "+gitr${SRCREV}"
 
 SRC_URI = "git://showoff.git.sourceforge.net/gitroot/showoff/showoff;protocol=git \
@@ -22,8 +22,8 @@ SRC_URI = "git://showoff.git.sourceforge.net/gitroot/showoff/showoff;protocol=gi
            "
 S = "${WORKDIR}/git"
 
-INITSCRIPT_NAME = "showoff"
-INITSCRIPT_PARAMS = "defaults 99"
+#INITSCRIPT_NAME = "showoff"
+#INITSCRIPT_PARAMS = "defaults 99"
 
 inherit qt4e update-rc.d
 
