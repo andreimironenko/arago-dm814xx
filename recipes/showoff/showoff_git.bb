@@ -25,7 +25,7 @@ S = "${WORKDIR}/git"
 #INITSCRIPT_NAME = "showoff"
 #INITSCRIPT_PARAMS = "defaults 99"
 
-inherit qt4e update-rc.d
+inherit qt4e
 
 do_install() {
     install -d ${D}/${libexecdir}
