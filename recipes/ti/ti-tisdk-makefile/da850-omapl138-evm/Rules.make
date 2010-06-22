@@ -57,6 +57,9 @@ LINUXKERNEL_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__kernel__>
 # Where temporary Linux headers and libs are installed.
 LINUXLIBS_INSTALL_DIR=$(SDK_INSTALL_DIR)/linuxlibs
 
+# Where temporary Linux headers and libs are installed.
+C6ACCEL_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__c6accel__>/soc
+
 # The prefix to be added before the GNU compiler tools (optionally including # path), i.e. "arm_v5t_le-" or "/opt/bin/arm_v5t_le-".
 CSTOOL_DIR=<__CROSS_COMPILER_PATH__>
 CSTOOL_PREFIX=$(CSTOOL_DIR)/bin/arm-none-linux-gnueabi-
