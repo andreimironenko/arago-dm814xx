@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r3"
+PR = "r4"
 LICENSE="MIT"
 
 inherit task
@@ -9,6 +9,7 @@ MATRIX_APPS = " libxml2 \
  matrix-gui \
  am-sysinfo \
  am-benchmarks \
+ qt-embedded-widgets-demo \
 "
 
 RDEPENDS_${PN} = "\
@@ -18,4 +19,3 @@ RDEPENDS_${PN} = "\
     qt4-embedded-plugin-gfxdriver-gfxtransformed \    
     ${MATRIX_APPS} \
     "
-
