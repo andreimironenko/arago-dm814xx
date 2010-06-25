@@ -18,8 +18,8 @@ S = "${WORKDIR}/cs1omapl138_${PV}"
 
 SRC_URI = "ftp://nemo.sc.ti.com/pub/int-packages/cs1omapl138_${PV}.tar.gz;name=l138codecsbin"
 
-SRC_URI[l138codecsbin.md5sum] = "a1c77d445f27cc52f80892c87a67e2c1"
-SRC_URI[l138codecsbin.sha256sum] = "fe32e8cf8cfebc5f0ac69df8da0531a51a0b19c753c73f2ff30365ca9f355854"
+SRC_URI[l138codecsbin.md5sum] = "550d96808cf8345503bc2887d3370b25"
+SRC_URI[l138codecsbin.sha256sum] = "ca639e99e3a09677e98cc2a7e4ed29c72517e260c2e04b38cc9d717b9a01c91c"
 
 DEPENDS = "ti-cgt6x ti-xdctools ti-dspbios ti-codec-engine ti-linuxutils ti-c6accel"
 
