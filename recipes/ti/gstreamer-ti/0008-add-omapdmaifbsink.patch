@@ -1,7 +1,7 @@
-From ce4ed54bc3528d7393353340d695d0570bcf1122 Mon Sep 17 00:00:00 2001
+From 3ddb7a08e7d48517ddbe3034838092fc20763b80 Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
 Date: Sat, 5 Jun 2010 13:59:23 -0500
-Subject: [PATCH] add omapdmaifbsink
+Subject: [PATCH 8/8] add omapdmaifbsink
 
 ---
  configure.ac           |    1 +
@@ -1361,5 +1361,5 @@ index 0000000..52113fa
 +        .endfunc
 +
 -- 
-1.5.4.3
+1.7.0.4
 

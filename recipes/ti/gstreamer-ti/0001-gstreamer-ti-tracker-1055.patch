@@ -1,7 +1,7 @@
-From 5ab8f3b5ce5f5f1483fda934784cffed31de4063 Mon Sep 17 00:00:00 2001
+From 33d743c3fad7afda1492b232bd961515830308c6 Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
 Date: Sat, 5 Jun 2010 13:43:25 -0500
-Subject: [PATCH] gstreamer ti tracker 1055
+Subject: [PATCH 1/8] gstreamer ti tracker 1055
 
 ---
  Makefile.external                |   28 +++++++++--
@@ -81,7 +81,7 @@ index abd7d2d..1f67783 100644
  	$(MAKE) -f Makefile
  
 diff --git a/src/gsttiauddec1.c b/src/gsttiauddec1.c
-index a196f4b..55aac43 100644
+index 4da6970..5838ce1 100644
 --- a/src/gsttiauddec1.c
 +++ b/src/gsttiauddec1.c
 @@ -149,6 +149,8 @@ static void
@@ -108,7 +108,7 @@ index a196f4b..55aac43 100644
      /* Initialize audio decoder */
      GST_LOG("opening audio decoder \"%s\"\n", auddec1->codecName);
      auddec1->hAd = Adec1_create(auddec1->hEngine, (Char*)auddec1->codecName,
-@@ -1408,6 +1418,16 @@ static void gst_tiauddec1_drain_pipeline(GstTIAuddec1 *auddec1)
+@@ -1411,6 +1421,16 @@ static void gst_tiauddec1_drain_pipeline(GstTIAuddec1 *auddec1)
  
  }
  
@@ -721,5 +721,5 @@ index c65ff10..0cf63cb 100644
              break;
  
 -- 
-1.5.4.3
+1.7.0.4
 

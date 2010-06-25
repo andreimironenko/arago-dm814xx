@@ -1,7 +1,7 @@
-From 451b1bfac444502b9d70d7e3843a93071bd98656 Mon Sep 17 00:00:00 2001
+From f56f026a90b40b6f1ac6f8a6c27437a5f5afd0d8 Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
 Date: Sat, 5 Jun 2010 13:52:37 -0500
-Subject: [PATCH] add initial omapl137 support
+Subject: [PATCH 4/8] add initial omapl137 support
 
 ---
  src/gstticodecplugin_omapl137.cfg |   41 +++++++++++++++++++
@@ -145,5 +145,5 @@ index 0000000..05b0e9f
 + vim:set expandtab:      /* Expand tabs into white spaces  */
 +#endif
 -- 
-1.5.4.3
+1.7.0.4
 

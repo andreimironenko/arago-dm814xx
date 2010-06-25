@@ -1,7 +1,7 @@
-From 7f8c1d4f1129c43d28b560a6de0b8aa9f3d4fbee Mon Sep 17 00:00:00 2001
+From 9a2af78105a93cff8636797e408d5473ca93841b Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
 Date: Sun, 9 May 2010 05:27:41 -0500
-Subject: [PATCH] gstreamer ti dm6467 usesinglecsserver
+Subject: [PATCH 5/8] gstreamer ti dm6467 usesinglecsserver
 
 ---
  src/gstticodecplugin_dm6467.cfg |   24 +++++++-----------------
@@ -45,5 +45,5 @@ index 46e24fa..5d39f60 100644
  
  /* Load support for the 'Davinci Multimedia Application Interface' modules */
 -- 
-1.5.4.3
+1.7.0.4
 

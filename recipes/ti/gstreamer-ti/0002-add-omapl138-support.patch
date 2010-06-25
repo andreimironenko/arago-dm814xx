@@ -1,7 +1,7 @@
-From ed5ca5d6448871102674289c8fda779dbc25ac62 Mon Sep 17 00:00:00 2001
+From 92faef945a74e09210c3c0c4d983320ef441d9e6 Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
 Date: Mon, 7 Jun 2010 14:28:39 -0500
-Subject: [PATCH] add omapl138 support
+Subject: [PATCH 2/8] add omapl138 support
 
 ---
  src/gstticodecplugin_omapl138.cfg |   41 ++++++++++++++++++
@@ -162,5 +162,5 @@ index 0cf63cb..9e21460 100644
              params.inputChromaFormat = XDM_YUV_422ILE;
              break;
 -- 
-1.5.4.3
+1.7.0.4
 

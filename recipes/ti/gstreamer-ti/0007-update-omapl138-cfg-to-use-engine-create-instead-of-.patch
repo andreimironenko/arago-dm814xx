@@ -1,0 +1,79 @@
+From 07857303c39e444ae5dc25c17a8a047760dea8c5 Mon Sep 17 00:00:00 2001
+From: Brijesh Singh <bksingh@ti.com>
+Date: Fri, 25 Jun 2010 16:26:46 -0500
+Subject: [PATCH 7/8] update omapl138 cfg to use engine create instead of createfromengine
+
+---
+ src/gstticodecplugin_omapl138.cfg |   44 ++++++++++++++++++++++++++++++++----
+ 1 files changed, 39 insertions(+), 5 deletions(-)
+
+diff --git a/src/gstticodecplugin_omapl138.cfg b/src/gstticodecplugin_omapl138.cfg
+index af1ad41..84177e8 100644
+--- a/src/gstticodecplugin_omapl138.cfg
++++ b/src/gstticodecplugin_omapl138.cfg
+@@ -15,6 +15,13 @@
+ /* Load the Codec Engine 'Operating System Abstraction Layer' */
+ var osalGlobal = xdc.useModule('ti.sdo.ce.osal.Global');
+ 
++var AACDEC    = xdc.useModule('ti.sdo.codecs.aachedec.ce.AACHEDEC')
++var H264DEC   = xdc.useModule('ti.sdo.codecs.h264dec.ce.H264DEC');
++var MPEG4DEC  = xdc.useModule('ti.sdo.codecs.mpeg4dec.ce.MPEG4DEC');
++var MPEG2DEC  = xdc.useModule('ti.sdo.codecs.mpeg2dec.ce.MPEG2DEC');
++var JPEGDEC   = xdc.useModule('ti.sdo.codecs.jpegdec.ce.JPEGDEC');
++var JPEGENC   = xdc.useModule('ti.sdo.codecs.jpegenc.ce.JPEGENC');
++
+ var os = xdc.useModule('ti.sdo.ce.osal.linux.Settings');
+ osalGlobal.os = os;
+ 
+@@ -26,16 +33,43 @@ ipc.commType = ipc.COMM_DSPLINK;
+ *  ======== Engine Configuration ========
+  */
+ var Engine = xdc.useModule('ti.sdo.ce.Engine');
+-var demoEngine = Engine.createFromServer(
+-    "codecServer",
+-    "./bin/cs.x64P",
+-    "ti.sdo.server.cs"
+-    );
+ 
++var demoEngine = Engine.create("codecServer", [
++	{name: "acchedec", mod:AACDEC, local:false},
++	{name: "h264dec", mod:H264DEC, local:false},
++	{name: "mpeg4dec", mod:MPEG4DEC, local:false},
++	{name: "mpeg2dec", mod:MPEG2DEC, local:false},
++	{name: "jpegdec", mod:JPEGDEC, local:false},
++	{name: "jpegenc", mod:JPEGENC, local:false},
++
++]);
++
++/* Remote server image */
+ var combopath = "" + java.lang.System.getenv("CODEC_SERVER");
+ if (combopath != "" && combopath != "null") {
+ 	demoEngine.server = java.lang.System.getenv("CODEC_SERVER");
+ }
+ 
++var dsplinkDspLinkCfg = xdc.useModule('ti.sdo.ce.ipc.dsplink.DspLinkCfg');
++
++/* ======== Server memory map (DSPLINK) configuration ========
++ * This table must match exactly the addresses and sizes of segments in the 
++ * Server BIOS configuration (.tcf) script. There is exactly one "main", one 
++ * "link", and one "reset" segment type, and zero or more of "other" types.
++ */
++
++/* use the default memory map config for this server */
++demoEngine.armDspLinkConfig = dsplinkDspLinkCfg.DEFAULT_ARMDSPLINKCONFIG[Program.cpu.deviceName];
++demoEngine.armDspLinkConfig.memTable["DDR2"].addr = 0xC3C00000;
++demoEngine.armDspLinkConfig.memTable["DDR2"].size = 0x00300000;
++demoEngine.armDspLinkConfig.memTable["DDRALGHEAP"].addr = 0xC3200000;
++demoEngine.armDspLinkConfig.memTable["DDRALGHEAP"].size = 0x00A00000;
++demoEngine.armDspLinkConfig.memTable["DSPLINKMEM"].addr = 0xC3F01000;
++demoEngine.armDspLinkConfig.memTable["DSPLINKMEM"].size = 0x000FF000;
++demoEngine.armDspLinkConfig.memTable["RESETCTRL"].addr = 0xC3F00000;
++demoEngine.armDspLinkConfig.memTable["RESETCTRL"].size = 0x00000080;
++
+ /* Load support for the DMAI module */
+ var DMAI = xdc.loadPackage('ti.sdo.dmai');
++
++
+-- 
+1.7.0.4
+
