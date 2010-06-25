@@ -5,7 +5,7 @@ LICENSE = "TI"
 
 # TODO :: Move to common .inc (omap3 and omapl ready)
 
-PV = "1_10_00_00"
+PV = "1_10_00_01"
 
 PR = "r0"
 
@@ -18,8 +18,8 @@ S = "${WORKDIR}/cs1omapl138_${PV}"
 
 SRC_URI = "ftp://nemo.sc.ti.com/pub/int-packages/cs1omapl138_${PV}.tar.gz;name=l138codecsbin"
 
-SRC_URI[l138codecsbin.md5sum] = "a2485391719037d71338ade5faa28736"
-SRC_URI[l138codecsbin.sha256sum] = "b00a77715b3452940c7f33afc220d27d16e7c931d02e10c399b66d64d2b60502"
+SRC_URI[l138codecsbin.md5sum] = "a1c77d445f27cc52f80892c87a67e2c1"
+SRC_URI[l138codecsbin.sha256sum] = "fe32e8cf8cfebc5f0ac69df8da0531a51a0b19c753c73f2ff30365ca9f355854"
 
 DEPENDS = "ti-cgt6x ti-xdctools ti-dspbios ti-codec-engine ti-linuxutils ti-c6accel"
 
