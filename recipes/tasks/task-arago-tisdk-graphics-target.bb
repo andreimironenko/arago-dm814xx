@@ -1,15 +1,19 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r4"
+PR = "r5"
 LICENSE="MIT"
 
 inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
+# for now install qt-widget demo on omapl138
+QTWIDGET_DEMO = ""
+QTWIDGET_DEMO_omapl138 = "qt-embedded-widgets-demo"
+
 MATRIX_APPS = " libxml2 \
  matrix-gui \
  am-sysinfo \
  am-benchmarks \
- qt-embedded-widgets-demo \
+ ${QTWIDGET_DEMO} \
 "
 
 RDEPENDS_${PN} = "\
