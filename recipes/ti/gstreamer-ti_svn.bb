@@ -14,6 +14,7 @@ SRC_URI = "svn://gforge.ti.com/svn/gstreamer_ti/trunk;module=gstreamer_ti;proto=
   file://0005-gstreamer-ti-dm6467-usesinglecsserver.patch \
   file://0006-remove-mp3-mime-type.patch \
   file://0007-update-omapl138-cfg-to-use-engine-create-instead-of-.patch \
+  file://0008-add-TIC6xColorspace-element.patch \
   file://gstreamer-ti-rc.sh \
   file://gst-ti.sh \
 "
@@ -27,7 +28,7 @@ SRC_URI_append_omapl138 = "file://loadmodules.sh "
 SRC_URI_append_omap3 = " file://loadmodules.sh "
 # apply omapdmaifbsink patch on omap3 platform
 # NOTE: this patch need's X11 header/libs
-#SRC_URI_append_omap3 = "file://0008-add-omapdmaifbsink.patch \
+#SRC_URI_append_omap3 = "file://0009-add-omapdmaifbsink.patch \
 # file://loadmodules.sh \
 # "
 

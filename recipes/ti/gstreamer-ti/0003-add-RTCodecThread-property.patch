@@ -1,7 +1,7 @@
 From 8fde8de95688b71b597dd9379931bfd8a1bfbe6a Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
 Date: Mon, 7 Jun 2010 12:29:39 -0500
-Subject: [PATCH 3/8] add "RTCodecThread" property
+Subject: [PATCH 3/9] add "RTCodecThread" property
 
 ---
  src/gsttiauddec1.c |   26 +++++++++++++++++++++++---

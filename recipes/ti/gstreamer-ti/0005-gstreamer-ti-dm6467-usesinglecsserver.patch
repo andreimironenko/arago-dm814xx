@@ -1,7 +1,7 @@
 From 9a2af78105a93cff8636797e408d5473ca93841b Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
 Date: Sun, 9 May 2010 05:27:41 -0500
-Subject: [PATCH 5/8] gstreamer ti dm6467 usesinglecsserver
+Subject: [PATCH 5/9] gstreamer ti dm6467 usesinglecsserver
 
 ---
  src/gstticodecplugin_dm6467.cfg |   24 +++++++-----------------

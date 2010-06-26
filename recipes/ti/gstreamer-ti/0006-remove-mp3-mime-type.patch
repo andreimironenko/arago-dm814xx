@@ -1,7 +1,7 @@
 From 58a2cbde0156d1fad2893c1ee6590f45ce9e95f8 Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
 Date: Sun, 9 May 2010 05:29:17 -0500
-Subject: [PATCH 6/8] remove mp3 mime type
+Subject: [PATCH 6/9] remove mp3 mime type
 
 This patch removes mp3 decoder cap from auddec elements. mp3 decoder is not
 part of tspa combo. If you are adding mp3 decoder support in your combo then

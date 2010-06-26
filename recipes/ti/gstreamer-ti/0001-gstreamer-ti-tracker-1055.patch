@@ -1,7 +1,7 @@
 From 33d743c3fad7afda1492b232bd961515830308c6 Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
 Date: Sat, 5 Jun 2010 13:43:25 -0500
-Subject: [PATCH 1/8] gstreamer ti tracker 1055
+Subject: [PATCH 1/9] gstreamer ti tracker 1055
 
 ---
  Makefile.external                |   28 +++++++++--

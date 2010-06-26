@@ -1,7 +1,7 @@
 From 92faef945a74e09210c3c0c4d983320ef441d9e6 Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
 Date: Mon, 7 Jun 2010 14:28:39 -0500
-Subject: [PATCH 2/8] add omapl138 support
+Subject: [PATCH 2/9] add omapl138 support
 
 ---
  src/gstticodecplugin_omapl138.cfg |   41 ++++++++++++++++++

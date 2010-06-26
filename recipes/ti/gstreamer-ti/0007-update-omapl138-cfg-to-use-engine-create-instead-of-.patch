@@ -1,7 +1,7 @@
 From 07857303c39e444ae5dc25c17a8a047760dea8c5 Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
 Date: Fri, 25 Jun 2010 16:26:46 -0500
-Subject: [PATCH 7/8] update omapl138 cfg to use engine create instead of createfromengine
+Subject: [PATCH 7/9] update omapl138 cfg to use engine create instead of createfromengine
 
 ---
  src/gstticodecplugin_omapl138.cfg |   44 ++++++++++++++++++++++++++++++++----
