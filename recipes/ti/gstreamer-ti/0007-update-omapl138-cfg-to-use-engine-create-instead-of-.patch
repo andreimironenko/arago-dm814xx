@@ -1,17 +1,17 @@
-From 07857303c39e444ae5dc25c17a8a047760dea8c5 Mon Sep 17 00:00:00 2001
+From 038f5002980077655de575de5fd6527ddcc365cb Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
-Date: Fri, 25 Jun 2010 16:26:46 -0500
+Date: Mon, 28 Jun 2010 14:35:11 -0500
 Subject: [PATCH 7/9] update omapl138 cfg to use engine create instead of createfromengine
 
 ---
- src/gstticodecplugin_omapl138.cfg |   44 ++++++++++++++++++++++++++++++++----
- 1 files changed, 39 insertions(+), 5 deletions(-)
+ src/gstticodecplugin_omapl138.cfg |   49 +++++++++++++++++++++++++++++++++----
+ 1 files changed, 44 insertions(+), 5 deletions(-)
 
 diff --git a/src/gstticodecplugin_omapl138.cfg b/src/gstticodecplugin_omapl138.cfg
-index af1ad41..84177e8 100644
+index af1ad41..7f9bd3d 100644
 --- a/src/gstticodecplugin_omapl138.cfg
 +++ b/src/gstticodecplugin_omapl138.cfg
-@@ -15,6 +15,13 @@
+@@ -15,6 +15,14 @@
  /* Load the Codec Engine 'Operating System Abstraction Layer' */
  var osalGlobal = xdc.useModule('ti.sdo.ce.osal.Global');
  
@@ -21,11 +21,12 @@ index af1ad41..84177e8 100644
 +var MPEG2DEC  = xdc.useModule('ti.sdo.codecs.mpeg2dec.ce.MPEG2DEC');
 +var JPEGDEC   = xdc.useModule('ti.sdo.codecs.jpegdec.ce.JPEGDEC');
 +var JPEGENC   = xdc.useModule('ti.sdo.codecs.jpegenc.ce.JPEGENC');
++var C6ACCEL   = xdc.useModule('ti.c6accel.ce.C6ACCEL');
 +
  var os = xdc.useModule('ti.sdo.ce.osal.linux.Settings');
  osalGlobal.os = os;
  
-@@ -26,16 +33,43 @@ ipc.commType = ipc.COMM_DSPLINK;
+@@ -26,16 +34,47 @@ ipc.commType = ipc.COMM_DSPLINK;
  *  ======== Engine Configuration ========
   */
  var Engine = xdc.useModule('ti.sdo.ce.Engine');
@@ -42,6 +43,7 @@ index af1ad41..84177e8 100644
 +	{name: "mpeg2dec", mod:MPEG2DEC, local:false},
 +	{name: "jpegdec", mod:JPEGDEC, local:false},
 +	{name: "jpegenc", mod:JPEGENC, local:false},
++	{name: "c6accel", mod:C6ACCEL, local:false},
 +
 +]);
 +
@@ -50,7 +52,10 @@ index af1ad41..84177e8 100644
  if (combopath != "" && combopath != "null") {
  	demoEngine.server = java.lang.System.getenv("CODEC_SERVER");
  }
- 
++else {
++	demoEngine.server = "./cs.x64P";
++}
++
 +var dsplinkDspLinkCfg = xdc.useModule('ti.sdo.ce.ipc.dsplink.DspLinkCfg');
 +
 +/* ======== Server memory map (DSPLINK) configuration ========
@@ -69,7 +74,7 @@ index af1ad41..84177e8 100644
 +demoEngine.armDspLinkConfig.memTable["DSPLINKMEM"].size = 0x000FF000;
 +demoEngine.armDspLinkConfig.memTable["RESETCTRL"].addr = 0xC3F00000;
 +demoEngine.armDspLinkConfig.memTable["RESETCTRL"].size = 0x00000080;
-+
+ 
  /* Load support for the DMAI module */
  var DMAI = xdc.loadPackage('ti.sdo.dmai');
 +

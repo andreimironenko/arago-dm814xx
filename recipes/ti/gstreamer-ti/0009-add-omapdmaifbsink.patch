@@ -1,6 +1,6 @@
-From a4880b5c87988f7d51f2b5e596516b056734549d Mon Sep 17 00:00:00 2001
+From 171144a3ba9f53006535d41a53e3fd2560a5ce27 Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
-Date: Sat, 26 Jun 2010 10:18:37 -0500
+Date: Mon, 28 Jun 2010 14:42:06 -0500
 Subject: [PATCH 9/9] add omapdmaifbsink
 
 ---
@@ -28,22 +28,22 @@ index cf5996a..2bc3ed7 100644
  dnl check for tools
  AC_PROG_CC
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 0943edb..926588f 100644
+index cb1b517..de12767 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -11,16 +11,16 @@ C6ACCEL_LIB = $(C6ACCEL_INSTALL_DIR)/c6accelw/lib/c6accelw_$(GST_TI_PLATFORM).a4
  endif
  
  # sources used to compile this plug-in
--libgstticodecplugin_la_SOURCES = gstticodecplugin.c gsttiauddec.c gsttiauddec1.c gsttividdec.c gsttividdec2.c gsttiimgenc1.c gsttiimgenc.c gsttiimgdec1.c gsttiimgdec.c gsttidmaibuffertransport.c gstticircbuffer.c gsttidmaivideosink.c gstticodecs.c gstticodecs_platform.c  gsttiquicktime_aac.c gsttiquicktime_h264.c gsttividenc.c gsttividenc1.c gsttiaudenc1.c gstticommonutils.c gsttividresize.c gsttidmaiperf.c gsttiquicktime_mpeg4.c  $(C6ACCEL_SRC)
-+libgstticodecplugin_la_SOURCES = gstticodecplugin.c gsttiauddec.c gsttiauddec1.c gsttividdec.c gsttividdec2.c gsttiimgenc1.c gsttiimgenc.c gsttiimgdec1.c gsttiimgdec.c gsttidmaibuffertransport.c gstticircbuffer.c gsttidmaivideosink.c gstticodecs.c gstticodecs_platform.c  gsttiquicktime_aac.c gsttiquicktime_h264.c gsttividenc.c gsttividenc1.c gsttiaudenc1.c gstticommonutils.c gsttividresize.c gsttidmaiperf.c gsttiquicktime_mpeg4.c  $(C6ACCEL_SRC)  omapfb.c yuv.S
+-libgstticodecplugin_la_SOURCES = gstticodecplugin.c gsttiauddec.c gsttiauddec1.c gsttividdec.c gsttividdec2.c gsttiimgenc1.c gsttiimgenc.c gsttiimgdec1.c gsttiimgdec.c gsttidmaibuffertransport.c gstticircbuffer.c gsttidmaivideosink.c gstticodecs.c gstticodecs_platform.c  gsttiquicktime_aac.c gsttiquicktime_h264.c gsttividenc.c gsttividenc1.c gsttiaudenc1.c gstticommonutils.c gsttividresize.c gsttidmaiperf.c gsttiquicktime_mpeg4.c $(C6ACCEL_SRC)
++libgstticodecplugin_la_SOURCES = gstticodecplugin.c gsttiauddec.c gsttiauddec1.c gsttividdec.c gsttividdec2.c gsttiimgenc1.c gsttiimgenc.c gsttiimgdec1.c gsttiimgdec.c gsttidmaibuffertransport.c gstticircbuffer.c gsttidmaivideosink.c gstticodecs.c gstticodecs_platform.c  gsttiquicktime_aac.c gsttiquicktime_h264.c gsttividenc.c gsttividenc1.c gsttiaudenc1.c gstticommonutils.c gsttividresize.c gsttidmaiperf.c gsttiquicktime_mpeg4.c $(C6ACCEL_SRC) omapfb.c yuv.S
  
  # flags used to compile this plugin
  # add other _CFLAGS and _LIBS as needed
  libgstticodecplugin_la_CFLAGS  = $(GST_CFLAGS) $(shell cat $(XDC_CONFIG_BASENAME)/compiler.opt)
--libgstticodecplugin_la_LIBADD  = $(GST_LIBS) $(GST_BASE_LIBS) $(GST_PLUGINS_BASE_LIBS) -lgstvideo-0.10 -lgstaudio-0.10 -lm
-+libgstticodecplugin_la_LIBADD  = $(GST_LIBS) $(GST_BASE_LIBS) $(GST_PLUGINS_BASE_LIBS) -lgstvideo-0.10 -lgstaudio-0.10 -lm -lX11
- libgstticodecplugin_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS) -Wl,$(XDC_CONFIG_BASENAME)/linker.cmd  -Wl,$(C6ACCEL_LIB)
+-libgstticodecplugin_la_LIBADD  = $(GST_CFLAGS) $(GST_LIBS) $(GST_BASE_LIBS) $(GST_PLUGINS_BASE_LIBS) -lgstvideo-0.10 -lgstaudio-0.10 -lm
++libgstticodecplugin_la_LIBADD  = $(GST_CFLAGS) $(GST_LIBS) $(GST_BASE_LIBS) $(GST_PLUGINS_BASE_LIBS) -lgstvideo-0.10 -lgstaudio-0.10 -lm -lX11
+ libgstticodecplugin_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS) -Wl,$(XDC_CONFIG_BASENAME)/linker.cmd -Wl,$(C6ACCEL_LIB)
  
  # headers we need but don't want installed
 -noinst_HEADERS = gsttiauddec.h gsttiauddec1.h gsttividdec.h gsttividdec2.h gsttiimgenc1.h gsttiimgenc.h gsttiimgdec1.h gsttiimgdec.h gsttidmaibuffertransport.h gstticircbuffer.h gsttidmaivideosink.h gsttithreadprops.h gstticodecs.h gsttiquicktime_aac.h gsttiquicktime_h264.h gsttividenc.h gsttividenc1.h gsttiaudenc1.h gstticommonutils.h gsttividresize.h gsttiquicktime_mpeg4.h $(C6ACCEL_HEAD)

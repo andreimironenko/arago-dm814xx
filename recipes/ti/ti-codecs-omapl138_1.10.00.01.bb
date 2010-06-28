@@ -7,7 +7,7 @@ LICENSE = "TI"
 
 PV = "1_10_00_01"
 
-PR = "r0"
+PR = "r1"
 
 require ti-paths.inc
 require ti-staging.inc
@@ -39,7 +39,7 @@ do_prepsources() {
              XDC_INSTALL_DIR=${XDC_INSTALL_DIR} \
              CODEC_INSTALL_DIR="${S}" \
              XDCARGS="prod" \
-			 C6ACCEL_INSTALL_DIR=${C6ACCEL_INSTALL_DIR}/soc \
+			 C6ACCEL_INSTALL_DIR=${C6ACCEL_INSTALL_DIR} \
              clean
 }
 
@@ -58,7 +58,7 @@ do_compile() {
              XDC_INSTALL_DIR=${XDC_INSTALL_DIR} \
              CODEC_INSTALL_DIR="${S}" \
              XDCARGS="prod" \
-			 C6ACCEL_INSTALL_DIR=${C6ACCEL_INSTALL_DIR}/soc \
+			 C6ACCEL_INSTALL_DIR=${C6ACCEL_INSTALL_DIR} \
              all
 }
 

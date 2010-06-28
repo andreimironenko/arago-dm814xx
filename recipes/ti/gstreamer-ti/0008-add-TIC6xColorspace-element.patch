@@ -1,16 +1,16 @@
-From 75f827a428471f101bb07518264419a121fe6d88 Mon Sep 17 00:00:00 2001
+From 8d5575cebd7f385c5888a04c1af51f0b4edf2f40 Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
-Date: Sat, 26 Jun 2010 10:05:25 -0500
+Date: Mon, 28 Jun 2010 14:36:56 -0500
 Subject: [PATCH 8/9] add TIC6xColorspace element
 
 ---
  configure.ac             |   16 +
- src/Makefile.am          |   15 +-
+ src/Makefile.am          |   17 +-
  src/gsttic6xcolorspace.c |  746 ++++++++++++++++++++++++++++++++++++++++++++++
  src/gsttic6xcolorspace.h |  105 +++++++
  src/gstticodecplugin.c   |   13 +
  src/gsttividdec2.c       |   25 ++-
- 6 files changed, 915 insertions(+), 5 deletions(-)
+ 6 files changed, 916 insertions(+), 6 deletions(-)
  create mode 100644 src/gsttic6xcolorspace.c
  create mode 100644 src/gsttic6xcolorspace.h
 
@@ -42,7 +42,7 @@ index 32f8304..cf5996a 100644
  AC_SUBST(GSTPB_BASE_CFLAGS)
  AC_SUBST(GSTPB_BASE_LIBS)
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 95973a8..0943edb 100644
+index 95973a8..cb1b517 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -3,22 +3,29 @@
@@ -53,19 +53,20 @@ index 95973a8..0943edb 100644
 +if HAVE_C6ACCEL
 +C6ACCEL_SRC = gsttic6xcolorspace.c
 +C6ACCEL_HEAD = gsttic6xcolorspace.h
-+C6ACCEL_LIB = $(C6ACCEL_INSTALL_DIR)/soc/c6accelw/lib/c6accelw_$(GST_TI_PLATFORM).a470MV
++C6ACCEL_LIB = $(C6ACCEL_INSTALL_DIR)/c6accelw/lib/c6accelw_$(GST_TI_PLATFORM).a470MV
 +endif
 +
  # sources used to compile this plug-in
 -libgstticodecplugin_la_SOURCES = gstticodecplugin.c gsttiauddec.c gsttiauddec1.c gsttividdec.c gsttividdec2.c gsttiimgenc1.c gsttiimgenc.c gsttiimgdec1.c gsttiimgdec.c gsttidmaibuffertransport.c gstticircbuffer.c gsttidmaivideosink.c gstticodecs.c gstticodecs_platform.c  gsttiquicktime_aac.c gsttiquicktime_h264.c gsttividenc.c gsttividenc1.c gsttiaudenc1.c gstticommonutils.c gsttividresize.c gsttidmaiperf.c gsttiquicktime_mpeg4.c 
-+libgstticodecplugin_la_SOURCES = gstticodecplugin.c gsttiauddec.c gsttiauddec1.c gsttividdec.c gsttividdec2.c gsttiimgenc1.c gsttiimgenc.c gsttiimgdec1.c gsttiimgdec.c gsttidmaibuffertransport.c gstticircbuffer.c gsttidmaivideosink.c gstticodecs.c gstticodecs_platform.c  gsttiquicktime_aac.c gsttiquicktime_h264.c gsttividenc.c gsttividenc1.c gsttiaudenc1.c gstticommonutils.c gsttividresize.c gsttidmaiperf.c gsttiquicktime_mpeg4.c  $(C6ACCEL_SRC)
++libgstticodecplugin_la_SOURCES = gstticodecplugin.c gsttiauddec.c gsttiauddec1.c gsttividdec.c gsttividdec2.c gsttiimgenc1.c gsttiimgenc.c gsttiimgdec1.c gsttiimgdec.c gsttidmaibuffertransport.c gstticircbuffer.c gsttidmaivideosink.c gstticodecs.c gstticodecs_platform.c  gsttiquicktime_aac.c gsttiquicktime_h264.c gsttividenc.c gsttividenc1.c gsttiaudenc1.c gstticommonutils.c gsttividresize.c gsttidmaiperf.c gsttiquicktime_mpeg4.c $(C6ACCEL_SRC)
  
  # flags used to compile this plugin
  # add other _CFLAGS and _LIBS as needed
  libgstticodecplugin_la_CFLAGS  = $(GST_CFLAGS) $(shell cat $(XDC_CONFIG_BASENAME)/compiler.opt)
- libgstticodecplugin_la_LIBADD  = $(GST_LIBS) $(GST_BASE_LIBS) $(GST_PLUGINS_BASE_LIBS) -lgstvideo-0.10 -lgstaudio-0.10 -lm
+-libgstticodecplugin_la_LIBADD  = $(GST_LIBS) $(GST_BASE_LIBS) $(GST_PLUGINS_BASE_LIBS) -lgstvideo-0.10 -lgstaudio-0.10 -lm
 -libgstticodecplugin_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS) -Wl,$(XDC_CONFIG_BASENAME)/linker.cmd
-+libgstticodecplugin_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS) -Wl,$(XDC_CONFIG_BASENAME)/linker.cmd  -Wl,$(C6ACCEL_LIB)
++libgstticodecplugin_la_LIBADD  = $(GST_CFLAGS) $(GST_LIBS) $(GST_BASE_LIBS) $(GST_PLUGINS_BASE_LIBS) -lgstvideo-0.10 -lgstaudio-0.10 -lm
++libgstticodecplugin_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS) -Wl,$(XDC_CONFIG_BASENAME)/linker.cmd -Wl,$(C6ACCEL_LIB)
  
  # headers we need but don't want installed
 -noinst_HEADERS = gsttiauddec.h gsttiauddec1.h gsttividdec.h gsttividdec2.h gsttiimgenc1.h gsttiimgenc.h gsttiimgdec1.h gsttiimgdec.h gsttidmaibuffertransport.h gstticircbuffer.h gsttidmaivideosink.h gsttithreadprops.h gstticodecs.h gsttiquicktime_aac.h gsttiquicktime_h264.h gsttividenc.h gsttividenc1.h gsttiaudenc1.h gstticommonutils.h gsttividresize.h gsttiquicktime_mpeg4.h 
@@ -75,7 +76,7 @@ index 95973a8..0943edb 100644
  CONFIGURO     = $(XDC_INSTALL_DIR)/xs xdc.tools.configuro
  BUILT_SOURCES = $(XDC_CONFIG_BASENAME)/compiler.opt $(XDC_CONFIG_BASENAME)/linker.cmd
 -XDC_PATH      = .;$(XDC_INSTALL_DIR)/packages;$(LINK_XDC_ROOT);$(FC_INSTALL_DIR)/packages;$(CE_INSTALL_DIR)/packages;$(XDAIS_INSTALL_DIR)/packages;$(CODEC_INSTALL_DIR)/packages;$(CMEM_INSTALL_DIR)/packages;$(DMAI_INSTALL_DIR)/packages;$(LPM_INSTALL_DIR)/packages;$(XDC_USER_PATH);$(EDMA3_LLD_INSTALL_DIR)/packages;
-+XDC_PATH      = .;$(XDC_INSTALL_DIR)/packages;$(LINK_XDC_ROOT);$(FC_INSTALL_DIR)/packages;$(CE_INSTALL_DIR)/packages;$(XDAIS_INSTALL_DIR)/packages;$(CODEC_INSTALL_DIR)/packages;$(CMEM_INSTALL_DIR)/packages;$(DMAI_INSTALL_DIR)/packages;$(LPM_INSTALL_DIR)/packages;$(XDC_USER_PATH);$(EDMA3_LLD_INSTALL_DIR)/packages;$(C6ACCEL_INSTALL_DIR)/soc/c6accelw
++XDC_PATH      = .;$(XDC_INSTALL_DIR)/packages;$(LINK_XDC_ROOT);$(FC_INSTALL_DIR)/packages;$(CE_INSTALL_DIR)/packages;$(XDAIS_INSTALL_DIR)/packages;$(CODEC_INSTALL_DIR)/packages;$(CMEM_INSTALL_DIR)/packages;$(DMAI_INSTALL_DIR)/packages;$(LPM_INSTALL_DIR)/packages;$(XDC_USER_PATH);$(EDMA3_LLD_INSTALL_DIR)/packages;$(C6ACCEL_INSTALL_DIR)/c6accelw;$(C6ACCEL_INSTALL_DIR)/packages
  
  gstticodecs_platform.c :
  	ln -s $(srcdir)/gstticodecs_$(GST_TI_PLATFORM).c gstticodecs_platform.c
