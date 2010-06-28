@@ -1,17 +1,17 @@
-From 038f5002980077655de575de5fd6527ddcc365cb Mon Sep 17 00:00:00 2001
+From 78a62056483c1e4c66c1d3a693c39b98c1706e7a Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
-Date: Mon, 28 Jun 2010 14:35:11 -0500
-Subject: [PATCH 7/9] update omapl138 cfg to use engine create instead of createfromengine
+Date: Mon, 28 Jun 2010 17:02:09 -0500
+Subject: [PATCH] update omapl138 cfg to use engine create instead of createfromengine
 
 ---
- src/gstticodecplugin_omapl138.cfg |   49 +++++++++++++++++++++++++++++++++----
- 1 files changed, 44 insertions(+), 5 deletions(-)
+ src/gstticodecplugin_omapl138.cfg |   52 +++++++++++++++++++++++++++++++++---
+ 1 files changed, 47 insertions(+), 5 deletions(-)
 
 diff --git a/src/gstticodecplugin_omapl138.cfg b/src/gstticodecplugin_omapl138.cfg
-index af1ad41..7f9bd3d 100644
+index af1ad41..d887a2d 100644
 --- a/src/gstticodecplugin_omapl138.cfg
 +++ b/src/gstticodecplugin_omapl138.cfg
-@@ -15,6 +15,14 @@
+@@ -15,6 +15,16 @@
  /* Load the Codec Engine 'Operating System Abstraction Layer' */
  var osalGlobal = xdc.useModule('ti.sdo.ce.osal.Global');
  
@@ -22,11 +22,13 @@ index af1ad41..7f9bd3d 100644
 +var JPEGDEC   = xdc.useModule('ti.sdo.codecs.jpegdec.ce.JPEGDEC');
 +var JPEGENC   = xdc.useModule('ti.sdo.codecs.jpegenc.ce.JPEGENC');
 +var C6ACCEL   = xdc.useModule('ti.c6accel.ce.C6ACCEL');
++var H264ENC   = xdc.useModule('ti.sdo.codecs.h264enc.ce.H264ENC');
++var MPEG4ENC  = xdc.useModule('ti.sdo.codecs.mpeg4enc.ce.MPEG4ENC');
 +
  var os = xdc.useModule('ti.sdo.ce.osal.linux.Settings');
  osalGlobal.os = os;
  
-@@ -26,16 +34,47 @@ ipc.commType = ipc.COMM_DSPLINK;
+@@ -26,16 +36,48 @@ ipc.commType = ipc.COMM_DSPLINK;
  *  ======== Engine Configuration ========
   */
  var Engine = xdc.useModule('ti.sdo.ce.Engine');
@@ -44,7 +46,8 @@ index af1ad41..7f9bd3d 100644
 +	{name: "jpegdec", mod:JPEGDEC, local:false},
 +	{name: "jpegenc", mod:JPEGENC, local:false},
 +	{name: "c6accel", mod:C6ACCEL, local:false},
-+
++	{name: "h264enc", mod:H264ENC, local:false},
++	{name: "mpeg4enc", mod:MPEG4ENC, local:false},
 +]);
 +
 +/* Remote server image */
