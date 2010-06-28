@@ -34,13 +34,13 @@ fi
 uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyS0,115200n8 rw mem=59M"
-videoargs1="video=davincifb:vid0=OFF:vid1=OFF:osd0=720x480x16,2025K"
-videoargs2="dm365_imp.oper_mode=0 davinci_enc_mngr.ch0_output=COMPOSITE"
-videoargs3="davinci_enc_mngr.ch0_mode=ntsc"
-videoargs="$videoargs1 $videoargs2 $videoargs3"
+baseargs="console=ttyS2,115200n8 noinitrd rw mem=32M@0xc0000000 mem=64M@0xc400000"
+#videoargs1="video=davincifb:vid0=OFF:vid1=OFF:osd0=720x480x16,2025K"
+#videoargs2="dm365_imp.oper_mode=0 davinci_enc_mngr.ch0_output=COMPOSITE"
+#videoargs3="davinci_enc_mngr.ch0_mode=ntsc"
+#videoargs="$videoargs1 $videoargs2 $videoargs3"
 fsflashargs="root=/dev/mtdblock4 rootfstype=jffs2"
-fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath"
+fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath,nolock"
 
 echo "Select Linux kernel location:"
 echo " 1: TFTP"
@@ -78,8 +78,8 @@ if [ "$kernel" -eq "1" ]; then
         uimage=$uimagedefault
     fi
 
-#    bootcmd="setenv bootcmd 'dhcp;bootm'"
-    bootcmd="setenv bootcmd 'dhcp;setenv serverip $ip;tftpboot;bootm'"
+    bootcmd="setenv bootcmd 'dhcp;bootm'"
+#    bootcmd="setenv bootcmd 'dhcp;setenv serverip $ip;tftpboot;bootm'"
     serverip="setenv serverip $ip"
     bootfile="setenv bootfile $uimage"
 
