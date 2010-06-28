@@ -9,7 +9,7 @@ require ti-staging.inc
 
 COMPATIBLE_MACHINE = "(da830-omapl137-evm|da850-omapl138-evm)"
 
-PR = "r4"
+PR = "r5"
 
 S = "${WORKDIR}/audio_soc_example_${PV}"
 
@@ -72,4 +72,4 @@ do_install() {
 FILES_${PN} = "${installdir}/ti-audio-soc-example/*"
 INSANE_SKIP_${PN} = "True"
 
-RDEPENDS_ti_audio-soc-example += "ti-dsplink"
+RRECOMMENDS_ti-audio-soc-example += "ti-dsplink-module"
