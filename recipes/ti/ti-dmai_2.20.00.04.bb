@@ -1,6 +1,6 @@
 require ti-dmai.inc
 
-PV = "2_20_00_03"
+PV = "2_20_00_04"
 PR = "r0"
  
 COMPATIBLE_MACHINE = "(da850-omapl138-evm|da830-omapl137-evm)"
@@ -10,8 +10,8 @@ SRC_URI_append = " \
         file://arago-tdox \
 "
 
-SRCREV         = "494"
-DMAIBRANCH     = "tags/TAG_2_20_00_03"
+SRCREV         = "500"
+DMAIBRANCH     = "tags/TAG_2_20_00_04"
 
 do_install_prepend () {
     find ${S} -name .svn -type d | xargs rm -rf
