@@ -88,6 +88,8 @@ help:
 	@echo
 	@echo "    audio_soc_example            : Build Audio Soc example app"
 	@echo "    audio_soc_example_clean      : Remove generated Audio Soc example files"
+	@echo "    audio_soc_example_kernel     : Build linux kernel for Audio Soc example files"
+	@echo "    audio_soc_example_install    : Install Audio Soc example files"
 	@echo
 	@echo "    everything                   : Rebuild everything"
 	@echo "    clobber                      : Remove all generated files"
@@ -118,7 +120,7 @@ linux_install:
 # Build ubl. Also, an explicit cleanup target is defined.
 #==============================================================================
 ubl:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP-L138/GNU/ubl CROSS_COMPILE=$(CSTOOL_PREFIX) CC=$(CSTOOL_PREFIX)gcc
+	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP-L138/GNU/ubl CROSSCOMPILE=$(CSTOOL_PREFIX)
 
 ubl_clean:
 	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP-L138/GNU/ubl clean
@@ -152,8 +154,8 @@ psp_examples_clean:
 	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/vpif KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR) CROSS_COMPILE=$(CSTOOL_PREFIX) clean
 
 psp_examples_install:
-	install -d  $(EXE_DIR)/linux-driver-examples 
-	cp $(PSP_INSTALL_DIR)/linux-driver-examples/vpif/vpif_test_disply $(EXEC_DIR)/psp-examples
+	install -d  $(EXEC_DIR)/psp-examples 
+	cp $(PSP_INSTALL_DIR)/linux-driver-examples/vpif/vpif_test_display $(EXEC_DIR)/psp-examples
 	cp $(PSP_INSTALL_DIR)/linux-driver-examples/vpif/vpif_test_mmap_loopback $(EXEC_DIR)/psp-examples
 	cp $(PSP_INSTALL_DIR)/linux-driver-examples/vpif/vpif_test_userptr_loopback $(EXEC_DIR)/psp-examples
 	
@@ -528,8 +530,8 @@ dsplink_clean: dsplink_arm_clean dsplink_dsp_clean dsplink_samples_clean
 
 dsplink_install:
 	install -d $(EXEC_DIR)/dsplink
-	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/DAVINCI/RELEASE/dsplinkk.ko $(EXEC_DIR)/dsplink
-	cp ${LINK_INSTALL_DIR}/packages/dsplink/gpp/export/BIN/Linux/DAVINCI/RELEASE/*gpp $(EXEC_DIR)/dsplink
+	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAPL138/RELEASE/dsplinkk.ko $(EXEC_DIR)/dsplink
+	cp ${LINK_INSTALL_DIR}/dsplink/gpp/export/BIN/Linux/OMAPL138/RELEASE/*gpp $(EXEC_DIR)/dsplink
 	@for file in $(shell find $(LINK_INSTALL_DIR)/dsplink/dsp/BUILD -name *.out); do \
 	cp $$file $(EXEC_DIR)/dsplink ; \
 	done
@@ -565,3 +567,27 @@ audio_soc_example_clean:
 	EDMA3LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
 	clean
 
+audio_soc_example_kernel:
+	PATH="$(PATH):$(PSP_INSTALL_DIR)/u-boot-source/tools" \
+	$(MAKE) -C ./audio-soc-example_* \
+	PLATFORM="$(PLATFORM)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	LINUXKERNEL_INSTALL_DIR="$(LINUXKERNEL_INSTALL_DIR)" \
+	LINUXKERNEL_CONFIG="$(DEFAULT_LINUXKERNEL_CONFIG)" \
+	audio_soc_linux
+	@echo "Copying audio SOC example kernel to $(EXEC_DIR)/boot "
+	install -d $(EXEC_DIR)/boot
+	install  $(LINUXKERNEL_INSTALL_DIR)/arch/arm/boot/uImage_audioSoc $(EXEC_DIR)/boot
+
+
+audio_soc_example_install:
+	install -d $(EXEC_DIR)/audio_soc_example/Release
+	install -d $(EXEC_DIR)/audio_soc_example/Debug
+	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAPL138/RELEASE/dsplinkk.ko $(EXEC_DIR)/audio_soc_example/Release
+	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAPL138/DEBUG/dsplinkk.ko $(EXEC_DIR)/audio_soc_example/Debug
+	cp audio-soc-example_*/gpp/evmOMAPL138/Release/* $(EXEC_DIR)/audio_soc_example/Release/.
+	cp audio-soc-example_*/gpp/evmOMAPL138/Debug/* $(EXEC_DIR)/audio_soc_example/Debug/.
+	cp audio-soc-example_*/dsp/evmOMAPL138/Debug/*.out $(EXEC_DIR)/audio_soc_example/Release/.
+	cp audio-soc-example_*/dsp/evmOMAPL138/Debug/*.out $(EXEC_DIR)/audio_soc_example/Debug/.
+	cp audio-soc-example_*/data/davincieffect_clip.pcm $(EXEC_DIR)/audio_soc_example/.
