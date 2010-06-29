@@ -39,7 +39,7 @@ do_prepsources() {
              XDC_INSTALL_DIR=${XDC_INSTALL_DIR} \
              CODEC_INSTALL_DIR="${S}" \
              XDCARGS="prod" \
-			 C6ACCEL_INSTALL_DIR=${C6ACCEL_INSTALL_DIR} \
+			 C6ACCEL_INSTALL_DIR=${C6ACCEL_INSTALL_DIR}/soc \
              clean
 }
 
@@ -58,7 +58,7 @@ do_compile() {
              XDC_INSTALL_DIR=${XDC_INSTALL_DIR} \
              CODEC_INSTALL_DIR="${S}" \
              XDCARGS="prod" \
-			 C6ACCEL_INSTALL_DIR=${C6ACCEL_INSTALL_DIR} \
+			 C6ACCEL_INSTALL_DIR=${C6ACCEL_INSTALL_DIR}/soc \
              all
 }
 
