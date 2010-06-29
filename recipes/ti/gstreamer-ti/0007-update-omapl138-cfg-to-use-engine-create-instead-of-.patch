@@ -39,7 +39,7 @@ index af1ad41..d887a2d 100644
 -    );
  
 +var demoEngine = Engine.create("codecServer", [
-+	{name: "acchedec", mod:AACDEC, local:false},
++	{name: "aachedec", mod:AACDEC, local:false},
 +	{name: "h264dec", mod:H264DEC, local:false},
 +	{name: "mpeg4dec", mod:MPEG4DEC, local:false},
 +	{name: "mpeg2dec", mod:MPEG2DEC, local:false},
