@@ -12,11 +12,14 @@ RRECOMMENDS_${PN} = "qt4-embedded-plugin-mousedriver-tslib gstreamer-ti"
 SRCREV=e907feb5b484000914690225e9502f10c3c8b442
 
 PV = "1.0"
-PR = "r24"
+PR = "r25"
 PR_append= "+gitr${SRCREV}"
 
 SRC_URI = "git://showoff.git.sourceforge.net/gitroot/showoff/showoff;protocol=git \
-	file://0001-set-RTCodecThread-FALSE-and-use-ffmpegcolorspace-unt.patch;patch=1\
+	file://0001-set-RTCodecThread-FALSE-and-use-ffmpegcolorspace-unt.patch\
+	file://0002-use-TIC6xColorspace-element-for-YUV420-RGB565-color-.patch\
+	file://0003-set-the-default-media-directory-to-usr-share-ti-data.patch\
+	file://0004-disable-audio-during-mp4-playback.patch \
            file://showoff \
            file://showoff.init \
            "

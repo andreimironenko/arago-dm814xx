@@ -1,0 +1,25 @@
+From c2f4670c52ae0d6ab5d893828adb80f9f221ffbb Mon Sep 17 00:00:00 2001
+From: Brijesh <brijesh@brijesh-desktop.(none)>
+Date: Tue, 29 Jun 2010 11:25:44 -0500
+Subject: [PATCH 4/4] disable audio during mp4 playback
+
+---
+ mainwindow.cpp |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/mainwindow.cpp b/mainwindow.cpp
+index 149c804..4179a04 100644
+--- a/mainwindow.cpp
++++ b/mainwindow.cpp
+@@ -570,7 +570,7 @@ void mainWindow::completePipe(QString fileSelected)
+         pipelineDesc.append(" demux.audio_00 ");
+         pipelineDesc.append(" ! queue max-size-time = 0 ");
+         pipelineDesc.append(" ! TIAuddec1 RTCodecThread=FALSE ");
+-        pipelineDesc.append(" ! audioconvert ! alsasink");
++        pipelineDesc.append(" ! fakesink ");
+ #else
+         pipelineDesc.append(" demux.video_00 ");
+         pipelineDesc.append(" ! decodebin ! queue ! videoscale  ! ffmpegcolorspace ");
+-- 
+1.7.0.4
+

@@ -1,0 +1,43 @@
+From 272beaec2836d120d2ff3df59e4e19a783a1fb87 Mon Sep 17 00:00:00 2001
+From: Brijesh <brijesh@brijesh-desktop.(none)>
+Date: Tue, 29 Jun 2010 09:12:54 -0500
+Subject: [PATCH 2/4] use TIC6xColorspace element for YUV420 -> RGB565 color conversion.
+
+---
+ mainwindow.cpp |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/mainwindow.cpp b/mainwindow.cpp
+index 0903a8c..af99469 100644
+--- a/mainwindow.cpp
++++ b/mainwindow.cpp
+@@ -565,7 +565,7 @@ void mainWindow::completePipe(QString fileSelected)
+ #ifdef __ARMEL__
+         pipelineDesc.append(" demux.video_00");
+         pipelineDesc.append(" ! queue max-size-time = 0");
+-        pipelineDesc.append(" ! TIViddec2 RTCodecThread=FALSE ! ffmpegcolorspace");
++        pipelineDesc.append(" ! TIViddec2 RTCodecThread=FALSE ! TIC6xColorspace  engineName=codecServer");
+         pipelineDesc.append(" ! ipcsink max-lateness=100000000 name = ipcsink");
+         pipelineDesc.append(" demux.audio_00 ");
+         pipelineDesc.append(" ! queue max-size-time = 0 ");
+@@ -586,7 +586,7 @@ void mainWindow::completePipe(QString fileSelected)
+ #ifdef __ARMEL__
+         pipelineDesc.append(" demux.video_00 ");
+         pipelineDesc.append(" ! TIViddec2 RTCodecThread=FALSE");
+-        pipelineDesc.append(" ! queue ! videoscale ! dt_colorspace ");
++        pipelineDesc.append(" ! queue ! TIC6xColorspace engineName=codecServer  ");
+ #else
+         pipelineDesc.append(" demux.video_00 ");
+         pipelineDesc.append(" ! decodebin ");
+@@ -600,7 +600,7 @@ void mainWindow::completePipe(QString fileSelected)
+ 
+ #ifdef __ARMEL__
+         pipelineDesc.append(" ! queue max-size-time = 0 ");
+-        pipelineDesc.append(" ! TIViddec2 RTCodecThread=FALSE ! ffmpegcolorspace ");
++        pipelineDesc.append(" ! TIViddec2 RTCodecThread=FALSE ! TIC6xColorspace engineName=codecServer  ");
+         pipelineDesc.append(" ! video/x-raw-rgb, width=320, height=240 ! ipcsink max-lateness=100000000 name=ipcsink");
+         pipelineDesc.append(" demux.audio_00 ");
+         pipelineDesc.append(" ! queue ! mad ! audioconvert ! alsasink ");
+-- 
+1.7.0.4
+

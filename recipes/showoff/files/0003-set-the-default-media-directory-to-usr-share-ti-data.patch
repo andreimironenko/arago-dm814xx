@@ -1,0 +1,28 @@
+From 6768e1616954c166524f472b9174718cbec2b643 Mon Sep 17 00:00:00 2001
+From: Brijesh <brijesh@brijesh-desktop.(none)>
+Date: Tue, 29 Jun 2010 09:13:59 -0500
+Subject: [PATCH 3/4] set the default media directory to /usr/share/ti/data
+
+---
+ mainwindow.cpp |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mainwindow.cpp b/mainwindow.cpp
+index af99469..149c804 100644
+--- a/mainwindow.cpp
++++ b/mainwindow.cpp
+@@ -78,9 +78,9 @@
+     dialog = new QFileDialog(this,Qt::Dialog);
+     dialog->setNameFilters(filters);
+     dialog->setGeometry(0,0,480,272);
+-    dialog->setDirectory("/usr/share/showoff");
++    dialog->setDirectory("/usr/share/ti/data");
+     QList<QUrl> urls;
+-    urls << QUrl::fromLocalFile("/usr/share/showoff")
++    urls << QUrl::fromLocalFile("/usr/share/ti/data")
+          << QUrl::fromLocalFile("/");
+     dialog->setSidebarUrls(urls);
+ 
+-- 
+1.7.0.4
+
