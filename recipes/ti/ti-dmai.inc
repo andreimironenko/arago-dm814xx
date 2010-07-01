@@ -55,7 +55,7 @@ DMAIPLATFORM          ?= "<UNDEFINED_DMAIPLATFORM>"
 # Need to re-define this for OMAP-L137/L138
 DSPSUFFIX_omapl137 = "x64P"
 DSPSUFFIX_omapl138 = "x64P"
-DSPSUFFIX ?= "x64p"
+DSPSUFFIX ?= "x64P"
 
 # This is needed for dm355/dm365 targets in order to find ti.sdo.codecs.g711
 # TODO :: review - should we just pass this in do_compile?
@@ -135,8 +135,8 @@ RDEPENDS_ti-dmai-apps_omapl137  += "ti-codecs-omapl137-server ti-cmem-module ti-
 RDEPENDS_ti-dmai-apps_omapl138  += "ti-codecs-omapl138-server ti-cmem-module ti-dsplink-module"
 
 pkg_postinst_ti-dmai-apps () {
-	if [ -f ${installdir}/ti-codecs-server/*.${DSPSUFFIX} ]; then
-	ln -sf ${installdir}/ti-codecs-server/*.${DSPSUFFIX} ${installdir}/ti-dmai-apps/
+	if [ -f ${D}/${installdir}/ti-codecs-server/*.${DSPSUFFIX} ]; then
+	ln -sf ${D}/${installdir}/ti-codecs-server/*.${DSPSUFFIX} ${installdir}/ti-dmai-apps/
 	fi
 }
 

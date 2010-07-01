@@ -1,7 +1,7 @@
 require ti-dmai.inc
 
 PV = "2_20_00_04"
-PR = "r0"
+PR = "r1"
  
 COMPATIBLE_MACHINE = "(da850-omapl138-evm|da830-omapl137-evm)"
 
