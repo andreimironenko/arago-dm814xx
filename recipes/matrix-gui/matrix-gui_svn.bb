@@ -4,7 +4,7 @@ LICENSE = "BSD"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-SRCREV = "85"
+SRCREV = "86"
 PV = "1.0"
 PR = "r9+svnr${SRCPV}"
 
@@ -24,6 +24,7 @@ INITSCRIPT_NAME = "matrix-gui"
 INITSCRIPT_PARAMS = "defaults 99"
 
 CXXFLAGS_da850-omapl138-evm_append = " -DPlatform_omapl138 "
+CXXFLAGS_dm365_append = " -DPlatform_dm365 "
 PACKAGE_ARCH = ${MACHINE_ARCH}
 
 inherit qt4e update-rc.d
