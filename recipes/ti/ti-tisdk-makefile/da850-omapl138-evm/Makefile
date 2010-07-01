@@ -5,32 +5,32 @@ DEFAULT_UBOOT_CONFIG=da850_omapl138_evm_config
 
 DMAI_PLATFORM=ol138
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install ubl ubl_clean ubl_install dsplink dsplink_clean dsplink_install audio_soc_exmaple audio_soc_example_clean audio_soc_example_install audio_soc_example_kernel
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
 #==============================================================================
-all:	linux dsplink
+all: linux dsplink
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	linux_clean dsplink_clean
+clean: linux_clean dsplink_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: all linux psp_examples cmem dsplink codecs ceexamples dmai u-boot ubl
+everything: all u-boot ubl psp_examples cmem dmai codecs ceexamples audio_soc_example
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install dmai_install psp_examples_install ceexamples_install codecs_install dsplink_install u-boot_install ubl_install
+install: linux_install dsplink_install u-boot_install ubl_install psp_examples_install cmem_install dmai_install codecs_install ceexamples_install audio_soc_example_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean codecs_clean dsplink_clean u-boot_clean ubl_clean
+clobber: clean u-boot_clean ubl_clean psp_examples_clean cmem_clean dmai_clean ceexamples_clean codecs_clean audio_soc_example_clean
 
 #==============================================================================
 # A help message target.
@@ -123,7 +123,7 @@ ubl:
 	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP-L138/GNU/ubl CROSSCOMPILE=$(CSTOOL_PREFIX)
 
 ubl_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP-L138/GNU/ubl clean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP-L138/GNU/ubl CROSSCOMPILE=$(CSTOOL_PREFIX) clean
 
 ubl_install:
 	install -d $(EXEC_DIR)/boot
@@ -192,6 +192,7 @@ codecs:
 	BIOS_INSTALL_DIR=$(BIOS_INSTALL_DIR) \
 	CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
 	BIOSUTILS_INSTALL_DIR=$(BIOSUTILS_INSTALL_DIR) \
+	C6ACCEL_INSTALL_DIR=$(C6ACCEL_INSTALL_DIR)/soc \
 	XDCARGS="eval" \
 	all
 
@@ -207,6 +208,7 @@ codecs_clean:
 	BIOS_INSTALL_DIR=$(BIOS_INSTALL_DIR) \
 	CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
 	BIOSUTILS_INSTALL_DIR=$(BIOSUTILS_INSTALL_DIR) \
+	C6ACCEL_INSTALL_DIR=$(C6ACCEL_INSTALL_DIR)/soc \
 	XDCARGS="eval" \
 	clean
 
@@ -220,7 +222,7 @@ codecs_install:
 # Build the Davinci Multimedia Application Interface for the configured
 # platform. Also, an explicit cleanup target is defined.
 #==============================================================================
-dmai:
+dmai: codecs
 	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM)_al \
 	CE_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(CE_INSTALL_DIR) \
 	CODEC_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(CODEC_INSTALL_DIR) \
