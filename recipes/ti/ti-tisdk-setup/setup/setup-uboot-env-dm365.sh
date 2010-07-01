@@ -37,7 +37,10 @@ uimagedefault=`basename $uimagesrc`
 baseargs="console=ttyS0,115200n8 rw mem=59M"
 videoargs1="video=davincifb:vid0=OFF:vid1=OFF:osd0=720x576x16,4050K"
 videoargs2="dm365_imp.oper_mode=0 davinci_capture.device_type=4"
-videoargs="$videoargs1 $videoargs2"
+videoargs3="davinci_display.cont2_bufsize=6291456"
+videoargs4="vpfe_capture.cont_bufoffset=6291456"
+videoargs5="vpfe_capture.cont_bufsize=6291456"
+videoargs="$videoargs1 $videoargs2 $videoargs3 $videoargs4 $videoargs5"
 fsflashargs="root=/dev/mtdblock4 rootfstype=jffs2"
 fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath"
 
@@ -159,10 +162,13 @@ if [ "$minicom" == "y" ]; then
     do_expect "\"$prompt\"" "send \"setenv bootdelay 4\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
-    do_expect "\"$prompt\"" "send \"setenv oldbootargs \$bootargs \c\"" $minicomfilepath
+    do_expect "\"$prompt\"" "send \"setenv oldbootargs \$\(bootargs\)\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs \c\"" $minicomfilepath
     echo "send \"$videoargs1 \c\"" >> $minicomfilepath
     echo "send \"$videoargs2 \c\"" >> $minicomfilepath
+    echo "send \"$videoargs3 \c\"" >> $minicomfilepath
+    echo "send \"$videoargs4 \c\"" >> $minicomfilepath
+    echo "send \"$videoargs5 \c\"" >> $minicomfilepath
     if [ "$fs" -eq "1" ]; then
         echo "send \"$fsnfsargs \c\"" >> $minicomfilepath
         echo "send \"ip=dhcp\"" >> $minicomfilepath
@@ -172,12 +178,12 @@ if [ "$minicom" == "y" ]; then
     fi
     if [ "$kernel" -eq "1" ]; then
         do_expect "\"$prompt\"" "send \"setenv autoload no\"" $minicomfilepath
-        do_expect "\"$prompt\"" "send \"setenv oldserverip \$serverip\"" $minicomfilepath
+        do_expect "\"$prompt\"" "send \"setenv oldserverip \$\(serverip\)\"" $minicomfilepath
         do_expect "\"$prompt\"" "send \"$serverip\"" $minicomfilepath
-        do_expect "\"$prompt\"" "send \"setenv oldbootfile \$bootfile\"" $minicomfilepath
+        do_expect "\"$prompt\"" "send \"setenv oldbootfile \$\(bootfile\)\"" $minicomfilepath
         do_expect "\"$prompt\"" "send \"$bootfile\"" $minicomfilepath
     fi
-    do_expect "\"$prompt\"" "send \"setenv oldbootcmd \$bootcmd\"" $minicomfilepath
+    do_expect "\"$prompt\"" "send \"setenv oldbootcmd \$\(bootcmd\)\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"$bootcmd\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"saveenv\"" $minicomfilepath
     do_expect "\"$prompt\"" "! killall -s SIGHUP minicom" $minicomfilepath
@@ -191,7 +197,8 @@ if [ "$minicom" == "y" ]; then
     echo
     echo "After successfully executing this script, your EVM will be set up. You will be "
     echo "able to connect to it by executing 'minicom -w' or if you prefer a windows host"
-    echo "you can set up Terra Term as explained in the Software Developer's Guide."
+    echo "you can set up Tera Term as explained in the Software Developer's Guide."
+    echo "If you connect minicom or Tera Term and power cycle the board Linux will boot."
     echo
     read -p "[ y ] " minicomsetup
 

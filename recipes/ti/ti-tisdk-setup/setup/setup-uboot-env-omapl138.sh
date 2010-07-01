@@ -80,7 +80,7 @@ if [ "$kernel" -eq "1" ]; then
     fi
 
 #    bootcmd="setenv bootcmd 'dhcp;bootm'"
-    bootcmd="setenv bootcmd 'dhcp;tftpboot;bootm'"
+    bootcmd="setenv bootcmd 'dhcp;setenv serverip $ip;tftpboot;bootm'"
     serverip="setenv serverip $ip"
     bootfile="setenv bootfile $uimage"
 
@@ -161,7 +161,7 @@ if [ "$minicom" == "y" ]; then
     do_expect "\"$prompt\"" "send \"setenv bootdelay 4\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
-#    do_expect "\"$prompt\"" "send \"setenv oldbootargs \$bootargs \c\"" $minicomfilepath
+    do_expect "\"$prompt\"" "send \"setenv oldbootargs \$\(bootargs\)\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs \c\"" $minicomfilepath
     echo "send \"$videoargs1 \c\"" >> $minicomfilepath
     echo "send \"$videoargs2 \c\"" >> $minicomfilepath
@@ -175,12 +175,12 @@ if [ "$minicom" == "y" ]; then
     fi
     if [ "$kernel" -eq "1" ]; then
         do_expect "\"$prompt\"" "send \"setenv autoload no\"" $minicomfilepath
-#        do_expect "\"$prompt\"" "send \"setenv oldserverip \$serverip\"" $minicomfilepath
+        do_expect "\"$prompt\"" "send \"setenv oldserverip \$\(serverip\)\"" $minicomfilepath
         do_expect "\"$prompt\"" "send \"$serverip\"" $minicomfilepath
-#        do_expect "\"$prompt\"" "send \"setenv oldbootfile \$bootfile\"" $minicomfilepath
+#        do_expect "\"$prompt\"" "send \"setenv oldbootfile \$\(bootfile\)\"" $minicomfilepath
         do_expect "\"$prompt\"" "send \"$bootfile\"" $minicomfilepath
     fi
-    do_expect "\"$prompt\"" "send \"setenv oldbootcmd \$bootcmd\"" $minicomfilepath
+    do_expect "\"$prompt\"" "send \"setenv oldbootcmd \$\(bootcmd\)\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"$bootcmd\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"saveenv\"" $minicomfilepath
     do_expect "\"$prompt\"" "! killall -s SIGHUP minicom" $minicomfilepath
@@ -194,7 +194,8 @@ if [ "$minicom" == "y" ]; then
     echo
     echo "After successfully executing this script, your EVM will be set up. You will be "
     echo "able to connect to it by executing 'minicom -w' or if you prefer a windows host"
-    echo "you can set up Terra Term as explained in the Software Developer's Guide."
+    echo "you can set up Tera Term as explained in the Software Developer's Guide."
+    echo "If you connect minicom or Tera Term and power cycle the board Linux will boot."
     echo
     read -p "[ y ] " minicomsetup
 
