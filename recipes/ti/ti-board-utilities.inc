@@ -3,9 +3,9 @@ LICENSE = "TI"
 
 require ti-paths.inc
 
-SRC_URI = "http://arago-project.org/files/releases/davinci-psp_${PV}/sources/flash-utils-davinci.tar.gz;name=boardutilitiestarball"
+SRC_URI = "http://install.source.dir.local/board_utilities_3.x.0.0-r36.tar.gz;name=boardutilitiestarball"
 
-S = "${WORKDIR}/flash_utils"
+S = "${WORKDIR}/board-utilities"
 
 do_compile () {
 	cd ${S}
