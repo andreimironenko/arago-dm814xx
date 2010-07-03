@@ -1,0 +1,26 @@
+From ca7073f01f29dac4cc12438e7206f8154ebfc988 Mon Sep 17 00:00:00 2001
+From: Brijesh Singh <bksingh@ti.com>
+Date: Fri, 2 Jul 2010 19:33:16 -0500
+Subject: [PATCH] reserve more DMA slots for DSP codec
+
+To run H.264 decoder we need *atleast* 48 slots.
+---
+ arch/arm/mach-davinci/devices-da8xx.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
+index 0842590..afa3cca 100755
+--- a/arch/arm/mach-davinci/devices-da8xx.c
++++ b/arch/arm/mach-davinci/devices-da8xx.c
+@@ -131,7 +131,7 @@ static const s16 da830_dma_rsv_slots[][2] = {
+ 	{ 8,  2},
+ 	{12,  2},
+ 	{24,  4},
+-	{30, 26},
++	{30, 50},
+ 	{-1, -1}
+ };
+ 
+-- 
+1.7.0.4
+

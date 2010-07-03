@@ -16,6 +16,7 @@ MODULES_IMAGE_BASE_NAME = "modules-${PV}-${MACHINE}"
 PV = "${KVER}-${PR}+gitr${SRCREV}"
 
 SRC_URI = "git://arago-project.org/git/projects/linux-omapl1.git;protocol=git;branch=${BRANCH} \
+ file://0001-reserve-more-DMA-slots-for-DSP-codec.patch \
            file://defconfig"
 
 S = "${WORKDIR}/git"
