@@ -2,14 +2,10 @@ DESCRIPTION = "DVSDK Demo applications for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-INC_PR = "r7"
+INC_PR = "r8"
  
 DEPENDS += "ti-dmai"
 DEPENDS += "alsa-lib libpng freetype jpeg"
-
-SRC_URI = "http://tigt_dev.gt.design.ti.com/dev/DVSDK/310_DVSDK/3_10_00/dvsdk_demos_${PV}.tar.gz;name=dvsdkdemostarball"
-
-S = "${WORKDIR}/dvsdk_demos_${PV}"
 
 require ti-paths.inc
 require ti-staging.inc
@@ -30,7 +26,6 @@ do_compile () {
 	cd ${S}
 	make -e clean
 	make -e PLATFORM=${DEMOSPLATFORM} \
-		VERBOSE="true" \
 		DMAI_INSTALL_DIR="${DMAI_INSTALL_DIR}" \
 		XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
 		CE_INSTALL_DIR="${CE_INSTALL_DIR}" \
@@ -46,6 +41,9 @@ do_compile () {
 		LINUXKERNEL_INSTALL_DIR="${STAGING_KERNEL_DIR}" \
 		LINUXLIBS_INSTALL_DIR="${STAGING_DIR_TARGET}/usr" \
 		MVTOOL_DIR="${TOOLCHAIN_PATH}" \
+                CSTOOL_DIR="${TOOLCHAIN_PATH}" \
+                CSTOOL_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+                MVTOOL_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
 		${DEMOSPLATFORM}
 }
 

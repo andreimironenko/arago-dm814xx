@@ -1,5 +1,9 @@
 require ti-dvsdk-demos.inc
 
+SRC_URI = "http://tigt_dev.gt.design.ti.com/dev/DVSDK/310_DVSDK/3_10_00/dvsdk_demos_${PV}.tar.gz;name=dvsdkdemostarball"
+
+S = "${WORKDIR}/dvsdk_demos_${PV}"
+
 PV = "3_10_00_14"
 PR = "${INC_PR}.1"
 
