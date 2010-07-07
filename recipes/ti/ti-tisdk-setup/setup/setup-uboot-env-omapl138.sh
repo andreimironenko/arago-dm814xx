@@ -190,7 +190,8 @@ if [ "$minicom" == "y" ]; then
     echo "Would you like to run the setup script now (y/n)? This requires you to connect"
     echo "the RS-232 cable between your host and EVM as well as your ethernet cable as"
     echo "described in the Quick Start Guide. Once answering 'y' on the prompt below"
-    echo "you will have $timeout seconds to connect the board before the setup times out."
+    echo "you will have $timeout seconds to connect the board and power cycle it"
+    echo "before the setup times out."
     echo
     echo "After successfully executing this script, your EVM will be set up. You will be "
     echo "able to connect to it by executing 'minicom -w' or if you prefer a windows host"

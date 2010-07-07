@@ -17,7 +17,7 @@ SRC_URI = "\
   	file://setup/setup-uboot-env-dm365.sh \
   	file://setup/setup-uboot-env-omapl138.sh \
 "
-PR = "r4"
+PR = "r5"
 
 do_install () {
 	install -d ${D}/${installdir}
