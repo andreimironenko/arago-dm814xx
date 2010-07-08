@@ -1,7 +1,7 @@
-From 33d743c3fad7afda1492b232bd961515830308c6 Mon Sep 17 00:00:00 2001
+From 9139fadd335cf012b4a615392c1efbbf84168876 Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
-Date: Sat, 5 Jun 2010 13:43:25 -0500
-Subject: [PATCH 1/9] gstreamer ti tracker 1055
+Date: Fri, 2 Jul 2010 22:35:45 -0500
+Subject: [PATCH 1/8] gstreamer ti tracker 1055
 
 ---
  Makefile.external                |   28 +++++++++--
@@ -13,9 +13,9 @@ Subject: [PATCH 1/9] gstreamer ti tracker 1055
  src/gstticodecs_dm365.c          |   42 ++++++++++++++--
  src/gstticodecs_dm6467.c         |    2 +-
  src/gstticodecs_dm6467t.c        |   69 ++++++++++++++++++++++++++
- src/gsttividdec2.c               |   73 +++++++++++++++-------------
+ src/gsttividdec2.c               |   52 +++++++++++---------
  src/gsttividenc1.c               |    4 ++
- 11 files changed, 301 insertions(+), 151 deletions(-)
+ 11 files changed, 290 insertions(+), 141 deletions(-)
  create mode 100644 src/gstticodecplugin_dm6467t.cfg
  create mode 100644 src/gstticodecs_dm6467t.c
 
@@ -81,10 +81,10 @@ index abd7d2d..1f67783 100644
  	$(MAKE) -f Makefile
  
 diff --git a/src/gsttiauddec1.c b/src/gsttiauddec1.c
-index 4da6970..5838ce1 100644
+index 911c498..8fb1e04 100644
 --- a/src/gsttiauddec1.c
 +++ b/src/gsttiauddec1.c
-@@ -149,6 +149,8 @@ static void
+@@ -146,6 +146,8 @@ static void
      gst_tiauddec1_dispose(GObject * object);
  static gboolean 
      gst_tiauddec1_set_query_pad(GstPad * pad, GstQuery * query);
@@ -93,7 +93,7 @@ index 4da6970..5838ce1 100644
  
  /******************************************************************************
   * gst_tiauddec1_class_init_trampoline
-@@ -1091,6 +1093,14 @@ static gboolean gst_tiauddec1_codec_start (GstTIAuddec1  *auddec1)
+@@ -1075,6 +1077,14 @@ static gboolean gst_tiauddec1_codec_start (GstTIAuddec1  *auddec1)
          return FALSE;
      }
  
@@ -108,7 +108,7 @@ index 4da6970..5838ce1 100644
      /* Initialize audio decoder */
      GST_LOG("opening audio decoder \"%s\"\n", auddec1->codecName);
      auddec1->hAd = Adec1_create(auddec1->hEngine, (Char*)auddec1->codecName,
-@@ -1411,6 +1421,16 @@ static void gst_tiauddec1_drain_pipeline(GstTIAuddec1 *auddec1)
+@@ -1382,6 +1392,16 @@ static void gst_tiauddec1_drain_pipeline(GstTIAuddec1 *auddec1)
  
  }
  
@@ -607,45 +607,10 @@ index 0000000..24df7aa
 +};
 +
 diff --git a/src/gsttividdec2.c b/src/gsttividdec2.c
-index 1b8ef1a..0e28b3e 100644
+index 32437a2..8ccca2a 100644
 --- a/src/gsttividdec2.c
 +++ b/src/gsttividdec2.c
-@@ -688,16 +688,8 @@ static gboolean gst_tividdec2_set_source_caps(
-        given buffer */
-     BufferGfx_getDimensions(hBuf, &dim);
- 
--#if !defined(Platform_dm365)
--    caps =
--        gst_caps_new_simple("video/x-raw-yuv",
--            "format",    GST_TYPE_FOURCC,   GST_MAKE_FOURCC('U','Y','V','Y'),
--            "framerate", GST_TYPE_FRACTION, viddec2->framerateNum,
--                                            viddec2->framerateDen,
--            "width",     G_TYPE_INT,        dim.width,
--            "height",    G_TYPE_INT,        dim.height,
--            NULL);
--#else
-+#if defined(Platform_dm365)   || defined(Platform_dm6467) || \
-+    defined(Platform_dm6467t)
-     caps =
-         gst_caps_new_simple("video/x-raw-yuv",
-             "format",   GST_TYPE_FOURCC,  GST_MAKE_FOURCC('N','V','1','2'),
-@@ -706,6 +698,15 @@ static gboolean gst_tividdec2_set_source_caps(
-             "width",    G_TYPE_INT,       dim.width,
-             "height",   G_TYPE_INT,       dim.height,
-             NULL);
-+#else
-+    caps =
-+        gst_caps_new_simple("video/x-raw-yuv",
-+            "format",    GST_TYPE_FOURCC,   GST_MAKE_FOURCC('U','Y','V','Y'),
-+            "framerate", GST_TYPE_FRACTION, viddec2->framerateNum,
-+                                            viddec2->framerateDen,
-+            "width",     G_TYPE_INT,        dim.width,
-+            "height",    G_TYPE_INT,        dim.height,
-+            NULL);
- #endif
- 
-     /* Set the source pad caps */
-@@ -1241,29 +1242,35 @@ static gboolean gst_tividdec2_codec_start (GstTIViddec2  *viddec2)
+@@ -1238,29 +1238,35 @@ static gboolean gst_tividdec2_codec_start (GstTIViddec2  *viddec2)
  
      /* Set up codec parameters depending on device */
      switch(device) {
@@ -705,10 +670,10 @@ index 1b8ef1a..0e28b3e 100644
  
      GST_LOG("opening video decoder \"%s\"\n", viddec2->codecName);
 diff --git a/src/gsttividenc1.c b/src/gsttividenc1.c
-index c65ff10..0cf63cb 100644
+index 2e84296..70d2b71 100644
 --- a/src/gsttividenc1.c
 +++ b/src/gsttividenc1.c
-@@ -1519,7 +1519,11 @@ static gboolean gst_tividenc1_codec_start (GstTIVidenc1 *videnc1)
+@@ -1503,7 +1503,11 @@ static gboolean gst_tividenc1_codec_start (GstTIVidenc1 *videnc1)
              break;
  
          case Cpu_Device_DM6467:

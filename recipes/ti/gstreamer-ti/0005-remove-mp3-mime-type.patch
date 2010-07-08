@@ -1,0 +1,28 @@
+From 7e0771d6567a6b9bdc3ceb8effc813390e81b1be Mon Sep 17 00:00:00 2001
+From: Brijesh Singh <bksingh@ti.com>
+Date: Sun, 4 Jul 2010 17:43:03 -0500
+Subject: [PATCH 5/8] remove mp3 mime type
+
+This patch removes mp3 decoder cap from auddec elements. mp3 decoder is not
+part of tspa combo. If you are adding mp3 decoder support in your combo then
+do not apply this patch.
+---
+ src/gsttiauddec1.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/src/gsttiauddec1.c b/src/gsttiauddec1.c
+index 8fb1e04..04e90b4 100644
+--- a/src/gsttiauddec1.c
++++ b/src/gsttiauddec1.c
+@@ -85,7 +85,7 @@ static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE(
+     GST_PAD_ALWAYS,
+     GST_STATIC_CAPS
+     ("audio/mpeg, "
+-        "mpegversion = (int) { 1, 4 }")
++        "mpegversion = (int) { 4 }")
+ );
+ 
+ /* Define source (output) pad capabilities.  Currently, RAW is supported. */
+-- 
+1.7.0.4
+

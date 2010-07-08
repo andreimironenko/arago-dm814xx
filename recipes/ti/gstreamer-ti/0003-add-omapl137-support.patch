@@ -1,7 +1,7 @@
-From f56f026a90b40b6f1ac6f8a6c27437a5f5afd0d8 Mon Sep 17 00:00:00 2001
+From b0ded23442fb168a2eb3c1182b47f2fc41c60e82 Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
-Date: Sat, 5 Jun 2010 13:52:37 -0500
-Subject: [PATCH 4/9] add initial omapl137 support
+Date: Fri, 2 Jul 2010 22:39:46 -0500
+Subject: [PATCH 3/8] add omapl137 support
 
 ---
  src/gstticodecplugin_omapl137.cfg |   41 +++++++++++++++++++

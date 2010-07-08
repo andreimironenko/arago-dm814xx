@@ -1,7 +1,7 @@
-From 8fde8de95688b71b597dd9379931bfd8a1bfbe6a Mon Sep 17 00:00:00 2001
+From 72d4a65e7af6d4da938ae9477b338ab069fe24dc Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
-Date: Mon, 7 Jun 2010 12:29:39 -0500
-Subject: [PATCH 3/9] add "RTCodecThread" property
+Date: Fri, 2 Jul 2010 22:39:04 -0500
+Subject: [PATCH 6/8] add "RTCodecThread" property
 
 ---
  src/gsttiauddec1.c |   26 +++++++++++++++++++++++---
@@ -11,7 +11,7 @@ Subject: [PATCH 3/9] add "RTCodecThread" property
  4 files changed, 48 insertions(+), 6 deletions(-)
 
 diff --git a/src/gsttiauddec1.c b/src/gsttiauddec1.c
-index 5838ce1..4887034 100644
+index 04e90b4..bcafc09 100644
 --- a/src/gsttiauddec1.c
 +++ b/src/gsttiauddec1.c
 @@ -73,7 +73,8 @@ enum
@@ -24,7 +24,7 @@ index 5838ce1..4887034 100644
  };
  
  /* Define sink (input) pad capabilities.  Currently, AAC and MP3 are
-@@ -284,6 +285,11 @@ static void gst_tiauddec1_class_init(GstTIAuddec1Class *klass)
+@@ -281,6 +282,11 @@ static void gst_tiauddec1_class_init(GstTIAuddec1Class *klass)
              "Display circular buffer status while processing",
              FALSE, G_PARAM_WRITABLE));
  
@@ -36,7 +36,7 @@ index 5838ce1..4887034 100644
      g_object_class_install_property(gobject_class, PROP_GEN_TIMESTAMPS,
          g_param_spec_boolean("genTimeStamps", "Generate Time Stamps",
              "Set timestamps on output buffers",
-@@ -328,6 +334,13 @@ static void gst_tiauddec1_init_env(GstTIAuddec1 *auddec1)
+@@ -325,6 +331,13 @@ static void gst_tiauddec1_init_env(GstTIAuddec1 *auddec1)
                      auddec1->genTimeStamps ? "TRUE" : "FALSE");
      }
  
@@ -50,7 +50,7 @@ index 5838ce1..4887034 100644
      GST_LOG("gst_tiauddec1_init_env - end");
  }
  
-@@ -399,6 +412,8 @@ static void gst_tiauddec1_init(GstTIAuddec1 *auddec1, GstTIAuddec1Class *gclass)
+@@ -395,6 +408,8 @@ static void gst_tiauddec1_init(GstTIAuddec1 *auddec1, GstTIAuddec1Class *gclass)
      auddec1->totalBytes         = 0;
      auddec1->sampleRate         = 0;
  
@@ -59,7 +59,7 @@ index 5838ce1..4887034 100644
      gst_tiauddec1_init_env(auddec1);
  }
  
-@@ -472,6 +487,11 @@ static void gst_tiauddec1_set_property(GObject *object, guint prop_id,
+@@ -468,6 +483,11 @@ static void gst_tiauddec1_set_property(GObject *object, guint prop_id,
              GST_LOG("setting \"genTimeStamps\" to \"%s\"\n",
                  auddec1->genTimeStamps ? "TRUE" : "FALSE");
              break;
@@ -71,7 +71,7 @@ index 5838ce1..4887034 100644
          default:
              G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
              break;
-@@ -882,8 +902,8 @@ static gboolean gst_tiauddec1_init_audio(GstTIAuddec1 * auddec1)
+@@ -877,8 +897,8 @@ static gboolean gst_tiauddec1_init_audio(GstTIAuddec1 * auddec1)
      }
  
      /* Create decoder thread */
@@ -83,10 +83,10 @@ index 5838ce1..4887034 100644
          ("failed to create decode thread\n"), (NULL));
          gst_tiauddec1_exit_audio(auddec1);
 diff --git a/src/gsttiauddec1.h b/src/gsttiauddec1.h
-index 4bda013..21baa48 100644
+index a35845c..eb9fbb0 100644
 --- a/src/gsttiauddec1.h
 +++ b/src/gsttiauddec1.h
-@@ -68,6 +68,7 @@ struct _GstTIAuddec1
+@@ -69,6 +69,7 @@ struct _GstTIAuddec1
    gboolean       displayBuffer;
    gboolean       genTimeStamps;
    gint           sampleRate;
@@ -95,7 +95,7 @@ index 4bda013..21baa48 100644
    /* Element state */
    Engine_Handle    hEngine;
 diff --git a/src/gsttividdec2.c b/src/gsttividdec2.c
-index 0e28b3e..d347044 100644
+index 8ccca2a..a213d24 100644
 --- a/src/gsttividdec2.c
 +++ b/src/gsttividdec2.c
 @@ -72,7 +72,8 @@ enum
@@ -108,7 +108,7 @@ index 0e28b3e..d347044 100644
  };
  
  /* Define sink (input) pad capabilities.  Currently, MPEG and H264 are 
-@@ -311,6 +312,11 @@ static void gst_tividdec2_class_init(GstTIViddec2Class *klass)
+@@ -308,6 +309,11 @@ static void gst_tividdec2_class_init(GstTIViddec2Class *klass)
              "Display circular buffer status while processing",
              FALSE, G_PARAM_WRITABLE));
  
@@ -120,7 +120,7 @@ index 0e28b3e..d347044 100644
      g_object_class_install_property(gobject_class, PROP_GEN_TIMESTAMPS,
          g_param_spec_boolean("genTimeStamps", "Generate Time Stamps",
              "Set timestamps on output buffers",
-@@ -360,6 +366,13 @@ static void gst_tividdec2_init_env(GstTIViddec2 *viddec2)
+@@ -357,6 +363,13 @@ static void gst_tividdec2_init_env(GstTIViddec2 *viddec2)
          GST_LOG("Setting frameRate=%d\n", viddec2->framerateNum);
      }
  
@@ -134,7 +134,7 @@ index 0e28b3e..d347044 100644
      GST_LOG("gst_tividdec2_init_env - end\n");
  }
  
-@@ -437,6 +450,8 @@ static void gst_tividdec2_init(GstTIViddec2 *viddec2, GstTIViddec2Class *gclass)
+@@ -433,6 +446,8 @@ static void gst_tividdec2_init(GstTIViddec2 *viddec2, GstTIViddec2Class *gclass)
  
      viddec2->mpeg4_quicktime_header = NULL;
  
@@ -143,7 +143,7 @@ index 0e28b3e..d347044 100644
      gst_tividdec2_init_env(viddec2);
  }
  
-@@ -521,6 +536,11 @@ static void gst_tividdec2_set_property(GObject *object, guint prop_id,
+@@ -517,6 +532,11 @@ static void gst_tividdec2_set_property(GObject *object, guint prop_id,
              GST_LOG("setting \"genTimeStamps\" to \"%s\"\n",
                  viddec2->genTimeStamps ? "TRUE" : "FALSE");
              break;
@@ -155,7 +155,7 @@ index 0e28b3e..d347044 100644
          default:
              G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
              break;
-@@ -1000,8 +1020,8 @@ static gboolean gst_tividdec2_init_video(GstTIViddec2 *viddec2)
+@@ -1007,8 +1027,8 @@ static gboolean gst_tividdec2_init_video(GstTIViddec2 *viddec2)
      }
  
      /* Create decoder thread */
@@ -167,10 +167,10 @@ index 0e28b3e..d347044 100644
          ("failed to create decode thread\n"), (NULL));
          gst_tividdec2_exit_video(viddec2);
 diff --git a/src/gsttividdec2.h b/src/gsttividdec2.h
-index 923339b..44a88a9 100644
+index 5233fd4..b443cc1 100644
 --- a/src/gsttividdec2.h
 +++ b/src/gsttividdec2.h
-@@ -68,6 +68,7 @@ struct _GstTIViddec2
+@@ -69,6 +69,7 @@ struct _GstTIViddec2
    const gchar*   codecName;
    gboolean       displayBuffer;
    gboolean       genTimeStamps;

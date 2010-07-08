@@ -1,19 +1,41 @@
-From 8d5575cebd7f385c5888a04c1af51f0b4edf2f40 Mon Sep 17 00:00:00 2001
+From 0f013abe09c87c8ece4a50b6a7e5d6a4fd2161a2 Mon Sep 17 00:00:00 2001
 From: Brijesh Singh <bksingh@ti.com>
-Date: Mon, 28 Jun 2010 14:36:56 -0500
-Subject: [PATCH 8/9] add TIC6xColorspace element
+Date: Sun, 4 Jul 2010 18:05:15 -0500
+Subject: [PATCH 7/8] add TIC6xColorspace element
 
 ---
+ Makefile.external        |    3 +-
  configure.ac             |   16 +
- src/Makefile.am          |   17 +-
- src/gsttic6xcolorspace.c |  746 ++++++++++++++++++++++++++++++++++++++++++++++
- src/gsttic6xcolorspace.h |  105 +++++++
+ src/Makefile.am          |   14 +-
+ src/gsttic6xcolorspace.c |  737 ++++++++++++++++++++++++++++++++++++++++++++++
+ src/gsttic6xcolorspace.h |  107 +++++++
  src/gstticodecplugin.c   |   13 +
- src/gsttividdec2.c       |   25 ++-
- 6 files changed, 916 insertions(+), 6 deletions(-)
+ src/gsttividdec2.c       |   19 ++-
+ 7 files changed, 904 insertions(+), 5 deletions(-)
  create mode 100644 src/gsttic6xcolorspace.c
  create mode 100644 src/gsttic6xcolorspace.h
 
+diff --git a/Makefile.external b/Makefile.external
+index e55096b..2643761 100644
+--- a/Makefile.external
++++ b/Makefile.external
+@@ -93,6 +93,7 @@ ifeq ($(GST_TI_PLATFORM), omapl138)
+     export CROSS_COMPILE = ${CSTOOL_PREFIX}
+     export LINK_XDC_ROOT = $(LINK_INSTALL_DIR)
+     export C6ACCEL_INSTALL_DIR
++    export ENABLE_C6ACCEL ="--enable-c6accel"
+ endif
+ 
+ CPPFLAGS=-DPlatform_$(GST_TI_PLATFORM) 
+@@ -102,7 +103,7 @@ configure:
+ 	./autogen.sh --noconfigure
+ 
+ Makefile: configure
+-	./configure CPPFLAGS="$(CPPFLAGS)" --host=$(HOST)
++	./configure CPPFLAGS="$(CPPFLAGS)" --host=$(HOST) $(ENABLE_C6ACCEL)
+ 
+ omap3530: Makefile
+ 	$(MAKE) -f Makefile
 diff --git a/configure.ac b/configure.ac
 index 32f8304..cf5996a 100644
 --- a/configure.ac
@@ -42,10 +64,10 @@ index 32f8304..cf5996a 100644
  AC_SUBST(GSTPB_BASE_CFLAGS)
  AC_SUBST(GSTPB_BASE_LIBS)
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 95973a8..cb1b517 100644
+index 177827f..02e6d0a 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -3,22 +3,29 @@
+@@ -3,17 +3,25 @@
  XDC_CONFIG_BASENAME = gstticodecplugin_$(GST_TI_PLATFORM)
  plugin_LTLIBRARIES  = libgstticodecplugin.la
  
@@ -56,36 +78,30 @@ index 95973a8..cb1b517 100644
 +C6ACCEL_LIB = $(C6ACCEL_INSTALL_DIR)/soc/c6accelw/lib/c6accelw_$(GST_TI_PLATFORM).a470MV
 +endif
 +
++
  # sources used to compile this plug-in
--libgstticodecplugin_la_SOURCES = gstticodecplugin.c gsttiauddec.c gsttiauddec1.c gsttividdec.c gsttividdec2.c gsttiimgenc1.c gsttiimgenc.c gsttiimgdec1.c gsttiimgdec.c gsttidmaibuffertransport.c gstticircbuffer.c gsttidmaivideosink.c gstticodecs.c gstticodecs_platform.c  gsttiquicktime_aac.c gsttiquicktime_h264.c gsttividenc.c gsttividenc1.c gsttiaudenc1.c gstticommonutils.c gsttividresize.c gsttidmaiperf.c gsttiquicktime_mpeg4.c 
-+libgstticodecplugin_la_SOURCES = gstticodecplugin.c gsttiauddec.c gsttiauddec1.c gsttividdec.c gsttividdec2.c gsttiimgenc1.c gsttiimgenc.c gsttiimgdec1.c gsttiimgdec.c gsttidmaibuffertransport.c gstticircbuffer.c gsttidmaivideosink.c gstticodecs.c gstticodecs_platform.c  gsttiquicktime_aac.c gsttiquicktime_h264.c gsttividenc.c gsttividenc1.c gsttiaudenc1.c gstticommonutils.c gsttividresize.c gsttidmaiperf.c gsttiquicktime_mpeg4.c $(C6ACCEL_SRC)
+-libgstticodecplugin_la_SOURCES = gstticodecplugin.c gsttiauddec1.c gsttividdec2.c gsttiimgenc1.c gsttiimgdec1.c gsttidmaibuffertransport.c gsttidmaibuftab.c gstticircbuffer.c gsttidmaivideosink.c gstticodecs.c gstticodecs_platform.c  gsttiquicktime_aac.c gsttiquicktime_h264.c gsttividenc1.c gsttiaudenc1.c gstticommonutils.c gsttividresize.c gsttidmaiperf.c gsttiquicktime_mpeg4.c 
++libgstticodecplugin_la_SOURCES = gstticodecplugin.c gsttiauddec1.c gsttividdec2.c gsttiimgenc1.c gsttiimgdec1.c gsttidmaibuffertransport.c gsttidmaibuftab.c gstticircbuffer.c gsttidmaivideosink.c gstticodecs.c gstticodecs_platform.c  gsttiquicktime_aac.c gsttiquicktime_h264.c gsttividenc1.c gsttiaudenc1.c gstticommonutils.c gsttividresize.c gsttidmaiperf.c gsttiquicktime_mpeg4.c $(C6ACCEL_SRC)
  
  # flags used to compile this plugin
  # add other _CFLAGS and _LIBS as needed
  libgstticodecplugin_la_CFLAGS  = $(GST_CFLAGS) $(shell cat $(XDC_CONFIG_BASENAME)/compiler.opt)
--libgstticodecplugin_la_LIBADD  = $(GST_LIBS) $(GST_BASE_LIBS) $(GST_PLUGINS_BASE_LIBS) -lgstvideo-0.10 -lgstaudio-0.10 -lm
+ libgstticodecplugin_la_LIBADD  = $(GST_LIBS) $(GST_BASE_LIBS) $(GST_PLUGINS_BASE_LIBS) -lgstvideo-0.10 -lgstaudio-0.10 -lm
 -libgstticodecplugin_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS) -Wl,$(XDC_CONFIG_BASENAME)/linker.cmd
-+libgstticodecplugin_la_LIBADD  = $(GST_CFLAGS) $(GST_LIBS) $(GST_BASE_LIBS) $(GST_PLUGINS_BASE_LIBS) -lgstvideo-0.10 -lgstaudio-0.10 -lm
 +libgstticodecplugin_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS) -Wl,$(XDC_CONFIG_BASENAME)/linker.cmd -Wl,$(C6ACCEL_LIB)
  
  # headers we need but don't want installed
--noinst_HEADERS = gsttiauddec.h gsttiauddec1.h gsttividdec.h gsttividdec2.h gsttiimgenc1.h gsttiimgenc.h gsttiimgdec1.h gsttiimgdec.h gsttidmaibuffertransport.h gstticircbuffer.h gsttidmaivideosink.h gsttithreadprops.h gstticodecs.h gsttiquicktime_aac.h gsttiquicktime_h264.h gsttividenc.h gsttividenc1.h gsttiaudenc1.h gstticommonutils.h gsttividresize.h gsttiquicktime_mpeg4.h 
-+noinst_HEADERS = gsttiauddec.h gsttiauddec1.h gsttividdec.h gsttividdec2.h gsttiimgenc1.h gsttiimgenc.h gsttiimgdec1.h gsttiimgdec.h gsttidmaibuffertransport.h gstticircbuffer.h gsttidmaivideosink.h gsttithreadprops.h gstticodecs.h gsttiquicktime_aac.h gsttiquicktime_h264.h gsttividenc.h gsttividenc1.h gsttiaudenc1.h gstticommonutils.h gsttividresize.h gsttiquicktime_mpeg4.h $(C6ACCEL_HEAD)
+-noinst_HEADERS = gsttiauddec1.h gsttividdec2.h gsttiimgenc1.h gsttiimgdec1.h gsttidmaibuffertransport.h gsttidmaibuftab.h gstticircbuffer.h gsttidmaivideosink.h gsttithreadprops.h gstticodecs.h gsttiquicktime_aac.h gsttiquicktime_h264.h gsttividenc1.h gsttiaudenc1.h gstticommonutils.h gsttividresize.h gsttiquicktime_mpeg4.h 
++noinst_HEADERS = gsttiauddec1.h gsttividdec2.h gsttiimgenc1.h gsttiimgdec1.h gsttidmaibuffertransport.h gsttidmaibuftab.h gstticircbuffer.h gsttidmaivideosink.h gsttithreadprops.h gstticodecs.h gsttiquicktime_aac.h gsttiquicktime_h264.h gsttividenc1.h gsttiaudenc1.h gstticommonutils.h gsttividresize.h gsttiquicktime_mpeg4.h $(C6ACCEL_HEAD)
  
  # XDC Configuration
  CONFIGURO     = $(XDC_INSTALL_DIR)/xs xdc.tools.configuro
- BUILT_SOURCES = $(XDC_CONFIG_BASENAME)/compiler.opt $(XDC_CONFIG_BASENAME)/linker.cmd
--XDC_PATH      = .;$(XDC_INSTALL_DIR)/packages;$(LINK_XDC_ROOT);$(FC_INSTALL_DIR)/packages;$(CE_INSTALL_DIR)/packages;$(XDAIS_INSTALL_DIR)/packages;$(CODEC_INSTALL_DIR)/packages;$(CMEM_INSTALL_DIR)/packages;$(DMAI_INSTALL_DIR)/packages;$(LPM_INSTALL_DIR)/packages;$(XDC_USER_PATH);$(EDMA3_LLD_INSTALL_DIR)/packages;
-+XDC_PATH      = .;$(XDC_INSTALL_DIR)/packages;$(LINK_XDC_ROOT);$(FC_INSTALL_DIR)/packages;$(CE_INSTALL_DIR)/packages;$(XDAIS_INSTALL_DIR)/packages;$(CODEC_INSTALL_DIR)/packages;$(CMEM_INSTALL_DIR)/packages;$(DMAI_INSTALL_DIR)/packages;$(LPM_INSTALL_DIR)/packages;$(XDC_USER_PATH);$(EDMA3_LLD_INSTALL_DIR)/packages;$(C6ACCEL_INSTALL_DIR)/soc/c6accelw;$(C6ACCEL_INSTALL_DIR)/soc/packages
- 
- gstticodecs_platform.c :
- 	ln -s $(srcdir)/gstticodecs_$(GST_TI_PLATFORM).c gstticodecs_platform.c
 diff --git a/src/gsttic6xcolorspace.c b/src/gsttic6xcolorspace.c
 new file mode 100644
-index 0000000..c959370
+index 0000000..d6c37da
 --- /dev/null
 +++ b/src/gsttic6xcolorspace.c
-@@ -0,0 +1,746 @@
+@@ -0,0 +1,737 @@
 +/*
 + * gsttic6xcolorspace.c
 + *
@@ -364,18 +380,10 @@ index 0000000..c959370
 +    }
 +
 +    /* Get free buffer from buftab */
-+    hOutBuf = BufTab_getFreeBuf(c6xcolorspace->hOutBufTab);
-+
-+    if (hOutBuf == NULL) {
-+        GST_LOG("failed to get free buffer, waiting for downstream to unref\n");
-+
-+        Rendezvous_meet(c6xcolorspace->waitOnBufTab);
-+        hOutBuf = BufTab_getFreeBuf(c6xcolorspace->hOutBufTab);
-+        if (hOutBuf == NULL) {
-+            GST_ELEMENT_ERROR(c6xcolorspace, RESOURCE, READ,
++    if (!(hOutBuf = gst_tidmaibuftab_get_buf(c6xcolorspace->hOutBufTab))) {
++        GST_ELEMENT_ERROR(c6xcolorspace, RESOURCE, READ,
 +            ("failed to get free buffer\n"), (NULL));
-+            return GST_FLOW_ERROR;
-+        }
++        return GST_FLOW_ERROR;
 +    }
 +
 +    /* Reset waitOnBufTab rendezvous handle to its orignal state */
@@ -387,8 +395,7 @@ index 0000000..c959370
 +     * gst_buffer_unref().
 +     */
 +    GST_LOG("creating dmai transport buffer\n");
-+    *outBuf = gst_tidmaibuffertransport_new(hOutBuf, 
-+                c6xcolorspace->waitOnBufTab);
++    *outBuf = gst_tidmaibuffertransport_new(hOutBuf, c6xcolorspace->hOutBufTab);
 +    gst_buffer_set_data(*outBuf, (guint8*) Buffer_getUserPtr(hOutBuf), 
 +                        Buffer_getSize(hOutBuf));
 +    gst_buffer_set_caps(*outBuf, GST_PAD_CAPS(trans->srcpad));
@@ -719,7 +726,7 @@ index 0000000..c959370
 +    }
 +
 +    /* allocate output buffer */
-+    gfxAttrs.bAttrs.useMask = gst_tidmaibuffertransport_GST_FREE;
++    gfxAttrs.bAttrs.useMask = gst_tidmaibuffer_GST_FREE;
 +    gfxAttrs.colorSpace = c6xcolorspace->dstColorSpace;
 +    gfxAttrs.dim.width = c6xcolorspace->width;
 +    gfxAttrs.dim.height = c6xcolorspace->height;
@@ -732,8 +739,8 @@ index 0000000..c959370
 +
 +    gfxAttrs.bAttrs.memParams.align = 128;
 +    c6xcolorspace->hOutBufTab = 
-+     BufTab_create(c6xcolorspace->numOutputBufs, outBufSize, 
-+                BufferGfx_getBufferAttrs (&gfxAttrs));
++	gst_tidmaibuftab_new(c6xcolorspace->numOutputBufs,
++       	outBufSize, BufferGfx_getBufferAttrs (&gfxAttrs));
 +    if (c6xcolorspace->hOutBufTab == NULL) {
 +        GST_ELEMENT_ERROR(c6xcolorspace, RESOURCE, NO_SPACE_LEFT,
 +        ("failed to create output bufTab\n"), (NULL));
@@ -801,15 +808,9 @@ index 0000000..c959370
 +        c6xcolorspace->hEngine = NULL;
 +    }
 +
-+    if (c6xcolorspace->waitOnBufTab) {
-+        GST_LOG("deleting  Rendezvous handle\n");
-+        Rendezvous_delete(c6xcolorspace->waitOnBufTab);
-+        c6xcolorspace->waitOnBufTab = NULL;
-+    }
-+
 +    if (c6xcolorspace->hOutBufTab) {
 +        GST_LOG("freeing output buffers\n");
-+        BufTab_delete(c6xcolorspace->hOutBufTab);
++        gst_tidmaibuftab_unref(c6xcolorspace->hOutBufTab);
 +        c6xcolorspace->hOutBufTab = NULL;
 +    }
 +
@@ -817,6 +818,12 @@ index 0000000..c959370
 +        GST_LOG("freeing output buffers\n");
 +        Buffer_delete(c6xcolorspace->hCoeff);
 +        c6xcolorspace->hCoeff = NULL;
++    }
++
++    if (c6xcolorspace->waitOnBufTab) {
++        GST_LOG("deleting  Rendezvous handle\n");
++        Rendezvous_delete(c6xcolorspace->waitOnBufTab);
++        c6xcolorspace->waitOnBufTab = NULL;
 +    }
 +
 +    GST_LOG("end exit_video\n");
@@ -834,10 +841,10 @@ index 0000000..c959370
 +#endif
 diff --git a/src/gsttic6xcolorspace.h b/src/gsttic6xcolorspace.h
 new file mode 100644
-index 0000000..10f7bbe
+index 0000000..5394218
 --- /dev/null
 +++ b/src/gsttic6xcolorspace.h
-@@ -0,0 +1,105 @@
+@@ -0,0 +1,107 @@
 +/*
 + * gsttic6xcolorspace.h
 + *
@@ -878,6 +885,8 @@ index 0000000..10f7bbe
 +
 +#include <c6accelw.h>
 +
++#include "gsttidmaibuftab.h"
++
 +G_BEGIN_DECLS
 +
 +/* Standard macros for maniuplating TIC6xColorspace objects */
@@ -913,7 +922,7 @@ index 0000000..10f7bbe
 +  gint              height;
 +  ColorSpace_Type   srcColorSpace;
 +  ColorSpace_Type   dstColorSpace;
-+  BufTab_Handle     hOutBufTab;
++  GstTIDmaiBufTab  *hOutBufTab;
 +  Rendezvous_Handle waitOnBufTab;
 +  C6accel_Handle    hC6;
 +  Engine_Handle     hEngine;
@@ -944,10 +953,10 @@ index 0000000..10f7bbe
 + vim:set expandtab:      /* Expand tabs into white spaces  */
 +#endif
 diff --git a/src/gstticodecplugin.c b/src/gstticodecplugin.c
-index 575916b..64159ca 100644
+index b8de0c7..8772fc1 100644
 --- a/src/gstticodecplugin.c
 +++ b/src/gstticodecplugin.c
-@@ -48,6 +48,10 @@
+@@ -43,6 +43,10 @@
  #include "gsttividresize.h"
  #include "gsttidmaiperf.h"
  
@@ -958,7 +967,7 @@ index 575916b..64159ca 100644
  /* entry point to initialize the plug-in
   * initialize the plug-in itself
   * register the element factories and other features
-@@ -161,6 +165,15 @@ TICodecPlugin_init (GstPlugin * TICodecPlugin)
+@@ -121,6 +125,15 @@ TICodecPlugin_init (GstPlugin * TICodecPlugin)
          GST_TYPE_DMAIPERF))
          return FALSE;
  
@@ -975,7 +984,7 @@ index 575916b..64159ca 100644
  }
  
 diff --git a/src/gsttividdec2.c b/src/gsttividdec2.c
-index d347044..e669630 100644
+index a213d24..c45a0e0 100644
 --- a/src/gsttividdec2.c
 +++ b/src/gsttividdec2.c
 @@ -120,7 +120,12 @@ static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE(
@@ -992,23 +1001,17 @@ index d347044..e669630 100644
      )
  );
  
-@@ -718,6 +723,15 @@ static gboolean gst_tividdec2_set_source_caps(
-             "width",    G_TYPE_INT,       dim.width,
-             "height",   G_TYPE_INT,       dim.height,
-             NULL);
-+#elif defined(Platform_omapl138)
-+    caps =
-+        gst_caps_new_simple("video/x-raw-yuv",
-+            "format",   GST_TYPE_FOURCC,  GST_MAKE_FOURCC('I','4','2','0'),
-+            "width",    G_TYPE_INT,       dim.width,
-+            "height",   G_TYPE_INT,       dim.height,
-+            "framerate",GST_TYPE_FRACTION,viddec2->framerateNum,
-+                                          viddec2->framerateDen,
-+            NULL);
- #else
-     caps =
-         gst_caps_new_simple("video/x-raw-yuv",
-@@ -1284,6 +1298,15 @@ static gboolean gst_tividdec2_codec_start (GstTIViddec2  *viddec2)
+@@ -722,6 +727,9 @@ static gboolean gst_tividdec2_set_source_caps(
+         case ColorSpace_YUV422PSEMI:
+             gst_value_set_fourcc(&fourcc, GST_MAKE_FOURCC('N','V','1','6'));
+             break;
++        case ColorSpace_YUV420P:
++            gst_value_set_fourcc(&fourcc, GST_MAKE_FOURCC('I','4','2','0'));
++            break;
+         default:
+             GST_ERROR("unsupported colorspace\n");
+             return FALSE;
+@@ -1280,6 +1288,15 @@ static gboolean gst_tividdec2_codec_start (GstTIViddec2  *viddec2)
              defaultNumBufs           = 4;
              break;
          #endif
