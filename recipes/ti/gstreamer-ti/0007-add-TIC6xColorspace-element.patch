@@ -796,16 +796,16 @@ index 0000000..d6c37da
 +    GST_LOG("begin exit_video\n");
 +
 +    /* Shut down remaining items */
-+    if (c6xcolorspace->hC6) {
-+        GST_LOG("freeing C6accel handle\n");
-+        C6accel_delete(c6xcolorspace->hC6);
-+        c6xcolorspace->hC6 = NULL;
-+    }
-+
 +    if (c6xcolorspace->hEngine) {
 +        GST_LOG("freeing engine handle\n");
 +        Engine_close(c6xcolorspace->hEngine);
 +        c6xcolorspace->hEngine = NULL;
++    }
++
++    if (c6xcolorspace->hC6) {
++        GST_LOG("freeing C6accel handle\n");
++        C6accel_delete(c6xcolorspace->hC6);
++        c6xcolorspace->hC6 = NULL;
 +    }
 +
 +    if (c6xcolorspace->hOutBufTab) {
