@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install source (or development header) packages on host"
-PR = "r12"
+PR = "r14"
 LICENSE="MIT"
 
 inherit task
@@ -16,7 +16,10 @@ MULTIMEDIA_SOURCETREE_omap3 = " \
     ti-dmai-sourcetree \
     ti-xdais-sourcetree \
     ti-local-power-manager-sourcetree \
+    ti-dvsdk-demos-sourcetree \
+    ti-dvtb-sourcetree \
     "
+
 MULTIMEDIA_SOURCETREE_dm355 = " \
     ti-framework-components-sourcetree \
     ti-codec-engine-sourcetree \
