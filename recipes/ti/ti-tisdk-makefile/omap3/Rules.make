@@ -26,7 +26,7 @@ CODEC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__codecs-omap3530__>
 DMAI_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__dmai__>
 
 # Where the SDK demos are installed
-DEMO_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__demo__>
+DEMO_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__dvsdk-demos__>
 
 # Where the DVTB package is installed.
 DVTB_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__dvtb__>

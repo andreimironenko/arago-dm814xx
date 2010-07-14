@@ -9,27 +9,27 @@ DMAI_PLATFORM="o3530_al"
 #==============================================================================
 # The default build target builds components to enable all other build targets.
 #==============================================================================
-all:	linux dsplink
+all:   cmem lpm sdma dmai dvtb demos 	
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	linux_clean dsplink_clean
+clean:	cmem_clean sdma_clean lpm_clean dmai_clean dvtb_clean demos_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: linux psp_examples cmem lpm dsplink codecs ceexamples dmai u-boot ubl
+everything: u-boot linux dsplink cmem lpm sdma codecs ceexamples dmai dvtb demos 
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install dmai_install psp_examples_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install ubl_install
+install: linux_install cmem_install dmai_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install 
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean codecs_clean lpm_clean dsplink_clean u-boot_clean ubl_clean
+clobber:    linux_clean dmai_clean ceexamples_clean cmem_clean sdma_clean codecs_clean lpm_clean dsplink_clean u-boot_clean dvtb_clean demos_clean
 
 #==============================================================================
 # A help message target.
@@ -49,9 +49,20 @@ help:
 	@echo "    lpm_clean                    : Remove generated lpm files."
 	@echo "    lpm_install                  : Install lpm module"
 	@echo
+	@echo "    sdma                         : Build SDMA for $(PLATFORM)"
+	@echo "    sdma_clean                   : Remove generated SDMA files."
+	@echo
+	@echo "    demos                        : Build the DVSDK demos for $(PLATFORM)"
+	@echo "    demos_clean                  : Remove generated DVSDK demo files."
+	@echo "    demos_install                : install DVSDK demo executables."
+	@echo
 	@echo "    dmai                         : Build DMAI"
 	@echo "    dmai_clean                   : Remove generated DMAI files."
 	@echo "    dmai_install                 : Install dmai app"
+	@echo
+	@echo "    dvtb                         : Build DVTB for $(PLATFORM)"
+	@echo "    dvtb_clean                   : Remove generated DVTB files"
+	@echo "    dvtb_install                 : install DVTB files"
 	@echo
 	@echo "    codecs                       : Build codec package"
 	@echo "    codecs_clean                 : Remove generated codec files."
@@ -95,6 +106,20 @@ help:
 	@echo "    install                      : Install all the targets in "
 	@echo "                            $(EXEC_DIR)"
 	@echo
+
+#==============================================================================
+# Build the dvsdk demos for the configured platform. Also, an explicit cleanup
+# target is defined.
+#==============================================================================
+demos:
+	$(MAKE) -C $(DEMO_INSTALL_DIR) $(PLATFORM) DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc AR=$(CSTOOL_PREFIX)ar CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) PLATFORM=$(PLATFORM)
+
+demos_clean:
+	$(MAKE) -C $(DEMO_INSTALL_DIR) clean DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) PLATFORM=$(PLATFORM)
+
+demos_install:
+	install -d $(EXEC_DIR)/dvsdk-demos
+	$(MAKE) -C $(DEMO_INSTALL_DIR)/$(PLATFORM) install DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) EXEC_DIR=$(EXEC_DIR)/dvsdk-demos PLATFORM=$(PLATFORM)
 
 #==============================================================================
 # Build the Linux kernel. Also, an explicit cleanup target is defined.
@@ -172,6 +197,16 @@ cmem_install:
 	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/cmem
 
 #==============================================================================
+# Build SDMA for the configured platform. Also, an explicit cleanup
+# target is defined.
+#==============================================================================
+sdma:
+	$(MAKE) -C $(LINUXUTILS_INSTALL_DIR)/packages/ti/sdo/linuxutils/sdma/src/module RULES_MAKE=$(DVSDK_INSTALL_DIR)/Rules.make
+
+sdma_clean:
+	$(MAKE) -C $(LINUXUTILS_INSTALL_DIR)/packages/ti/sdo/linuxutils/sdma/src/module clean RULES_MAKE=$(DVSDK_INSTALL_DIR)/Rules.make
+
+#==============================================================================
 # Build LPM for the configured platform. Also, an explicit cleanup
 # target is defined.
 #==============================================================================
@@ -191,6 +226,22 @@ lpm_install:
 	install -d $(EXEC_DIR)/lpm
 	install $(LPM_INSTALL_DIR)/packages/ti/bios/power/modules/omap3530/lpm/lpm_omap3530.ko $(EXEC_DIR)/lpm
 
+#==============================================================================
+# Build the Digital Video Test Bench for the configured platform. Also, an
+# explicit cleanup target is defined.
+#==============================================================================
+dvtb:
+	$(MAKE) -C $(DVTB_INSTALL_DIR) $(PLATFORM) CODECS=TSPA
+	@echo
+	@echo "dvtb can be found under $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/$(PLATFORM)/linux/bin"
+
+dvtb_clean:
+	$(MAKE) -C $(DVTB_INSTALL_DIR) clean
+
+dvtb_install:
+	install -d $(EXEC_DIR)/dvtb/scripts
+	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/$(PLATFORM)/linux/bin/* $(EXEC_DIR)/dvtb
+	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/scripts/$(PLATFORM)/* $(EXEC_DIR)/dvtb/scripts
 
 #==============================================================================
 # Build codec package for the configured platform. Also, an explicit cleanup
