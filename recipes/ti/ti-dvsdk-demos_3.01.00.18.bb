@@ -19,5 +19,10 @@ do_install_prepend () {
     chmod a+x ${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/release.sh
     chmod a+x ${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/demos/tdox
     ${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/release.sh ${PV}
+
+    rm -rf ${S}/doxygen_templates
+    rm -rf ${S}/tdox
+    rm -rf ${S}/dvsdk_demos_${PV}
+    rm -rf ${S}/patches
 }
 
