@@ -600,6 +600,11 @@ sub get_input
         }
     }
 
+    if (-d $sdkpath) {
+        print "\nERROR: failed to create '$sdkpath' \n";
+        exit 1;
+    }
+
     if ($sdkpath =~ m/default/i) {
         $sdkpath = "$arago_dir/$sdkpath_default";
     }
