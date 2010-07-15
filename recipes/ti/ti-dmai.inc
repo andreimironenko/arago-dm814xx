@@ -135,9 +135,7 @@ RDEPENDS_ti-dmai-apps_omapl137  += "ti-codecs-omapl137-server ti-cmem-module ti-
 RDEPENDS_ti-dmai-apps_omapl138  += "ti-codecs-omapl138-server ti-cmem-module ti-dsplink-module"
 
 pkg_postinst_ti-dmai-apps () {
-#	if [ -f \${D}/${installdir}/ti-codecs-server/*.${DSPSUFFIX} ]; then
 	ln -sf ${installdir}/ti-codecs-server/*.${DSPSUFFIX} ${installdir}/ti-dmai-apps/
-#	fi
 }
 
 PACKAGES += "ti-dmai-tests"
