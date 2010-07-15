@@ -2,7 +2,7 @@ DESCRIPTION = "DVSDK Demo applications for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-INC_PR = "r9"
+INC_PR = "r11"
  
 DEPENDS += "ti-dmai"
 DEPENDS += "alsa-lib libpng freetype jpeg"
@@ -55,6 +55,10 @@ do_install () {
 	make -e EXEC_DIR=${D}/${installdir}/dvsdk-demos \
 		PLATFORM=${DEMOSPLATFORM} \
 		install
+}
+
+pkg_postinst_${PN} () {
+	ln -sf ${installdir}/ti-codecs-server/*.${DSPSUFFIX} ${installdir}/dvsdk-demos/
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
