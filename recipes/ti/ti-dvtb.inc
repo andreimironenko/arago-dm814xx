@@ -2,7 +2,7 @@ DESCRIPTION = "DVTB for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-PR = "r8"
+PR = "r10"
  
 DEPENDS = "virtual/kernel alsa-lib ti-framework-components ti-codec-engine ti-xdctools ti-linuxutils alsa-lib jpeg ncurses ti-xdais "
 
@@ -68,6 +68,10 @@ do_install () {
         # Copy dvtb example scripts into dvtb directory
         install -d ${D}/${installdir}/dvtb/scripts
         cp ${S}/packages/ti/sdo/dvtb/scripts/${DVTBPLATFORM}/* ${D}/${installdir}/dvtb/scripts
+}
+
+pkg_postinst_${PN} () {
+	ln -sf ${installdir}/ti-codecs-server/*.${DSPSUFFIX} ${installdir}/dvtb/
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
