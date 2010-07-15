@@ -492,6 +492,9 @@ tar zxf `ls -1 ${install_dir}/filesystem/*.tar.gz` -C $install_dir/filesystem --
 generate_sw_manifest "Packages installed on the target:" "$install_dir/filesystem" >> ${install_dir}/docs/software_manifest.htm
 rm -rf ${install_dir}/filesystem/usr
 
+# copy original image on filesystem directory.
+cp deploy/images/$machine/*.tar.gz ${install_dir}/filesystem
+
 # install arago sdk
 install_arago_sdk
 
