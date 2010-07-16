@@ -3,7 +3,7 @@ LICENSE = "TI"
 
 require ti-paths.inc
 
-SRC_URI = "http://install.source.dir.local/board_utilities_3.x.0.0-r36.tar.gz;name=boardutilitiestarball"
+SRC_URI = "http://install.source.dir.local/board_utilities_${PV}.tar.gz;name=boardutilitiestarball"
 
 S = "${WORKDIR}/board-utilities"
 
