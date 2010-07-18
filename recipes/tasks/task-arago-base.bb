@@ -1,6 +1,6 @@
 DESCRIPTION = "Basic task to get a device booting"
 LICENSE = "MIT"
-PR = "r12"
+PR = "r13"
 
 inherit task
 
@@ -19,7 +19,7 @@ ARAGO_BASE = "\
     mtd-utils \
     curl \
     arago-feed-configs \
-#    initscript-telnetd \
+    initscript-telnetd \
     devmem2 \
     "
 
