@@ -4,13 +4,14 @@ LICENSE = "BSD"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-SRCREV = "89"
+SRCREV = "93"
 PV = "1.0"
 PR = "r9+svnr${SRCPV}"
 
 PLATFORM_dm365 = "dm365"
 PLATFORM_da850-omapl138-evm = "omapl138"
-PLATFORM ?= "dm3730-am3715-evm"
+PLATFORM_omap3 = "omap3530"
+PLATFORM ?= "<UNDEFINED>"
 
 # Skip the QA for browser binary (temporary)
 INSANE_SKIP_${PN} = "True"
