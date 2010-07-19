@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support package sources (or development header) packages on host"
-PR = "r20"
+PR = "r21"
 LICENSE="MIT"
 ALLOW_EMPTY = "1"
 
@@ -64,6 +64,7 @@ BSP_COMPONENTS_omap3 = "\
     "
 
 BSP_COMPONENTS_dm3730-am3715-evm = "\
+    ti-docs-sdg \
     linux-omap3-sourcetree \
     u-boot-sourcetree \
     "
