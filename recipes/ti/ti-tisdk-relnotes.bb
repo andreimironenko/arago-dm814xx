@@ -10,9 +10,11 @@ RELNOTESURL = "http://ap-fpdsp-swapps.dal.design.ti.com/index.php/${RELNOTESTOPI
 
 SDK_PLATFORM_dm365 = "TMS320DM365"
 SDK_PLATFORM_omapl138 = "OMAPL138"
+SDK_PLATFORM_dm3730-am3715-evm = "TMS320DM3730"
 
 SDK_SHORT_PLATFORM_dm365 = "dm365"
 SDK_SHORT_PLATFORM_omapl138 = "omapl138"
+SDK_SHORT_PLATFORM_dm3730-am3715-evm = "dm3730"
 
 require ti-paths.inc
 

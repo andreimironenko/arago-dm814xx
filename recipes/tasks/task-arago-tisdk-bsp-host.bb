@@ -64,6 +64,7 @@ BSP_COMPONENTS_omap3 = "\
     "
 
 BSP_COMPONENTS_dm3730-am3715-evm = "\
+    ti-tisdk-relnotes \
     ti-docs-sdg \
     linux-omap3-sourcetree \
     u-boot-sourcetree \
