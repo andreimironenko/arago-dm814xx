@@ -1,7 +1,7 @@
 DESCRIPTION = "libGLES for the omap3"
 LICENSE = "proprietary-binary"
 
-PR = "r6"
+PR = "r7"
 
 COMPATIBLE_MACHINE = "(dm3730-am3715-evm|am3517-evm|beagleboard|cm-t35|igep0020|omap3-pandora|omap3-touchbook|omap3evm|omapzoom|omapzoom2|overo|palmpre)"
 
@@ -278,7 +278,7 @@ INITSCRIPT_PARAMS = "start 30 5 2 . stop 40 0 1 6 ."
 
 # Append to update-rc.d postinst
 pkg_postinst_${PN}_append() {
-modprobe -a
+depmod -a
 rm -f /etc/powervr-esrev
 
 ln -sf /usr/lib/libXdmcp.so.6.0.0 /usr/lib/libXdmcp.so.0 
