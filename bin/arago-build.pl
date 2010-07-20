@@ -19,6 +19,7 @@ my $dsp_source = "task-arago-tisdk-dsp-host";
 my $dsp_binary = "task-arago-tisdk-dsp-target";
 my $multimedia_sdk_target ="task-arago-tisdk-multimedia-toolchain-target";
 my $graphics_binary = "task-arago-tisdk-graphics-target";
+my $graphics_src = "task-arago-tisdk-graphics-host";
 my $graphics_sdk_target ="task-arago-tisdk-graphics-toolchain-target";
 
 my $image;
@@ -627,6 +628,7 @@ sub get_input
 
     if ($graphics =~ m/yes/i) {
         $packages[$index++] = $graphics_binary;
+        $packages[$index++] = $graphics_src;
         $packages[$index++] = $graphics_sdk_target;
     }
 

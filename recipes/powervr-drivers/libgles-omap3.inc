@@ -36,6 +36,8 @@ S = "${WORKDIR}/OMAP35x_Graphics_SDK_${SGXPV}"
 # Logic to unpack installjammer file
 TI_BIN_UNPK_CMDS="Y: qY:workdir:Y"
 require ../ti/ti-eula-unpack.inc
+require ../ti/ti-paths.inc
+require ../ti/ti-staging.inc
 
 BINLOCATION ?= "${S}/gfx_rel"
 ES2LOCATION ?= "${S}/gfx_rel_es2.x"
@@ -73,7 +75,7 @@ TARGET_CC_ARCH += " ${TARGET_LINK_HASH_STYLE} -Wl,-rpath-link,${BINLOCATION} -L$
 PARALLEL_MAKE = ""
 
 do_compile() {
-	export X11ROOT="${STAGING_DIR_HOST}/usr"
+	export X11ROOT="${STAGING_DIR_TARGET}/usr"
 	export TOOLCHAIN="${TOOLCHAIN_PATH}"
 	export PLATFORM="LinuxOMAP3"
 
@@ -132,6 +134,9 @@ do_compile() {
 }
 
 do_install () {
+	install -d ${D}${GFX_SDK_INSTALL_DIR_RECIPE}
+	cp -pPrf ${S}/* ${D}${GFX_SDK_INSTALL_DIR_RECIPE}
+
 	install -d ${D}${libdir}
 	cp -pPR ${BINLOCATION}/*.so* ${D}${libdir}
 	install -m 0644 ${BINLOCATION}/*.a ${D}${libdir}

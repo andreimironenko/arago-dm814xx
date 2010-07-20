@@ -143,6 +143,14 @@ move_to_install_dir()
     rmdir ${install_dir}/usr/share/ti/ti-docs-tree
   fi
 
+  if [ -d ${install_dir}/usr/share/ti/ti-gfx-sdk-tree ]; then
+    version="`cat ${install_dir}/usr/lib/opkg/info/libgles-omap3.control  | grep Version | awk {'print $2'} | cut -f2 -d: | cut -f1 -d-`"
+    echo " from ti-gfx-sdk-tree => omap35x_graphics_sdk"
+    mkdir -p ${install_dir}/omap35x_graphics_sdk_${version}
+    mv ${install_dir}/usr/share/ti/ti-gfx-sdk-tree/* ${install_dir}/omap35x_graphics_sdk_${version}
+    rmdir ${install_dir}/usr/share/ti/ti-gfx-sdk-tree
+  fi
+
   mv ${install_dir}/usr/share/ti/* ${install_dir}/
   rm -rf $install_dir/usr
   rm -rf $install_dir/lib
@@ -419,8 +427,8 @@ while [ $# -gt 0 ]; do
       version $0
       ;;
     --graphics)
-      graphics_src="task-arago-tisdk-graphics-host";
       graphics_bin="task-arago-tisdk-graphics-target";
+      graphics_src="task-arago-tisdk-graphics-host";
       graphics_sdk_target="task-arago-tisdk-graphics-toolchain-target";
       graphics_sdk_host="qt4-tools-sdk";
       graphics="yes";

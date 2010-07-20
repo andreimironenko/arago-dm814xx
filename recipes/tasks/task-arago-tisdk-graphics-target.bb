@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r5"
+PR = "r7"
 LICENSE="MIT"
 
 inherit task
@@ -15,11 +15,18 @@ MATRIX_APPS = " libxml2 \
  am-benchmarks \
  ${QTWIDGET_DEMO} \
 "
+LIBGLES = ""
 
+LIBGLES_omap3 = " \
+    libgles-omap3 \
+    libgles-omap3-rawdemos \
+"
+    
 RDEPENDS_${PN} = "\
     qt4-embedded \
     qt4-embedded-plugin-phonon-backend-gstreamer \
     qt4-embedded-plugin-mousedriver-tslib \
     qt4-embedded-plugin-gfxdriver-gfxtransformed \    
     ${MATRIX_APPS} \
+    ${LIBGLES} \
     "
