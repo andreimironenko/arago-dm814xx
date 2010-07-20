@@ -144,7 +144,7 @@ move_to_install_dir()
   fi
 
   if [ -d ${install_dir}/usr/share/ti/ti-gfx-sdk-tree ]; then
-    version="`cat ${install_dir}/usr/lib/opkg/info/libgles-omap3.control  | grep Version | awk {'print $2'} | cut -f2 -d: | cut -f1 -d-`"
+    version="`cat ${install_dir}/usr/lib/opkg/info/libgles-omap3-sourcetree.control  | grep Version | awk {'print $2'} | cut -f2 -d: | cut -f1 -d-`"
     echo " from ti-gfx-sdk-tree => omap35x_graphics_sdk"
     mkdir -p ${install_dir}/omap35x_graphics_sdk_${version}
     mv ${install_dir}/usr/share/ti/ti-gfx-sdk-tree/* ${install_dir}/omap35x_graphics_sdk_${version}
@@ -341,7 +341,7 @@ host_install ()
 
   # TODO: figure out a ways to disable glibc, libasound, freetype depedencies
   # from sourcetree packages.  For now uninstall those extra packages
-  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6 libasound2 alsa-conf-base sln libfreetype6 libz1 libpng12 libjpeg62 ncurses libpng12-0  libjpeg62 libglib-2.0-0 libgthread-2.0-0 libpng12-0"
+  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6 libasound2 alsa-conf-base sln libfreetype6 libz1 libpng12 libjpeg62 ncurses libpng12-0  libjpeg62 libglib-2.0-0 libgthread-2.0-0 libpng12-0 bigreqsproto bigreqsproto-dev devmem2 devmem2-dev fbset fbset-dev fbset-modes gettext gettext-dev glibc-extra-nss inputproto inputproto-dev kbproto kbproto-dev kernel-2.6.32 kernel libblkid1 libc6-dev libexpat1 libexpat-dev libgcc1-dev libgettextlib libgettextsrc libgles-omap3-blitwseg libgles-omap3 libgles-omap3-dev libgles-omap3-flipwsegl libgles-omap3-frontwsegl libgles-omap3-linuxfbwsegl libice6 libice-dev libjpeg-dev libsm6 libsm-dev libthread-db1 libuuid1 libvolume-id1 libvolume-id-dev libx11-6 libx11-dev libxau6 libxau-dev libxdmcp6 libxdmcp-dev libz-dev udev udev-dev udev-utils update-modules update-rc.d  update-rc.d-dev util-linux-ng-blkid  util-linux-ng-cfdisk util-linux-ng util-linux-ng-dev  util-linux-ng-fdisk  util-linux-ng-fsck util-linux-ng-losetup util-linux-ng-mountall util-linux-ng-mount  util-linux-ng-readprofile util-linux-ng-sfdisk util-linux-ng-swaponoff util-linux-ng-umount util-macros util-macros-dev xcmiscproto xcmiscproto-dev xextproto xextproto-dev xf86bigfontproto xf86bigfontproto-dev xproto xproto-dev xtrans-dev  libgles-omap3-blitwsegl module-init-tools-depmod ncurses-dev omap3-sgx-modules libthread-db1 "
 
   update_rules_make
 
@@ -396,7 +396,7 @@ install_arago_sdk ()
   ! test -z $multimedia && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  install $multimedia_sdk_target "
 
   # remove these packages (see arago/meta/meta-toolchain-target.bb)
-  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir}/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf} remove  -force-depends     libc6 libc6-dev glibc-extra-nss libgcc1 linux-libc-headers-dev libthread-db1 sln"
+  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir}/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf} remove  -force-depends     libc6 libc6-dev glibc-extra-nss libgcc1 linux-libc-headers-dev libthread-db1 sln gettext gettext-dev  libgettextlib libgettextsrc"
 
   ! test -z $graphics && install_graphics_sdk_host 
 
