@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install source (or development) packages on host"
-PR = "r7"
+PR = "r8"
 LICENSE="MIT"
 
 inherit task
@@ -56,6 +56,7 @@ DSP_SOURCETREE_omap3 = "\
     ti-dsplink-sourcetree \
     ti-edma3lld-sourcetree \
     ti-dsplib-c64p-sourcetree \
+    ti-c6accel-sourcetree \
     "
 DSP_SOURCETREE = " "
 
