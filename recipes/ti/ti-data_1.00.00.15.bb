@@ -2,6 +2,8 @@ require ti-data.inc
 
 PV = "1_00_00_15"
 
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/avdata/latest/exports/${DEMOSPLATFORM}_avdata_${PV}.tar.gz;name=${DEMOSPLATFORM}_datatarball"
+
 SRC_URI[dm365_datatarball.md5sum] = "43c1aba1d6af2103249f0708d3b01522"
 SRC_URI[dm365_datatarball.sha256sum] = "841c894281f33c9ea1fddb71251b74b0ecb9ff8d971eabbd2b0170f04548aeb1"
 

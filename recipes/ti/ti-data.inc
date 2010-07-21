@@ -15,8 +15,6 @@ DEMOSPLATFORM_dm365    = "dm365"
 DEMOSPLATFORM_dm6467   = "dm6467"
 DEMOSPLATFORM_omapl138   = "omapl138"
 
-SRC_URI ?= "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/avdata/latest/exports/${DEMOSPLATFORM}_avdata_${PV}.tar.gz;name=${DEMOSPLATFORM}_datatarball"
-
 do_compile () {
        cd ${S}
 }
