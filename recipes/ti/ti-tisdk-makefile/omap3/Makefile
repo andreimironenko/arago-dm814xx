@@ -100,6 +100,10 @@ help:
 	@echo "    psp_examples_clean           : Remove all generated PSP examples"
 	@echo "    psp_examples_install         : Install psp examples"
 	@echo
+	@echo "    c6accel                      : Build c6accel package"
+	@echo "    c6accel_clean                : Remove generated c6accel files"
+	@echo "    c6accel_install              : Install c6accel examples"
+	@echo
 	@echo "    everything                   : Rebuild everything"
 	@echo "    clobber                      : Remove all generated files"
 	@echo
@@ -594,3 +598,53 @@ dsplink_install:
 	@for file in $(shell find $(LINK_INSTALL_DIR)/dsplink/dsp/BUILD -name *.out); do \
 	cp $$file $(EXEC_DIR)/dsplink ; \
 	done
+
+##############################################################################
+#  Build c6accel
+##############################################################################
+c6accel:
+	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
+	PLATFORM="$(PLATFORM)" \
+	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
+	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	EDMA3_LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	FC_INSTALL_DIR="$(FC_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	BIOSUTILS_INSTALL_DIR="$(BIOSUTILS_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	SERVER_INSTALL_DIR="$(CODEC_INSTALL_DIR)" \
+	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)/soc" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	all
+
+c6accel_clean:
+	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
+	PLATFORM="$(PLATFORM)" \
+	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
+	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	EDMA3_LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	FC_INSTALL_DIR="$(FC_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	BIOSUTILS_INSTALL_DIR="$(BIOSUTILS_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	SERVER_INSTALL_DIR="$(CODEC_INSTALL_DIR)" \
+	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)/soc" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	clean
+
+c6accel_install:
+	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
+	PLATFORM="$(PLATFORM)" \
+	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel" \
+	install
+

@@ -91,6 +91,10 @@ help:
 	@echo "    audio_soc_example_kernel     : Build linux kernel for Audio Soc example files"
 	@echo "    audio_soc_example_install    : Install Audio Soc example files"
 	@echo
+	@echo "    c6accel                      : Build c6accel package "
+	@echo "    c6accel_clean                : Remove generated c6accel files"
+	@echo "    c6accel_install              : Install the c6accel image"
+	@echo
 	@echo "    everything                   : Rebuild everything"
 	@echo "    clobber                      : Remove all generated files"
 	@echo
@@ -593,3 +597,50 @@ audio_soc_example_install:
 	cp audio-soc-example_*/dsp/evmOMAPL138/Debug/*.out $(EXEC_DIR)/audio_soc_example/Release/.
 	cp audio-soc-example_*/dsp/evmOMAPL138/Debug/*.out $(EXEC_DIR)/audio_soc_example/Debug/.
 	cp audio-soc-example_*/data/davincieffect_clip.pcm $(EXEC_DIR)/audio_soc_example/.
+
+##############################################################################
+#  Build c6accel
+##############################################################################
+c6accel:
+	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
+	PLATFORM="$(PLATFORM)" \
+	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
+	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	EDMA3_LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	FC_INSTALL_DIR="$(FC_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	BIOSUTILS_INSTALL_DIR="$(BIOSUTILS_INSTALL_DIR)" \
+	SERVER_INSTALL_DIR="$(CODEC_INSTALL_DIR)" \
+	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)/soc" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	all
+
+c6accel_clean:
+	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
+	PLATFORM="$(PLATFORM)" \
+	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
+	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	EDMA3_LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	FC_INSTALL_DIR="$(FC_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	BIOSUTILS_INSTALL_DIR="$(BIOSUTILS_INSTALL_DIR)" \
+	SERVER_INSTALL_DIR="$(CODEC_INSTALL_DIR)" \
+	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)/soc" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	clean
+
+c6accel_install:
+	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
+	PLATFORM="$(PLATFORM)" \
+	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel" \
+	install
