@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r7"
+PR = "r11"
 LICENSE="MIT"
 
 inherit task
@@ -21,6 +21,9 @@ LIBGLES_omap3 = " \
     libgles-omap3 \
     libgles-omap3-rawdemos \
 "
+
+BLITRIX = ""
+BLITRIX_omap3 = " qt4-blitrix-demos "
     
 RDEPENDS_${PN} = "\
     qt4-embedded \
@@ -29,4 +32,5 @@ RDEPENDS_${PN} = "\
     qt4-embedded-plugin-gfxdriver-gfxtransformed \    
     ${MATRIX_APPS} \
     ${LIBGLES} \
+    ${BLITRIX} \
     "
