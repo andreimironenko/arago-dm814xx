@@ -18,7 +18,7 @@ PR = "r5"
 
 S = "${WORKDIR}/c6accel_${PV}/c6accel_${PV}"
 
-SRC_URI = "https://gforge01.dal.design.ti.com/gf/download/frsrelease/420/3771/c6accel_${PV}_Linux-x86_Setup.bin;name=c6accelbin"
+SRC_URI = "http://install.source.dir.local/c6accel_${PV}_Linux-x86_Setup.bin;name=c6accelbin"
 
 BINFILE="c6accel_${PV}_Linux-x86_Setup.bin"
 TI_BIN_UNPK_CMDS="Y:workdir"
