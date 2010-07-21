@@ -13,9 +13,23 @@ CXXFLAGS_append_omap3 = " -I${WORKDIR}/TI-Neon-BlitEngine-Qte-v1.4/src/3rdparty/
 LDFLAGS_append_omap3 = " -L${WORKDIR}/TI-Neon-BlitEngine-Qte-v1.4/src/3rdparty/tiblt/lib/ -lTICPUBLT_BX "
 
 do_install_append_omap3 () {
-	cp -ar ${WORKDIR}/TI-Neon-BlitEngine-Qte-v1.4/src/3rdparty/tiblt/lib/* ${D}/${libdir}/
+ 	cp -ar ${WORKDIR}/TI-Neon-BlitEngine-Qte-v1.4/src/3rdparty/tiblt/lib/* ${D}/${libdir}/
 	mkdir -p ${D}/${datadir}/ti/blitrix
 	cp -ar ${WORKDIR}/TI-Neon-BlitEngine-Qte-v1.4/src/3rdparty/tiblt/demo/* ${D}/${datadir}/ti/blitrix
+}
+
+PACKAGES += "qt4-blitrix-libs "
+FILES_qt4-blitrix-libs = "${libdir}/libTI*"
+
+PACKAGES += " qt4-blitrix-demos "
+FILES_qt4-blitrix-demos = "${datadir}/ti/blitrix/*"
+
+INSANE_SKIP_qt4-blitrix-libs = True
+INSANE_SKIP_qt4-blitrix-demos = True
+
+pkg_postinst_qt4-blitrix-demos () {
+ ln -s /usr/lib/libQtGuiE.so.4  /usr/lib/libQtGui.so.4
+ ln -s /usr/lib/libQtCoreE.so.4  /usr/lib/libQtCore.so.4
 }
 
 SRC_URI[md5sum] = "eb651ee4b157c01696aa56777fc6e0e5"
