@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r22"
+PR = "r23"
 LICENSE="MIT"
 
 inherit task
@@ -65,6 +65,7 @@ MULTIMEDIA_omap3 = " \
     gstreamer-ti \
     ti-dvsdk-demos \
     ti-dvtb \
+    ti-data \
     "
 
 RDEPENDS_${PN} = "\
