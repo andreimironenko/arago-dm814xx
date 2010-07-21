@@ -33,8 +33,8 @@ fbset -vyres $(expr $YRES \* 3)
 if [ $CPUTYPE = "OMAP3530" ]; then
 	echo Starting PVR
 	insmod $(busybox find /lib/modules/$(uname -r) -name "pvrsrvkm.ko")
-	modprobe omaplfb
-	modprobe bufferclass_ti
+	insmod $(busybox find /lib/modules/$(uname -r) -name "omaplfb.ko")
+	insmod $(busybox find /lib/modules/$(uname -r) -name "bufferclass_ti.ko")
 
 	pvr_maj=`grep "pvrsrvkm$" /proc/devices | cut -b1,2,3`
         bc_maj=`grep "bc" /proc/devices | cut -b1,2,3`
