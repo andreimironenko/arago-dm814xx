@@ -8,23 +8,47 @@ require ti-paths.inc
 require ti-staging.inc
 require ti-eula-unpack.inc
 
+PLATFORM_omapl138 = "omapl138"
+PLATFORM_omap3 = "omap3530"
+PLATFORM ?= "<UNDEFINED_PLATFORM>"
 
-COMPATIBLE_MACHINE = "(da850-omapl138-evm)"
+COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm3730-am3715-evm)"
 
-PR = "r2"
+PR = "r5"
 
-S = "${WORKDIR}/Texas\ Instruments/c6accel_${PV}/c6accel_${PV}"
+S = "${WORKDIR}/c6accel_${PV}/c6accel_${PV}"
 
-SRC_URI = "https://gforge01.dal.design.ti.com/gf/download/frsrelease/397/3619/C6Accel_${PV}_Linux-x86_Setup.bin;name=c6accelbin"
+SRC_URI = "https://gforge01.dal.design.ti.com/gf/download/frsrelease/420/3771/c6accel_${PV}_Linux-x86_Setup.bin;name=c6accelbin"
 
-
-BINFILE="C6Accel_${PV}_Linux-x86_Setup.bin"
+BINFILE="c6accel_${PV}_Linux-x86_Setup.bin"
 TI_BIN_UNPK_CMDS="Y:workdir"
 
-DEPENDS = "ti-dsplink ti-dspbios ti-codec-engine ti-linuxutils ti-xdais"
-DEPENDS += "ti-cgt6x ti-xdctools"
+DEPENDS = "ti-codec-engine ti-xdais ti-dsplink ti-dspbios" 
+DEPENDS += "ti-edma3lld ti-cgt6x ti-xdctools ti-framework-components" 
+DEPENDS += "ti-biosutils" 
 
 do_compile() {
+    # Build C6Accel package
+    cd ${S}
+    PLATFORM="${PLATFORM}" make \
+    PLATFORM="${PLATFORM}" \
+    CE_INSTALL_DIR="${CE_INSTALL_DIR}" \
+    XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
+    LINK_INSTALL_DIR="${LINK_INSTALL_DIR}" \
+    CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
+    EDMA3_LLD_INSTALL_DIR="${EDMA3_LLD_INSTALL_DIR}" \
+    CODEGEN_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
+    XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
+    FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
+    BIOS_INSTALL_DIR="${BIOS_INSTALL_DIR}" \
+    BIOSUTILS_INSTALL_DIR="${BIOSUTILS_INSTALL_DIR}" \
+    LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
+    SERVER_INSTALL_DIR="${CODEC_INSTALL_DIR}" \
+    C6ACCEL_INSTALL_DIR="${S}/soc" \
+    CSTOOL_DIR="${TOOLCHAIN_PATH}" \
+    CSTOOLS_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+    all
+
 }
 
 do_install() {
