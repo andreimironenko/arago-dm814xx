@@ -1,0 +1,28 @@
+diff --git a/Makefile_org b/Makefile
+index 8364d4c..6fdf5e1 100755
+--- a/Makefile
++++ b/Makefile
+@@ -128,19 +128,19 @@ ifeq ($(PLATFORM),omap3530)
+ 	@echo Copying cmemk.ko
+ 	@install -m 755 $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR_C6ACCEL)/
+ 	@echo Copying dsplinkk.ko
+-	@install -m 755 $(LINK_INSTALL_DIR)/packages/dsplink/gpp/export/BIN/Linux/OMAP3530/RELEASE/dsplinkk.ko $(EXEC_DIR_C6ACCEL)/
++	@install -m 755 $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAP3530/RELEASE/dsplinkk.ko $(EXEC_DIR_C6ACCEL)/
+ 	@echo Copying lpm_omap3530.ko
+ 	@install -m 755 $(LPM_INSTALL_DIR)/packages/ti/bios/power/modules/omap3530/lpm/lpm_omap3530.ko $(EXEC_DIR_C6ACCEL)/
+ 	@echo Copying sdmak.ko
+ 	@install -m 755 $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/sdma/src/module/sdmak.ko $(EXEC_DIR_C6ACCEL)/
+ 	@echo Copying c6accel codec servers from $(C6ACCEL_INSTALL_DIR)
+-	@install -m 755 $(C6ACCEL_INSTALL_DIR)/packages/ti/c6accel_unitservers/omap3530/omap3530.x64P $(EXEC_DIR_C6ACCEL)/
++	@install -m 755 $(C6ACCEL_INSTALL_DIR)/packages/ti/c6accel_unitservers/omap3530/c6accel_omap3530.x64P $(EXEC_DIR_C6ACCEL)/
+ 	@echo Copying c6accel test app from $(C6ACCEL_INSTALL_DIR)
+-	@install -m 755 $(C6ACCEL_INSTALL_DIR)/app/app $(EXEC_DIR_C6ACCEL)/
++	@install -m 755 $(C6ACCEL_INSTALL_DIR)/app/c6accel_app $(EXEC_DIR_C6ACCEL)/
+ 	@echo Copying testfile from $(C6ACCEL_INSTALL_DIR)
+ 	@install -m 755 $(C6ACCEL_INSTALL_DIR)/app/test_files/* $(EXEC_DIR_C6ACCEL)/test_files
+ 	@chmod -x $(EXEC_DIR_C6ACCEL)/*.x64P $(EXEC_DIR_C6ACCEL)/*.ko 
+-	@chmod +x $(EXEC_DIR_C6ACCEL)/app
++	@chmod +x $(EXEC_DIR_C6ACCEL)/c6accel_app
+ 	@install -m 755 $(C6ACCEL_INSTALL_DIR)/app/omap3530/loadmodules_omap3530_c6accel.sh $(EXEC_DIR_C6ACCEL)
+ 	@chmod +x $(EXEC_DIR_C6ACCEL)/loadmodules_omap3530_c6accel.sh
+ endif
