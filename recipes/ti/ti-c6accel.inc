@@ -14,11 +14,13 @@ PLATFORM ?= "<UNDEFINED_PLATFORM>"
 
 COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm3730-am3715-evm)"
 
-PR = "r5"
+PR = "r6"
 
 S = "${WORKDIR}/c6accel_${PV}/c6accel_${PV}"
 
-SRC_URI = "http://install.source.dir.local/c6accel_${PV}_Linux-x86_Setup.bin;name=c6accelbin"
+SRC_URI = "http://install.source.dir.local/c6accel_${PV}_Linux-x86_Setup.bin;name=c6accelbin \
+  file://fix_makefile_install_directive_for_omap3530.patch;patch=1 \
+"
 
 BINFILE="c6accel_${PV}_Linux-x86_Setup.bin"
 TI_BIN_UNPK_CMDS="Y:workdir"
