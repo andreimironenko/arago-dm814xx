@@ -9,7 +9,7 @@ echo "This step will set up the u-boot variables for booting the EVM."
 
 ipdefault=`ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1 }'`
 platform=`grep PLATFORM= $cwd/../Rules.make | cut -d= -f2`
-prompt=" >"
+prompt="EVM #"
 
 echo "Autodetected the following ip address of your host, correct it if necessary"
 read -p "[ $ipdefault ] " ip
@@ -34,13 +34,17 @@ fi
 uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyS2,115200n8 noinitrd rw mem=32M@0xc0000000"
-fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3 rootwait"
-fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath,nolock"
+baseargs="console=ttyS0,115200n8 rw mem=99M mpurate=800"
+videoargs1="omap_vout.vid1_static_vrfb_alloc=y"
+videoargs2="omapfb.vrfb=y vram=20M omapfb.vram=0:20M"
+videoargs3="omapfb.mode=dvi:720x480MR-16@60"
+videoargs="$videoargs1 $videoargs2 $videoargs3"
+fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3"
+fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath"
 
 echo "Select Linux kernel location:"
 echo " 1: TFTP"
-echo " 2: flash"
+echo " 2: SD card"
 echo
 read -p "[ 1 ] " kernel
 
@@ -74,7 +78,6 @@ if [ "$kernel" -eq "1" ]; then
         uimage=$uimagedefault
     fi
 
-#    bootcmd="setenv bootcmd 'dhcp;bootm'"
     bootcmd="setenv bootcmd 'dhcp;setenv serverip $ip;tftpboot;bootm'"
     serverip="setenv serverip $ip"
     bootfile="setenv bootfile $uimage"
@@ -89,12 +92,12 @@ if [ "$kernel" -eq "1" ]; then
 else
     if [ "$fs" -eq "1" ]; then
         bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
-        bootcmd="setenv bootcmd 'sf probe 0; sf read 0xc0700000 0x80000 0x280000; bootm 0xc0700000'"
-        cfg="uimage-flash_fs-nfs"
+        bootcmd="setenv bootcmd 'mmc init;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
+        cfg="uimage-sd_fs-nfs"
     else
         bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
-        bootcmd="setenv bootcmd 'sf probe 0; sf read 0xc0700000 0x80000 0x280000; bootm 0xc0700000'"
-        cfg="uimage-flash_fs-sd"
+        bootcmd="setenv bootcmd 'mmc init;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
+        cfg="uimage-sd_fs-sd"
     fi
 fi
 
@@ -156,11 +159,12 @@ if [ "$minicom" == "y" ]; then
     do_expect "\"$prompt\"" "send \"setenv bootdelay 4\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
-    do_expect "\"$prompt\"" "send \"setenv oldbootargs \$\(bootargs\)\"" $minicomfilepath
+    do_expect "\"$prompt\"" "send \"setenv oldbootargs \$\{bootargs\}\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs \c\"" $minicomfilepath
     echo "send \"$videoargs1 \c\"" >> $minicomfilepath
     echo "send \"$videoargs2 \c\"" >> $minicomfilepath
     echo "send \"$videoargs3 \c\"" >> $minicomfilepath
+#    echo "send \"$videoargs4 \c\"" >> $minicomfilepath
     if [ "$fs" -eq "1" ]; then
         echo "send \"$fsnfsargs \c\"" >> $minicomfilepath
         echo "send \"ip=dhcp\"" >> $minicomfilepath
@@ -170,12 +174,12 @@ if [ "$minicom" == "y" ]; then
     fi
     if [ "$kernel" -eq "1" ]; then
         do_expect "\"$prompt\"" "send \"setenv autoload no\"" $minicomfilepath
-        do_expect "\"$prompt\"" "send \"setenv oldserverip \$\(serverip\)\"" $minicomfilepath
+        do_expect "\"$prompt\"" "send \"setenv oldserverip \$\{serverip\}\"" $minicomfilepath
         do_expect "\"$prompt\"" "send \"$serverip\"" $minicomfilepath
-#        do_expect "\"$prompt\"" "send \"setenv oldbootfile \$\(bootfile\)\"" $minicomfilepath
+        do_expect "\"$prompt\"" "send \"setenv oldbootfile \$\{bootfile\}\"" $minicomfilepath
         do_expect "\"$prompt\"" "send \"$bootfile\"" $minicomfilepath
     fi
-    do_expect "\"$prompt\"" "send \"setenv oldbootcmd \$\(bootcmd\)\"" $minicomfilepath
+    do_expect "\"$prompt\"" "send \"setenv oldbootcmd \$\{bootcmd\}\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"$bootcmd\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"saveenv\"" $minicomfilepath
     do_expect "\"$prompt\"" "! killall -s SIGHUP minicom" $minicomfilepath
@@ -186,7 +190,7 @@ if [ "$minicom" == "y" ]; then
     echo "the RS-232 cable between your host and EVM as well as your ethernet cable as"
     echo "described in the Quick Start Guide. Once answering 'y' on the prompt below"
     echo "you will have $timeout seconds to connect the board and power cycle it"
-    echo "before the setup times out."
+    echo "before the setup times out"
     echo
     echo "After successfully executing this script, your EVM will be set up. You will be "
     echo "able to connect to it by executing 'minicom -w' or if you prefer a windows host"

@@ -5,6 +5,7 @@ require ti-paths.inc
 
 UBOOT_ENV_dm365 = "setup-uboot-env-dm365.sh"
 UBOOT_ENV_omapl138 = "setup-uboot-env-omapl138.sh"
+UBOOT_ENV_dm3730-am3715-evm = "setup-uboot-env-dm3730.sh"
 
 SRC_URI = "\
 	file://setup/setup.sh \
@@ -16,8 +17,9 @@ SRC_URI = "\
   	file://setup/setup-tftp.sh \
   	file://setup/setup-uboot-env-dm365.sh \
   	file://setup/setup-uboot-env-omapl138.sh \
+  	file://setup/setup-uboot-env-dm3730.sh \
 "
-PR = "r5"
+PR = "r6"
 
 do_install () {
 	install -d ${D}/${installdir}

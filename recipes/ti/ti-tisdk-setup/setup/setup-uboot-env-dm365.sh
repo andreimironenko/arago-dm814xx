@@ -40,13 +40,25 @@ videoargs2="dm365_imp.oper_mode=0 davinci_capture.device_type=4"
 videoargs3="davinci_display.cont2_bufsize=6291456"
 videoargs4="vpfe_capture.cont_bufoffset=6291456"
 videoargs5="vpfe_capture.cont_bufsize=6291456"
-videoargs="$videoargs1 $videoargs2 $videoargs3 $videoargs4 $videoargs5"
-fsflashargs="root=/dev/mtdblock4 rootfstype=jffs2"
+videoargs6="davinci_enc_mngr.ch0_output=COMPONENT"
+videoargs7="davinci_enc_mngr.ch0_mode=480P-60"
+videoargs="$videoargs1 $videoargs2 $videoargs3 $videoargs4 $videoargs5 $videoargs6 $videoargs7"
+fssdargs="root=/dev/mmcblk0p2 rootwait"
 fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath"
+
+#echo "Select UBL location:"
+#echo " 1: flash"
+#echo " 2: SD card"
+#echo
+#read -p "[ 1 ] " ubl
+
+#if [ ! -n "$ubl" ]; then
+#    ubl="1"
+#fi
 
 echo "Select Linux kernel location:"
 echo " 1: TFTP"
-echo " 2: flash"
+echo " 2: SD card"
 echo
 read -p "[ 1 ] " kernel
 
@@ -57,7 +69,7 @@ fi
 echo
 echo "Select root file system location:"
 echo " 1: NFS"
-echo " 2: flash"
+echo " 2: SD card"
 echo
 read -p "[ 1 ] " fs
 
@@ -80,7 +92,6 @@ if [ "$kernel" -eq "1" ]; then
         uimage=$uimagedefault
     fi
 
-#    bootcmd="setenv bootcmd 'dhcp;bootm'"
     bootcmd="setenv bootcmd 'dhcp;setenv serverip $ip;tftpboot;bootm'"
     serverip="setenv serverip $ip"
     bootfile="setenv bootfile $uimage"
@@ -89,18 +100,18 @@ if [ "$kernel" -eq "1" ]; then
         bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
         cfg="uimage-tftp_fs-nfs"
     else
-        bootargs="setenv bootargs $baseargs $videoargs $fsflashargs ip=off"
-        cfg="uimage-tftp_fs-flash"
+        bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
+        cfg="uimage-tftp_fs-sd"
     fi
 else
     if [ "$fs" -eq "1" ]; then
         bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
-        bootcmd="setenv bootcmd 'setenv nboot 0x80700000 0 0x400000;bootm'"
-        cfg="uimage-flash_fs-nfs"
+        bootcmd="setenv bootcmd 'bootm 0x80700000'"
+        cfg="uimage-sd_fs-nfs"
     else
-        bootargs="setenv bootargs $baseargs $videoargs $fsflashargs ip=off"
-        bootcmd="setenv bootcmd 'nboot 0x80700000 0 0x400000;bootm'"
-        cfg="uimage-flash_fs-flash"
+        bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
+        bootcmd="setenv bootcmd 'bootm 0x80700000'"
+        cfg="uimage-sd_fs-sd"
     fi
 fi
 
@@ -158,6 +169,9 @@ if [ "$minicom" == "y" ]; then
     echo "timeout $timeout" >> $minicomfilepath
     echo "verbose on" >> $minicomfilepath
     echo >> $minicomfilepath
+#if [ "$ubl" -eq "2" ]; then
+#    do_expect "\"\ > \"" "send \"1\"" $minicomfilepath
+#fi
     do_expect "\"stop autoboot:\"" "send \"\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv bootdelay 4\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
@@ -169,11 +183,13 @@ if [ "$minicom" == "y" ]; then
     echo "send \"$videoargs3 \c\"" >> $minicomfilepath
     echo "send \"$videoargs4 \c\"" >> $minicomfilepath
     echo "send \"$videoargs5 \c\"" >> $minicomfilepath
+    echo "send \"$videoargs6 \c\"" >> $minicomfilepath
+    echo "send \"$videoargs7 \c\"" >> $minicomfilepath
     if [ "$fs" -eq "1" ]; then
         echo "send \"$fsnfsargs \c\"" >> $minicomfilepath
         echo "send \"ip=dhcp\"" >> $minicomfilepath
     else
-        echo "send \"$fsflashargs \c\"" >> $minicomfilepath
+        echo "send \"$fssdargs \c\"" >> $minicomfilepath
         echo "send \"ip=off\"" >> $minicomfilepath
     fi
     if [ "$kernel" -eq "1" ]; then
