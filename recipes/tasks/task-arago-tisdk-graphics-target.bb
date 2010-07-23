@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r11"
+PR = "r12"
 LICENSE="MIT"
 
 inherit task
@@ -29,7 +29,8 @@ RDEPENDS_${PN} = "\
     qt4-embedded \
     qt4-embedded-plugin-phonon-backend-gstreamer \
     qt4-embedded-plugin-mousedriver-tslib \
-    qt4-embedded-plugin-gfxdriver-gfxtransformed \    
+    qt4-embedded-plugin-gfxdriver-gfxtransformed \ 
+    dbus-x11 \
     ${MATRIX_APPS} \
     ${LIBGLES} \
     ${BLITRIX} \
