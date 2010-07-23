@@ -11,8 +11,8 @@
 # Sample bootargs is given below
 # mem=76M console=ttyS0,115200n8 root=/dev/nfs rw nfsroot=<nfsroot> ip=dhcp vpif_display.ch2_numbuffers=0 vpif_display.ch3_numbuffers=0 
 
-rmmod cmemk.ko 2>/dev/null
-rmmod dsplinkk.ko 2>/dev/null 
+rmmod cmemk 2>/dev/null
+rmmod dsplinkk 2>/dev/null 
 
 depmod -a cmemk
 depmod -a dsplinkk

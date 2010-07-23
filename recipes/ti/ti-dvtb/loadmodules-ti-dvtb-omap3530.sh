@@ -11,6 +11,11 @@ depmod -a
 # 0x87200000     13 MB  CODEC SERVER
 
 
+rmmod cmemk
+rmmod dsplink
+rmmod lpm_omap3530
+rmmod sdmak
+
 # Allocate 15MB for CMEM
 modprobe cmemk phys_start=0x86300000 phys_end=0x87200000 pools=1x3000000,1x1429440,6x1048576,4x829440,1x327680,1x256000,7x131072,20x4096 allowOverlap=1
 
