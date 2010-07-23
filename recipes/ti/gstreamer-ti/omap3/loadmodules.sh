@@ -1,5 +1,9 @@
 #!/bin/sh
 
+rmmod cmemk
+rmmod dsplinkk
+rmmod lpm_omap3530
+rmmod sdmak
 #
 # CMEM Allocation
 #    1x5250000            Circular buffer
