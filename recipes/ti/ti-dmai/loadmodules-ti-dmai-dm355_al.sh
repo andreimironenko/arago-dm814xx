@@ -13,6 +13,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 
+rmmod cmemk
+rmmod dm350mmap
+
 # 12MB
 modprobe cmemk phys_start=0x87400000 phys_end=0x88000000 pools=1x2903040,1x1529856,7x829440,1x524288,1x108680,1x81920,2x8192,6x4096
 

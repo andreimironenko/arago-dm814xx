@@ -24,6 +24,10 @@
 # 0x87F00000     4 KB   DSPLINK (RESET)
 # 0x87F01000  1020 KB   unused
 
+rmmod cmemk
+rmmod dsplinkk
+rmmod lpm_omap3530
+
 modprobe cmemk phys_start=0x85800000 phys_end=0x86800000 pools=20x4096,8x131072,4x829440,1x5250000,1x1429440,1x256000
 
 

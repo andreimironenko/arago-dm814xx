@@ -21,6 +21,10 @@ awk '/MemTotal:/ {
     printf "You have %dkB total memory for Linux\n", mem
 }' /proc/meminfo
 
+rmmod cmemk
+rmmod dsplinkk
+rmmod lpm_omap3530
+
 # Select cmemk parameters for best fit, i.e. starting at 0x85000000
 modprobe cmemk phys_start=0x85800000 phys_end=0x86800000 pools=20x4096,8x131072,5x1048576,1x1429440,1x256000,1x3600000,5x829440
 

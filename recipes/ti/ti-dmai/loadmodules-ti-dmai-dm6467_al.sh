@@ -12,6 +12,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 
+rmmod cmemk
+rmmod dsplinkk
+
 modprobe cmemk phys_start=0x87800000 phys_end=0x88E00000 pools=20x4096,8x202752,10x131072,2x1048576,1x2097152,10x829440,1x6750000
 modprobe dsplinkk ddr_start=0x8F800000  ddr_size=0x600000
 

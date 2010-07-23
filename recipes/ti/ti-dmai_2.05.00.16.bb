@@ -1,7 +1,7 @@
 require ti-dmai.inc
 
 PV = "2_05_00_16"
-PR = "r1"
+PR = "r2"
  
 COMPATIBLE_MACHINE = "(omap3evm|dm3730-am3715-evm)"
 
