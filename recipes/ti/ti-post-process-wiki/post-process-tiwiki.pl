@@ -143,6 +143,29 @@ sub change_title
 }
 
 ################################################################################
+# remove_search
+################################################################################
+sub remove_search
+{
+    my $lines = $_[0];
+
+    for (my $cnt = 0; $cnt < scalar @$lines; $cnt++) {
+        if (@$lines[$cnt] =~ m/http:\/\/processors\.wiki\.ti\.com\/index\.php\/File:Google-16x16.png/i) {
+            @$lines[$cnt] = "";
+        }
+        if (@$lines[$cnt] =~ m/<form action="http:\/\/processors\.wiki\.ti\.com\/index\.php"/i) {
+            @$lines[$cnt] = "";
+        }
+        if (@$lines[$cnt] =~ m/googleSearchFrameborder/i) {
+            @$lines[$cnt] = "";
+        }
+        if (@$lines[$cnt] =~ m/src="http:\/\/processors\.wiki\.ti\.com/i) {
+            @$lines[$cnt] = "";
+        }
+    }
+}
+
+################################################################################
 # process_page
 ################################################################################
 sub process_page
@@ -154,6 +177,8 @@ sub process_page
     open FILE, "<$srcfile" or die "Failed to open $srcfile for reading";
     @lines = <FILE>;
     close FILE;
+
+    remove_search(\@lines);
 
     remove_div(\@lines, "id=\"jump-to-nav\"");
     remove_div(\@lines, "id=\"BreadCrumbsTrail\"");
