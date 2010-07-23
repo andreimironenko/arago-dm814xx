@@ -14,22 +14,22 @@ all:   cmem lpm sdma dmai dvtb demos
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	cmem_clean sdma_clean lpm_clean dmai_clean dvtb_clean demos_clean
+clean:	cmem_clean sdma_clean lpm_clean dmai_clean dvtb_clean demos_clean psp_examples_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: u-boot linux dsplink cmem lpm sdma codecs ceexamples dmai dvtb demos 
+everything: u-boot linux dsplink cmem lpm sdma codecs ceexamples dmai dvtb demos psp_examples
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install dmai_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install 
+install: linux_install cmem_install dmai_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber:    linux_clean dmai_clean ceexamples_clean cmem_clean sdma_clean codecs_clean lpm_clean dsplink_clean u-boot_clean dvtb_clean demos_clean
+clobber:    linux_clean dmai_clean ceexamples_clean cmem_clean sdma_clean codecs_clean lpm_clean dsplink_clean u-boot_clean dvtb_clean demos_clean psp_examples_clean
 
 #==============================================================================
 # A help message target.
@@ -175,13 +175,18 @@ u-boot_install:
 # Build the PSP Linux examples. Also, an explicit cleanup target is defined.
 #==============================================================================
 psp_examples:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) all
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/audio PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib all
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/video PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib all
 
 psp_examples_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) clean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/audio PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib clean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/video PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib clean
 
 psp_examples_install:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) EXEC_DIR=$(EXEC_DIR)/psp-examples install
+	mkdir -p $(EXEC_DIR)/psp-examples/audio
+	cp  $(PSP_INSTALL_DIR)/linux-driver-examples/audio/bin/* $(EXEC_DIR)/psp-examples/audio
+	mkdir -p $(EXEC_DIR)/psp-examples/video
+	cp  $(PSP_INSTALL_DIR)/linux-driver-examples/video/bin/* $(EXEC_DIR)/psp-examples/video
 	
 #==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the
