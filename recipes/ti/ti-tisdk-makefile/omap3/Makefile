@@ -4,7 +4,7 @@ DEFAULT_LINUXKERNEL_CONFIG=omap3_evm_defconfig
 DEFAULT_UBOOT_CONFIG=omap3_evm_config
 DMAI_PLATFORM="o3530_al"
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install ubl ubl_clean ubl_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install ubl ubl_clean ubl_install c6accel c6accel_clean c6accel_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -14,17 +14,17 @@ all:   cmem lpm sdma dmai dvtb demos
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	cmem_clean sdma_clean lpm_clean dmai_clean dvtb_clean demos_clean psp_examples_clean
+clean:	cmem_clean sdma_clean lpm_clean dmai_clean dvtb_clean demos_clean psp_examples_clean c6accel_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: u-boot linux dsplink cmem lpm sdma codecs ceexamples dmai dvtb demos psp_examples
+everything: u-boot linux dsplink cmem lpm sdma codecs ceexamples dmai dvtb demos psp_examples c6accel
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install dmai_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install
+install: linux_install cmem_install dmai_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install c6accel_install
 
 #==============================================================================
 # Clean up all targets.
@@ -650,6 +650,10 @@ c6accel_clean:
 c6accel_install:
 	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
 	PLATFORM="$(PLATFORM)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)/soc" \
 	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel" \
 	install
 

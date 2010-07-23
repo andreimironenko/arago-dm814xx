@@ -20,17 +20,17 @@ clean: linux_clean dsplink_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: all u-boot ubl psp_examples cmem dmai codecs ceexamples audio_soc_example
+everything: all u-boot ubl psp_examples cmem dmai codecs ceexamples audio_soc_example c6accel
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install dsplink_install u-boot_install ubl_install psp_examples_install cmem_install dmai_install codecs_install ceexamples_install audio_soc_example_install
+install: linux_install dsplink_install u-boot_install ubl_install psp_examples_install cmem_install dmai_install codecs_install ceexamples_install audio_soc_example_install c6accel_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber: clean u-boot_clean ubl_clean psp_examples_clean cmem_clean dmai_clean ceexamples_clean codecs_clean audio_soc_example_clean
+clobber: clean u-boot_clean ubl_clean psp_examples_clean cmem_clean dmai_clean ceexamples_clean codecs_clean audio_soc_example_clean c6accel_clean
 
 #==============================================================================
 # A help message target.
@@ -642,5 +642,8 @@ c6accel_clean:
 c6accel_install:
 	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
 	PLATFORM="$(PLATFORM)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)/soc" \
 	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel" \
 	install
