@@ -7,6 +7,9 @@ DEPENDS = "signgp-native"
 
 PARALLEL_MAKE=""
 
+require ../ti/ti-paths.inc
+require ../ti/ti-staging.inc
+
 EXTRA_OEMAKE = "CROSS_COMPILE=${TARGET_PREFIX}"
 
 XLOAD_MACHINE ?= "${MACHINE}_config"
@@ -30,6 +33,11 @@ do_compile () {
 
 do_install () {
 	signGP ${S}/x-load.bin
+
+	install -d ${D}/${installdir}/ti-psp-tree/x-loader/host-tools
+	install -d ${D}/${installdir}/ti-psp-tree/x-loader/src
+        cp -pPrf ${S}/* ${D}/${installdir}/ti-psp-tree/x-loader/src	
+	cp `which signGP` ${D}/${installdir}/ti-psp-tree/x-loader/host-tools/
 
 	install -d ${D}/boot
 	install ${S}/x-load.bin.ift ${D}/boot/${MLO_IMAGE}
