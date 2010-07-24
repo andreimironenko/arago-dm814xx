@@ -4,7 +4,7 @@ DEFAULT_LINUXKERNEL_CONFIG=omap3_evm_defconfig
 DEFAULT_UBOOT_CONFIG=omap3_evm_config
 DMAI_PLATFORM="o3530_al"
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install ubl ubl_clean ubl_install c6accel c6accel_clean c6accel_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install xload xload_clean xload_install c6accel c6accel_clean c6accel_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -88,9 +88,9 @@ help:
 	@echo "    linux_clean                  : Remove generated Linux kernel files"
 	@echo "    linux_install                : Install kernel binary and  modules"
 	@echo
-	@echo "    ubl                          : Build the ubl boot loader"
-	@echo "    ubl_clean                    : Remove generated ubl files"
-	@echo "    ubl_install                  : Install the ubl image"
+	@echo "    xload                        : Build the xload boot loader"
+	@echo "    xload_clean                  : Remove generated xload files"
+	@echo "    xload_install                : Install the xload image"
 	@echo
 	@echo "    u-boot                       : Build the u-boot boot loader"
 	@echo "    u-boot_clean                 : Remove generated u-boot files"
@@ -144,17 +144,21 @@ linux_install:
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) INSTALL_MOD_PATH=$(EXEC_DIR)/ modules_install
 
 #==============================================================================
-# Build ubl. Also, an explicit cleanup target is defined.
+# Build xload. Also, an explicit cleanup target is defined.
 #==============================================================================
-ubl:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP35xx/GNU/ubl CROSSCOMPILE=$(CSTOOL_PREFIX)
+xload:
+	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load/src CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm distclean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load/src CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm omap3evm_config
+	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load/src CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm
+	$(PSP_INSTALL_DIR)/x-load/host-tools/signGP $(PSP_INSTALL_DIR)/x-load/src/x-load.bin
 
-ubl_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP35xx/GNU/ubl clean
+xload_clean:
+	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load/src clean
 
-ubl_install:
+xload_install:
 	install -d $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/board-utilities/OMAP35xx/GNU/ubl/*.bin $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/x-load/src/x-load.bin $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/x-load/src/x-load.bin.ift $(EXEC_DIR)/boot
 
 #==============================================================================
 # Build u-boot. Also, an explicit cleanup target is defined.

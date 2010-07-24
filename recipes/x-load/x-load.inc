@@ -34,10 +34,10 @@ do_compile () {
 do_install () {
 	signGP ${S}/x-load.bin
 
-	install -d ${D}/${installdir}/ti-psp-tree/x-loader/host-tools
-	install -d ${D}/${installdir}/ti-psp-tree/x-loader/src
-        cp -pPrf ${S}/* ${D}/${installdir}/ti-psp-tree/x-loader/src	
-	cp `which signGP` ${D}/${installdir}/ti-psp-tree/x-loader/host-tools/
+	install -d ${D}/${installdir}/ti-psp-tree/x-load/host-tools
+	install -d ${D}/${installdir}/ti-psp-tree/x-load/src
+	cp -pPrf ${S}/* ${D}/${installdir}/ti-psp-tree/x-load/src	
+	cp `which signGP` ${D}/${installdir}/ti-psp-tree/x-load/host-tools/
 
 	install -d ${D}/boot
 	install ${S}/x-load.bin.ift ${D}/boot/${MLO_IMAGE}
