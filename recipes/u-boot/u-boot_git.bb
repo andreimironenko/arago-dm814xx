@@ -68,8 +68,8 @@ SRCREV_omap3evm = "2dea1db2a3b7c12ed70bbf8ee50755089c5e5170"
 PV_omap3evm = "2009.03+${PR}+gitr${SRCREV}"
 
 SRC_URI_dm3730-am3715-evm = "git://arago-project.org/git/projects/u-boot-omap3.git;protocol=git"
-# This tag is v2009.11_OMAPPSP_03.00.00.06
-SRCREV_dm3730-am3715-evm = "9feb6b26b7f3abe260ead7b7856b1887864b0f5f"
+# use this commit id as per PSP suggestion
+SRCREV_dm3730-am3715-evm = "c0a8fb217fdca7888d89f9a3dee74a4cec865620"
 PV_dm3730-am3715-evm = "2009.11+${PR}+gitr${SRCREV}"
 
 SRCREV_am3517-evm = "e60beb13cf0"
