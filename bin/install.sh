@@ -82,6 +82,11 @@ update_rules_make()
     version="`cat $i | grep Version | awk {'print $2'} | cut -f2 -d: | \
           cut -f1 -d-`"
 
+    # skip examples
+    if [ "$name" = "linux-driver-examples-omap3" ]; then
+       continue;
+    fi
+
     # update rules.make
     sed -i -e s/\<__${name}__\>/${name}_${version}/g \
      $install_dir/usr/share/ti/Rules.make
