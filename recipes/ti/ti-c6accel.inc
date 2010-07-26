@@ -14,7 +14,7 @@ PLATFORM ?= "<UNDEFINED_PLATFORM>"
 
 COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm3730-am3715-evm)"
 
-PR = "r6"
+PR = "r7"
 
 S = "${WORKDIR}/c6accel_${PV}/c6accel_${PV}"
 
@@ -56,5 +56,19 @@ do_compile() {
 do_install() {
     install -d ${D}${C6ACCEL_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${C6ACCEL_INSTALL_DIR_RECIPE}
+    
+    cd ${S} 
+    make \
+      PLATFORM="${PLATFORM}" \
+      CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
+      LINK_INSTALL_DIR="${LINK_INSTALL_DIR}" \
+      LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
+      C6ACCEL_INSTALL_DIR="${S}/soc" \
+      EXEC_DIR_C6ACCEL="${D}/${installdir}/c6accel" \
+      install
 }
+
+FILES_${PN} = "${installdir}/c6accel/*"
+INSANE_SKIP_${PN} = True
+
 
