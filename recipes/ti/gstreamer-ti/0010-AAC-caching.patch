@@ -1,0 +1,30 @@
+From d29ff598f98ddf1e2d6a00e43ea9bb5211add826 Mon Sep 17 00:00:00 2001
+From: Brijesh Singh <bksingh@ti.com>
+Date: Mon, 26 Jul 2010 17:36:31 -0500
+Subject: [PATCH] AAC caching
+
+---
+ src/gstticodecplugin_dm365.cfg |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
+
+diff --git a/src/gstticodecplugin_dm365.cfg b/src/gstticodecplugin_dm365.cfg
+index 9642504..b7e4c3e 100644
+--- a/src/gstticodecplugin_dm365.cfg
++++ b/src/gstticodecplugin_dm365.cfg
+@@ -41,9 +41,12 @@ var myEngine = Engine.create("codecServer", [
+     {name: "jpegenc", mod: JPEGENC, local: true}
+ ]);
+ 
+-algSettings = xdc.useModule('ti.sdo.ce.alg.Settings');
++/* Disable caching for all codecs except AAC */
++algSettings          = xdc.useModule('ti.sdo.ce.alg.Settings');
+ algSettings.useCache = false;
+ 
++AACDEC.useCache      = true;
++
+ /* Load support for the 'Davinci Multimedia Application Interface' modules */
+ var DMAI = xdc.loadPackage('ti.sdo.dmai');
+ 
+-- 
+1.7.0.4
+

@@ -15,6 +15,7 @@ SRC_URI = "svn://gforge.ti.com/svn/gstreamer_ti/trunk;module=gstreamer_ti;proto=
   file://0006-add-RTCodecThread-property.patch \
   file://0007-add-TIC6xColorspace-element.patch \
   file://0009-dmaisink-compilation-fix.patch \
+  file://0010-AAC-caching.patch \
   file://gstreamer-ti-rc.sh \
   file://gst-ti.sh \
 "
