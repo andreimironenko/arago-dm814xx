@@ -2,10 +2,12 @@ DESCRIPTION = "DVSDK Demo applications for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-INC_PR = "r11"
+INC_PR = "r12"
  
 DEPENDS += "ti-dmai"
 DEPENDS += "alsa-lib libpng freetype jpeg"
+
+DEPENDS_ti-dvsdk-demos_omap3 += "ti-c6accel"
 
 require ti-paths.inc
 require ti-staging.inc
@@ -31,6 +33,7 @@ do_compile () {
 		CE_INSTALL_DIR="${CE_INSTALL_DIR}" \
 		FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
 		CODEC_INSTALL_DIR="${CODEC_INSTALL_DIR}" \
+		C6ACCEL_INSTALL_DIR="${C6ACCEL_INSTALL_DIR}" \
 		CODEGEN_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
 		BIOS_INSTALL_DIR="${BIOS_INSTALL_DIR}"\
 		CROSS_COMPILE="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
@@ -59,12 +62,14 @@ do_install () {
 
 pkg_postinst_${PN} () {
 	ln -sf ${installdir}/ti-codecs-server/*.${DSPSUFFIX} ${installdir}/dvsdk-demos/
+	ln -sf ${installdir}/c6accel/*.${DSPSUFFIX} ${installdir}/dvsdk-demos/
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 RDEPENDS_ti-dvsdk-demos_dm355 += "ti-dm355mm-module ti-cmem-module alsa-lib libpng freetype jpeg libpng12"
 RDEPENDS_ti-dvsdk-demos_dm365 += "ti-dm365mm-module ti-cmem-module alsa-lib libpng freetype jpeg ti-codecs-dm365 ti-edma-module ti-irq-module libpng12"
+RDEPENDS_ti-dvsdk-demos_omap3 += "ti-cmem-module alsa-lib libpng libasound freetype jpeg ti-codecs-omap3530 ti-c6accel"
 
 FILES_${PN} = "${installdir}/dvsdk-demos/*"
 
