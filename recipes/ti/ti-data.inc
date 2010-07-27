@@ -2,7 +2,7 @@ DESCRIPTION = "Media files for TI DVSDK"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-PR = "r4"
+PR = "r5"
 
 S = "${WORKDIR}/${DEMOSPLATFORM}"
 
