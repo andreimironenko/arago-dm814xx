@@ -18,9 +18,7 @@ PR = "r7"
 
 S = "${WORKDIR}/c6accel_${PV}/c6accel_${PV}"
 
-SRC_URI = "http://install.source.dir.local/c6accel_${PV}_Linux-x86_Setup.bin;name=c6accelbin \
-  file://fix_makefile_install_directive_for_omap3530.patch;patch=1 \
-"
+SRC_URI = "http://install.source.dir.local/c6accel_${PV}_Linux-x86_Setup.bin;name=c6accelbin "
 
 BINFILE="c6accel_${PV}_Linux-x86_Setup.bin"
 TI_BIN_UNPK_CMDS="Y:workdir"
@@ -66,6 +64,13 @@ do_install() {
       C6ACCEL_INSTALL_DIR="${S}/soc" \
       EXEC_DIR_C6ACCEL="${D}/${installdir}/c6accel" \
       install
+
+    # replace insmod with modprobe
+    sed -i 's/insmod/modprobe/g' ${D}/${installdir}/c6accel/loadmodules_${PLATFORM}_c6accel.sh
+    sed -i 's/.ko//g' ${D}/${installdir}/c6accel/loadmodules_${PLATFORM}_c6accel.sh
+    # remove prebuilt *.ko files
+    rm -rf ${D}/${installdir}/c6accel/*.ko
+
 }
 
 FILES_${PN} = "${installdir}/c6accel/*"
