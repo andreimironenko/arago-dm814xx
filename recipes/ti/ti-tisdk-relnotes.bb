@@ -5,15 +5,16 @@ PR="r2"
 
 DEPENDS = "ti-post-process-wiki-native"
 
-RELNOTESTOPIC = "DVSDK_4.00_Release_Notes"
-RELNOTESURL = "http://ap-fpdsp-swapps.dal.design.ti.com/index.php/${RELNOTESTOPIC}"
+RELNOTESTOPIC_dm365 = "TMS320DM365_DVSDK_4.00_Release_Notes"
+RELNOTESTOPIC_omapl138 = "OMAPL138_DVSDK_4.00_Release_Notes"
+RELNOTESTOPIC_omap3evm = "OMAP3530_DVSDK_4.00_Release_Notes"
+RELNOTESTOPIC_dm3730-am3715-evm = "TMS320DM3730_DVSDK_4.00_Release_Notes"
 
-SDK_PLATFORM_dm365 = "TMS320DM365"
-SDK_PLATFORM_omapl138 = "OMAPL138"
-SDK_PLATFORM_dm3730-am3715-evm = "TMS320DM3730"
+RELNOTESURL = "http://ap-fpdsp-swapps.dal.design.ti.com/index.php/${RELNOTESTOPIC}"
 
 SDK_SHORT_PLATFORM_dm365 = "dm365"
 SDK_SHORT_PLATFORM_omapl138 = "omapl138"
+SDK_SHORT_PLATFORM_omap3evm = "omap3530"
 SDK_SHORT_PLATFORM_dm3730-am3715-evm = "dm3730"
 
 require ti-paths.inc
@@ -38,7 +39,6 @@ do_install () {
 
     for file in $htmlfiles; do
         sed -i "s/__SDK_VERSION__/${SDK_VERSION}/g" $file
-        sed -i "s/__SDK_PLATFORM__/${SDK_PLATFORM}/g" $file
         sed -i "s/__DATE__/${TODAYS_DATE}/g" $file
     done
 
