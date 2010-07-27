@@ -7,6 +7,7 @@ inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 BSP_COMPONENTS_dm365 = "\
+    ti-tisdk-licenses \
     ti-tisdk-setup \
     ti-tisdk-relnotes \
     ti-docs-sdg \
@@ -47,6 +48,7 @@ BSP_COMPONENTS_da830-omapl137-evm = "\
     "
 
 BSP_COMPONENTS_da850-omapl138-evm = "\
+    ti-tisdk-licenses \
     ti-tisdk-setup \
     ti-tisdk-relnotes \
     ti-docs-sdg \
@@ -59,6 +61,7 @@ BSP_COMPONENTS_da850-omapl138-evm = "\
     "
 
 BSP_COMPONENTS_omap3evm = "\
+    ti-tisdk-licenses \
     ti-tisdk-relnotes \
     ti-docs-psp \
     linux-omap3-sourcetree \
@@ -68,6 +71,7 @@ BSP_COMPONENTS_omap3evm = "\
     "
 
 BSP_COMPONENTS_dm3730-am3715-evm = "\
+    ti-tisdk-licenses \
     ti-tisdk-setup \
     ti-tisdk-relnotes \
     ti-docs-sdg \
