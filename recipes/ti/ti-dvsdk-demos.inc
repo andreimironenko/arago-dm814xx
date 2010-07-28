@@ -6,8 +6,7 @@ INC_PR = "r12"
  
 DEPENDS += "ti-dmai"
 DEPENDS += "alsa-lib libpng freetype jpeg"
-
-DEPENDS_ti-dvsdk-demos_omap3 += "ti-c6accel"
+DEPENDS_omap3 += " ti-c6accel "
 
 require ti-paths.inc
 require ti-staging.inc
@@ -68,7 +67,8 @@ pkg_postinst_${PN} () {
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 RDEPENDS_ti-dvsdk-demos_dm355 += "ti-dm355mm-module ti-cmem-module alsa-lib libpng freetype jpeg libpng12"
-RDEPENDS_ti-dvsdk-demos_dm365 += "ti-dm365mm-module ti-cmem-module alsa-lib libpng freetype jpeg ti-codecs-dm365 ti-edma-module ti-irq-module libpng12"
+RDEPENDS_ti-dvsdk-demos_dm365 += "ti-dm365mm-module ti-cmem-module alsa-lib libpng freetype jpeg  ti-edma-module ti-irq-module libpng12"
+RDEPENDS_ti-dvsdk-demos_omap3 += "ti-cmem-module alsa-lib libpng freetype jpeg ti-codecs-omap3530-server ti-dsplink-module ti-c6accel libpng12"
 
 FILES_${PN} = "${installdir}/dvsdk-demos/*"
 

@@ -37,7 +37,7 @@ PREFERRED_VERSION_ti-dm355mm-module = "1_13"
 PREFERRED_VERSION_ti-dm365mm-module = "1_0_3"
 PREFERRED_VERSION_ti-dvsdk-demos = "3_10_00_16"
 PREFERRED_VERSION_ti-dvsdk-demos_dm365 = "4_00_00_00"
-PREFERRED_VERSION_ti-dvsdk-demos_omap3 = "3_01_00_24"
+PREFERRED_VERSION_ti-dvsdk-demos_omap3 = "3_01_00_26"
 PREFERRED_VERSION_ti-dvtb_omap3 = "4_20_10"
 
 # PREFERRED_VERSION_ti-dmai = ""
