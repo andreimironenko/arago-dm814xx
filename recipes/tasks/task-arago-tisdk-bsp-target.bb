@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install Board Support Package binaries on $MACHINE"
-PR = "r12"
+PR = "r13"
 LICENSE="MIT"
 ALLOW_EMPTY = "1"
 
@@ -31,6 +31,14 @@ BSP_COMPONENTS_da850-omapl138-evm = "\
 BSP_COMPONENTS_omap3 = "\
     ti-linux-driver-examples-omap3 \
     x-load \
+    bluez4 \
+    bluez4-agent \
+    libasound-module-bluez \
+    bluez-hcidump \
+    openobex \
+    openobex-apps \
+    obexftp \
+    ussp-push \
     "
 
 RDEPENDS_${PN} = "\
