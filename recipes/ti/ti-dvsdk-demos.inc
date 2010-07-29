@@ -6,7 +6,7 @@ INC_PR = "r12"
  
 DEPENDS += "ti-dmai"
 DEPENDS += "alsa-lib libpng freetype jpeg"
-DEPENDS_omap3 += " ti-c6accel "
+DEPENDS_append_omap3 = " ti-c6accel "
 
 require ti-paths.inc
 require ti-staging.inc
