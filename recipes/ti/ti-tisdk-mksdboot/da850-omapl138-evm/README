@@ -1,0 +1,51 @@
+
+           == README ==
+
+The purpose of this readme is to describe on how to create SD card for OMAPL138
+EVM.
+
+1. Download OMAP-L138 DVSDK from ....
+
+2. Install the DVSDK on supported Linux host machine.
+   host# ./dvsdk_da850-omapl138-evm_4_00_00_05_setuplinux.bin
+
+3. Follow the instruction from Software Developer Guide section 'Flashing boot 
+   loader using serial flash utility' to copy u-boot/ubl on SPI NAND flash.
+
+4. Follow the instruction from Software Developer Guide section 'Flashing 
+   kernel using TFTP' to copy kernel image (uImage) on SPI NAND flash.
+
+5. Power ON the EVM  and run the commands below on u-boot prompt to save the 
+   environment variables.
+
+   U-Boot > setenv bootcmd 'sf probe 0; sf read 0xc0700000 0x80000 0x280000; bootm 0xc0700000'
+
+   U-Boot > setenv bootargs console=ttyS2,115200n8 root=/dev/mmcblk0p2 rw rootwait mem=32M
+
+   U-Boot > saveenv
+
+6. Power OFF the EVM.
+
+7. Plug 4GB SD card on Linux host machine and run dmesg command to check the 
+   the device node. 
+
+  host # dmesg
+  [5777492.042232] sd 7:0:0:0: [sdd] 7744512 512-byte logical blocks: (3.96 GB/3.69 GiB)
+  [5777492.043371] sd 7:0:0:0: [sdd] Assuming drive cache: write through
+  [5777492.045099] sd 7:0:0:0: [sdd] Assuming drive cache: write through
+  [5777492.045110]  sdd: sdd1 sdd2 sdd3
+
+  * In this example, SD card is detected on /dev/sdd.
+
+8. Run mksdboot script on host machine to create SD card.
+
+   host # sudo ./mksdboot.sh --device /dev/sdd --sdk <sdk_installation_location>
+     --copy <installation bin file name>
+
+
+   e.g
+    sudo ./mksdboot --device /dev/sdd --sdk /dvsdk/dvsdk_omapl18_4_0_0 --copy
+    /downloads/dvsdk_da850-omapl138-evm_4_00_00_05_setuplinux.bin
+
+9. On completion, plug the SD card on EVM and power ON the EVM.
+
