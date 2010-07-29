@@ -522,6 +522,10 @@ rm -rf ${opkg_conf}
 rm -rf ${opkg_sdk_conf}
 rm -rf ${install_dir}/install-tools
 
+# TODO: don't know which package is creating include directory on top level.
+# for now remove the directory.
+rm -rf ${install_dir}/include
+
 echo "Installation completed!"
 
 exit 0
