@@ -19,7 +19,7 @@ SRC_URI = "\
   	file://setup/setup-uboot-env-omapl138.sh \
   	file://setup/setup-uboot-env-dm3730.sh \
 "
-PR = "r7"
+PR = "r8"
 
 do_install () {
 	install -d ${D}/${installdir}
