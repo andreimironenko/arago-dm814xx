@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install Board Support Package binaries on $MACHINE"
-PR = "r13"
+PR = "r14"
 LICENSE="MIT"
 ALLOW_EMPTY = "1"
 
@@ -13,7 +13,7 @@ BSP_COMPONENTS_dm355 = "\
     "
 
 BSP_COMPONENTS_dm365 = "\
-    ti-linux-driver-examples \
+#    ti-linux-driver-examples \
     "
 
 BSP_COMPONENTS_dm6446 = "\
