@@ -406,7 +406,7 @@ install_arago_sdk ()
   ! test -z $graphics && install_graphics_sdk_host 
 
   echo "Running demangle_libtool.sh to fix *.la files"
-  execute "demangle_libtool.sh $install_dir/linux-devkit/arm-none-linux-gnueabi/usr/lib/*.la"
+  execute "demangle_libtool.sh $install_dir/linux-devkit/arm-none-linux-gnueabi/usr/lib/*.la" 2> /dev/null
   
   echo "Updating SDK_PATH env"        
   sed -i "1{s|SDK_PATH\(..*\)|SDK_PATH=$install_dir/linux-devkit/|g}" $install_dir/linux-devkit/environment-setup
