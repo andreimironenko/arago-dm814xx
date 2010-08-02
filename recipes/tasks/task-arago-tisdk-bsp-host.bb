@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support package sources (or development header) packages on host"
-PR = "r28"
+PR = "r29"
 LICENSE="MIT"
 ALLOW_EMPTY = "1"
 
@@ -64,11 +64,13 @@ BSP_COMPONENTS_da850-omapl138-evm = "\
 BSP_COMPONENTS_omap3evm = "\
     ti-tisdk-licenses \
     ti-tisdk-relnotes \
+    ti-tisdk-setup \
     ti-docs-psp \
     linux-omap3-sourcetree \
     u-boot-sourcetree \
-    ti-linux-driver-examples-omap3-sourcetree \
     x-load-sourcetree \
+    ti-tisdk-mksdboot \
+    ti-linux-driver-examples-omap3-sourcetree \
     "
 
 BSP_COMPONENTS_dm3730-am3715-evm = "\
