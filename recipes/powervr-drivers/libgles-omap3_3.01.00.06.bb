@@ -1,4 +1,7 @@
-BINLOCATION = "${S}/gfx_rel_es3.x"
+
+BINLOCATION_dm3730-am3715-evm = "${S}/gfx_rel_es5.x"
+BINLOCATION_omap3evm = "${S}/gfx_rel_es3.x"
+BINLOCATION ?= "${S}/gfx_rel_es3.x"
 
 ES2LOCATION = "${S}/gfx_rel_es2.x"
 ES3LOCATION = "${S}/gfx_rel_es3.x"
