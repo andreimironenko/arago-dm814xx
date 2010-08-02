@@ -3,7 +3,7 @@ LICENSE = GPLv2
 require ti-paths.inc
 require ti-staging.inc
 
-PR = "r2"
+PR = "r3"
 
 SRC_URI = "file://mksdboot.sh \
 	   file://README \
@@ -11,6 +11,10 @@ SRC_URI = "file://mksdboot.sh \
 
 do_compile () {
 	:
+}
+
+do_configure_prepend_omap3evm () {
+   sed -i -e s:mpurate=1000:mpurate=720:g ${WORKDIR}/mksdboot.sh
 }
 
 do_install () {
