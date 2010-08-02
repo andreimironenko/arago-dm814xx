@@ -1,6 +1,6 @@
 DESCRIPTION = "Extended task to get more basic and console apps"
 LICENSE = "MIT"
-PR = "r14"
+PR = "r15"
 
 inherit task
 
@@ -75,5 +75,4 @@ RDEPENDS_${PN} = "\
 
 RRECOMMENDS_${PN} = "\
     kernel-modules \
-    ksymoops \
     "
