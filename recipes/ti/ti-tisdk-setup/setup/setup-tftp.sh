@@ -4,7 +4,7 @@ cwd=`dirname $0`
 . $cwd/common.sh
 
 tftpcfg=/etc/xinetd.d/tftp
-tftproot=/tftpboot
+tftprootdefault=/tftpboot
 
 tftp() {
     echo "
@@ -24,6 +24,15 @@ disable = no
      echo
      echo "$tftpcfg successfully created"
 }
+
+echo "--------------------------------------------------------------------------------"
+echo "In which directory do you want to keep your tftp root directory?"
+read -p "[ $tftprootdefault ] " tftproot
+
+if [ ! -n "$tftproot" ]; then
+    tftproot=$tftprootdefault
+fi
+echo "--------------------------------------------------------------------------------"
 
 echo
 echo "--------------------------------------------------------------------------------"
@@ -61,8 +70,8 @@ echo
 if [ -f $tftpcfg ]; then
     echo "$tftpcfg already exists.."
 
-    grep "$tftproot" $tftpcfg > /dev/null
-    if [ "$?" -eq "0" ]; then
+    if [ "`cat $tftpcfg | grep server_args | cut -d= -f2 | sed 's/^[ ]*//'`" \
+          == "$tftproot" ]; then
         echo "$tftproot already exported for TFTP, skipping.."
     else
         echo "Copying old $tftpcfg to $tftpcfg.old"
