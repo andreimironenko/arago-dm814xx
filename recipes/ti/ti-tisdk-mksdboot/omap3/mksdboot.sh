@@ -159,7 +159,8 @@ execute "umount /tmp/sdk/$$"
 
 execute "mount ${device}2 /tmp/sdk/$$"
 echo "Extracting filesystem on ${device}2 ..."
-execute "tar zxf $sdkdir/filesystem/dvsdk-dm3730-am3715-evm-rootfs.tar.gz -C /tmp/sdk/$$"
+rootfs=`ls -1 $sdkdir/filesystem/dvsdk*rootfs.tar.gz`
+execute "tar zxf $rootfs -C /tmp/sdk/$$"
 
 # check if we need to create symbolic link for matrix to auto start
 echo -n "Creating matrix-gui symbolic link..."
