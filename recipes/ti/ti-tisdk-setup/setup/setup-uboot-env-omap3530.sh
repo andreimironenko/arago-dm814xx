@@ -36,9 +36,8 @@ uimagedefault=`basename $uimagesrc`
 
 baseargs="console=ttyS0,115200n8 rw mem=99M mpurate=720"
 videoargs1="omap_vout.vid1_static_vrfb_alloc=y"
-videoargs2="omapfb.vrfb=y vram=20M omapfb.vram=0:20M"
-videoargs3="omapfb.mode=dvi:720x480MR-16@60"
-videoargs="$videoargs1 $videoargs2 $videoargs3"
+videoargs2="omapfb.mode=dvi:720x480MR-16@60"
+videoargs="$videoargs1 $videoargs2"
 fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3"
 fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath"
 
@@ -163,8 +162,6 @@ if [ "$minicom" == "y" ]; then
     do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs \c\"" $minicomfilepath
     echo "send \"$videoargs1 \c\"" >> $minicomfilepath
     echo "send \"$videoargs2 \c\"" >> $minicomfilepath
-    echo "send \"$videoargs3 \c\"" >> $minicomfilepath
-#    echo "send \"$videoargs4 \c\"" >> $minicomfilepath
     if [ "$fs" -eq "1" ]; then
         echo "send \"$fsnfsargs \c\"" >> $minicomfilepath
         echo "send \"ip=dhcp\"" >> $minicomfilepath
