@@ -17,5 +17,7 @@ SGXPV = "3_01_00_06"
 IMGPV = "1.4.14.2616"
 BINFILE := "OMAP35x_Graphics_SDK_setuplinux_${SGXPV}.bin"
 
+SRC_URI_append = "file://opengl-gfx.patch;patch=0"
+
 SRC_URI[md5sum] = "7aa37ca72f34011d353e72cc67f8aac1"
 SRC_URI[sha256sum] = "02276bc728699c36b0d2411c60f23030aa066ca6b8ed5adb7a40204563a227fb"

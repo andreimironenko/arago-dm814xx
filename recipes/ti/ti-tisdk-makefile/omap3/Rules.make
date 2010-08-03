@@ -56,6 +56,7 @@ PSP_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/psp
 
 # The directory that points to your kernel source directory.
 LINUXKERNEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__kernel__>
+KERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR)
 
 # Where the local power manager is installed.
 LPM_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__local-power-manager__>
@@ -66,9 +67,13 @@ LINUXLIBS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/linuxlibs
 # Where c6accel package is installed.
 C6ACCEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__c6accel__>
 
+# Where opengl graphics package is installed.
+GRAPHICS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__libgles-omap3__>
+
 # The prefix to be added before the GNU compiler tools (optionally including # path), i.e. "arm_v5t_le-" or "/opt/bin/arm_v5t_le-".
 CSTOOL_DIR=<__CROSS_COMPILER_PATH__>
 CSTOOL_PREFIX=$(CSTOOL_DIR)/bin/arm-none-linux-gnueabi-
+CSTOOL_PATH=$(CSTOOL_DIR)/bin
 
 MVTOOL_DIR=$(CSTOOL_DIR)
 MVTOOL_PREFIX=$(CSTOOL_PREFIX)

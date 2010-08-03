@@ -1,0 +1,101 @@
+diff -uNr OMAP35x_Graphics_SDK_3_01_00_06_orig/Makefile.KM OMAP35x_Graphics_SDK_3_01_00_06/Makefile.KM
+--- OMAP35x_Graphics_SDK_3_01_00_06_orig/Makefile.KM	2010-08-03 22:06:38.000000000 +0530
++++ OMAP35x_Graphics_SDK_3_01_00_06/Makefile.KM	2010-08-03 19:30:27.000000000 +0530
+@@ -138,30 +138,6 @@
+ 	@echo "########################################################"
+ 	@echo "creating directories..."
+ 	@mkdir -p $(EXEC_DIR)
+-	@mkdir -p $(GFX_LIBRARY_TARGET_PATH)
+-	@echo "copying startup files..."
+-	@cp $(GFX_PKG_TARGETFS_PATH)/omap-demo $(TARGETFS_INSTALL_DIR)/etc/init.d
+-	@cp $(GFX_PKG_TARGETFS_PATH)/powervr.ini $(TARGETFS_INSTALL_DIR)/etc
+-	@chmod 755 $(TARGETFS_INSTALL_DIR)/etc/init.d/omap-demo
+-	@cp $(GFX_PKG_TARGETFS_PATH)/devmem2 $(TARGETFS_INSTALL_DIR)/etc/init.d
+-	@chmod 755 $(TARGETFS_INSTALL_DIR)/etc/init.d/devmem2
+-	@echo "installing and adding kernel modules to target file system..."
+-	@./addkernelmodules.sh $(KERNEL_INSTALL_DIR) $(TARGETFS_INSTALL_DIR)
+-	
+-	@echo "copying user space graphics libraries to target file system..."
+-  ifeq ($(OMAPES),2.x)
+-	@cp -rf $(GFX_REL_ES2_LIB_SRCPATH) $(GFX_LIBRARY_TARGET_PATH)/.
+-	@cp -rf $(GFX_DBG_ES2_LIB_SRCPATH) $(GFX_LIBRARY_TARGET_PATH)/.
+-  endif
+-  ifeq ($(OMAPES),3.x)
+-	@cp -rf $(GFX_REL_ES3_LIB_SRCPATH) $(GFX_LIBRARY_TARGET_PATH)/.
+-	@cp -rf $(GFX_DBG_ES3_LIB_SRCPATH) $(GFX_LIBRARY_TARGET_PATH)/.
+-  endif
+-  ifeq ($(OMAPES),5.x)
+-	@cp -rf $(GFX_REL_ES5_LIB_SRCPATH) $(GFX_LIBRARY_TARGET_PATH)/.
+-	@cp -rf $(GFX_DBG_ES5_LIB_SRCPATH) $(GFX_LIBRARY_TARGET_PATH)/.
+-  endif
+-
+ 	@echo "copying install information to target file system..."
+ 	@cd $(GFX_DEMOS_EXECPATH) && \
+ 		cp -rf * $(EXEC_DIR)/.
+diff -uNr OMAP35x_Graphics_SDK_3_01_00_06_orig/Rules.make OMAP35x_Graphics_SDK_3_01_00_06/Rules.make
+--- OMAP35x_Graphics_SDK_3_01_00_06_orig/Rules.make	2010-08-03 22:06:27.000000000 +0530
++++ OMAP35x_Graphics_SDK_3_01_00_06/Rules.make	2010-08-03 16:15:50.000000000 +0530
+@@ -2,34 +2,48 @@
+ 
+ ################# FIELDS MODIFIABLE BY THE USER ###############################
+ ############### All the fields below are mandatory ############################
+-# Set home area (ex /home/user123/)
+-HOME=
++-include ../Rules.make
++
++ifndef GRAPHICS_INSTALL_DIR
++    GRAPHICS_INSTALL_DIR = .
++endif
+ 
+-# Set installation folder (typically, OMAP35x_Graphics_***)
+-GRAPHICS_INSTALL_DIR=$(HOME)/INVALIDVAL
++# Set home area (ex /home/user123/)
++#HOME=
+ 
+ # Location of demo executables and install information
++ifndef GFX_DEMOS_EXECPATH
+ GFX_DEMOS_EXECPATH=$(GRAPHICS_INSTALL_DIR)/gfxsdkdemos
++endif
+ 
+ # Toolchain path
++ifndef CSTOOL_DIR
+ CSTOOL_DIR=/opt/cslite/arm-2009q1
++endif
++
++ifndef CSTOOL_PREFIX
+ CSTOOL_PREFIX=arm-none-linux-gnueabi-
++endif
++
++ifndef CSTOOL_PATH
+ CSTOOL_PATH=$(CSTOOL_DIR)/bin
+-CSTOOL_LIBSTDC++_PATH=$(CSTOOL_DIR)/arm-none-linux-gnueabi/libc/usr/lib
++endif
+ 
+ # Set the kernel installation path
++ifndef KERNEL_INSTALL_DIR
+ KERNEL_INSTALL_DIR=$(HOME)/linux-omap3
++endif
+ 
+ # Target NFS root file system location
+-TARGETFS_INSTALL_DIR=
++TARGETFS_INSTALL_DIR=$(EXEC_DIR)
+ 
+ # Kernel dependent module installation path
+-GFX_TARGETFS_KERMOD_PATH=$(TARGETFS_INSTALL_DIR)/lib/modules/2.6.32
++GFX_TARGETFS_KERMOD_PATH=$(TARGETFS_INSTALL_DIR)/opengl-kernel-modules
+ 
+ ######################### PRE-DEFINED VARIABLES ###############################
+ ######################## NOT MODIFIABLE BY USER ###############################
+ 
+-PLATFORM=LinuxOMAP3
++#PLATFORM=LinuxOMAP3
+ 
+ GFX_OGLES_SDKPATH=$(GRAPHICS_INSTALL_DIR)/GFX_Linux_SDK/OGLES/SDKPackage
+ 
+@@ -67,5 +81,5 @@
+ # install') in a proper file structure. This EXEC_DIR should either be visible
+ # from the target, or you will have to copy this (whole) directory onto the
+ # target filesystem.
+-EXEC_DIR=$(TARGETFS_INSTALL_DIR)/opt/gfxsdkdemos
++#EXEC_DIR=$(TARGETFS_INSTALL_DIR)/opt/gfxsdkdemos
+ ################################################################################

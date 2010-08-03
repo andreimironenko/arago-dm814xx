@@ -7,7 +7,11 @@ SRC_URI = "\
 	file://Makefile \
   	file://Rules.make \
 "
-PR = "r33"
+PR = "r34"
+
+do_configure_prepend_dm3730-am3715-evm () { 
+         sed -i -e 's:OMAPES=3.x:OMAPES=5.x:g' ${WORKDIR}/Makefile
+}
 
 do_install () {
 	install -d ${D}/${installdir}

@@ -4,7 +4,7 @@ DEFAULT_LINUXKERNEL_CONFIG=omap3_evm_defconfig
 DEFAULT_UBOOT_CONFIG=omap3_evm_config
 DMAI_PLATFORM="o3530_al"
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install xload xload_clean xload_install c6accel c6accel_clean c6accel_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install xload xload_clean xload_install c6accel c6accel_clean c6accel_install opengldemos opengldemos_clean opengldemos_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -19,17 +19,17 @@ clean:	cmem_clean sdma_clean lpm_clean dmai_clean dvtb_clean demos_clean psp_exa
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: u-boot linux dsplink cmem lpm sdma codecs ceexamples dmai dvtb demos psp_examples c6accel
+everything: u-boot linux dsplink cmem lpm sdma codecs ceexamples dmai dvtb demos psp_examples c6accel opengldemos
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install dmai_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install c6accel_install
+install: linux_install cmem_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install c6accel_install opengldemos_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber:    linux_clean dmai_clean ceexamples_clean cmem_clean sdma_clean codecs_clean lpm_clean dsplink_clean u-boot_clean dvtb_clean demos_clean psp_examples_clean
+clobber:    linux_clean dmai_clean ceexamples_clean cmem_clean sdma_clean codecs_clean lpm_clean dsplink_clean u-boot_clean dvtb_clean demos_clean psp_examples_clean opengldemos_clean
 
 #==============================================================================
 # A help message target.
@@ -103,6 +103,10 @@ help:
 	@echo "    c6accel                      : Build c6accel package"
 	@echo "    c6accel_clean                : Remove generated c6accel files"
 	@echo "    c6accel_install              : Install c6accel examples"
+	@echo 
+	@echo "    opengldemos                  : Build the OPENGL graphics SDK demos for $(PLATFORM)"
+	@echo "    opengldemos_clean            : Remove OPENGL graphics SDK demo files."
+	@echo "    opengldemos_install          : install OPENGL graphics SDK demo executables."
 	@echo
 	@echo "    everything                   : Rebuild everything"
 	@echo "    clobber                      : Remove all generated files"
@@ -660,4 +664,13 @@ c6accel_install:
 	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)/soc" \
 	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel" \
 	install
+
+opengldemos:
+	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x all
+
+opengldemos_clean:
+	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x clean
+
+opengldemos_install:
+	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x install EXEC_DIR=$(EXEC_DIR)/opengl-demos
 
