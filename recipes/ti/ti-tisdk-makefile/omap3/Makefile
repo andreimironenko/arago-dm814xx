@@ -2,7 +2,7 @@ include Rules.make
 
 DEFAULT_LINUXKERNEL_CONFIG=omap3_evm_defconfig
 DEFAULT_UBOOT_CONFIG=omap3_evm_config
-DMAI_PLATFORM="o3530_al"
+DMAI_PLATFORM=o3530_al
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
@@ -329,7 +329,7 @@ dmai_clean:
 
 dmai_install:
 	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM) \
-	EXEC_DIR_$(DMAI_PLATFORM)_al=$(EXEC_DIR)/dmai \
+	EXEC_DIR_$(DMAI_PLATFORM)=$(EXEC_DIR)/dmai \
 	install
 
 ###############################################################################

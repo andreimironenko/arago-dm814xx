@@ -7,7 +7,7 @@ SRC_URI = "\
 	file://Makefile \
   	file://Rules.make \
 "
-PR = "r37"
+PR = "r38"
 
 # Update makefile to use silicon rev 5.x for DM3730 EVM.
 do_configure_prepend_dm3730-am3715-evm () { 
