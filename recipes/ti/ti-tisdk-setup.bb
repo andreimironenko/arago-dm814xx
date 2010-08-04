@@ -21,7 +21,7 @@ SRC_URI = "\
   	file://setup/setup-uboot-env-dm3730.sh \
   	file://setup/setup-uboot-env-omap3530.sh \
 "
-PR = "r11"
+PR = "r12"
 
 do_install () {
 	install -d ${D}/${installdir}
