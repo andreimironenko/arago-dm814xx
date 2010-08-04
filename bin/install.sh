@@ -154,6 +154,8 @@ move_to_install_dir()
     mkdir -p ${install_dir}/omap35x_graphics_sdk_${version}
     mv ${install_dir}/usr/share/ti/ti-gfx-sdk-tree/* ${install_dir}/omap35x_graphics_sdk_${version}
     rmdir ${install_dir}/usr/share/ti/ti-gfx-sdk-tree
+    sed -i -e s/\<__libgles-omap3__\>/omap35x_graphics_sdk_${version}/g \
+     $install_dir/usr/share/ti/Rules.make
   fi
 
   mv ${install_dir}/usr/share/ti/* ${install_dir}/
