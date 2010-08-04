@@ -6,32 +6,32 @@ DMAI_PLATFORM=o3530_al
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install xload xload_clean xload_install c6accel c6accel_clean c6accel_install opengldemos opengldemos_clean opengldemos_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install xload xload_clean xload_install c6accel c6accel_clean c6accel_install opengldemos opengldemos_clean opengldemos_install demos demos_clean demos_install dvtb dvtb_clean dvtb_install dsplink dsplink_clean dsplink_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
 #==============================================================================
-all:   linux cmem lpm sdma dmai dvtb demos dsplink
+all: linux dsplink
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	linux_clean cmem_clean sdma_clean lpm_clean dmai_clean dvtb_clean demos_clean psp_examples_clean c6accel_clean dsplink_clean
+clean:	linux_clean dsplink_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: u-boot linux dsplink cmem lpm sdma codecs ceexamples dmai dvtb demos psp_examples c6accel opengldemos
+everything: all u-boot cmem lpm sdma codecs ceexamples dmai dvtb demos psp_examples c6accel opengldemos xload
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install c6accel_install opengldemos_install
+install: linux_install cmem_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install c6accel_install opengldemos_install xload_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber:    linux_clean dmai_clean ceexamples_clean cmem_clean sdma_clean codecs_clean lpm_clean dsplink_clean u-boot_clean dvtb_clean demos_clean psp_examples_clean opengldemos_clean
+clobber: clean dmai_clean ceexamples_clean cmem_clean sdma_clean codecs_clean lpm_clean u-boot_clean dvtb_clean demos_clean psp_examples_clean opengldemos_clean xload_clean
 
 #==============================================================================
 # A help message target.
