@@ -155,7 +155,11 @@ fatload mmc 0 80200000 uImage
 bootm 80200000
 EOF
 
+sync
+
 mkimage -A arm -O linux -T script -C none -a 0 -e 0 -n 'Execute uImage.bin' -d /tmp/sdk/$$/boot.cmd /tmp/sdk/$$/boot.scr
+
+sync
 
 if [ $? -ne 0 ]; then
   echo "Failed to execute mkimage to create boot.scr"
