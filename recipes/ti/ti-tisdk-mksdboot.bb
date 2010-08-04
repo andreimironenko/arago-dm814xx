@@ -3,7 +3,7 @@ LICENSE = GPLv2
 require ti-paths.inc
 require ti-staging.inc
 
-PR = "r5"
+PR = "r6"
 
 SRC_URI = "file://mksdboot.sh \
 	   file://README \
@@ -29,8 +29,7 @@ do_install () {
 }
 
 do_install_append_dm3730-am3715-evm () {
-	mkdir -p ${D}/${installdir}/docs/
-	cp ${WORKDIR}/setup.htm ${D}/${installdir}/docs/
+	cp ${WORKDIR}/setup.htm ${D}/${installdir}/bin/
 	cp ${WORKDIR}/top_omap35x_evm.png ${D}/${installdir}/bin/
 	cp ${WORKDIR}/windows_users.htm ${D}/${installdir}/bin
 }
