@@ -157,6 +157,12 @@ EOF
 
 mkimage -A arm -O linux -T script -C none -a 0 -e 0 -n 'Execute uImage.bin' -d /tmp/sdk/$$/boot.cmd /tmp/sdk/$$/boot.scr
 
+if [ $? -ne 0 ]; then
+  echo "Failed to execute mkimage to create boot.scr"
+  echo "Execute 'sudo apt-get install uboot-mkimage' to install the package"
+  exit 1
+fi
+
 execute "rm -rf /tmp/sdk/$$/boot.cmd"
 echo "unmounting ${device}1"
 execute "umount /tmp/sdk/$$"

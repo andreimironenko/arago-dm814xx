@@ -3,7 +3,7 @@ LICENSE = GPLv2
 require ti-paths.inc
 require ti-staging.inc
 
-PR = "r6"
+PR = "r7"
 
 SRC_URI = "file://mksdboot.sh \
 	   file://README \
