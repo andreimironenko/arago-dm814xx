@@ -134,7 +134,7 @@ echo "Formating ${device}2 ..."
 execute "mkfs.ext3 -j -L "ROOTFS" ${device}2"
 if [ "$pc2" != "" ]; then
  echo "Formating ${device}3 ..."
- execute "mkfs.ext3 -j -L "INSTALLER" ${device}3"
+ execute "mkfs.ext3 -j -L "START_HERE" ${device}3"
 fi
 
 echo "Copying u-boot/mlo/uImage on ${device}1"
@@ -143,6 +143,10 @@ execute "mount ${device}1 /tmp/sdk/$$"
 execute "cp $sdkdir/psp/prebuilt-images/uImage /tmp/sdk/$$/"
 execute "cp $sdkdir/psp/prebuilt-images/u-boot.bin /tmp/sdk/$$/"
 execute "cp $sdkdir/psp/prebuilt-images/MLO /tmp/sdk/$$/"
+execute "cp $sdkdir/docs/TMS320DM3730_EVM_Quick_Start_Guide.pdf /tmp/sdk/$$/"
+execute "cp $sdkdir/docs/top_omap35x_evm.png /tmp/sdk/$$/"
+execute "cp $sdkdir/bin/windows_users.htm /tmp/sdk/$$/"
+
 
 # creating boot.scr
 cat <<EOF >/tmp/sdk/$$/boot.cmd
@@ -181,6 +185,9 @@ if [ "$pc2" != "" ]; then
   echo "Copying $copy on ${device}3 ..."
   execute "mount ${device}3 /tmp/sdk/$$"
   execute "cp -ar $copy /tmp/sdk/$$"
+  execute "cp $sdkdir/docs/setup.htm /tmp/sdk/$$"
+  execute "cp $sdkdir/docs/top_omap35x_evm.png /tmp/sdk/$$/"
+  execute "cp $sdkdir/docs/TMS320DM3730_EVM_Quick_Start_Guide.pdf /tmp/sdk/$$/"
   echo "unmounting ${device}3"
   execute "umount /tmp/sdk/$$"
 fi
