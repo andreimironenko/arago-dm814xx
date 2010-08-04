@@ -608,8 +608,8 @@ dsplink_clean: dsplink_arm_clean dsplink_dsp_clean dsplink_samples_clean
 
 dsplink_install:
 	install -d $(EXEC_DIR)/dsplink
-	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/DAVINCI/RELEASE/dsplinkk.ko $(EXEC_DIR)/dsplink
-	cp ${LINK_INSTALL_DIR}/packages/dsplink/gpp/export/BIN/Linux/DAVINCI/RELEASE/*gpp $(EXEC_DIR)/dsplink
+	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAP3530/RELEASE/dsplinkk.ko $(EXEC_DIR)/dsplink
+	cp ${LINK_INSTALL_DIR}/dsplink/gpp/export/BIN/Linux/OMAP3530/RELEASE/*gpp $(EXEC_DIR)/dsplink
 	@for file in $(shell find $(LINK_INSTALL_DIR)/dsplink/dsp/BUILD -name *.out); do \
 	cp $$file $(EXEC_DIR)/dsplink ; \
 	done
