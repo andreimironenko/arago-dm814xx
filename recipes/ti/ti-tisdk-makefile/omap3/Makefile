@@ -11,12 +11,12 @@ PATH := ${PATH}:${CSTOOL_PATH}
 #==============================================================================
 # The default build target builds components to enable all other build targets.
 #==============================================================================
-all:   cmem lpm sdma dmai dvtb demos 	
+all:   linux cmem lpm sdma dmai dvtb demos dsplink
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	cmem_clean sdma_clean lpm_clean dmai_clean dvtb_clean demos_clean psp_examples_clean c6accel_clean
+clean:	linux_clean cmem_clean sdma_clean lpm_clean dmai_clean dvtb_clean demos_clean psp_examples_clean c6accel_clean dsplink_clean
 
 #==============================================================================
 # Build everything rebuildable.
