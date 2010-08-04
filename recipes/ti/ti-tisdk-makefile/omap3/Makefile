@@ -675,4 +675,6 @@ opengldemos_clean:
 
 opengldemos_install:
 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x install EXEC_DIR=$(EXEC_DIR)/opengl-demos
+	install -d $(EXEC_DIR)/opengl-demos/kernel-modules
+	cp $(GRAPHICS_INSTALL_DIR)/gfx_rel_es3.x/*.ko $(EXEC_DIR)/opengl-demos/kernel-modules
 
