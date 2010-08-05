@@ -1,7 +1,7 @@
 DESCRIPTION = "DVSDK 4.00 Release Notes"
 LICENSE = "CC-BY-SA"
 
-PR="r2"
+PR="r3"
 
 DEPENDS = "ti-post-process-wiki-native"
 
@@ -9,6 +9,7 @@ RELNOTESTOPIC_dm365 = "TMS320DM365_DVSDK_4.00_Release_Notes"
 RELNOTESTOPIC_omapl138 = "OMAPL138_DVSDK_4.00_Release_Notes"
 RELNOTESTOPIC_omap3evm = "OMAP3530_DVSDK_4.00_Release_Notes"
 RELNOTESTOPIC_dm3730-am3715-evm = "TMS320DM3730_DVSDK_4.00_Release_Notes"
+RELNOTESTOPIC_omap3evm = "OMAP3530_DVSDK_4.00_Release_Notes"
 
 RELNOTESURL = "http://ap-fpdsp-swapps.dal.design.ti.com/index.php/${RELNOTESTOPIC}"
 
