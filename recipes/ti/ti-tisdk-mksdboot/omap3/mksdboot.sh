@@ -144,8 +144,9 @@ execute "cp $sdkdir/psp/prebuilt-images/uImage /tmp/sdk/$$/"
 execute "cp $sdkdir/psp/prebuilt-images/u-boot.bin /tmp/sdk/$$/"
 execute "cp $sdkdir/psp/prebuilt-images/MLO /tmp/sdk/$$/"
 execute "cp $sdkdir/docs/TMS320DM3730_EVM_Quick_Start_Guide.pdf /tmp/sdk/$$/"
-execute "cp $sdkdir/docs/top_omap35x_evm.png /tmp/sdk/$$/"
+execute "cp $sdkdir/bin/top_omap35x_evm.png /tmp/sdk/$$/"
 execute "cp $sdkdir/bin/windows_users.htm /tmp/sdk/$$/"
+sync
 
 
 # creating boot.scr
@@ -155,11 +156,7 @@ fatload mmc 0 80200000 uImage
 bootm 80200000
 EOF
 
-sync
-
 mkimage -A arm -O linux -T script -C none -a 0 -e 0 -n 'Execute uImage.bin' -d /tmp/sdk/$$/boot.cmd /tmp/sdk/$$/boot.scr
-
-sync
 
 if [ $? -ne 0 ]; then
   echo "Failed to execute mkimage to create boot.scr"
@@ -167,7 +164,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-execute "rm -rf /tmp/sdk/$$/boot.cmd"
+sync
 echo "unmounting ${device}1"
 execute "umount /tmp/sdk/$$"
 
@@ -175,6 +172,7 @@ execute "mount ${device}2 /tmp/sdk/$$"
 echo "Extracting filesystem on ${device}2 ..."
 rootfs=`ls -1 $sdkdir/filesystem/dvsdk*rootfs.tar.gz`
 execute "tar zxf $rootfs -C /tmp/sdk/$$"
+sync
 
 # check if we need to create symbolic link for matrix to auto start
 echo -n "Creating matrix-gui symbolic link..."
@@ -188,6 +186,7 @@ if [ -f /tmp/sdk/$$/etc/init.d/matrix-gui ]; then
   fi
 fi
 
+sync
 echo "unmounting ${device}2"
 execute "umount /tmp/sdk/$$"
 
@@ -195,9 +194,10 @@ if [ "$pc2" != "" ]; then
   echo "Copying $copy on ${device}3 ..."
   execute "mount ${device}3 /tmp/sdk/$$"
   execute "cp -ar $copy /tmp/sdk/$$"
-  execute "cp $sdkdir/docs/setup.htm /tmp/sdk/$$"
-  execute "cp $sdkdir/docs/top_omap35x_evm.png /tmp/sdk/$$/"
+  execute "cp $sdkdir/bin/setup.htm /tmp/sdk/$$"
+  execute "cp $sdkdir/bin/top_omap35x_evm.png /tmp/sdk/$$/"
   execute "cp $sdkdir/docs/TMS320DM3730_EVM_Quick_Start_Guide.pdf /tmp/sdk/$$/"
+  sync
   echo "unmounting ${device}3"
   execute "umount /tmp/sdk/$$"
 fi
