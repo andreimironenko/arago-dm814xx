@@ -4,13 +4,13 @@ LICENSE = "TI"
 require ti-paths.inc
 
 QSG_dm3730-am3715-evm = TMS320DM3730_EVM_Quick_Start_Guide.pdf
-QSG_omap3evm = OMA3530_EVM_Quick_Start_Guide.pdf
+QSG_omap3evm = OMAP3530_EVM_Quick_Start_Guide.pdf
 
 SRC_URI = "\
 	file://${QSG} \
 "
 
-PR = "r1"
+PR = "r2"
 
 do_install () {
 	install -d ${D}/${installdir}/ti-docs-tree
