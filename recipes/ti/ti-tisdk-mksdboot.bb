@@ -3,7 +3,7 @@ LICENSE = GPLv2
 require ti-paths.inc
 require ti-staging.inc
 
-PR = "r11"
+PR = "r13"
 
 SRC_URI = "file://mksdboot.sh \
 	   file://README \
@@ -11,6 +11,7 @@ SRC_URI = "file://mksdboot.sh \
 
 SRC_URI_append_omap3 = "file://setup.htm \
  file://top_omap35x_evm.png \
+ file://README.boot.scr \
  file://windows_users.htm"
 
 do_compile () {
@@ -36,6 +37,7 @@ do_install_append_omap3 () {
 	cp ${WORKDIR}/setup.htm ${D}/${installdir}/bin/
 	cp ${WORKDIR}/top_omap35x_evm.png ${D}/${installdir}/bin/
 	cp ${WORKDIR}/windows_users.htm ${D}/${installdir}/bin
+	cp ${WORKDIR}/README.boot.scr ${D}/${installdir}/bin
 }
 
 FILES_${PN} = "${installdir}/*"

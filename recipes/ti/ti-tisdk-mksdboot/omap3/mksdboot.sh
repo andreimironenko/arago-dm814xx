@@ -137,32 +137,34 @@ if [ "$pc2" != "" ]; then
  execute "mkfs.ext3 -j -L "START_HERE" ${device}3"
 fi
 
-echo "Copying u-boot/mlo/uImage on ${device}1"
-execute "mkdir -p /tmp/sdk/$$"
-execute "mount ${device}1 /tmp/sdk/$$"
-execute "cp $sdkdir/psp/prebuilt-images/uImage /tmp/sdk/$$/"
-execute "cp $sdkdir/psp/prebuilt-images/u-boot.bin /tmp/sdk/$$/"
-execute "cp $sdkdir/psp/prebuilt-images/MLO /tmp/sdk/$$/"
-execute "cp $sdkdir/docs/TMS320DM3730_EVM_Quick_Start_Guide.pdf /tmp/sdk/$$/"
-execute "cp $sdkdir/bin/top_omap35x_evm.png /tmp/sdk/$$/"
-execute "cp $sdkdir/bin/windows_users.htm /tmp/sdk/$$/"
-sync
-
-
 # creating boot.scr
-cat <<EOF >/tmp/sdk/$$/boot.cmd
+execute "mkdir -p /tmp/sdk"
+cat <<EOF >/tmp/sdk/boot.cmd
 setenv bootargs 'console=ttyS0,115200n8 root=/dev/mmcblk0p2 rw ip=off mem=99M mpurate=1000  omap_vout.vid1_static_vrfb_alloc=y omapfb.mode=dvi:720x480MR-16@60 omapdss.def_disp=lcd rootwait'
 fatload mmc 0 80200000 uImage
 bootm 80200000
 EOF
 
-mkimage -A arm -O linux -T script -C none -a 0 -e 0 -n 'Execute uImage.bin' -d /tmp/sdk/$$/boot.cmd /tmp/sdk/$$/boot.scr
+mkimage -A arm -O linux -T script -C none -a 0 -e 0 -n 'Execute uImage.bin' -d /tmp/sdk/boot.cmd /tmp/sdk/boot.scr
 
 if [ $? -ne 0 ]; then
   echo "Failed to execute mkimage to create boot.scr"
   echo "Execute 'sudo apt-get install uboot-mkimage' to install the package"
   exit 1
 fi
+
+echo "Copying u-boot/mlo/uImage on ${device}1"
+execute "mkdir -p /tmp/sdk/$$"
+execute "mount ${device}1 /tmp/sdk/$$"
+execute "cp /tmp/sdk/boot.scr /tmp/sdk/$$/"
+execute "cp /tmp/sdk/boot.cmd /tmp/sdk/$$/"
+execute "cp $sdkdir/psp/prebuilt-images/uImage /tmp/sdk/$$/"
+execute "cp $sdkdir/psp/prebuilt-images/u-boot.bin /tmp/sdk/$$/"
+execute "cp $sdkdir/psp/prebuilt-images/MLO /tmp/sdk/$$/"
+execute "cp $sdkdir/docs/TMS320DM3730_EVM_Quick_Start_Guide.pdf /tmp/sdk/$$/quickstartguide.pdf"
+execute "cp $sdkdir/bin/top_omap35x_evm.png /tmp/sdk/$$/"
+execute "cp $sdkdir/bin/windows_users.htm /tmp/sdk/$$/"
+execute "cp $sdkdir/bin/README.boot.scr /tmp/sdk/$$/"
 
 sync
 echo "unmounting ${device}1"
@@ -196,7 +198,7 @@ if [ "$pc2" != "" ]; then
   execute "cp -ar $copy /tmp/sdk/$$"
   execute "cp $sdkdir/bin/setup.htm /tmp/sdk/$$"
   execute "cp $sdkdir/bin/top_omap35x_evm.png /tmp/sdk/$$/"
-  execute "cp $sdkdir/docs/TMS320DM3730_EVM_Quick_Start_Guide.pdf /tmp/sdk/$$/"
+  execute "cp $sdkdir/docs/TMS320DM3730_EVM_Quick_Start_Guide.pdf /tmp/sdk/$$/quickstartguide.pdf"
   sync
   echo "unmounting ${device}3"
   execute "umount /tmp/sdk/$$"
