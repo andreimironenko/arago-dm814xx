@@ -9,7 +9,7 @@ require ti-staging.inc
 
 COMPATIBLE_MACHINE = "(da830-omapl137-evm|da850-omapl138-evm)"
 
-PR = "r5"
+PR = "r6"
 
 S = "${WORKDIR}/audio_soc_example_${PV}"
 
