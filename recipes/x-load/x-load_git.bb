@@ -45,6 +45,10 @@ SRCREV_dm3730-am3715-evm = "fc6d5be15c703d21aef0ae0b8c02177721f0445f"
 SRC_URI_dm3730-am3715-evm = "git://arago-project.org/git/projects/x-load-omap3.git;protocol=git"
 XLOAD_MACHINE_dm3730-am3715-evm = "omap3evm_config"
 
+SRCREV_omap3evm = "fc6d5be15c703d21aef0ae0b8c02177721f0445f"
+SRC_URI_omap3evm = "git://arago-project.org/git/projects/x-load-omap3.git;protocol=git"
+XLOAD_MACHINE_omap3evm = "omap3evm_config"
+
 S = "${WORKDIR}/git"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"

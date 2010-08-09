@@ -1,5 +1,5 @@
 require u-boot.inc
-PR ="r41"
+PR ="r42"
 
 FILESPATHPKG =. "u-boot-git:"
 
@@ -63,14 +63,16 @@ SRCREV_omap3-touchbook = "d363f9cb0918a1b6b92e2e20d01543d0c4f53274"
 PV_omap3-touchbook = "2009.05+${PR}+gitr${SRCREV}"
 
 
-SRC_URI_omap3evm = "git://gitorious.org/u-boot-omap3/mainline.git;branch=omap3-dev;protocol=git"
-SRCREV_omap3evm = "2dea1db2a3b7c12ed70bbf8ee50755089c5e5170"
-PV_omap3evm = "2009.03+${PR}+gitr${SRCREV}"
-
 SRC_URI_dm3730-am3715-evm = "git://arago-project.org/git/projects/u-boot-omap3.git;protocol=git"
-# use this commit id as per PSP suggestion
+# use this commit id as per PSP suggestion v2009.11_OMAPPSP_03.00.01.06.patch1
 SRCREV_dm3730-am3715-evm = "c0a8fb217fdca7888d89f9a3dee74a4cec865620"
 PV_dm3730-am3715-evm = "2009.11+${PR}+gitr${SRCREV}"
+
+SRC_URI_omap3evm = "git://arago-project.org/git/projects/u-boot-omap3.git;protocol=git"
+# use this commit id as per PSP suggestion v2009.11_OMAPPSP_03.00.01.06.patch1 
+
+SRCREV_omap3evm = "c0a8fb217fdca7888d89f9a3dee74a4cec865620"
+PV_omap3evm = "2009.11+${PR}+gitr${SRCREV}"
 
 SRCREV_am3517-evm = "e60beb13cf0"
 SRC_URI_append_am3517-evm = " \
