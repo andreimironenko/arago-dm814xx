@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support package sources (or development header) packages on host"
-PR = "r31"
+PR = "r32"
 LICENSE="MIT"
 ALLOW_EMPTY = "1"
 
@@ -81,6 +81,7 @@ BSP_COMPONENTS_dm3730-am3715-evm = "\
     ti-tisdk-relnotes \
     ti-docs-sdg \
     ti-docs-qsg-hardcopy \
+    ti-docs-hug-hardcopy \
     ti-docs-psp \
     linux-omap3-sourcetree \
     u-boot-sourcetree \
