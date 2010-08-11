@@ -23,7 +23,7 @@ everything: linux psp_examples cmem dm365mm irq edma ceexamples dmai demos u-boo
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install dm365mm_install dmai_install psp_examples_install ceexamples_install irq_install edma_install demos_install u-boot_install dvtb_install ubl_install
+install: linux_install cmem_install dm365mm_install dmai_install psp_examples_install ceexamples_install irq_install edma_install demos_install u-boot_install ubl_install
 
 #==============================================================================
 # Clean up all targets.
