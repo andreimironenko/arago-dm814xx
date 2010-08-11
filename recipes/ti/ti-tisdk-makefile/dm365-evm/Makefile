@@ -222,11 +222,12 @@ irq_install:
 # is defined.
 #==============================================================================
 edma:
-	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/interface
+	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/interface ../../lib/edma.a470MV
 	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/module
 
 edma_clean:
 	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/module clean
+	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/interface clean
 
 edma_install:
 	install -d $(EXEC_DIR)/edma
