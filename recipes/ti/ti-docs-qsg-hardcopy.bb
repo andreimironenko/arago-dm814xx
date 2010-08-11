@@ -10,7 +10,7 @@ SRC_URI = "\
 	file://${QSG} \
 "
 
-PR = "r2"
+PR = "r3"
 
 do_install () {
 	install -d ${D}/${installdir}/ti-docs-tree
