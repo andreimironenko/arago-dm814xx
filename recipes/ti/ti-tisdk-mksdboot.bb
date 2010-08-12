@@ -3,7 +3,7 @@ LICENSE = GPLv2
 require ti-paths.inc
 require ti-staging.inc
 
-PR = "r14"
+PR = "r15"
 
 SRC_URI = "file://mksdboot.sh \
 	   file://README \
@@ -25,6 +25,7 @@ do_configure_prepend_omap3evm () {
    sed -i -e s:TMS320DM3730:OMAP3530:g ${WORKDIR}/setup.htm
    sed -i -e s:DM37x:OMAP3530:g ${WORKDIR}/windows_users.htm
    sed -i -e s:DM37x:OMAP3530:g ${WORKDIR}/setup.htm
+   sed -i -e s:dm3730:omap3530:g ${WORKDIR}/setup.htm
 }
 
 do_install () {
