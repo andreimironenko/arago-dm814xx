@@ -191,6 +191,14 @@ echo "
       *) highlight="" ;;
     esac
 
+    if [ "$package" = "libticpublt-bx1.0" ]; then
+       license="TI"
+    fi
+
+    if [ "$package" = "qt4-blitrix-demos" ]; then
+       license="TI"
+    fi
+    
     case "$source" in
       file://*) source="";;
       *) ;;
