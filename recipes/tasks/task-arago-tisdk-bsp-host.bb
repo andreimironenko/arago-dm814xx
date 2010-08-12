@@ -67,6 +67,7 @@ BSP_COMPONENTS_omap3evm = "\
     ti-tisdk-setup \
     ti-docs-sdg \
     ti-docs-qsg-hardcopy \
+    ti-docs-hug-hardcopy \
     ti-docs-psp \
     linux-omap3-sourcetree \
     u-boot-sourcetree \
