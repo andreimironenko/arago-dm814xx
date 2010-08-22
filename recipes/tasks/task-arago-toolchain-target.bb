@@ -29,6 +29,6 @@ RDEPENDS_${PN} = "\
     zlib-dev \
     mtd-utils-dev \
     ncurses-dev \
-    opkg-nogpg-nocurl-dev \
+    opkg-dev \
 #    sysvinit-dev \
     "

@@ -55,7 +55,7 @@ DMAIPLATFORM          ?= "<UNDEFINED_DMAIPLATFORM>"
 # Need to re-define this for OMAP-L137/L138
 DSPSUFFIX_omapl137 = "x64P"
 DSPSUFFIX_omapl138 = "x64P"
-DSPSUFFIX ?= "x64P"
+DSPSUFFIX ?= "x64p"
 
 # This is needed for dm355/dm365 targets in order to find ti.sdo.codecs.g711
 # TODO :: review - should we just pass this in do_compile?
