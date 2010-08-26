@@ -104,8 +104,6 @@ do_install_prepend () {
 
     install -d ${D}${sysconfdir}/init.d/
     install -m 0755  ${WORKDIR}/gstreamer-ti-rc.sh ${D}${sysconfdir}/init.d/gstti-init
-    install -d ${D}${sysconfdir}/profile.d/
-    install -m 0755 ${WORKDIR}/gst-ti.sh ${D}${sysconfdir}/profile.d/
 }
 
 RRECOMMENDS_${PN}_append_dm6446    += "ti-codecs-dm6446-server   ti-cmem-module ti-dsplink-module"
