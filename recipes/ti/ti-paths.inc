@@ -31,6 +31,7 @@ export RTFS_INSTALL_DIR_RECIPE       = "${installdir}/ti-rtfs-tree"
 export NDK_INSTALL_DIR_RECIPE        = "${installdir}/ti-ndk-tree"
 export C6ACCEL_INSTALL_DIR_RECIPE    = "${installdir}/ti-c6accel-tree"
 export GFX_SDK_INSTALL_DIR_RECIPE    = "${installdir}/ti-gfx-sdk-tree"
+export C6RUN_INSTALL_DIR_RECIPE      = "${installdir}/ti-c6run-tree"
 
 # This is where the tools will end up in staging provided PACKAGE_ARCH = ${MACHINE_ARCH} is set
 export CODEGEN_INSTALL_DIR    = "${STAGING_DIR}/${MULTIMACH_TARGET_SYS}${CODEGEN_INSTALL_DIR_RECIPE}"
@@ -52,6 +53,7 @@ export DSPLIB_C64P_INSTALL_DIR     = "${STAGING_DIR}/${MULTIMACH_TARGET_SYS}${DS
 export DSPLIB_C674_INSTALL_DIR = "${STAGING_DIR}/${MULTIMACH_TARGET_SYS}${DSPLIB_C674_INSTALL_DIR_RECIPE}"
 export BIOSPSP_INSTALL_DIR    = "${STAGING_DIR}/${MULTIMACH_TARGET_SYS}${BIOSPSP_INSTALL_DIR_RECIPE}"
 export C6ACCEL_INSTALL_DIR    = "${STAGING_DIR}/${MULTIMACH_TARGET_SYS}${C6ACCEL_INSTALL_DIR_RECIPE}"
+export C6RUN_INSTALL_DIR    = "${STAGING_DIR}/${MULTIMACH_TARGET_SYS}${C6RUN_INSTALL_DIR_RECIPE}"
 
 DSPSUFFIX_omapl137 = "x674"
 DSPSUFFIX_omapl138 = "x674"
