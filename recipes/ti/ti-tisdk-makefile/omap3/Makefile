@@ -6,7 +6,7 @@ DMAI_PLATFORM=o3530_al
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install xload xload_clean xload_install c6accel c6accel_clean c6accel_install opengldemos opengldemos_clean opengldemos_install demos demos_clean demos_install dvtb dvtb_clean dvtb_install dsplink dsplink_clean dsplink_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install xload xload_clean xload_install c6accel c6accel_clean c6accel_install opengldemos opengldemos_clean opengldemos_install demos demos_clean demos_install dvtb dvtb_clean dvtb_install dsplink dsplink_clean dsplink_install c6run c6run_clean c6run_examples c6run_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -21,17 +21,17 @@ clean:	linux_clean dsplink_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: all u-boot cmem lpm sdma codecs ceexamples dmai dvtb demos psp_examples c6accel opengldemos xload
+everything: all u-boot cmem lpm sdma codecs ceexamples dmai dvtb demos psp_examples c6accel opengldemos xload c6run c6run_examples
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install c6accel_install opengldemos_install xload_install
+install: linux_install cmem_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install c6accel_install opengldemos_install xload_install c6run_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber: clean dmai_clean ceexamples_clean cmem_clean sdma_clean codecs_clean lpm_clean u-boot_clean dvtb_clean demos_clean psp_examples_clean opengldemos_clean xload_clean
+clobber: clean dmai_clean ceexamples_clean cmem_clean sdma_clean codecs_clean lpm_clean u-boot_clean dvtb_clean demos_clean psp_examples_clean opengldemos_clean xload_clean c6run_clean
 
 #==============================================================================
 # A help message target.
@@ -105,6 +105,11 @@ help:
 	@echo "    c6accel                      : Build c6accel package"
 	@echo "    c6accel_clean                : Remove generated c6accel files"
 	@echo "    c6accel_install              : Install c6accel examples"
+	@echo
+	@echo "    c6run                        : Build c6run backend libraries"
+	@echo "    c6run_clean                  : Remove c6run backend libraries"
+	@echo "    c6run_examples               : Build c6run examples & tests"
+	@echo "    c6run_install                : Install c6run examples & tests"
 	@echo 
 	@echo "    opengldemos                  : Build the OPENGL graphics SDK demos for $(PLATFORM)"
 	@echo "    opengldemos_clean            : Remove OPENGL graphics SDK demo files."
@@ -667,6 +672,9 @@ c6accel_install:
 	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel" \
 	install
 
+################################################################################
+# Build openGL demos
+################################################################################
 opengldemos:
 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x all
 
@@ -678,4 +686,85 @@ opengldemos_install:
 	for file in `find $(GRAPHICS_INSTALL_DIR)/gfx_rel_es3.x -name "*.ko"`; do \
 	    install $${file} $(EXEC_DIR)/opengl-demos; \
 	done
+
+
+################################################################################
+# Build C6run
+################################################################################
+c6run:
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	omap3530_config
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	clean
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	oe_build
+
+c6run_clean:
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	distclean
+
+c6run_examples:
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	examples
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	tests
+
+c6run_install:
+	install -d $(EXEC_DIR)/ti-c6run-programs
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	INSTALL_DIR="$(EXEC_DIR)/ti-c6run-programs" \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	install_programs
 

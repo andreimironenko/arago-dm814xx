@@ -5,7 +5,7 @@ DEFAULT_UBOOT_CONFIG=da850_omapl138_evm_config
 
 DMAI_PLATFORM=ol138
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install ubl ubl_clean ubl_install dsplink dsplink_clean dsplink_install audio_soc_exmaple audio_soc_example_clean audio_soc_example_install audio_soc_example_kernel
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install ubl ubl_clean ubl_install dsplink dsplink_clean dsplink_install audio_soc_exmaple audio_soc_example_clean audio_soc_example_install audio_soc_example_kernel c6accel c6accel_clean c6accel_install c6run c6run_clean c6run_examples c6run_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -20,17 +20,17 @@ clean: linux_clean dsplink_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: all u-boot ubl psp_examples cmem dmai codecs ceexamples audio_soc_example c6accel
+everything: all u-boot ubl psp_examples cmem dmai codecs ceexamples audio_soc_example c6accel c6run c6run_examples
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install dsplink_install u-boot_install ubl_install psp_examples_install cmem_install dmai_install codecs_install ceexamples_install audio_soc_example_install c6accel_install
+install: linux_install dsplink_install u-boot_install ubl_install psp_examples_install cmem_install dmai_install codecs_install ceexamples_install audio_soc_example_install c6accel_install c6run_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber: clean u-boot_clean ubl_clean psp_examples_clean cmem_clean dmai_clean ceexamples_clean codecs_clean audio_soc_example_clean c6accel_clean
+clobber: clean u-boot_clean ubl_clean psp_examples_clean cmem_clean dmai_clean ceexamples_clean codecs_clean audio_soc_example_clean c6accel_clean c6run_clean
 
 #==============================================================================
 # A help message target.
@@ -91,9 +91,14 @@ help:
 	@echo "    audio_soc_example_kernel     : Build linux kernel for Audio Soc example files"
 	@echo "    audio_soc_example_install    : Install Audio Soc example files"
 	@echo
-	@echo "    c6accel                      : Build c6accel package "
+	@echo "    c6accel                      : Build c6accel package"
 	@echo "    c6accel_clean                : Remove generated c6accel files"
 	@echo "    c6accel_install              : Install the c6accel image"
+	@echo
+	@echo "    c6run                        : Build c6run backend libraries"
+	@echo "    c6run_clean                  : Remove c6run backend libraries"
+	@echo "    c6run_examples               : Build c6run examples & tests"
+	@echo "    c6run_install                : Install c6run examples & tests"
 	@echo
 	@echo "    everything                   : Rebuild everything"
 	@echo "    clobber                      : Remove all generated files"
@@ -647,3 +652,84 @@ c6accel_install:
 	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)/soc" \
 	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel" \
 	install
+
+################################################################################
+# Build C6run
+################################################################################
+c6run:
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	omapl138_64MB_config
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	clean
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	oe_build
+
+c6run_clean:
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	distclean
+
+c6run_examples:
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	examples
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	tests
+
+c6run_install:
+	install -d $(EXEC_DIR)/ti-c6run-programs
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	INSTALL_DIR="$(EXEC_DIR)/ti-c6run-programs" \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	install_programs
+
