@@ -12,7 +12,7 @@ PLATFORM_omapl138 = "omapl138"
 PLATFORM_omap3 = "omap3530"
 PLATFORM ?= "<UNDEFINED_PLATFORM>"
 
-COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm3730-am3715-evm)"
+COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm37x-evm)"
 
 PR = "r7"
 

@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r24"
+PR = "r25"
 LICENSE = "MIT"
 
 inherit task
@@ -58,11 +58,24 @@ MULTIMEDIA_dm6467-evm = " \
     gstreamer-ti \
     "
 
-MULTIMEDIA_dm3730-evm = " \
+MULTIMEDIA_dm37x-evm = " \
     ti-dmai-apps \
     ti-codec-engine-examples \
     task-arago-gst \
     gstreamer-ti \
+    ti-dvsdk-demos \
+    ti-dvtb \
+    ti-data \
+    "
+
+MULTIMEDIA_omap3evm = " \
+    ti-dmai-apps \
+    ti-codec-engine-examples \
+    task-arago-gst \
+    gstreamer-ti \
+    ti-dvsdk-demos \
+    ti-dvtb \
+    ti-data \
     "
 
 MULTIMEDIA_am37x-evm = " \

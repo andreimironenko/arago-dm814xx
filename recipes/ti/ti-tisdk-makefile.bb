@@ -9,7 +9,7 @@ SRC_URI = "\
 "
 PR = "r44"
 
-do_configure_prepend_dm3730-am3715-evm () { 
+do_configure_prepend_dm37x-evm () { 
          sed -i -e 's:OMAPES=3.x:OMAPES=5.x:g' ${WORKDIR}/Makefile
          sed -i -e 's:gfx_rel_es3.x:gfx_rel_es5.x:g' ${WORKDIR}/Makefile
          sed -i -e 's:\$(PLATFORM):dm3730:g' ${WORKDIR}/Rules.make

@@ -1,4 +1,4 @@
-COMPATIBLE_MACHINE = "(omap3evm|dm3730-am3715-evm)"
+COMPATIBLE_MACHINE = "(omap3evm|dm37x-evm)"
 DEMOSPLATFORM = "omap3530"
 PV = "1_00_00_16"
 SRC_URI = "http://install.source.dir.local/${DEMOSPLATFORM}_avdata_${PV}.tar.gz;name=${DEMOSPLATFORM}_datatarball"

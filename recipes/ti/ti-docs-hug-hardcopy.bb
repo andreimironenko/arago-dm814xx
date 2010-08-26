@@ -3,7 +3,7 @@ LICENSE = "TI"
 
 require ti-paths.inc
 
-QSG_dm3730-am3715-evm = AM_DM_3730_HUG.pdf
+QSG_dm37x-evm = AM_DM_3730_HUG.pdf
 QSG_omap3evm = OMAP35x_EVM_Hardware_User_Guide.pdf
 
 SRC_URI = "\

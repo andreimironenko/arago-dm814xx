@@ -11,7 +11,7 @@ PR = "r9+svnr${SRCPV}"
 PLATFORM_dm365 = "dm365"
 PLATFORM_da850-omapl138-evm = "omapl138"
 PLATFORM_omap3evm = "omap3530"
-PLATFORM_dm3730-am3715-evm = "dm3730"
+PLATFORM_dm37x-evm = "dm3730"
 PLATFORM ?= "<UNDEFINED>"
 
 # Skip the QA for browser binary (temporary)

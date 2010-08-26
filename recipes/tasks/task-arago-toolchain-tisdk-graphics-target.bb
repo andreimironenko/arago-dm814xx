@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on sdk target"
-PR = "r5"
+PR = "r6"
 LICENSE = "MIT"
 
 inherit task
@@ -8,6 +8,10 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 # Install 3D graphics for all omap3 SOC_FAMILY devices
 GRAPHICS_3D = ""
 GRAPHICS_3D_omap3 = "libgles-omap3-dev"
+
+# graphics SDK source package is already installed hence no need for duplicating the headers.
+GRAPHICS_3D_omap3evm = ""
+GRAPHICS_3D_dm37x-evm = ""
 
 RDEPENDS_${PN} = "\
     qt4-embedded-dev \

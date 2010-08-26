@@ -12,7 +12,7 @@ PR = "r2"
 
 S = "${WORKDIR}/pspdrivers_${PV}"
 
-SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/psp/BIOSPSP/${PV}/content/BIOSPSP_${PV}_Setup.exe;name=biospsptarball"
+SRC_URI = "ftp://ftp.india.ti.com/PSP/Releases/ODC/Freon_BIOS_PSP/REL.BIOSPSP.01.30.01.GA/BIOSPSP_${PV}.tar.gz;name=biospsptarball"
 
 # No real depends right now since we're not building anything - placeholder for now
 

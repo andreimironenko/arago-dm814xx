@@ -7,7 +7,7 @@
 #  Script to install TI SDK
 #
 
-VERSION="1.1"
+VERSION="1.2"
 
 #
 # Display program usage
@@ -20,6 +20,7 @@ Usage: `basename $1` [options] --machine <machine_name> <install_dir>
   --help                Print this help message
   --graphics            Install graphics packages
   --bsp                 Install board support packages
+  --addons              Install addon demos/utilities
   --dsp                 Install c64p dsp packages
   --multimedia          Install multimedia packages
   --force               Force installation on unsupported host
@@ -74,22 +75,33 @@ execute ()
 update_rules_make()
 {
   echo "Updating Rules.make"
-  for i in ${install_dir}/usr/lib/opkg/info/*sourcetree*.control; do
-    # we are not greping package name because the name contains ti-*-sourcetree
-    name="`cat $i | grep OE | awk {'print $2'} | cut -f2-5 -d-`"
+  for i in ${install_dir}/usr/lib/opkg/info/*-src*.control; do
+    name="`cat $i | grep Package | awk {'print $2'}`"
+    
+    echo $name | grep ti-*  >/dev/null
+
+    # if package contain ti- prefix then remove it
+    if [ $? -eq 0 ]; then
+      name="`echo $name | cut -f2-5 -d-`"
+    fi
+
+    # remove -src from the end
+    name="`echo $name | sed -e 's/....$//g'`"
 
     # in some case version will be 1:xxxx and we need to remove 1: part 
     version="`cat $i | grep Version | awk {'print $2'} | cut -f2 -d: | \
           cut -f1 -d-`"
 
-    # skip examples
-    if [ "$name" = "linux-driver-examples-omap3" ]; then
-       continue;
-    fi
-
     # update rules.make
     sed -i -e s/\<__${name}__\>/${name}_${version}/g \
-     $install_dir/usr/share/ti/Rules.make
+        $install_dir/usr/share/ti/Rules.make
+
+    # rename libgles-omap3 to omap35x_graphics_sdk
+    if [ "$name" = "libgles-omap3" ]; then
+      sed -i -e s/${name}/omap35x_graphics_sdk/g \
+        $install_dir/usr/share/ti/Rules.make
+    fi
+
   done
 
   sed -i -e s=\<__kernel__\>=psp/linux-kernel-source= \
@@ -98,6 +110,9 @@ update_rules_make()
     $install_dir/usr/share/ti/Rules.make
   sed -i -e s=\<__CROSS_COMPILER_PATH__\>=${TOOLCHAIN_PATH}= \
     $install_dir/usr/share/ti/Rules.make
+  sed -i -e s=linuxlibs=linux-devkit/arm-none-linux-gnueabi/usr= \
+    $install_dir/usr/share/ti/Rules.make
+
 }
 
 #
@@ -106,34 +121,9 @@ update_rules_make()
 move_to_install_dir()
 {
   echo "Moving sourcetree"
-  for i in ${install_dir}/usr/lib/opkg/info/*.control; do
-    # we are not greping package name because the name contains ti-*-sourcetree
-    name="`cat $i | grep OE | awk {'print $2'} | cut -f2-5 -d-`"
-
-    # in some case version will be 1:xxxx and we need to remove 1: part 
-    version="`cat $i | grep Version | awk {'print $2'} | cut -f2 -d: | \
-          cut -f1 -d-`"
-
-    # move source from pkginstall_dir/ti-$name-tree to 
-    # $ROOT_DIR/$name_$version to present older dvsdk style
-    if [ -d ${install_dir}/usr/share/ti/ti-$name-tree ]; then
-      echo " from ti-$name-tree => ${name}_${version}"
-      mv ${install_dir}/usr/share/ti/ti-$name-tree ${install_dir}/${name}_${version}
-    fi
-
-    # Handle the special case, where codec source directory is named as  
-    # "ti-codecs-tree" instead of ti-codecs-$machine-tree. 
-    case "$name" in
-      codecs-*) 
-        echo " from ti-codecs-tree => ${name}_${version}"
-        mv ${install_dir}/usr/share/ti/ti-codecs-tree ${install_dir}/${name}_${version}
-        ;;
-    esac
-
-  done
   if [ -d ${install_dir}/usr/share/ti/ti-psp-tree ]; then
     echo " from ti-psp-tree => psp"
-    mv ${install_dir}/usr/share/ti/ti-psp-tree ${install_dir}/psp
+    mv ${install_dir}/usr/share/ti/ti-psp-tree/* ${install_dir}/psp/
 
     # copy prebuilt kernel image and uboot in psp/prebuilt directory
     mkdir -p ${install_dir}/psp/prebuilt-images/
@@ -146,16 +136,6 @@ move_to_install_dir()
     echo " from ti-docs-tree => docs"
     mv ${install_dir}/usr/share/ti/ti-docs-tree/* ${install_dir}/docs/
     rmdir ${install_dir}/usr/share/ti/ti-docs-tree
-  fi
-
-  if [ -d ${install_dir}/usr/share/ti/ti-gfx-sdk-tree ]; then
-    version="`cat ${install_dir}/usr/lib/opkg/info/libgles-omap3-sourcetree.control  | grep Version | awk {'print $2'} | cut -f2 -d: | cut -f1 -d-`"
-    echo " from ti-gfx-sdk-tree => omap35x_graphics_sdk"
-    mkdir -p ${install_dir}/omap35x_graphics_sdk_${version}
-    mv ${install_dir}/usr/share/ti/ti-gfx-sdk-tree/* ${install_dir}/omap35x_graphics_sdk_${version}
-    rmdir ${install_dir}/usr/share/ti/ti-gfx-sdk-tree
-    sed -i -e s/\<__libgles-omap3__\>/omap35x_graphics_sdk_${version}/g \
-     $install_dir/usr/share/ti/Rules.make
   fi
 
   mv ${install_dir}/usr/share/ti/* ${install_dir}/
@@ -191,14 +171,6 @@ echo "
       *) highlight="" ;;
     esac
 
-    if [ "$package" = "libticpublt-bx1.0" ]; then
-       license="TI"
-    fi
-
-    if [ "$package" = "qt4-blitrix-demos" ]; then
-       license="TI"
-    fi
-    
     case "$source" in
       file://*) source="";;
       *) ;;
@@ -206,7 +178,7 @@ echo "
 
     case "$package" in
       task-*) continue ;;
-      ti-*-sourcetree*) delivered_as="Source and Binary"
+      *-src_*) delivered_as="Source and Binary"
             modified="Yes" 
             location="$2"
             ;; 
@@ -218,6 +190,17 @@ echo "
             modified="No";;
             
     esac
+
+    # Check if this package has a directory in the Arago SDK licenses
+    # directory.  If so copy it to the top-level "docs" licenses directory.
+    if [ -e ${install_dir}/linux-devkit/licenses/$package ]
+    then
+        if [ ! -e ${install_dir}/docs/licenses ]
+        then
+            mkdir -p ${install_dir}/docs/licenses
+        fi
+        mv ${install_dir}/linux-devkit/licenses/$package ${install_dir}/docs/licenses/ > /dev/null 2>&1
+    fi
 
     echo "
 <tr><td>${package} </td><td>${version}</td> <td $highlight> ${license} </td><td>$location</td><td>$delivered_as</td><td>$modified</td> <td><a href=$source>$source</a></td></tr>
@@ -350,13 +333,9 @@ prepare_install ()
 host_install ()
 {
   mkdir -p ${install_dir}/usr/lib/opkg
-  echo "Install $bsp_src $dsp_src $multimedia_src $graphics_src ti-tisdk-makefile"
+  echo "Install $bsp_src $addons_src $dsp_src $multimedia_src $graphics_src ti-tisdk-makefile"
   execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_conf}  update"
-  execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_conf} install  $bsp_src $dsp_src $multimedia_src $graphics_src ti-tisdk-makefile"
-
-  # TODO: figure out a ways to disable glibc, libasound, freetype depedencies
-  # from sourcetree packages.  For now uninstall those extra packages
-  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends libc6 libgcc1 libstdc++6 libasound2 alsa-conf-base sln libfreetype6 libz1 libpng12 libjpeg62 ncurses libpng12-0  libjpeg62 libglib-2.0-0 libgthread-2.0-0 libpng12-0 bigreqsproto bigreqsproto-dev devmem2 devmem2-dev fbset fbset-dev fbset-modes gettext gettext-dev glibc-extra-nss inputproto inputproto-dev kbproto kbproto-dev kernel-2.6.32 kernel libblkid1 libc6-dev libexpat1 libexpat-dev libgcc1-dev libgettextlib libgettextsrc libgles-omap3-blitwseg libgles-omap3 libgles-omap3-dev libgles-omap3-flipwsegl libgles-omap3-frontwsegl libgles-omap3-linuxfbwsegl libice6 libice-dev libjpeg-dev libsm6 libsm-dev libthread-db1 libuuid1 libvolume-id1 libvolume-id-dev libx11-6 libx11-dev libxau6 libxau-dev libxdmcp6 libxdmcp-dev libz-dev udev udev-dev udev-utils update-modules update-rc.d  update-rc.d-dev util-linux-ng-blkid  util-linux-ng-cfdisk util-linux-ng util-linux-ng-dev  util-linux-ng-fdisk  util-linux-ng-fsck util-linux-ng-losetup util-linux-ng-mountall util-linux-ng-mount  util-linux-ng-readprofile util-linux-ng-sfdisk util-linux-ng-swaponoff util-linux-ng-umount util-macros util-macros-dev xcmiscproto xcmiscproto-dev xextproto xextproto-dev xf86bigfontproto xf86bigfontproto-dev xproto xproto-dev xtrans-dev  libgles-omap3-blitwsegl module-init-tools-depmod ncurses-dev omap3-sgx-modules libthread-db1 "
+  execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_conf} install  $bsp_src $addons_src $dsp_src $multimedia_src $graphics_src ti-tisdk-makefile"
 
   update_rules_make
 
@@ -423,10 +402,6 @@ install_arago_sdk ()
   sed -i "2{s|TOOLCHAIN_PATH\(..*\)|TOOLCHAIN_PATH=${TOOLCHAIN_PATH}|g}" $install_dir/linux-devkit/environment-setup
   echo "export PS1=\"\[\e[32;1m\][linux-devkit]\[\e[0m\]:\w> \"" >> $install_dir/linux-devkit/environment-setup
 
-  echo "Updating linuxlibs path in rules.make "
-  sed -i -e s=linuxlibs=linux-devkit/arm-none-linux-gnueabi/usr= \
-    $install_dir/Rules.make
-
   echo "Updating prefix in libtoolize "
   sed -i -e "s|/linux-devkit|$install_dir/linux-devkit|g" \
     $install_dir/linux-devkit/bin/libtoolize 
@@ -442,29 +417,35 @@ while [ $# -gt 0 ]; do
       version $0
       ;;
     --graphics)
-      graphics_bin="task-arago-tisdk-graphics-target";
-      graphics_src="task-arago-tisdk-graphics-host";
-      graphics_sdk_target="task-arago-tisdk-graphics-toolchain-target";
+      graphics_bin="task-arago-tisdk-graphics";
+      graphics_src="task-arago-toolchain-tisdk-graphics-host";
+      graphics_sdk_target="task-arago-toolchain-tisdk-graphics-target";
       graphics_sdk_host="qt4-tools-sdk";
       graphics="yes";
       shift;
       ;;
     --bsp)
-      bsp_src="task-arago-tisdk-bsp-host";
-      bsp_bin="task-arago-tisdk-bsp-target";
+      bsp_src="task-arago-toolchain-tisdk-bsp-host";
+      bsp_bin="task-arago-tisdk-bsp";
       bsp="yes";
       shift;
       ;;
+    --addons)
+      addons_src="task-arago-toolchain-tisdk-addons-host";
+      addons_bin="task-arago-tisdk-addons";
+      addons="yes";
+      shift;
+      ;;
     --dsp)
-      dsp_src="task-arago-tisdk-dsp-host";
-      dsp_bin="task-arago-tisdk-dsp-target";
+      dsp_src="task-arago-toolchain-tisdk-dsp-host";
+      dsp_bin="task-arago-tisdk-dsp";
       dsp="yes";
       shift;
       ;;
     --multimedia)
-      multimedia_src="task-arago-tisdk-multimedia-host"
-      multimedia_bin="task-arago-tisdk-multimedia-target"
-      multimedia_sdk_target="task-arago-tisdk-multimedia-toolchain-target";
+      multimedia_src="task-arago-toolchain-tisdk-multimedia-host"
+      multimedia_bin="task-arago-tisdk-multimedia"
+      multimedia_sdk_target="task-arago-toolchain-tisdk-multimedia-target";
       multimedia="yes";
       shift;
       ;;
@@ -501,6 +482,12 @@ prepare_install
 mkdir -p $install_dir/docs
 sw_manifest_header > ${install_dir}/docs/software_manifest.htm
 
+# install arago sdk
+# NOTE:  This should be installed before any other packages so that
+#        licenses are available to by copied when making the 
+#        software manifest.
+install_arago_sdk
+
 # install sourcetree (or devel) ipk on host.
 host_install
 
@@ -508,8 +495,8 @@ host_install
 mkdir -p ${install_dir}/filesystem
 cp deploy/images/$machine/*.tar.gz ${install_dir}/filesystem
 export DVSDK_INSTALL_MACHINE="$machine"
-echo "Install  $install_dir $bsp_bin $multimedia_bin $graphics_bin $dsp_bin"
-fakeroot install_rootfs.sh $install_dir $bsp_bin $multimedia_bin $graphics_bin $dsp_bin 
+echo "Install  $install_dir $bsp_bin $addons_bin $multimedia_bin $graphics_bin $dsp_bin"
+fakeroot install_rootfs.sh $install_dir $bsp_bin $addons_bin $multimedia_bin $graphics_bin $dsp_bin 
 
 tar zxf `ls -1 ${install_dir}/filesystem/*.tar.gz` -C $install_dir/filesystem --wildcards *.control*
 generate_sw_manifest "Packages installed on the target:" "$install_dir/filesystem" >> ${install_dir}/docs/software_manifest.htm
@@ -517,9 +504,6 @@ rm -rf ${install_dir}/filesystem/usr
 
 # copy original image on filesystem directory.
 cp deploy/images/$machine/*.tar.gz ${install_dir}/filesystem
-
-# install arago sdk
-install_arago_sdk
 
 generate_sw_manifest "Packages installed on arago-sdk host side:" "$install_dir/linux-devkit" >> ${install_dir}/docs/software_manifest.htm
 
@@ -531,10 +515,15 @@ sw_manifest_footer >> ${install_dir}/docs/software_manifest.htm
 rm -rf ${opkg_conf}
 rm -rf ${opkg_sdk_conf}
 rm -rf ${install_dir}/install-tools
+rm -rf $install_dir/var
 
 # TODO: don't know which package is creating include directory on top level.
 # for now remove the directory.
 rm -rf ${install_dir}/include
+
+# Remove licenses directory from Arago SDK since any applicable licenses
+# have already been copied to the top-level docs/licenses directory
+rm -rf ${install_dir}/linux-devkit/licenses
 
 echo "Installation completed!"
 

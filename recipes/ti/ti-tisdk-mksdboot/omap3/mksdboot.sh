@@ -66,7 +66,7 @@ if [ ! -d $sdkdir ]; then
    exit 1;
 fi
 
-if [ ! -f $sdkdir/filesystem/dvsdk-dm3730-am3715-evm-rootfs.tar.gz ]; then
+if [ ! -f $sdkdir/filesystem/dvsdk-dm37x-evm-rootfs.tar.gz ]; then
   if [ ! -f $sdkdir/filesystem/dvsdk-omap3evm-rootfs.tar.gz ]; then
     echo "ERROR: failed to find rootfs tar in $sdkdir/filesystem "
     exit 1;

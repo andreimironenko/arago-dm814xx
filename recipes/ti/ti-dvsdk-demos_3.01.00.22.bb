@@ -1,6 +1,6 @@
 require ti-dvsdk-demos.inc
 
-COMPATIBLE_MACHINE = "(omap3evm|dm3730-am3715-evm)"
+COMPATIBLE_MACHINE = "(omap3evm|dm37x-evm)"
 
 PV = "3_01_00_22"
 SRCREV         = "9530"

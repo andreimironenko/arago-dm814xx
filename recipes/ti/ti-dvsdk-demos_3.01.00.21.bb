@@ -1,6 +1,6 @@
 require ti-dvsdk-demos.inc
 
-COMPATIBLE_MACHINE = "(omap3evm|dm3730-am3715-evm)"
+COMPATIBLE_MACHINE = "(omap3evm|dm37x-evm)"
 
 SRCREV         = "9521"
 DEMOSBRANCH    = "tags/TAG_${PV}"

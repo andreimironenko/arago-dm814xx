@@ -41,9 +41,9 @@ SRCREV_omapzoom36x = "251d92815500143aefdbe3b3558a0ce6daeaebdc"
 SRC_URI[uboot.md5sum] = "e68b30714d22ce2f926d2dd19f94a2be"
 SRC_URI[uboot.sha256sum] = "e7e5c87d939cc4c1f14d17ea0814b0bed97021c7afca3ef9053c896c2b5bdd6f"
 
-SRCREV_dm3730-am3715-evm = "fc6d5be15c703d21aef0ae0b8c02177721f0445f"
-SRC_URI_dm3730-am3715-evm = "git://arago-project.org/git/projects/x-load-omap3.git;protocol=git"
-XLOAD_MACHINE_dm3730-am3715-evm = "omap3evm_config"
+SRCREV_dm37x-evm = "fc6d5be15c703d21aef0ae0b8c02177721f0445f"
+SRC_URI_dm37x-evm = "git://arago-project.org/git/projects/x-load-omap3.git;protocol=git"
+XLOAD_MACHINE_dm37x-evm = "omap3evm_config"
 
 SRCREV_omap3evm = "fc6d5be15c703d21aef0ae0b8c02177721f0445f"
 SRC_URI_omap3evm = "git://arago-project.org/git/projects/x-load-omap3.git;protocol=git"

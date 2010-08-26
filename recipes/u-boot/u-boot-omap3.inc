@@ -5,8 +5,6 @@ PRIORITY = "optional"
 LICENSE = "GPLv2"
 PROVIDES = "virtual/bootloader"
 
-require ../ti/ti-staging.inc
-require ../ti/ti-paths.inc
 DEPENDS = "mtd-utils"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
@@ -40,8 +38,7 @@ do_install () {
 		install -m 755 ${S}/tools/env/fw_printenv ${D}${base_sbindir}/fw_printenv
 		install -m 755 ${S}/tools/env/fw_printenv ${D}${base_sbindir}/fw_setenv
 	fi
-	install -d ${D}/boot
-	install -m 755  ${S}/${UBOOT_BINARY} ${D}/boot
+
 }
 
 FILES_${PN} = "/boot"
@@ -70,13 +67,3 @@ do_stage() {
 	install -d ${STAGING_BINDIR_NATIVE}
 	install -m 755 tools/mkimage ${STAGING_BINDIR_NATIVE}/
 }
-
-do_install_append() {
-    	install -d ${D}/${UBOOT_SOURCE_DIR}
-	cp -pPrf ${S}/* ${D}/${UBOOT_SOURCE_DIR}
-	cd ${D}/${UBOOT_SOURCE_DIR}
-	make distclean
-}
-
-FILES_${PN} = "/boot/*"
-

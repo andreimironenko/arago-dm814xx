@@ -13,7 +13,7 @@ PR_append = "c"
 # SRC_URI = "http://gitsvr01.india.ti.com/git/psp_examples/.git;protocol=git"
 SRC_URI = "http://install.source.dir.local/psp_examples_${SRCREV}.tar.gz"
 
-COMPATIBLE_MACHINE = "(omap3evm|dm3730-am3715-evm)"
+COMPATIBLE_MACHINE = "(omap3evm|dm37x-evm)"
 
 S = "${WORKDIR}/psp_examples/omap"
 

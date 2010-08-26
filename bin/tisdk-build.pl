@@ -3,24 +3,25 @@
 use POSIX;
 
 ################################################################################
-# Arago build script
+# TISDK Arago build script
 ################################################################################
-my $script_version = "0.7";
+my $script_version = "0.8";
 
 my @no_machines = ("arago", "include");
 my @packages;
 
-my $bsp_source = "task-arago-tisdk-bsp-host";
-my $bsp_binary = "task-arago-tisdk-bsp-target";
-my $multimedia_source = "task-arago-tisdk-multimedia-host";
-my $multimedia_binary = "task-arago-tisdk-multimedia-target";
-my $multimedia_sdk_header ="task-arago-tisdk-multimedia-toolchain-target";
-my $dsp_source = "task-arago-tisdk-dsp-host";
-my $dsp_binary = "task-arago-tisdk-dsp-target";
-my $multimedia_sdk_target ="task-arago-tisdk-multimedia-toolchain-target";
-my $graphics_binary = "task-arago-tisdk-graphics-target";
-my $graphics_src = "task-arago-tisdk-graphics-host";
-my $graphics_sdk_target ="task-arago-tisdk-graphics-toolchain-target";
+my $bsp_source = "task-arago-toolchain-tisdk-bsp-host";
+my $bsp_binary = "task-arago-tisdk-bsp";
+my $addons_source = "task-arago-toolchain-tisdk-addons-host";
+my $addons_binary = "task-arago-tisdk-addons";
+my $multimedia_source = "task-arago-toolchain-tisdk-multimedia-host";
+my $multimedia_binary = "task-arago-tisdk-multimedia";
+my $multimedia_sdk_header ="task-arago-toolchain-tisdk-multimedia-target";
+my $dsp_source = "task-arago-toolchain-tisdk-dsp-host";
+my $dsp_binary = "task-arago-tisdk-dsp";
+my $graphics_binary = "task-arago-tisdk-graphics";
+my $graphics_src = "task-arago-toolchain-tisdk-graphics-host";
+my $graphics_sdk_target ="task-arago-toolchain-tisdk-graphics-target";
 
 my $image;
 my $machine;
@@ -32,6 +33,7 @@ my $machine_default = "dm6446-evm";
 my %machines = (
     "dm365-evm"     => {
         bsp_default         => "yes",
+        addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "no",
         dvsdk_factory_default => "no",
@@ -39,6 +41,7 @@ my %machines = (
     },
     "dm6446-evm"    => {
         bsp_default         => "yes",
+        addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         dvsdk_factory_default => "no",
@@ -46,6 +49,7 @@ my %machines = (
     },
     "dm355-evm"     => {
         bsp_default         => "yes",
+        addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "no",
         dvsdk_factory_default => "no",
@@ -53,6 +57,7 @@ my %machines = (
     },
     "da830-omapl137-evm"     => {
         bsp_default         => "yes",
+        addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         dvsdk_factory_default => "no",
@@ -60,6 +65,7 @@ my %machines = (
     },
     "dm6467-evm"     => {
         bsp_default         => "yes",
+        addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         dvsdk_factory_default => "no",
@@ -67,6 +73,7 @@ my %machines = (
     },
     "da850-omapl138-evm"     => {
         bsp_default         => "yes",
+        addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         dvsdk_factory_default => "no",
@@ -74,15 +81,25 @@ my %machines = (
     },
     "omap3evm"     => {
         bsp_default         => "yes",
+        addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
-    "dm3730-am3715-evm"     => {
+    "dm37x-evm"     => {
         bsp_default         => "yes",
+        addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
+        dvsdk_factory_default => "no",
+        graphics_default    => "yes",
+    },
+    "am37x-evm"     => {
+        bsp_default         => "yes",
+        addons_default      => "yes",
+        multimedia_default  => "yes",
+        dsp_default         => "no",
         dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
@@ -157,8 +174,8 @@ sub build_image
         }
     }
 
-    print "\nBuilding meta-toolchain-base for $machine\n";
-    $cmd = "MACHINE=$machine META_SDK_PATH=/linux-devkit bitbake meta-toolchain-arago";
+    print "\nBuilding meta-toolchain-arago-base-tisdk for $machine\n";
+    $cmd = "MACHINE=$machine META_SDK_PATH=/linux-devkit bitbake meta-toolchain-arago-base-tisdk";
     $result = system($cmd);
     if ($result) {
         print "\n ERROR: failed to build sdk";
@@ -176,7 +193,8 @@ sub copy_output
     my $march;
 
     if ($machine =~ m/beagleboard/ || $machine =~ m/omap3evm/ ||
-        $machine =~ m/am3517-evm/ || $machine =~ m/dm3730/) {
+        $machine =~ m/am3517-evm/ || $machine =~ m/dm37x/ ||
+        $machine =~ m/am37x/) {
         $march = "armv7a";
     }
     else {
@@ -353,7 +371,7 @@ sub copy_output
     
     # copy install script
     print "\nCopying $arago_dir/arago/bin/install.sh ...";
-    $cmd = "cp $arago_dir/arago/bin/install*.sh $sdkpath";
+    $cmd = "cp $arago_dir/arago/bin/tisdk-install*.sh $sdkpath/install.sh";
     $result = system($cmd);
 
     if ($result) {
@@ -362,7 +380,7 @@ sub copy_output
     }
 
     # copy opkg and fakeroot command on sdk cdrom, these commands will be
-    # used by install.sh during installation.
+    # used by tisdk-install.sh during installation.
     print "\nCopying $arago_dir/arago/bin/install-tools.tgz  ...";
     $cmd = "cp $arago_dir/arago/bin/install-tools.tgz  $sdkpath";
     
@@ -517,6 +535,29 @@ sub get_input
         $bsp = $machines{$machine}{'bsp_default'};
     }
 
+    if (!$addons) {
+        print "\nDo you want to add addons in SDK? \n";
+        print "[ $machines{$machine}{'addons_default'} ] ";
+        $input = <STDIN>;
+        $input =~ s/\s+$//;
+
+        if ($input) {
+            if ($input =~ m/y/i) {
+                $addons = "yes";
+            }
+            else {
+                $addons = "no";
+            }
+        }
+        else {
+            $addons = $machines{$machine}{'addons_default'};
+        }
+    }
+
+    if ($addons =~ m/default/i) {
+        $addons = $machines{$machine}{'addons_default'};
+    }
+
     if (!$multimedia) {
         print "\nDo you want to add Multimedia packages in SDK? \n";
         print "[ $machines{$machine}{'multimedia_default'} ] ";
@@ -615,6 +656,11 @@ sub get_input
         $packages[$index++] = $bsp_binary;
     }
 
+    if ($addons =~ m/yes/i) {
+        $packages[$index++] = $addons_source;
+        $packages[$index++] = $addons_binary;
+    }
+
     if ($multimedia =~ m/yes/i) {
         $packages[$index++] = $multimedia_source;
         $packages[$index++] = $multimedia_binary;
@@ -689,6 +735,12 @@ sub parse_args
             next;
         }
 
+        if ($ARGV[0] eq '-a' || $ARGV[0] eq '--addons') {
+            shift(@ARGV);
+            $addons = shift(@ARGV);
+            next;
+        }
+
         if ($ARGV[0] eq '-e' || $ARGV[0] eq '--multimedia') {
             shift(@ARGV);
             $multimedia = shift(@ARGV);
@@ -735,11 +787,12 @@ sub parse_args
 ################################################################################
 sub display_help
 {
-    print "Usage: perl arago-build.pl [options]\n\n";
+    print "Usage: perl tisdk-build.pl [options]\n\n";
     print "    -h | --help         Display this help message.\n";
     print "    -m | --machine      Machine type to build for.\n";
     print "    -i | --image        Image to build.\n";
     print "    -b | --bsp          Add Board Support Package in SDK.\n";
+    print "    -a | --addons       Add Addon demo/utility packages in SDK.\n";
     print "    -e | --multimedia   Add Multimedia packages in SDK.\n";
     print "    -d | --dsp          Add DSP packages in SDK.\n";
     print "    -f | --factory      Build DVSDK factory image.\n";
