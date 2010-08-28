@@ -3,7 +3,7 @@
 
 require arago-image.inc
 
-COMPATIBLE_MACHINE = "dm37x-evm|am37x-evm|omap3evm|dm365-evm|da850-omapl138-evm"
+COMPATIBLE_MACHINE = "dm37x-evm|am37x-evm|omap3evm|dm365-evm|da850-omapl138-evm|ti816x"
 
 IMAGE_INSTALL += "\
     task-arago-base \
