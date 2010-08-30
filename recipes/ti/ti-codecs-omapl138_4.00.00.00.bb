@@ -5,6 +5,8 @@ LICENSE = "TI"
 require ti-paths.inc
 require ti-staging.inc
 
+PR="r2"
+
 PV="4_00_00_00"
 
 CODEC_SUITE_NAME="${WORKDIR}/${PN}_${PV}"
@@ -107,7 +109,9 @@ python do_unpack () {
 
 }
 
-do_create_srcipk_prepend () {
+addtask prepsources after do_unpack before do_patch
+
+do_prepsources () {
 
     mkdir -p ${CODEC_SUITE_NAME}/packages/ti/sdo/server/cs
     cp ${WORKDIR}/git/omap-l138/cs1omapl138/rel-files/*  ${CODEC_SUITE_NAME}/  

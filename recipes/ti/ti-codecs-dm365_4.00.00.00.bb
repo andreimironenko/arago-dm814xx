@@ -2,6 +2,8 @@ DESCRIPTION = "TI Codecs for DM365"
 SECTION = "multimedia"
 LICENSE = "TI"
 
+PR="r2"
+
 require ti-paths.inc
 require ti-staging.inc
 
@@ -139,8 +141,9 @@ python do_unpack () {
     bb.build.exec_func('ti_bin_do_unpack', d)
 }
 
+addtask prepsources after do_unpack before do_patch
 
-do_create_srcipk_prepend () {
+do_prepsources() {
 
     mkdir -p ${CODEC_SUITE_NAME}/packages/ti/sdo/codecs
     mkdir -p ${CODEC_SUITE_NAME}/packages/ittiam/codecs
