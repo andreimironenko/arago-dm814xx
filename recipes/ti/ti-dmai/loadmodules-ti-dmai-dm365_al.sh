@@ -5,7 +5,6 @@
 # Sample bootargs is given below
 # mem=60M console=ttyS0,115200n8 root=/dev/nfs rw nfsroot=<nfsroot> ip=dhcp video=davincifb:vid0=OFF:vid1=OFF:osd0=720x576x16,2025K dm365_imp.oper_mode=0
 
-depmod -a
 rmmod cmemk 2>/dev/null
 rmmod irqk 2>/dev/null
 rmmod edmak 2>/dev/null

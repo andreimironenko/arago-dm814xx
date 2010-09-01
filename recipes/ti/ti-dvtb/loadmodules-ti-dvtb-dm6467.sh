@@ -14,9 +14,6 @@
 rmmod cmemk 2>/dev/null
 rmmod dsplinkk 2>/dev/null 
 
-depmod -a cmemk
-depmod -a dsplinkk
-
 modprobe cmemk phys_start=0x84C00000 phys_end=0x8ba00000 pools=2x921600,1x460800,1x1048576,1x345600,2x86400,11x564528,5x677376,14x5396480,3x4147200,4x1451520,4x1843200
 
 modprobe dsplinkk

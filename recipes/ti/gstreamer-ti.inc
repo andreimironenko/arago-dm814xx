@@ -15,7 +15,7 @@ require ti-paths.inc
 require ti-staging.inc
 
 # Rebuild on kernel change since it links statically to ti-dmai, ti-codec-engine, etc
-PR = "r71+${MACHINE_KERNEL_PR}"
+PR = "r72+${MACHINE_KERNEL_PR}"
 
 DEPENDS = "ti-dmai gstreamer gst-plugins-base"
 
@@ -95,9 +95,6 @@ do_install_prepend () {
      echo "modprobe sdmak" >> ${D}/${installdir}/gst/${PLATFORM}/loadmodules.sh
     fi
         
-     # FIXME: add depmod -a after #!/bin/sh  
-     sed -i '/#!\/bin\/sh/a\depmod -a' ${D}/${installdir}/gst/${PLATFORM}/loadmodules.sh
-
     # delete .svn files
     find ${D}/${installdir}/gst -name .svn -type d | xargs rm -rf
     chmod 0755 ${D}/${installdir}/gst -R

@@ -1,6 +1,4 @@
 #!/bin/sh
-depmod -a
-
 #
 # Default Memory Map
 #
