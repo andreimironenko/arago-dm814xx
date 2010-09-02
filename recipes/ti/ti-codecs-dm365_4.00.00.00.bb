@@ -1,7 +1,6 @@
 DESCRIPTION = "TI Codecs for DM365"
 SECTION = "multimedia"
 LICENSE = "TI"
-
 PR="r2"
 
 require ti-paths.inc
@@ -171,6 +170,5 @@ do_install() {
 
 PACKAGES += "ti-codecs-dm365-server"
 FILES_ti-codecs-dm365-server = "${installdir}/ti-codecs-server/*"
-
 INSANE_SKIP_ti-codecs-dm365-server = True
 

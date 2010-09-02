@@ -32,6 +32,8 @@ export NDK_INSTALL_DIR_RECIPE        = "${installdir}/ti-ndk-tree"
 export C6ACCEL_INSTALL_DIR_RECIPE    = "${installdir}/ti-c6accel-tree"
 export GFX_SDK_INSTALL_DIR_RECIPE    = "${installdir}/ti-gfx-sdk-tree"
 export C6RUN_INSTALL_DIR_RECIPE      = "${installdir}/ti-c6run-tree"
+export AUDIO_SOC_INSTALL_DIR_RECIPE  = "${installdir}/ti-audio-soc-example-tree"
+export C6ACCEL_INSTALL_DIR_RECIPE    = "${installdir}/ti-c6accel-tree"
 
 # This is where the tools will end up in staging provided PACKAGE_ARCH = ${MACHINE_ARCH} is set
 export CODEGEN_INSTALL_DIR    = "${STAGING_DIR}/${MULTIMACH_TARGET_SYS}${CODEGEN_INSTALL_DIR_RECIPE}"

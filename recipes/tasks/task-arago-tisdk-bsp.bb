@@ -40,8 +40,22 @@ BSP_COMPONENTS_append_dm37x-evm = "\
     ti-linux-driver-examples-omap3 \
     "    
 
+BLUETOOTH_SUPPORT = ""
+
+BLUETOOTH_SUPPORT_omap3 = "\
+    bluez4 \
+    bluez4-agent \
+    libasound-module-bluez \
+    bluez-hcidump \
+    openobex \
+    openobex-apps \
+    obexftp \
+    ussp-push \
+    "
+
 RDEPENDS_${PN} = "\
     ${BSP_COMPONENTS} \
+    ${BLUETOOTH_SUPPORT} \
     "
 
 RRECOMMENDS_${PN} = "\
@@ -50,3 +64,4 @@ RRECOMMENDS_${PN} = "\
     kernel-vmlinux \
     u-boot \
     "
+
