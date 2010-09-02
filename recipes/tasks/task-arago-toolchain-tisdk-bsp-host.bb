@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support Package sources (or development header) packages on host"
-PR = "r32"
+PR = "r33"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -61,6 +61,7 @@ BSP_COMPONENTS_append_omap3evm = "\
     ti-docs-psp \
     ti-tisdk-mksdboot \
     ti-linux-driver-examples-omap3-src \
+    flash-utility \
     "
 
 # Add components to omap3 components
@@ -79,6 +80,7 @@ BSP_COMPONENTS_append_dm37x-evm = "\
     ti-docs-psp \
     ti-tisdk-mksdboot \
     ti-linux-driver-examples-omap3-src \
+    flash-utility \
     "
 
 RRECOMMENDS_${PN} = "\
