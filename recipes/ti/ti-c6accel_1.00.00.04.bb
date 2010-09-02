@@ -2,7 +2,6 @@ require ti-c6accel.inc
 
 PV = "1_00_00_04"
 
-SRC_URI[c6accelbin.md5sum] = "a1146d7b23252b4ac2ff927d79dcdc4b"
-SRC_URI[c6accelbin.sha256sum] = "c558ad170315b8706a9639a056a38b12c42b8ae9bb909e6529591a69c82cc789"
-
+SRC_URI[c6accelbin.md5sum] = "520a2e416c6eaefb3aefcf66f775f4c7"
+SRC_URI[c6accelbin.sha256sum] = "54f42307dd9122c59d0ea604ec126ba7a72dbb9772a6d845960fa8529706a400"
 
