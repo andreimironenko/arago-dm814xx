@@ -64,19 +64,19 @@ do_install() {
       LINK_INSTALL_DIR="${LINK_INSTALL_DIR}" \
       LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
       C6ACCEL_INSTALL_DIR="${S}/soc" \
-      EXEC_DIR_C6ACCEL="${D}/${installdir}/c6accel-examples" \
+      EXEC_DIR_C6ACCEL="${D}/${installdir}/c6accel-apps" \
       install
 
     # replace insmod with modprobe
-    sed -i 's/insmod/modprobe/g' ${D}/${installdir}/c6accel/loadmodules_${PLATFORM}_c6accel.sh
-    sed -i 's/.ko//g' ${D}/${installdir}/c6accel/loadmodules_${PLATFORM}_c6accel.sh
+    sed -i 's/insmod/modprobe/g' ${D}/${installdir}/c6accel-apps/loadmodules_${PLATFORM}_c6accel.sh
+    sed -i 's/.ko//g' ${D}/${installdir}/c6accel-apps/loadmodules_${PLATFORM}_c6accel.sh
     # remove prebuilt *.ko files
     rm -rf ${D}/${installdir}/c6accel/*.ko
 
 }
 
 PACKAGES += "ti-c6accel-apps"
-FILES_ti-c6accel-apps = "${installdir}/c6accel/*"
+FILES_ti-c6accel-apps = "${installdir}/c6accel-apps/*"
 INSANE_SKIP_ti-c6accel-apps = True
 RDEPENDS_ti-c6accel-apps += "ti-cmem-module ti-dsplink-module"
 
