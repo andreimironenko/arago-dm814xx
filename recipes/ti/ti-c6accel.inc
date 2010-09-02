@@ -71,7 +71,7 @@ do_install() {
     sed -i 's/insmod/modprobe/g' ${D}/${installdir}/c6accel-apps/loadmodules_${PLATFORM}_c6accel.sh
     sed -i 's/.ko//g' ${D}/${installdir}/c6accel-apps/loadmodules_${PLATFORM}_c6accel.sh
     # remove prebuilt *.ko files
-    rm -rf ${D}/${installdir}/c6accel/*.ko
+    rm -rf ${D}/${installdir}/c6accel-apps/*.ko
 
 }
 
