@@ -14,11 +14,13 @@ PLATFORM ?= "<UNDEFINED_PLATFORM>"
 
 COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm37x-evm)"
 
-PR = "r7"
+PROVIDES += "ti-c6accel-apps"
+
+PR = "r8"
 
 S = "${WORKDIR}/c6accel_${PV}/c6accel_${PV}"
 
-SRC_URI = "http://install.source.dir.local/c6accel_${PV}_Linux-x86_Setup.bin;name=c6accelbin "
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/c6000/web/c6accel/latest/exports//c6accel_${PV}_Linux-x86_Setup.bin;name=c6accelbin "
 
 BINFILE="c6accel_${PV}_Linux-x86_Setup.bin"
 TI_BIN_UNPK_CMDS="Y:workdir"
@@ -62,7 +64,7 @@ do_install() {
       LINK_INSTALL_DIR="${LINK_INSTALL_DIR}" \
       LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
       C6ACCEL_INSTALL_DIR="${S}/soc" \
-      EXEC_DIR_C6ACCEL="${D}/${installdir}/c6accel" \
+      EXEC_DIR_C6ACCEL="${D}/${installdir}/c6accel-examples" \
       install
 
     # replace insmod with modprobe
@@ -73,7 +75,8 @@ do_install() {
 
 }
 
-FILES_${PN} = "${installdir}/c6accel/*"
-INSANE_SKIP_${PN} = True
-
+PACKAGES += "ti-c6accel-apps"
+FILES_ti-c6accel-apps = "${installdir}/c6accel/*"
+INSANE_SKIP_ti-c6accel-apps = True
+RDEPENDS_ti-c6accel-apps += "ti-cmem-module ti-dsplink-module"
 
