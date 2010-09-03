@@ -75,9 +75,7 @@ SRC_URI[g711enc.md5sum] = "416030f1c56aff8e0a9c78020de6fefc"
 SRC_URI[g711enc.sha256sum] = "7bcea809aff63e258dfaf7a7e72f82fd6aac1af10e42b2ade12f1d9c15e33198"
 
 TI_BIN_UNPK_CMDS = "Y:workdir"
-
 S = "${CODEC_SUITE_NAME}"
-
 PROVIDES += "ti-codecs-dm365-server"
 
 python do_unpack () {
