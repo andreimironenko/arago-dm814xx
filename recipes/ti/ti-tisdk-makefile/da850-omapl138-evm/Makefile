@@ -664,7 +664,7 @@ c6run:
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
 	omapl138_64MB_config
 
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
@@ -674,7 +674,7 @@ c6run:
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
 	clean
 
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
@@ -684,7 +684,7 @@ c6run:
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
 	oe_build
 
 c6run_clean:
@@ -695,7 +695,7 @@ c6run_clean:
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
 	distclean
 
 c6run_examples:
@@ -706,7 +706,7 @@ c6run_examples:
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
 	examples
 
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
@@ -716,20 +716,20 @@ c6run_examples:
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
 	tests
 
 c6run_install:
-	install -d $(EXEC_DIR)/ti-c6run-programs
+	install -d $(EXEC_DIR)/c6run
 
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	INSTALL_DIR="$(EXEC_DIR)/ti-c6run-programs" \
+	INSTALL_DIR="$(EXEC_DIR)/c6run" \
 	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
 	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
 	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
 	install_programs
 
