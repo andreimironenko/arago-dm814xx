@@ -22,13 +22,13 @@ DSP_COMPONENTS_da850-omapl138-evm = "\
     ti-dsplink-examples \
     ti-audio-soc-example \
     ti-c6accel-apps \
-    ti-c6run-programs \
+    ti-c6run-apps \
     "
 
 DSP_COMPONENTS_omap3 = "\
     ti-dsplink-examples \
     ti-c6accel-apps \
-    ti-c6run-programs \
+    ti-c6run-apps \
     "
 
 DSP_COMPONENTS = ""
