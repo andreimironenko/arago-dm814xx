@@ -1,9 +1,9 @@
 DESCRIPTION = "Qt Catalog Embedded Widget Demo"
-HOMEPAGE = "https://gforge01.dal.design.ti.com/gf/project/qtembwidget/"
+HOMEPAGE = "https://gforge.ti.com/gf/project/qt-emb-demos/"
 LICENSE = "Embedded Widgets Demo License Agreement"
 PRIORITY = "optional"
 
-PR = "r0"
+PR = "r1"
 
 SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/342/3644/qt-embedded-widget-demo-v${PV}.tar.gz"
 SRC_URI[md5sum] = "2749d6a0d4ca2a03a763cd1c20b6d178"
