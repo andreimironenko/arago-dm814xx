@@ -7,9 +7,9 @@ LICENSE = "BSD"
 require ti-paths.inc
 require ti-staging.inc
 
-PROVIDES += "ti-c6run-programs"
+PROVIDES += "ti-c6run-apps"
 
-PR = "r0"
+PR = "r1"
 
 S = "${WORKDIR}/C6Run_${PV}/"
 
@@ -27,7 +27,7 @@ C6RUNPLATFORMS              ?= "<UNDEFINED_C6RUNPLATFORMS>"
 
 
 do_configure() {
-    # Run config set with correct platform
+    # Run config with correct platform
     cd ${S}
     make \
     CODEGEN_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \  
@@ -37,7 +37,7 @@ do_configure() {
     CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
     LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
     CSTOOL_DIR="${TOOLCHAIN_PATH}" \
-    CSTOOLS_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+    CSTOOLS_PREFIX="${TARGET_PREFIX}" \
     ${C6RUNPLATFORMS}_config
 
 }
@@ -54,7 +54,7 @@ do_prepsources() {
     CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
     LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
     CSTOOL_DIR="${TOOLCHAIN_PATH}" \
-    CSTOOLS_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+    CSTOOLS_PREFIX="${TARGET_PREFIX}" \
     clean
 }
 
@@ -71,7 +71,7 @@ do_compile() {
     CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
     LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
     CSTOOL_DIR="${TOOLCHAIN_PATH}" \
-    CSTOOLS_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+    CSTOOLS_PREFIX="${TARGET_PREFIX}" \
     oe_build
 
     # Build example apps
@@ -83,7 +83,7 @@ do_compile() {
     CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
     LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
     CSTOOL_DIR="${TOOLCHAIN_PATH}" \
-    CSTOOLS_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+    CSTOOLS_PREFIX="${TARGET_PREFIX}" \
     examples 
 
     # Build test apps
@@ -95,7 +95,7 @@ do_compile() {
     CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
     LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
     CSTOOL_DIR="${TOOLCHAIN_PATH}" \
-    CSTOOLS_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+    CSTOOLS_PREFIX="${TARGET_PREFIX}" \
     tests
 }
 
@@ -105,10 +105,10 @@ do_install() {
     cp -pPrf ${S}/* ${D}${C6RUN_INSTALL_DIR_RECIPE}
 
     # Install the target package
-    install -d ${D}/${installdir}/ti-c6run-programs
+    install -d ${D}/${installdir}/c6run-apps
     cd ${S}
     make \
-    INSTALL_DIR=${D}/${installdir}/ti-c6run-programs \
+    INSTALL_DIR=${D}/${installdir}/c6run-apps \
     CODEGEN_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
     BIOS_INSTALL_DIR="${BIOS_INSTALL_DIR}" \
     XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
@@ -116,13 +116,17 @@ do_install() {
     CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
     LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
     CSTOOL_DIR="${TOOLCHAIN_PATH}" \
-    CSTOOLS_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+    CSTOOLS_PREFIX="${TARGET_PREFIX}" \
     install_programs
+
+    # remove prebuilt *.ko files
+    rm -rf ${D}/${installdir}/c6run_apps/*.ko
+
 }
 
-PACKAGES += "ti-c6run-programs"
+PACKAGES += "ti-c6run-apps"
 
-FILES_ti-c6run-programs = "${installdir}/ti-c6run-programs/*"
-INSANE_SKIP_ti-c6run-programs = "True"
+FILES_ti-c6run-apps = "${installdir}/c6run-apps/*"
+INSANE_SKIP_ti-c6run-apps = "True"
 
-RDEPENDS_ti-c6run-programs += "ti-cmem-module ti-dsplink-module"
+RDEPENDS_ti-c6run-apps += "ti-cmem-module ti-dsplink-module"
