@@ -66,11 +66,6 @@ USER_XDC_PATH = "${CE_INSTALL_DIR}/examples"
 PARALLEL_MAKE = ""
 
 do_prepsources() {
-    # TODO :: Why do we do this?
-    unset DMAI_INSTALL_DIR
-    cd ${S}
-    make XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" PLATFORM="${DMAIPLATFORM}" clean
-
     # run the release steps - this will delete .svn file and run doxygen to
     # generate proper documentation of the source etc.
     find ${S} -name .svn -type d | xargs rm -rf
@@ -85,10 +80,11 @@ do_prepsources() {
 addtask prepsources after do_unpack before do_patch
 
 do_compile () {
-
     # TODO :: Why do we do this?
     unset DMAI_INSTALL_DIR
     cd ${S}
+
+    make XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" PLATFORM="${DMAIPLATFORM}" clean
 
     for dir in ${S}/dmai ${S}/tests ; do
         cd $dir
