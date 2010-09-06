@@ -19,6 +19,13 @@ DEMOSPLATFORM_omap3    = "omap3530"
 DEMOSPLATFORM_omapl137 = "ol137"
 DEMOSPLATFORM_omapl138 = "ol138"
 
+SRC_URI = "svn://winsvn.sanb.design.ti.com/SDOApps/apps/dvsdk_demos/;module=${DEMOSBRANCH};proto=http;user=anonymous;pswd='' \
+	file://doxygen_templates.tar.gz \
+	file://arago-tdox "
+
+PR = "${INC_PR}.1"
+S  = "${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/demos"
+
 do_preparesource () {
 	# run release step 
     find ${S} -name .svn -type d | xargs rm -rf
@@ -27,11 +34,9 @@ do_preparesource () {
     chmod a+x ${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/release.sh
     chmod a+x ${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/demos/tdox
     ${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/release.sh ${PV}
-
     rm -rf ${S}/doxygen_templates
     rm -rf ${S}/tdox
     rm -rf ${S}/dvsdk_demos_${PV}
-    rm -rf ${S}/patches
 }
 
 # run prepare sources before do_patch to ensure that sourceipk picks the right sources.
@@ -68,9 +73,6 @@ do_compile () {
 }
 
 do_install () {
-        install -d ${D}${DVSDK_DEMOS_INSTALL_DIR_RECIPE}
-        cp -pPrf ${S}/* ${D}${DVSDK_DEMOS_INSTALL_DIR_RECIPE}
-
 	cd ${S}
 	make -e EXEC_DIR=${D}/${installdir}/dvsdk-demos \
 		PLATFORM=${DEMOSPLATFORM} \
@@ -89,8 +91,5 @@ RDEPENDS_ti-dvsdk-demos_dm365 += "ti-dm365mm-module ti-cmem-module alsa-lib libp
 RDEPENDS_ti-dvsdk-demos_omap3 += "ti-cmem-module alsa-lib libpng freetype jpeg ti-codecs-omap3530-server ti-dsplink-module ti-c6accel libpng12 ti-dmai"
 
 FILES_${PN} = "${installdir}/dvsdk-demos/*"
-
-BASE_SRC_URI ?= "http://install.source.dir.local"
-
 PACKAGE_STRIP = "no"
 INSANE_SKIP_${PN} = "True"
