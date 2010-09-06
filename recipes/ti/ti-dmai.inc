@@ -75,16 +75,6 @@ do_prepsources() {
     chmod a+x ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/tdox
     sed -i 's|tdox|./tdox|g' ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/release.sh
     (cd ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface; ./release.sh ${PV})
-    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/dmai
-    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/dmai_${PV}.tar.gz
-    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/Makefile
-    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/*.sh
-    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/docs
-    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/scripts
-    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/tdox
-    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/doxygen_templates
-    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/tests
-    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/wince_pb
 }
 
 # run prepare sources before do_patch to ensure that sourceipk picks the right sources.
