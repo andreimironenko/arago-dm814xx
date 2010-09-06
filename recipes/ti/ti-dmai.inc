@@ -83,6 +83,7 @@ do_prepsources() {
     rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/tdox
     rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/doxygen_templates
     rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/tests
+    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/wince_pb
 }
 
 # run prepare sources before do_patch to ensure that sourceipk picks the right sources.
