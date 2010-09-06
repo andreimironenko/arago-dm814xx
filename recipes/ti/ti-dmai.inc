@@ -15,7 +15,7 @@ PE = "1"
 SRCREV               ?= "<UNDEFINED_SRCREV>"
 DMAIBRANCH           ?= "<UNDEFINED_DMAIBRANCH>"
 
-S = "${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface"
+S = "${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/dmai_${PV}"
 
 SRC_URI = "svn://gforge.ti.com/svn/dmai/;module=${DMAIBRANCH};proto=https;user=anonymous;pswd='' \
 		file://loadmodules-ti-dmai-dm6446_al.sh \
@@ -68,12 +68,21 @@ PARALLEL_MAKE = ""
 do_prepsources() {
     # run the release steps - this will delete .svn file and run doxygen to
     # generate proper documentation of the source etc.
-    find ${S} -name .svn -type d | xargs rm -rf
-    cp -pPrf ${WORKDIR}/doxygen_templates ${S}
-    cp -pPrf ${WORKDIR}/arago-tdox ${S}/tdox
-    chmod a+x ${S}/release.sh
-    chmod a+x ${S}/tdox
-    ${S}/release.sh ${PV}
+    find ${WORKDIR}/${DMAIBRANCH} -name .svn -type d | xargs rm -rf
+    cp -pPrf ${WORKDIR}/doxygen_templates ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface
+    cp -pPrf ${WORKDIR}/arago-tdox ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/tdox
+    chmod a+x ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/release.sh
+    chmod a+x ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/tdox
+    (cd ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface; ./release.sh ${PV})
+    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/dmai
+    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/dmai_${PV}.tar.gz
+    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/Makefile
+    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/*.sh
+    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/docs
+    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/scripts
+    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/tdox
+    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/doxygen_templates
+    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/tests
 }
 
 # run prepare sources before do_patch to ensure that sourceipk picks the right sources.
@@ -86,7 +95,7 @@ do_compile () {
 
     make XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" PLATFORM="${DMAIPLATFORM}" clean
 
-    for dir in ${S}/dmai ${S}/tests ; do
+    for dir in ${S} ${S}/tests; do
         cd $dir
         #  TODO: Figure out how to pass the alsa require location, currently 
         #  LINUXLIBS_INSTALL_DIR is hard-coded for armv5te
@@ -117,17 +126,18 @@ do_install () {
     unset DMAI_INSTALL_DIR
 
     install -d ${D}/${installdir}/ti-dmai-apps
-    cd ${S}/dmai
+    cd ${S}
     make PLATFORM="${DMAIPLATFORM}" EXEC_DIR=${D}/${installdir}/ti-dmai-apps install 
     install -m 0755 ${WORKDIR}/loadmodules-ti-dmai-${DMAIPLATFORM}.sh ${D}/${installdir}/ti-dmai-apps/loadmodules.sh 
 
     install -d ${D}/${installdir}/ti-dmai-tests
     cd ${S}/tests
     make PLATFORM="${DMAIPLATFORM}" EXEC_DIR=${D}/${installdir}/ti-dmai-tests install 
-    install -m 0755 ${WORKDIR}/loadmodules-ti-dmai-${DMAIPLATFORM}.sh ${D}/${installdir}/ti-dmai-tests/loadmodules.sh 
+    install -m 0755 ${WORKDIR}/loadmodules-ti-dmai-${DMAIPLATFORM}.sh ${D}/${installdir}/ti-dmai-tests/loadmodules.sh
+-
 
     install -d ${D}${DMAI_INSTALL_DIR_RECIPE}
-    cp -pPrf ${S}/dmai/* ${D}${DMAI_INSTALL_DIR_RECIPE}
+    cp -pPrf ${S}/* ${D}${DMAI_INSTALL_DIR_RECIPE}
 }
 
 PACKAGES += "ti-dmai-apps"
@@ -152,4 +162,5 @@ INSANE_SKIP_ti-dmai-tests = True
 
 # To make dependency more simpler we just depend on ti-dmai-apps
 RDEPENDS_ti-dmai-tests   += "ti-dmai-apps"
+
 
