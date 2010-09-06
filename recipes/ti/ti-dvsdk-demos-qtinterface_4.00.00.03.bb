@@ -6,3 +6,5 @@ SRCREV         = "9631"
 DEMOSBRANCH    = "tags/TAG_${PV}"
 
 require ti-dvsdk-demos-qtinterface.inc
+PR = "r1"
+

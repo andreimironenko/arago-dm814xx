@@ -1,3 +1,7 @@
+DESCRIPTION = "DVSDK Demo applications for TI ARM/DSP processors"
+SECTION = "multimedia"
+LICENSE = "TI"
+
 inherit qt4e
 
 DEMOSPLATFORM_dm355    = "dm355"
@@ -13,8 +17,6 @@ installdir="/usr/share/ti"
 SRC_URI = "svn://winsvn.sanb.design.ti.com/SDOApps/apps/dvsdk_demos/;module=${DEMOSBRANCH};proto=http;user=anonymous;pswd=''" 
 
 S  = "${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/demos/${DEMOSPLATFORM}/qtInterface"
-DEPENDS_append = " qt4-embedded "
-RDEPENDS_append = " qt4-embedded "
 
 do_install() {
 	install -d ${D}/${installdir}/dvsdk-demos
@@ -22,5 +24,5 @@ do_install() {
 }
 
 FILES_${PN} = "${installdir}/dvsdk-demos/*"
-
+RRECOMMENDS_${PN} = "qt4-embedded-plugin-mousedriver-tslib"
 
