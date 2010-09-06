@@ -2,7 +2,7 @@ DESCRIPTION = "DVSDK Demo applications for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-INC_PR = "r14"
+INC_PR = "r15"
  
 DEPENDS += "ti-dmai"
 DEPENDS += "alsa-lib libpng freetype jpeg"
@@ -18,6 +18,24 @@ DEMOSPLATFORM_dm6467   = "dm6467"
 DEMOSPLATFORM_omap3    = "omap3530"
 DEMOSPLATFORM_omapl137 = "ol137"
 DEMOSPLATFORM_omapl138 = "ol138"
+
+do_preparesource () {
+	# run release step 
+    find ${S} -name .svn -type d | xargs rm -rf
+    cp -pPrf ${WORKDIR}/doxygen_templates ${S}
+    cp -pPrf ${WORKDIR}/arago-tdox ${S}/tdox
+    chmod a+x ${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/release.sh
+    chmod a+x ${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/demos/tdox
+    ${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/release.sh ${PV}
+
+    rm -rf ${S}/doxygen_templates
+    rm -rf ${S}/tdox
+    rm -rf ${S}/dvsdk_demos_${PV}
+    rm -rf ${S}/patches
+}
+
+# run prepare sources before do_patch to ensure that sourceipk picks the right sources.
+addtask prepsources after do_unpack before do_patch
 
 do_configure_prepend() {
     sed -i -e 's:INSTALLSUBDIRS = $(addsuffix .install, $(SUBDIRS)):INSTALLSUBDIRS = $(addsuffix .install, $(PLATFORM)):g' ${S}/Makefile

@@ -8,7 +8,7 @@ LICENSE = "BSD"
 require ti-paths.inc
 require ti-staging.inc
 
-PROVIDES += "ti-dmai-apps ti-dmai-tests"
+PROVIDES += "ti-dmai-apps"
 
 PE = "1"
 
@@ -95,7 +95,7 @@ do_compile () {
 
     make XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" PLATFORM="${DMAIPLATFORM}" clean
 
-    for dir in ${S} ${S}/tests; do
+    for dir in ${S}; do
         cd $dir
         #  TODO: Figure out how to pass the alsa require location, currently 
         #  LINUXLIBS_INSTALL_DIR is hard-coded for armv5te
@@ -130,12 +130,6 @@ do_install () {
     make PLATFORM="${DMAIPLATFORM}" EXEC_DIR=${D}/${installdir}/ti-dmai-apps install 
     install -m 0755 ${WORKDIR}/loadmodules-ti-dmai-${DMAIPLATFORM}.sh ${D}/${installdir}/ti-dmai-apps/loadmodules.sh 
 
-    install -d ${D}/${installdir}/ti-dmai-tests
-    cd ${S}/tests
-    make PLATFORM="${DMAIPLATFORM}" EXEC_DIR=${D}/${installdir}/ti-dmai-tests install 
-    install -m 0755 ${WORKDIR}/loadmodules-ti-dmai-${DMAIPLATFORM}.sh ${D}/${installdir}/ti-dmai-tests/loadmodules.sh
--
-
     install -d ${D}${DMAI_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${DMAI_INSTALL_DIR_RECIPE}
 }
@@ -155,12 +149,4 @@ RDEPENDS_ti-dmai-apps_omapl138  += "ti-codecs-omapl138-server ti-cmem-module ti-
 pkg_postinst_ti-dmai-apps () {
 	ln -sf ${installdir}/ti-codecs-server/*.${DSPSUFFIX} ${installdir}/ti-dmai-apps/
 }
-
-PACKAGES += "ti-dmai-tests"
-FILES_ti-dmai-tests = "${installdir}/ti-dmai-tests/*"
-INSANE_SKIP_ti-dmai-tests = True
-
-# To make dependency more simpler we just depend on ti-dmai-apps
-RDEPENDS_ti-dmai-tests   += "ti-dmai-apps"
-
 

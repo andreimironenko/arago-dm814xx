@@ -13,17 +13,3 @@ PV = "3_01_00_21"
 PR = "${INC_PR}.1"
 S  = "${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/demos"
 
-do_install_prepend () {
-    find ${S} -name .svn -type d | xargs rm -rf
-    cp -pPrf ${WORKDIR}/doxygen_templates ${S}
-    cp -pPrf ${WORKDIR}/arago-tdox ${S}/tdox
-    chmod a+x ${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/release.sh
-    chmod a+x ${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/demos/tdox
-    ${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/release.sh ${PV}
-
-    rm -rf ${S}/doxygen_templates
-    rm -rf ${S}/tdox
-    rm -rf ${S}/dvsdk_demos_${PV}
-    rm -rf ${S}/patches
-}
-
