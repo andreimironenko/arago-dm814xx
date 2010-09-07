@@ -101,18 +101,20 @@ update_rules_make()
       sed -i -e s/${name}/omap35x_graphics_sdk/g \
         $install_dir/usr/share/ti/Rules.make
     fi
-
+    
+    if [ "$name" = "linux-omap3" ] || [ "$name" = "linux-davinci-staging" ] || [ "$name" = "linux-omapl1" ] ; then
+        version="`cat $i | grep Version | awk {'print $2'} | cut -f2 -d: | cut -f1-2 -d-`"
+        sed -i -e s/\<__kernel__\>/linux-${version}/g \
+          $install_dir/usr/share/ti/Rules.make
+    fi
   done
 
-  sed -i -e s=\<__kernel__\>=psp/linux-kernel-source= \
-    $install_dir/usr/share/ti/Rules.make
   sed -i -e s=\<__SDK__INSTALL_DIR__\>=${install_dir}= \
     $install_dir/usr/share/ti/Rules.make
   sed -i -e s=\<__CROSS_COMPILER_PATH__\>=${TOOLCHAIN_PATH}= \
     $install_dir/usr/share/ti/Rules.make
   sed -i -e s=linuxlibs=linux-devkit/arm-none-linux-gnueabi/usr= \
     $install_dir/usr/share/ti/Rules.make
-
 }
 
 #
