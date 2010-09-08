@@ -112,7 +112,7 @@ help:
 #==============================================================================
 linux:	u-boot
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_LINUXKERNEL_CONFIG)
-	PATH="$(PATH):$(PSP_INSTALL_DIR)/u-boot-source/tools" $(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
+	PATH="$(PATH):$(PSP_INSTALL_DIR)/u-boot-*/tools" $(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) modules
 linux_clean:
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) mrproper
@@ -142,31 +142,31 @@ ubl_install:
 # Build u-boot. Also, an explicit cleanup target is defined.
 #==============================================================================
 u-boot:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-source CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_UBOOT_CONFIG)
-	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-source CROSS_COMPILE=$(CSTOOL_PREFIX)
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_UBOOT_CONFIG)
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX)
 
 u-boot_clean: 
-	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-source CROSS_COMPILE=$(CSTOOL_PREFIX) distclean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) distclean
 
 u-boot_install:
 	install -d $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/u-boot-source/u-boot.bin $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/u-boot-source/u-boot.map $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/u-boot-*/u-boot.bin $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/u-boot-*/u-boot.map $(EXEC_DIR)/boot
 
 #==============================================================================
 # Build the PSP Linux examples. Also, an explicit cleanup target is defined.
 #==============================================================================
 psp_examples:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/vpif KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR) CROSS_COMPILE=$(CSTOOL_PREFIX)
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/vpif KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR) CROSS_COMPILE=$(CSTOOL_PREFIX)
 
 psp_examples_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/vpif KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR) CROSS_COMPILE=$(CSTOOL_PREFIX) clean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/vpif KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR) CROSS_COMPILE=$(CSTOOL_PREFIX) clean
 
 psp_examples_install:
 	install -d  $(EXEC_DIR)/psp-examples 
-	cp $(PSP_INSTALL_DIR)/linux-driver-examples/vpif/vpif_test_display $(EXEC_DIR)/psp-examples
-	cp $(PSP_INSTALL_DIR)/linux-driver-examples/vpif/vpif_test_mmap_loopback $(EXEC_DIR)/psp-examples
-	cp $(PSP_INSTALL_DIR)/linux-driver-examples/vpif/vpif_test_userptr_loopback $(EXEC_DIR)/psp-examples
+	cp $(PSP_INSTALL_DIR)/linux-driver-examples-*/vpif/vpif_test_display $(EXEC_DIR)/psp-examples
+	cp $(PSP_INSTALL_DIR)/linux-driver-examples-*/vpif/vpif_test_mmap_loopback $(EXEC_DIR)/psp-examples
+	cp $(PSP_INSTALL_DIR)/linux-driver-examples-*/vpif/vpif_test_userptr_loopback $(EXEC_DIR)/psp-examples
 	
 #==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the
@@ -579,7 +579,7 @@ audio_soc_example_clean:
 	clean
 
 audio_soc_example_kernel:
-	PATH="$(PATH):$(PSP_INSTALL_DIR)/u-boot-source/tools" \
+	PATH="$(PATH):$(PSP_INSTALL_DIR)/u-boot-*/tools" \
 	$(MAKE) -C ./audio-soc-example_* \
 	PLATFORM="$(PLATFORM)" \
 	CSTOOL_DIR="$(CSTOOL_DIR)" \

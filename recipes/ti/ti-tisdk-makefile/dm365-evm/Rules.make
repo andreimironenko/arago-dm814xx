@@ -42,7 +42,7 @@ XDAIS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__xdais__>
 XDC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__xdctools__>
 
 # The directory that points to your kernel source directory.
-LINUXKERNEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__kernel__>
+LINUXKERNEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/psp/<__kernel__>
 
 # Where temporary Linux headers and libs are installed.
 LINUXLIBS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/linuxlibs

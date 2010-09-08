@@ -141,7 +141,7 @@ demos_install:
 #==============================================================================
 linux:	u-boot
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_LINUXKERNEL_CONFIG)
-	PATH="$(PATH):$(PSP_INSTALL_DIR)/u-boot-source/tools" $(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
+	PATH="$(PATH):$(PSP_INSTALL_DIR)/u-boot-*/tools" $(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) modules
 linux_clean:
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) mrproper
@@ -158,50 +158,50 @@ linux_install:
 # Build xload. Also, an explicit cleanup target is defined.
 #==============================================================================
 xload:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load/src CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm distclean
-	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load/src CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm omap3evm_config
-	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load/src CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm
-	$(PSP_INSTALL_DIR)/x-load/host-tools/signGP $(PSP_INSTALL_DIR)/x-load/src/x-load.bin
+	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm distclean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm omap3evm_config
+	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm
+	$(PSP_INSTALL_DIR)/x-load/host-tools/signGP $(PSP_INSTALL_DIR)/x-load-*/x-load.bin
 
 xload_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load/src clean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* clean
 
 xload_install:
 	install -d $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/x-load/src/x-load.bin $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/x-load/src/x-load.bin.ift $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/x-load-*/x-load.bin $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/x-load-*/x-load.bin.ift $(EXEC_DIR)/boot
 
 #==============================================================================
 # Build u-boot. Also, an explicit cleanup target is defined.
 #==============================================================================
 u-boot:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-source CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_UBOOT_CONFIG)
-	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-source CROSS_COMPILE=$(CSTOOL_PREFIX)
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_UBOOT_CONFIG)
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX)
 
 u-boot_clean: 
-	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-source CROSS_COMPILE=$(CSTOOL_PREFIX) distclean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) distclean
 
 u-boot_install:
 	install -d $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/u-boot-source/u-boot.bin $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/u-boot-source/u-boot.map $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/u-boot-*/u-boot.bin $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/u-boot-*/u-boot.map $(EXEC_DIR)/boot
 
 #==============================================================================
 # Build the PSP Linux examples. Also, an explicit cleanup target is defined.
 #==============================================================================
 psp_examples:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/audio PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib all
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/video PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib all
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib all
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/video PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib all
 
 psp_examples_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/audio PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib clean
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/video PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib clean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib clean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/video PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib clean
 
 psp_examples_install:
 	mkdir -p $(EXEC_DIR)/psp-examples/audio
-	cp  $(PSP_INSTALL_DIR)/linux-driver-examples/audio/bin/* $(EXEC_DIR)/psp-examples/audio
+	cp  $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio/bin/* $(EXEC_DIR)/psp-examples/audio
 	mkdir -p $(EXEC_DIR)/psp-examples/video
-	cp  $(PSP_INSTALL_DIR)/linux-driver-examples/video/bin/* $(EXEC_DIR)/psp-examples/video
+	cp  $(PSP_INSTALL_DIR)/linux-driver-examples-*/video/bin/* $(EXEC_DIR)/psp-examples/video
 	
 #==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the

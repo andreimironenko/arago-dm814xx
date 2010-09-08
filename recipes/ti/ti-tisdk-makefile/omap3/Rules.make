@@ -55,7 +55,7 @@ CODEGEN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__cgt6x__>
 PSP_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/psp
 
 # The directory that points to your kernel source directory.
-LINUXKERNEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__kernel__>
+LINUXKERNEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/psp/<__kernel__>
 KERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR)
 
 # Where the local power manager is installed.
