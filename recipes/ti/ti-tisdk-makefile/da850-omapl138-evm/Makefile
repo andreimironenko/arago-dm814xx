@@ -535,9 +535,20 @@ dsplink_samples:
 	KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
 	all
 
-dsplink: dsplink_arm dsplink_dsp dsplink_samples
+dsplink_dsp_genpackage:
+	$(XDC_INSTALL_DIR)/xdc -C $(LINK_INSTALL_DIR)/dsplink/dsp clean
+	$(XDC_INSTALL_DIR)/xdc -C $(LINK_INSTALL_DIR)/dsplink/dsp .interfaces
+
+dsplink_gpp_genpackage:
+	$(XDC_INSTALL_DIR)/xdc -C $(LINK_INSTALL_DIR)/dsplink/gpp clean
+	$(XDC_INSTALL_DIR)/xdc -C $(LINK_INSTALL_DIR)/dsplink/gpp .interfaces
+
+dsplink: dsplink_arm dsplink_dsp dsplink_samples dsplink_dsp_genpackage dsplink_gpp_genpackage 
 
 dsplink_clean: dsplink_arm_clean dsplink_dsp_clean dsplink_samples_clean
+    XDCPATH=${DSPLINK} ${XDC_INSTALL_DIR}/xdc .make -PR .
+    XDCPATH=${DSPLINK} ${XDC_INSTALL_DIR}/xdc clean -PR .
+    XDCPATH=${DSPLINK} ${XDC_INSTALL_DIR}/xdc .interfaces -PR .
 
 dsplink_install:
 	install -d $(EXEC_DIR)/dsplink
