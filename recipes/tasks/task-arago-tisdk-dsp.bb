@@ -23,6 +23,7 @@ DSP_COMPONENTS_da850-omapl138-evm = "\
     ti-audio-soc-example \
     ti-c6accel-apps \
     ti-c6run-apps \
+    qt-mandelbrot-accel \
     "
 
 DSP_COMPONENTS_omap3 = "\
