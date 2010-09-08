@@ -6,7 +6,7 @@ require ti-staging.inc
 
 SRCREV = "08e9bb16ba295f356da081e307cd0cf72fe6920b"
 
-PV = "git-${MACHINE_KERNEL_PR}-gitr${SRCREV}"
+PV = "psp-3.00.01.06"
 PR_append = "c"
 
 # FIXME: I don't know why SRC_URI does not work with http:// protocol
