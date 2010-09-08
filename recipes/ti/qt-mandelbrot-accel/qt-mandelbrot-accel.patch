@@ -1,0 +1,880 @@
+From 88da998ec464ed8d5c10981665e0e72164a89918 Mon Sep 17 00:00:00 2001
+From: Arnie Reynoso <arnier@ti.com>
+Date: Wed, 8 Sep 2010 10:25:13 -0500
+Subject: [PATCH] added ti demo changes
+
+---
+ critical.c           |  119 ++++++++++++++++++++++++
+ critical.h           |   66 ++++++++++++++
+ main.cpp             |   17 ++++-
+ mandelbrot.pro       |    7 +-
+ mandelbrotwidget.cpp |  189 +++++++++++++++++++++++++++++----------
+ mandelbrotwidget.h   |   15 +++
+ renderthread.cpp     |  168 +++++++++++++++++++++++++---------
+ renderthread.h       |   15 +++
+ 8 files changed, 497 insertions(+), 99 deletions(-)
+ create mode 100644 critical.c
+ create mode 100644 critical.h
+
+diff --git a/critical.c b/critical.c
+new file mode 100644
+index 0000000..0fb3594
+--- /dev/null
++++ b/critical.c
+@@ -0,0 +1,119 @@
++/****************************************************************************
++**
++** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
++** All rights reserved.
++** Contact: Nokia Corporation (qt-info@nokia.com)
++**
++** This file is part of the examples of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial Usage
++** Licensees holding valid Qt Commercial licenses may use this file in
++** accordance with the Qt Commercial License Agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Nokia.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Nokia gives you certain additional
++** rights.  These rights are described in the Nokia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++** If you have questions regarding the use of this file, please contact
++** Nokia at qt-info@nokia.com.
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++/****************************************************************************
++ *
++ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/ 
++ *
++ * The following changes were made by Texas Instruments Incorporated
++ *
++ * ChangeLog
++ *
++ * 2010/07/03 - v1.0
++ * - Creaed new file to include the MIPS critical function
++ *  
++ */
++
++#include <stdio.h>
++#include "critical.h"
++
++#ifdef IN
++#undef IN
++#endif
++#define IN
++#ifdef OUT
++#undef OUT
++#endif
++#define OUT
++#ifdef INOUT
++#undef INOUT
++#endif
++#define INOUT
++
++void criticalFxn ( double centerYVal, double scaleFactorVal, int halfHeightVal, int halfWidthVal,
++               double centerXVal, int MaxIterationsVal,
++               OUT unsigned int  * frameptrVal, IN unsigned int * colormapptrVal) 
++{
++
++  int x, y;
++  float ay, ax, a1, b1;
++  int numIterations;
++  const int Limit = 4;
++  float a2, b2;
++
++  for (y = -halfHeightVal; y < halfHeightVal; ++y) 
++  {
++
++      ay = centerYVal + (y * scaleFactorVal);
++
++      for (x = -halfWidthVal; x < halfWidthVal; ++x)
++      {
++        ax = centerXVal + (x * scaleFactorVal);
++        a1 = ax;
++        b1 = ay;
++        numIterations = 0;
++
++        do
++        {
++          ++numIterations;
++          a2 =  ax - (b1 * b1) + (a1 * a1);
++          b2 =  ay + (2 * a1 * b1);
++          if ((a2 * a2) + (b2 * b2) > Limit)
++              break;
++
++          ++numIterations;
++          a1 = (a2 * a2) - (b2 * b2) + ax;
++          b1 =  ay + (2 * a2 * b2);
++          if ((a1 * a1) + (b1 * b1) > Limit)
++              break;
++        }
++        while (numIterations < MaxIterationsVal);
++
++        if (numIterations < MaxIterationsVal)
++        {
++          *frameptrVal++ = colormapptrVal[numIterations % 512];
++        }
++        else
++        {
++          *frameptrVal++ = 0;
++        }
++      }
++    }
++}
+diff --git a/critical.h b/critical.h
+new file mode 100644
+index 0000000..224dfa7
+--- /dev/null
++++ b/critical.h
+@@ -0,0 +1,66 @@
++/****************************************************************************
++**
++** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
++** All rights reserved.
++** Contact: Nokia Corporation (qt-info@nokia.com)
++**
++** This file is part of the examples of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial Usage
++** Licensees holding valid Qt Commercial licenses may use this file in
++** accordance with the Qt Commercial License Agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Nokia.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Nokia gives you certain additional
++** rights.  These rights are described in the Nokia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++** If you have questions regarding the use of this file, please contact
++** Nokia at qt-info@nokia.com.
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++/****************************************************************************
++ *
++ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/ 
++ *
++ * The following changes were made by Texas Instruments Incorporated
++ *
++ * ChangeLog
++ *
++ * 2010/07/03 - v1.0
++ * - Creaed new file to include the MIPS critical function
++ *  
++ */
++
++#ifdef __cplusplus
++extern "C" {
++#endif /* __cplusplus */
++
++
++extern void criticalFxn ( double centerYVal, double scaleFactorVal, int halfHeightVal, int halfWidthVal,
++               double centerXVal, int MaxIterationsVal,
++               unsigned int  * frameptrVal, unsigned int * colormapptrVal );
++
++#ifdef __cplusplus
++}
++#endif /* __cplusplus */
+diff --git a/main.cpp b/main.cpp
+index a9fe8f3..a9fee86 100644
+--- a/main.cpp
++++ b/main.cpp
+@@ -39,6 +39,20 @@
+ **
+ ****************************************************************************/
+ 
++/****************************************************************************
++ *
++ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/ 
++ *
++ * The following changes were made by Texas Instruments Incorporated
++ *
++ * ChangeLog
++ *
++ * 2010/07/03 - v1.0
++ * - Added Override Cursor 
++ * - Added showFullScreen
++ */
++
++
+ #include <QApplication>
+ 
+ #include "mandelbrotwidget.h"
+@@ -48,7 +62,8 @@ int main(int argc, char *argv[])
+ {
+     QApplication app(argc, argv);
+     MandelbrotWidget widget;
+-    widget.show();
++    app.setOverrideCursor(Qt::BlankCursor); /*This is the new line that disables mouse*/
++    widget.showFullScreen();
+     return app.exec();
+ }
+ //! [0]
+diff --git a/mandelbrot.pro b/mandelbrot.pro
+index f8bd704..0a87e6b 100644
+--- a/mandelbrot.pro
++++ b/mandelbrot.pro
+@@ -1,12 +1,9 @@
+-######################################################################
+-# Automatically generated by qmake (2.01a) Wed Sep 8 07:41:02 2010
+-######################################################################
+-
+ TEMPLATE = app
+ TARGET = 
+ DEPENDPATH += .
+ INCLUDEPATH += .
+ 
+ # Input
+-HEADERS += mandelbrotwidget.h renderthread.h
++HEADERS += critical.h mandelbrotwidget.h renderthread.h
+ SOURCES += main.cpp mandelbrotwidget.cpp renderthread.cpp
++LIBS += critical.lib 
+diff --git a/mandelbrotwidget.cpp b/mandelbrotwidget.cpp
+index 27b9a89..bd1fb78 100644
+--- a/mandelbrotwidget.cpp
++++ b/mandelbrotwidget.cpp
+@@ -39,20 +39,60 @@
+ **
+ ****************************************************************************/
+ 
++/****************************************************************************
++ *
++ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/ 
++ *
++ * The following changes were made by Texas Instruments Incorporated
++ *
++ * ChangeLog
++ *
++ * 2010/07/03 - v1.0
++ * - Added Autozoom feature 
++ */
++
+ #include <QtGui>
+ 
+ #include <math.h>
+ 
+ #include "mandelbrotwidget.h"
+ 
+-//! [0]
+-const double DefaultCenterX = -0.637011f;
+-const double DefaultCenterY = -0.0395159f;
++#define ZOOM_IN_MAX 150
++#define ZOOM_OUT_MAX 0
++#define AUTO_ZOOM_IN_FACTOR 0.95f
++#define AUTO_ZOOM_OUT_FACTOR 1.052631578f
++#define AUTO_SCROLL_IN_X -20
++#define AUTO_SCROLL_IN_Y 0
++#define AUTO_SCROLL_OUT_X 20
++#define AUTO_SCROLL_OUT_Y 0
++#define MAX_RENDERTHREAD_ITERATIONS 3
++#define UPDATE_AFTER_NUM_ITERATIONS 2
++#define MAX_RENDERTHREAD_ITERATIONS_A (MAX_RENDERTHREAD_ITERATIONS - 1)
++#define UPDATE_AFTER_NUM_ITERATIONS_A (UPDATE_AFTER_NUM_ITERATIONS - 1)
++#define FPS_CALC_INTERVAL_MS 3000
++#define FPS_CALC_INTERVAL_SEC (FPS_CALC_INTERVAL_MS/1000)
++#define FONT_SIZE 12
++
++static int zoomCallCount = 0;
++
++const double DefaultCenterX = -1.34854f;
++const double DefaultCenterY = -0.0621396f;
++
++static bool ZoomDirection = true;
++
++/*Counter Variables*/
++static int ZoomCount = 0;
++
++/*fps Counter Variable*/
++static int fpsCounter = 0;
++double fpsValue = 0;
++
+ const double DefaultScale = 0.00403897f;
+ 
+ const double ZoomInFactor = 0.8f;
+ const double ZoomOutFactor = 1 / ZoomInFactor;
+ const int ScrollStep = 20;
++
+ //! [0]
+ 
+ //! [1]
+@@ -61,6 +101,7 @@ MandelbrotWidget::MandelbrotWidget(QWidget *parent)
+ {
+     centerX = DefaultCenterX;
+     centerY = DefaultCenterY;
++
+     pixmapScale = DefaultScale;
+     curScale = DefaultScale;
+ 
+@@ -69,14 +110,21 @@ MandelbrotWidget::MandelbrotWidget(QWidget *parent)
+             this, SLOT(updatePixmap(QImage,double)));
+ 
+     setWindowTitle(tr("Mandelbrot"));
++
+ #ifndef QT_NO_CURSOR
+     setCursor(Qt::CrossCursor);
+ #endif
+     resize(550, 400);
++
++    /*fps calc timer*/
++    QTimer *ztimer = new QTimer;
++    connect(ztimer, SIGNAL(timeout()), this, SLOT(calcFPS()));
++    ztimer->start(FPS_CALC_INTERVAL_MS);
++
++    /*To start the thread for first time only*/
++    QTimer::singleShot(1000, this, SLOT(autoZoom()));
+ }
+-//! [1]
+ 
+-//! [2]
+ void MandelbrotWidget::paintEvent(QPaintEvent * /* event */)
+ {
+     QPainter painter(this);
+@@ -86,19 +134,17 @@ void MandelbrotWidget::paintEvent(QPaintEvent * /* event */)
+         painter.setPen(Qt::white);
+         painter.drawText(rect(), Qt::AlignCenter,
+                          tr("Rendering initial image, please wait..."));
+-//! [2] //! [3]
++
+         return;
+-//! [3] //! [4]
++
+     }
+-//! [4]
+ 
+-//! [5]
+     if (curScale == pixmapScale) {
+-//! [5] //! [6]
++
+         painter.drawPixmap(pixmapOffset, pixmap);
+-//! [6] //! [7]
++
+     } else {
+-//! [7] //! [8]
++
+         double scaleFactor = pixmapScale / curScale;
+         int newWidth = int(pixmap.width() * scaleFactor);
+         int newHeight = int(pixmap.height() * scaleFactor);
+@@ -111,32 +157,44 @@ void MandelbrotWidget::paintEvent(QPaintEvent * /* event */)
+         QRectF exposed = painter.matrix().inverted().mapRect(rect()).adjusted(-1, -1, 1, 1);
+         painter.drawPixmap(exposed, pixmap, exposed);
+         painter.restore();
++    } 
++
++        /*printing fps and zoom level*/        
++        QString fpsText = tr("fps: ") +  QString("%1").arg(fpsValue, 4, '0');
++        QString zoomText = tr("Zoom: ") + QString("%1x").arg(ZoomCount);
++        QString introText = tr("DSP Acceleration powered by C6EzRun");
++
++        QFont t_font = painter.font();
++        t_font.setPointSize(FONT_SIZE);
++        painter.setFont(t_font);
++
++        QFontMetrics metrics = painter.fontMetrics();
++        int textWidth = metrics.width(fpsText);
++        int zoomTextWidth = metrics.width(zoomText);
++        int introTextWidth = metrics.width(introText);
++
++        painter.setPen(Qt::NoPen);
++        painter.setBrush(QColor(0, 0, 0, 127));
++        painter.drawRect((width() - textWidth) - 5, 0, textWidth + 10, metrics.lineSpacing() + 5);
++        painter.drawRect(0, 0, zoomTextWidth + 10, metrics.lineSpacing() + 5);
++        painter.drawRect((width() - introTextWidth)/2 - 5, 0, introTextWidth + 10, metrics.lineSpacing() + 5);
++        painter.setPen(Qt::white);
++        painter.drawText((width() - textWidth) - 2, metrics.leading() + metrics.ascent(), fpsText);
++        painter.drawText(2, metrics.leading() + metrics.ascent(), zoomText);
++        painter.drawText((width() - introTextWidth)/2 - 2, metrics.leading() + metrics.ascent(), introText);
++
++
++    if (zoomCallCount > (MAX_RENDERTHREAD_ITERATIONS_A)) {
++        autoZoom();
++        zoomCallCount = 0;
+     }
+-//! [8] //! [9]
+-
+-    QString text = tr("Use mouse wheel or the '+' and '-' keys to zoom. "
+-                      "Press and hold left mouse button to scroll.");
+-    QFontMetrics metrics = painter.fontMetrics();
+-    int textWidth = metrics.width(text);
+-
+-    painter.setPen(Qt::NoPen);
+-    painter.setBrush(QColor(0, 0, 0, 127));
+-    painter.drawRect((width() - textWidth) / 2 - 5, 0, textWidth + 10,
+-                     metrics.lineSpacing() + 5);
+-    painter.setPen(Qt::white);
+-    painter.drawText((width() - textWidth) / 2,
+-                     metrics.leading() + metrics.ascent(), text);
+ }
+-//! [9]
+ 
+-//! [10]
+ void MandelbrotWidget::resizeEvent(QResizeEvent * /* event */)
+ {
+     thread.render(centerX, centerY, curScale, size());
+ }
+-//! [10]
+ 
+-//! [11]
+ void MandelbrotWidget::keyPressEvent(QKeyEvent *event)
+ {
+     switch (event->key()) {
+@@ -162,26 +220,20 @@ void MandelbrotWidget::keyPressEvent(QKeyEvent *event)
+         QWidget::keyPressEvent(event);
+     }
+ }
+-//! [11]
+ 
+-//! [12]
+ void MandelbrotWidget::wheelEvent(QWheelEvent *event)
+ {
+     int numDegrees = event->delta() / 8;
+     double numSteps = numDegrees / 15.0f;
+     zoom(pow(ZoomInFactor, numSteps));
+ }
+-//! [12]
+ 
+-//! [13]
+ void MandelbrotWidget::mousePressEvent(QMouseEvent *event)
+ {
+     if (event->button() == Qt::LeftButton)
+         lastDragPos = event->pos();
+ }
+-//! [13]
+ 
+-//! [14]
+ void MandelbrotWidget::mouseMoveEvent(QMouseEvent *event)
+ {
+     if (event->buttons() & Qt::LeftButton) {
+@@ -190,9 +242,7 @@ void MandelbrotWidget::mouseMoveEvent(QMouseEvent *event)
+         update();
+     }
+ }
+-//! [14]
+ 
+-//! [15]
+ void MandelbrotWidget::mouseReleaseEvent(QMouseEvent *event)
+ {
+     if (event->button() == Qt::LeftButton) {
+@@ -204,9 +254,7 @@ void MandelbrotWidget::mouseReleaseEvent(QMouseEvent *event)
+         scroll(deltaX, deltaY);
+     }
+ }
+-//! [15]
+ 
+-//! [16]
+ void MandelbrotWidget::updatePixmap(const QImage &image, double scaleFactor)
+ {
+     if (!lastDragPos.isNull())
+@@ -216,25 +264,70 @@ void MandelbrotWidget::updatePixmap(const QImage &image, double scaleFactor)
+     pixmapOffset = QPoint();
+     lastDragPos = QPoint();
+     pixmapScale = scaleFactor;
+-    update();
++
++    zoomCallCount++;
++    fpsCounter++;
++
++    if (zoomCallCount > (UPDATE_AFTER_NUM_ITERATIONS_A))
++    {
++        update();
++    }
++}
++
++void MandelbrotWidget::autoZoom()
++{
++    double zfactor;
++    int s_x, s_y;
++
++    /*Calculation to determine direction*/
++    if(ZoomDirection)
++    {
++        zfactor = AUTO_ZOOM_IN_FACTOR;
++        s_x = AUTO_SCROLL_IN_X;
++        s_y = AUTO_SCROLL_IN_Y;
++        ZoomCount++;
++    }
++    else
++    {
++        zfactor = AUTO_ZOOM_OUT_FACTOR;
++        s_x = AUTO_SCROLL_OUT_X;
++        s_y = AUTO_SCROLL_OUT_Y;
++        ZoomCount--;
++    }
++
++    zoom(zfactor);
++
++
++    /*Determining the direction for next update*/
++    if(ZoomDirection)
++    {
++        if(!(ZoomCount < ZOOM_IN_MAX))
++            ZoomDirection = false;
++    }
++    else
++    {
++        if(!(ZoomCount > ZOOM_OUT_MAX))
++            ZoomDirection = true;
++    }
+ }
+-//! [16]
+ 
+-//! [17]
+ void MandelbrotWidget::zoom(double zoomFactor)
+ {
+     curScale *= zoomFactor;
+-    update();
+     thread.render(centerX, centerY, curScale, size());
+ }
+-//! [17]
+ 
+-//! [18]
+ void MandelbrotWidget::scroll(int deltaX, int deltaY)
+ {
+     centerX += deltaX * curScale;
+     centerY += deltaY * curScale;
+-    update();
+     thread.render(centerX, centerY, curScale, size());
+ }
+-//! [18]
++
++void MandelbrotWidget::calcFPS()
++{
++    fpsValue = fpsCounter/(double)FPS_CALC_INTERVAL_SEC;
++    fpsCounter = 0;
++}
++
++
+diff --git a/mandelbrotwidget.h b/mandelbrotwidget.h
+index e08cf21..20a205a 100644
+--- a/mandelbrotwidget.h
++++ b/mandelbrotwidget.h
+@@ -39,6 +39,19 @@
+ **
+ ****************************************************************************/
+ 
++/****************************************************************************
++ *
++ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/ 
++ *
++ * The following changes were made by Texas Instruments Incorporated
++ *
++ * ChangeLog
++ *
++ * 2010/07/03 - v1.0
++ * - Added autozoom feature
++ *  
++ */
++
+ #ifndef MANDELBROTWIDGET_H
+ #define MANDELBROTWIDGET_H
+ 
+@@ -66,6 +79,8 @@ protected:
+ 
+ private slots:
+     void updatePixmap(const QImage &image, double scaleFactor);
++    void autoZoom();
++    void calcFPS();
+ 
+ private:
+     void zoom(double zoomFactor);
+diff --git a/renderthread.cpp b/renderthread.cpp
+index c7831c8..829f0a6 100644
+--- a/renderthread.cpp
++++ b/renderthread.cpp
+@@ -38,13 +38,42 @@
+ ** $QT_END_LICENSE$
+ **
+ ****************************************************************************/
++/****************************************************************************
++ *
++ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/ 
++ *
++ * The following changes were made by Texas Instruments Incorporated
++ *
++ * ChangeLog
++ *
++ * 2010/07/03 - v1.0
++ * - Added Option for DSP acceleration
++ *  
++ */
+ 
+ #include <QtGui>
+-
+ #include <math.h>
+-
+ #include "renderthread.h"
+ 
++#define DSP_ACCELERATION
++
++#ifdef DSP_ACCELERATION
++#include <critical.h>
++#endif
++
++#ifdef __cplusplus
++extern "C" {
++#endif /* __cplusplus */
++
++#ifdef DSP_ACCELERATION
++extern void * C6RUN_MEM_malloc (unsigned int size);
++#endif
++
++#ifdef __cplusplus
++}
++#endif /* __cplusplus */
++
++
+ //! [0]
+ RenderThread::RenderThread(QObject *parent)
+     : QThread(parent)
+@@ -52,8 +81,16 @@ RenderThread::RenderThread(QObject *parent)
+     restart = false;
+     abort = false;
+ 
+-    for (int i = 0; i < ColormapSize; ++i)
++#ifdef DSP_ACCELERATION
++    colormapptr = (uint *) (C6RUN_MEM_malloc (ColormapSize * sizeof (uint)));
++#else
++    colormapptr = (uint *) (malloc (ColormapSize * sizeof (uint)));
++#endif
++
++    for (int i = 0; i < ColormapSize; ++i) {
+         colormap[i] = rgbFromWaveLength(380.0 + (i * 400.0 / ColormapSize));
++        colormapptr [i] = colormap[i];
++    }
+ }
+ //! [0]
+ 
+@@ -89,10 +126,70 @@ void RenderThread::render(double centerX, double centerY, double scaleFactor,
+ }
+ //! [2]
+ 
++#ifndef DSP_ACCELERATION
++void criticalFxn ( double centerYVal, double scaleFactorVal, int halfHeightVal, int halfWidthVal,
++               double centerXVal, int MaxIterationsVal,
++               uint  * frameptrVal, uint * colormapptrVal )
++{
++
++  int x, y;
++  float ay, ax, a1, b1;
++  int numIterations;
++  const int Limit = 4;
++  float a2, b2;
++
++  for (y = -halfHeightVal; y < halfHeightVal; ++y) {
++
++          ay = centerYVal + (y * scaleFactorVal);
++
++          for (x = -halfWidthVal; x < halfWidthVal; ++x)
++          {
++            ax = centerXVal + (x * scaleFactorVal);
++            a1 = ax;
++            b1 = ay;
++            numIterations = 0;
++
++            do
++            {
++              ++numIterations;
++              a2 =  ax - (b1 * b1) + (a1 * a1);
++              b2 =  ay + (2 * a1 * b1);
++              if ((a2 * a2) + (b2 * b2) > Limit)
++                  break;
++
++              ++numIterations;
++              a1 = (a2 * a2) - (b2 * b2) + ax;
++              b1 =  ay + (2 * a2 * b2);
++              if ((a1 * a1) + (b1 * b1) > Limit)
++                  break;
++            }
++            while (numIterations < MaxIterationsVal);
++
++            if (numIterations < MaxIterationsVal)
++            {
++              *frameptrVal++ = colormapptrVal[numIterations % 512];
++            }
++            else
++            {
++              *frameptrVal++ = 0;
++            }
++          }
++        }
++
++}
++#endif
++
+ //! [3]
+ void RenderThread::run()
+ {
++#ifdef DSP_ACCELERATION
++    frameptr = (uint *) (C6RUN_MEM_malloc (1920 * 1080* sizeof (uint)));
++#else
++    frameptr = (uint *) (malloc (1920 * 1080* sizeof (uint)));
++#endif
++
+     forever {
++    //    qDebug() << count++ << "thread::run::awake now";
+         mutex.lock();
+         QSize resultSize = this->resultSize;
+         double scaleFactor = this->scaleFactor;
+@@ -105,66 +202,47 @@ void RenderThread::run()
+         int halfWidth = resultSize.width() / 2;
+ //! [4] //! [5]
+         int halfHeight = resultSize.height() / 2;
+-        QImage image(resultSize, QImage::Format_RGB32);
+ 
+         const int NumPasses = 8;
+         int pass = 0;
++
+         while (pass < NumPasses) {
++          //  qDebug() << count++ <<"thread::run::while loop starts, pass" << pass;
+             const int MaxIterations = (1 << (2 * pass + 6)) + 32;
+             const int Limit = 4;
+             bool allBlack = true;
+ 
+-            for (int y = -halfHeight; y < halfHeight; ++y) {
+-                if (restart)
+-                    break;
+-                if (abort)
+-                    return;
+-
+-                uint *scanLine =
+-                        reinterpret_cast<uint *>(image.scanLine(y + halfHeight));
+-                double ay = centerY + (y * scaleFactor);
+-
+-                for (int x = -halfWidth; x < halfWidth; ++x) {
+-                    double ax = centerX + (x * scaleFactor);
+-                    double a1 = ax;
+-                    double b1 = ay;
+-                    int numIterations = 0;
+-
+-                    do {
+-                        ++numIterations;
+-                        double a2 = (a1 * a1) - (b1 * b1) + ax;
+-                        double b2 = (2 * a1 * b1) + ay;
+-                        if ((a2 * a2) + (b2 * b2) > Limit)
+-                            break;
+-
+-                        ++numIterations;
+-                        a1 = (a2 * a2) - (b2 * b2) + ax;
+-                        b1 = (2 * a2 * b2) + ay;
+-                        if ((a1 * a1) + (b1 * b1) > Limit)
+-                            break;
+-                    } while (numIterations < MaxIterations);
+-
+-                    if (numIterations < MaxIterations) {
+-                        *scanLine++ = colormap[numIterations % ColormapSize];
+-                        allBlack = false;
+-                    } else {
+-                        *scanLine++ = qRgb(0, 0, 0);
+-                    }
+-                }
+-            }
++            if (restart)
++                break;
++            if (abort)
++                return;
++
++            criticalFxn (
++                            centerY, scaleFactor, halfHeight, halfWidth,
++                            centerX, MaxIterations,
++                            frameptr, colormapptr
++                        );
++
++            // Set allBlack as False
++            allBlack = false;
+ 
+             if (allBlack && pass == 0) {
+                 pass = 4;
+-            } else {
+-                if (!restart)
++            }
++            else {
++                if (!restart) {
++                    QImage image (reinterpret_cast<uchar *>(frameptr), resultSize.width(), resultSize.height(), QImage::Format_RGB32);
+                     emit renderedImage(image, scaleFactor);
++                }
++
+ //! [5] //! [6]
+                 ++pass;
+             }
++
+ //! [6] //! [7]
+         }
+ //! [7]
+-
++;
+ //! [8]
+         mutex.lock();
+ //! [8] //! [9]
+diff --git a/renderthread.h b/renderthread.h
+index c8fea8e..6d37083 100644
+--- a/renderthread.h
++++ b/renderthread.h
+@@ -38,6 +38,18 @@
+ ** $QT_END_LICENSE$
+ **
+ ****************************************************************************/
++/****************************************************************************
++ *
++ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/ 
++ *
++ * The following changes were made by Texas Instruments Incorporated
++ *
++ * ChangeLog
++ *
++ * 2010/07/03 - v1.0
++ * - Defined colormapptr and framemptr for DSP 
++ *  
++ */
+ 
+ #ifndef RENDERTHREAD_H
+ #define RENDERTHREAD_H
+@@ -83,6 +95,9 @@ private:
+ 
+     enum { ColormapSize = 512 };
+     uint colormap[ColormapSize];
++
++    uint * colormapptr;
++    uint * frameptr;
+ };
+ //! [0]
+ 
+-- 
+1.7.0.4
+
