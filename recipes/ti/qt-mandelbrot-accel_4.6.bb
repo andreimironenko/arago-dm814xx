@@ -5,7 +5,7 @@ require ti-paths.inc
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-PR = "r0"
+PR = "r1"
 
 SRC_URI = "file://mandelbrot-v${PV}.tar.gz \
           file://qt-mandelbrot-accel.patch "
@@ -14,13 +14,11 @@ S = "${WORKDIR}/mandelbrot"
 
 DEPENDS = "ti-c6run "
 
-do_buildc6runlib() {
+do_compile_prepend() {
     cd ${S}
     ${C6RUN_INSTALL_DIR}/bin/c6runlib-cc -O3 -c -ms0 critical.c
     ${C6RUN_INSTALL_DIR}/bin/c6runlib-ar rcs critical.lib critical.o
 }
-
-addtask buildc6runlib before do_compile
 
 
 inherit qt4e
