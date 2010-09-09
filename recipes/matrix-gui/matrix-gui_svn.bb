@@ -4,9 +4,9 @@ LICENSE = "BSD"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-SRCREV = "114"
+SRCREV = "123"
 PV = "1.0"
-PR = "r9+svnr${SRCPV}"
+PR = "r10+svnr${SRCPV}"
 
 PLATFORM_dm365 = "dm365"
 PLATFORM_da850-omapl138-evm = "omapl138"
