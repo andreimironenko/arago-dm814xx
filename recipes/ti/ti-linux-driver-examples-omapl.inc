@@ -11,9 +11,9 @@ COMPATIBLE_MACHINE = "(da850-omapl138-evm)"
 
 PR = "r1"
 
-S = "${WORKDIR}/examples-${PV_dot}"
+S = "${WORKDIR}/examples-${PV}"
 
-SRC_URI = "ftp://nemo.sc.ti.com/pub/int-packages/omapl138_psp_examples_${PV}.tar.gz;name=linuxexamplestarball"
+SRC_URI = "ftp://nemo.sc.ti.com/pub/int-packages/omapl138-linux-driver-examples-${PV}.tar.gz;name=linuxexamplestarball"
 
 DEPENDS += "virtual/kernel"
 
