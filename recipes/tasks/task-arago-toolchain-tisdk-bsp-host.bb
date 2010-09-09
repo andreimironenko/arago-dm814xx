@@ -11,6 +11,8 @@ BSP_COMPONENTS_COMMON = "\
     u-boot-src \
     "
 
+BSP_COMPONENTS = ""
+
 BSP_COMPONENTS_dm365 = "\
     ti-tisdk-relnotes \
     ti-tisdk-setup \

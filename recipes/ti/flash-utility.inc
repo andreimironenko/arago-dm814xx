@@ -5,7 +5,7 @@ PR = "r1"
 
 S = "${WORKDIR}"
 
-installdir = "psp/board-utilties/flash_util/windows"
+installdir = "psp/board-utilities/flash_utils/windows"
 
 do_install() {
     install -d ${D}/${installdir}
