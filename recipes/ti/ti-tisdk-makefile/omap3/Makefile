@@ -161,7 +161,7 @@ xload:
 	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm distclean
 	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm omap3evm_config
 	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm
-	$(PSP_INSTALL_DIR)/x-load/host-tools/signGP $(PSP_INSTALL_DIR)/x-load-*/x-load.bin
+	$(DVSDK_INSTALL_DIR)/linux-devkit/bin/signGP $(PSP_INSTALL_DIR)/x-load-*/x-load.bin
 
 xload_clean:
 	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* clean

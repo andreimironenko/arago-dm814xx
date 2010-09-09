@@ -7,7 +7,7 @@ require ti-staging.inc
 SRCREV = "08e9bb16ba295f356da081e307cd0cf72fe6920b"
 
 PV = "psp-3.00.01.06"
-PR_append = "c"
+PR_append = "d"
 
 # FIXME: I don't know why SRC_URI does not work with http:// protocol
 # SRC_URI = "http://gitsvr01.india.ti.com/git/psp_examples/.git;protocol=git"
