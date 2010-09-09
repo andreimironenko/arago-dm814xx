@@ -9,7 +9,7 @@ require ti-staging.inc
 
 COMPATIBLE_MACHINE = "(da850-omapl138-evm)"
 
-PR = "r1"
+PR = "r2"
 
 S = "${WORKDIR}/examples-${PV}"
 
