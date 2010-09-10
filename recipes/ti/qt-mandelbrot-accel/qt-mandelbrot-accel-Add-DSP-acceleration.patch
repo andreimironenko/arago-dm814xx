@@ -1,30 +1,30 @@
-From 01a7ca8e4cb90f6c023234f2c611d89e53230c4d Mon Sep 17 00:00:00 2001
+From 84acbd4e664dbde75a193e3149889cbf2ac195fa Mon Sep 17 00:00:00 2001
 From: Arnie Reynoso <arnier@ti.com>
-Date: Thu, 9 Sep 2010 16:56:27 -0500
-Subject: [PATCH] Add TI DSP acceleration changes
+Date: Thu, 9 Sep 2010 22:42:41 -0500
+Subject: [PATCH] Add DSP acceleration to QT mandelbrot example
 
 ---
- critical.c           |  119 ++++++++++++++++++++++
- critical.h           |   66 ++++++++++++
- icons/exit.png       |  Bin 0 -> 30777 bytes
- main.cpp             |   29 +++++-
- mandelbrot.css       |   15 +++
+ critical.c           |  119 +++++++++++++++++++++++++++++
+ critical.h           |   66 ++++++++++++++++
+ exit.png             |  Bin 0 -> 30777 bytes
+ main.cpp             |   29 +++++++-
+ mandelbrot.css       |   15 ++++
  mandelbrot.pro       |    4 +-
- mandelbrot.qrc       |    6 +
- mandelbrotwidget.cpp |  208 ++++++++++++++++++++++++++++++---------
- mandelbrotwidget.h   |   17 +++
- renderthread.cpp     |  179 +++++++++++++++++++++++++---------
- renderthread.h       |   15 +++
- 11 files changed, 562 insertions(+), 96 deletions(-)
+ mandelbrot.qrc       |    6 ++
+ mandelbrotwidget.cpp |  207 ++++++++++++++++++++++++++++++++++++++------------
+ mandelbrotwidget.h   |   17 ++++
+ renderthread.cpp     |  179 ++++++++++++++++++++++++++++++++-----------
+ renderthread.h       |   15 ++++
+ 11 files changed, 561 insertions(+), 96 deletions(-)
  create mode 100644 critical.c
  create mode 100644 critical.h
- create mode 100755 icons/exit.png
+ create mode 100755 exit.png
  create mode 100755 mandelbrot.css
  create mode 100755 mandelbrot.qrc
 
 diff --git a/critical.c b/critical.c
 new file mode 100644
-index 0000000..0fb3594
+index 0000000..cf4a1cd
 --- /dev/null
 +++ b/critical.c
 @@ -0,0 +1,119 @@
@@ -70,7 +70,7 @@ index 0000000..0fb3594
 +****************************************************************************/
 +/****************************************************************************
 + *
-+ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/ 
++ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/
 + *
 + * The following changes were made by Texas Instruments Incorporated
 + *
@@ -78,7 +78,7 @@ index 0000000..0fb3594
 + *
 + * 2010/07/03 - v1.0
 + * - Creaed new file to include the MIPS critical function
-+ *  
++ *
 + */
 +
 +#include <stdio.h>
@@ -99,7 +99,7 @@ index 0000000..0fb3594
 +
 +void criticalFxn ( double centerYVal, double scaleFactorVal, int halfHeightVal, int halfWidthVal,
 +               double centerXVal, int MaxIterationsVal,
-+               OUT unsigned int  * frameptrVal, IN unsigned int * colormapptrVal) 
++               OUT unsigned int  * frameptrVal, IN unsigned int * colormapptrVal)
 +{
 +
 +  int x, y;
@@ -108,7 +108,7 @@ index 0000000..0fb3594
 +  const int Limit = 4;
 +  float a2, b2;
 +
-+  for (y = -halfHeightVal; y < halfHeightVal; ++y) 
++  for (y = -halfHeightVal; y < halfHeightVal; ++y)
 +  {
 +
 +      ay = centerYVal + (y * scaleFactorVal);
@@ -149,7 +149,7 @@ index 0000000..0fb3594
 +}
 diff --git a/critical.h b/critical.h
 new file mode 100644
-index 0000000..224dfa7
+index 0000000..1780cf2
 --- /dev/null
 +++ b/critical.h
 @@ -0,0 +1,66 @@
@@ -196,7 +196,7 @@ index 0000000..224dfa7
 +
 +/****************************************************************************
 + *
-+ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/ 
++ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/
 + *
 + * The following changes were made by Texas Instruments Incorporated
 + *
@@ -204,7 +204,7 @@ index 0000000..224dfa7
 + *
 + * 2010/07/03 - v1.0
 + * - Creaed new file to include the MIPS critical function
-+ *  
++ *
 + */
 +
 +#ifdef __cplusplus
@@ -219,7 +219,7 @@ index 0000000..224dfa7
 +#ifdef __cplusplus
 +}
 +#endif /* __cplusplus */
-diff --git a/icons/exit.png b/icons/exit.png
+diff --git a/exit.png b/exit.png
 new file mode 100755
 index 0000000000000000000000000000000000000000..a2d7a514e56ffa326565de2be6b58b23497a06c9
 GIT binary patch
@@ -810,7 +810,7 @@ literal 0
 HcmV?d00001
 
 diff --git a/main.cpp b/main.cpp
-index a9fe8f3..9cd9e30 100644
+index a9fe8f3..cc8c286 100644
 --- a/main.cpp
 +++ b/main.cpp
 @@ -39,16 +39,41 @@
@@ -820,14 +820,14 @@ index a9fe8f3..9cd9e30 100644
 -#include <QApplication>
 +/****************************************************************************
 + *
-+ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/ 
++ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/
 + *
 + * The following changes were made by Texas Instruments Incorporated
 + *
 + * ChangeLog
 + *
 + * 2010/07/03 - v1.0
-+ * - Added Override Cursor 
++ * - Added Override Cursor
 + * - Added showFullScreen
 + * 2010/09/03 - v2.0
 + * - Added PushButton Style Sheet
@@ -879,7 +879,7 @@ index 0000000..55b03b7
 +    border-radius: 5px;
 +}
 diff --git a/mandelbrot.pro b/mandelbrot.pro
-index f8bd704..92903a1 100644
+index f8bd704..3357c3e 100644
 --- a/mandelbrot.pro
 +++ b/mandelbrot.pro
 @@ -8,5 +8,7 @@ DEPENDPATH += .
@@ -890,7 +890,7 @@ index f8bd704..92903a1 100644
 +HEADERS += critical.h mandelbrotwidget.h renderthread.h
  SOURCES += main.cpp mandelbrotwidget.cpp renderthread.cpp
 +RESOURCES += mandelbrot.qrc
-+LIBS += critical.lib 
++LIBS += critical.lib
 diff --git a/mandelbrot.qrc b/mandelbrot.qrc
 new file mode 100755
 index 0000000..2ae172b
@@ -899,12 +899,12 @@ index 0000000..2ae172b
 @@ -0,0 +1,6 @@
 +<RCC>
 +    <qresource prefix="/">
-+        <file>icons/exit.png</file>
++        <file>exit.png</file>
 +        <file>mandelbrot.css</file>
 +    </qresource>
 +</RCC>
 diff --git a/mandelbrotwidget.cpp b/mandelbrotwidget.cpp
-index 27b9a89..2e05ddf 100644
+index 27b9a89..d1e7aa3 100644
 --- a/mandelbrotwidget.cpp
 +++ b/mandelbrotwidget.cpp
 @@ -39,20 +39,62 @@
@@ -913,14 +913,14 @@ index 27b9a89..2e05ddf 100644
  
 +/****************************************************************************
 + *
-+ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/ 
++ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/
 + *
 + * The following changes were made by Texas Instruments Incorporated
 + *
 + * ChangeLog
 + *
 + * 2010/07/03 - v1.0
-+ * - Added Autozoom feature 
++ * - Added Autozoom feature
 + * 2010/09/03 - v2.0
 + * - Added Exit Button & functionality
 + */
@@ -987,7 +987,7 @@ index 27b9a89..2e05ddf 100644
      setWindowTitle(tr("Mandelbrot"));
 +
 +    QPushButton *exitButton = new QPushButton(tr("Exit"));
-+    QIcon *exitIcon = new QIcon(":/icons/exit.png");
++    QIcon *exitIcon = new QIcon(":exit.png");
 +    exitButton->setIcon(*exitIcon);
 +    exitButton->setIconSize(QSize(35,35));
 +
@@ -1043,13 +1043,26 @@ index 27b9a89..2e05ddf 100644
          double scaleFactor = pixmapScale / curScale;
          int newWidth = int(pixmap.width() * scaleFactor);
          int newHeight = int(pixmap.height() * scaleFactor);
-@@ -111,32 +172,44 @@ void MandelbrotWidget::paintEvent(QPaintEvent * /* event */)
-         QRectF exposed = painter.matrix().inverted().mapRect(rect()).adjusted(-1, -1, 1, 1);
+@@ -112,31 +173,43 @@ void MandelbrotWidget::paintEvent(QPaintEvent * /* event */)
          painter.drawPixmap(exposed, pixmap, exposed);
          painter.restore();
-+    } 
+     }
+-//! [8] //! [9]
+-
+-    QString text = tr("Use mouse wheel or the '+' and '-' keys to zoom. "
+-                      "Press and hold left mouse button to scroll.");
+-    QFontMetrics metrics = painter.fontMetrics();
+-    int textWidth = metrics.width(text);
+-
+-    painter.setPen(Qt::NoPen);
+-    painter.setBrush(QColor(0, 0, 0, 127));
+-    painter.drawRect((width() - textWidth) / 2 - 5, 0, textWidth + 10,
+-                     metrics.lineSpacing() + 5);
+-    painter.setPen(Qt::white);
+-    painter.drawText((width() - textWidth) / 2,
+-                     metrics.leading() + metrics.ascent(), text);
 +
-+        /*printing fps and zoom level*/        
++        /*printing fps and zoom level*/
 +        QString fpsText = tr("fps: ") +  QString("%1").arg(fpsValue, 4, '0');
 +        QString zoomText = tr("Zoom: ") + QString("%1x").arg(ZoomCount);
 +        QString introText = tr("DSP Acceleration powered by C6EzRun");
@@ -1077,21 +1090,7 @@ index 27b9a89..2e05ddf 100644
 +    if (zoomCallCount > (MAX_RENDERTHREAD_ITERATIONS_A)) {
 +        autoZoom();
 +        zoomCallCount = 0;
-     }
--//! [8] //! [9]
--
--    QString text = tr("Use mouse wheel or the '+' and '-' keys to zoom. "
--                      "Press and hold left mouse button to scroll.");
--    QFontMetrics metrics = painter.fontMetrics();
--    int textWidth = metrics.width(text);
--
--    painter.setPen(Qt::NoPen);
--    painter.setBrush(QColor(0, 0, 0, 127));
--    painter.drawRect((width() - textWidth) / 2 - 5, 0, textWidth + 10,
--                     metrics.lineSpacing() + 5);
--    painter.setPen(Qt::white);
--    painter.drawText((width() - textWidth) / 2,
--                     metrics.leading() + metrics.ascent(), text);
++    }
  }
 -//! [9]
  
@@ -1153,7 +1152,7 @@ index 27b9a89..2e05ddf 100644
  void MandelbrotWidget::updatePixmap(const QImage &image, double scaleFactor)
  {
      if (!lastDragPos.isNull())
-@@ -216,25 +279,74 @@ void MandelbrotWidget::updatePixmap(const QImage &image, double scaleFactor)
+@@ -216,25 +279,73 @@ void MandelbrotWidget::updatePixmap(const QImage &image, double scaleFactor)
      pixmapOffset = QPoint();
      lastDragPos = QPoint();
      pixmapScale = scaleFactor;
@@ -1232,12 +1231,11 @@ index 27b9a89..2e05ddf 100644
 +}
 +
 +void MandelbrotWidget::closeApp()
-+{    
++{
 +    this->close();
 +}
-+
 diff --git a/mandelbrotwidget.h b/mandelbrotwidget.h
-index e08cf21..2e57e63 100644
+index e08cf21..f0574ac 100644
 --- a/mandelbrotwidget.h
 +++ b/mandelbrotwidget.h
 @@ -39,6 +39,20 @@
@@ -1246,7 +1244,7 @@ index e08cf21..2e57e63 100644
  
 +/****************************************************************************
 + *
-+ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/ 
++ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/
 + *
 + * The following changes were made by Texas Instruments Incorporated
 + *
@@ -1272,7 +1270,7 @@ index e08cf21..2e57e63 100644
  private:
      void zoom(double zoomFactor);
 diff --git a/renderthread.cpp b/renderthread.cpp
-index c7831c8..44a0223 100644
+index c7831c8..3150a41 100644
 --- a/renderthread.cpp
 +++ b/renderthread.cpp
 @@ -38,13 +38,45 @@
@@ -1281,7 +1279,7 @@ index c7831c8..44a0223 100644
  ****************************************************************************/
 +/****************************************************************************
 + *
-+ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/ 
++ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/
 + *
 + * The following changes were made by Texas Instruments Incorporated
 + *
@@ -1291,7 +1289,7 @@ index c7831c8..44a0223 100644
 + * - Added Option for DSP acceleration
 + * 2010/09/09 - v2.0
 + * - Added code to free the allocated free
-+ *  
++ *
 + */
  
  #include <QtGui>
@@ -1518,7 +1516,7 @@ index c7831c8..44a0223 100644
          mutex.lock();
  //! [8] //! [9]
 diff --git a/renderthread.h b/renderthread.h
-index c8fea8e..6d37083 100644
+index c8fea8e..b463db4 100644
 --- a/renderthread.h
 +++ b/renderthread.h
 @@ -38,6 +38,18 @@
@@ -1527,15 +1525,15 @@ index c8fea8e..6d37083 100644
  ****************************************************************************/
 +/****************************************************************************
 + *
-+ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/ 
++ * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com/
 + *
 + * The following changes were made by Texas Instruments Incorporated
 + *
 + * ChangeLog
 + *
 + * 2010/07/03 - v1.0
-+ * - Defined colormapptr and framemptr for DSP 
-+ *  
++ * - Defined colormapptr and framemptr for DSP
++ *
 + */
  
  #ifndef RENDERTHREAD_H
