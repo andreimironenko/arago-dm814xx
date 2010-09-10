@@ -79,7 +79,6 @@ update_rules_make()
     name="`cat $i | grep Package | awk {'print $2'}`"
     
     echo $name | grep ti-*  >/dev/null
-
     # if package contain ti- prefix then remove it
     if [ $? -eq 0 ]; then
       name="`echo $name | cut -f2-5 -d-`"
@@ -88,27 +87,22 @@ update_rules_make()
     # remove -src from the end
     name="`echo $name | sed -e 's/....$//g'`"
 
-    # in some case version will be 1:xxxx and we need to remove 1: part 
-    version="`cat $i | grep Version | awk {'print $2'} | cut -f2 -d: | \
-          cut -f1 -d-`"
+    # get the directory name
+    dirname="`basename $install_dir/${name}_*`"
+
+    if [ "$name" = "libgles-omap3" ]; then
+       dirname="`basename $install_dir/omap35x_graphics_sdk_*`"
+    fi
 
     # update rules.make
-    sed -i -e s/\<__${name}__\>/${name}_${version}/g \
+    sed -i -e s/\<__${name}__\>/${dirname}/g \
         $install_dir/usr/share/ti/Rules.make
-
-    # rename libgles-omap3 to omap35x_graphics_sdk
-    if [ "$name" = "libgles-omap3" ]; then
-      sed -i -e s/${name}/omap35x_graphics_sdk/g \
-        $install_dir/usr/share/ti/Rules.make
-    fi
-    
-    if [ "$name" = "linux-omap3" ] || [ "$name" = "linux-davinci-staging" ] || [ "$name" = "linux-omapl1" ] ; then
-        version="`cat $i | grep Version | awk {'print $2'} | cut -f2 -d: | cut -f1-2 -d-`"
-        sed -i -e s/\<__kernel__\>/linux-${version}/g \
-          $install_dir/usr/share/ti/Rules.make
-    fi
   done
-
+  
+  # update LINUX KERNEL INSTALL DIR
+  linuxversion="`basename $install_dir/psp/linux-*`"
+  sed -i -e s/\<__kernel__\>/${linuxversion}/g \
+          $install_dir/usr/share/ti/Rules.make
   sed -i -e s=\<__SDK__INSTALL_DIR__\>=${install_dir}= \
     $install_dir/usr/share/ti/Rules.make
   sed -i -e s=\<__CROSS_COMPILER_PATH__\>=${TOOLCHAIN_PATH}= \
@@ -370,6 +364,7 @@ install_graphics_sdk_host ()
   echo 'export OE_QMAKE_QT_CONFIG=${SDK_PATH}/${TARGET_SYS}/usr/share/qtopia/mkspecs/qconfig.pri' >> $script
   echo 'export QMAKESPEC=${SDK_PATH}/${TARGET_SYS}/usr/share/qtopia/mkspecs/linux-g++' >> $script
   echo 'export OE_QMAKE_LDFLAGS="-L${SDK_PATH}/${TARGET_SYS}/usr/lib -Wl,-rpath-link,${SDK_PATH}/${TARGET_SYS}/usr/lib -Wl,-O1 -Wl,--hash-style=gnu"' >> $script
+  echo 'export OE_QMAKE_STRIP="echo"' >> $script
 
 }
 
