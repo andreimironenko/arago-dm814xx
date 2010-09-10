@@ -5,16 +5,19 @@ require ti-paths.inc
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-PR = "r1"
+PR = "r2"
 
 SRC_URI = "file://mandelbrot-v${PV}.tar.gz \
-          file://qt-mandelbrot-accel.patch "
+          file://qt-mandelbrot-accel-Add-DSP-acceleration.patch \
+          file://exit.png "
 
 S = "${WORKDIR}/mandelbrot"
 
 DEPENDS = "ti-c6run "
 
 do_compile_prepend() {
+    cp ${WORKDIR}/exit.png ${S}
+
     cd ${S}
     ${C6RUN_INSTALL_DIR}/bin/c6runlib-cc -O3 -c -ms0 critical.c
     ${C6RUN_INSTALL_DIR}/bin/c6runlib-ar rcs critical.lib critical.o
