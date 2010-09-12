@@ -1,5 +1,5 @@
 
-SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvtb/4.20.10/exports/dvtb_${PV}.tar.gz;name=dvtbtarball"
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvtb/4.20.10/exports/dvtb_${PV}.tar.gz;name=dvtbtarball "
 
 require ti-dvtb.inc
 

@@ -1,4 +1,4 @@
-#
+#!/bin/sh
 # loadmodules.sh
 #
 # Copyright (C) $year Texas Instruments Incorporated - http://www.ti.com/
@@ -12,11 +12,12 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 
-rmmod cmemk
-rmmod dsplinkk
+# remove previously cmem module to ensure that its using our cmem pool configuration
+rmmod cmemk 2>/dev/null
 
 modprobe cmemk phys_start=0xC2200000 phys_end=0xC3200000 pools=1x5250000,3x1048576,3x829440,1x256000,4x131072
 modprobe dsplinkk
 
 rm -rf /dev/dsplink
 mknod /dev/dsplink c `awk "\\$2==\"dsplink\" {print \\$1}" /proc/devices` 0
+

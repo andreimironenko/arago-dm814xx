@@ -1,4 +1,4 @@
-# loadmodules.sh
+#!/bin/sh 
 #
 # Copyright (C) $year Texas Instruments Incorporated - http://www.ti.com/
 #
@@ -11,37 +11,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 
-#
-# Default Memory Map
-#
-# Start Addr    Size    Description
-# -------------------------------------------
-# 0x80000000    88 MB   Linux
-# 0x85800000    08 MB   CMEM
-# 0x86800000    24 MB   DDRALGHEAP
-# 0x87800000     6 MB   DDR2 (BIOS, Codecs, Applications)
-# 0x87E00000     1 MB   DSPLINK (MEM)
-# 0x87F00000     4 KB   DSPLINK (RESET)
-# 0x87F01000  1020 KB   unused
+# remove previously loaded cmem to ensure that its using our pool configuration
+rmmod cmemk 2>/dev/null
 
-depmod -a
-rmmod cmemk
-rmmod dsplinkk
-rmmod lpm_omap3530
-
-modprobe cmemk phys_start=0x86300000 phys_end=0x87200000 pools=20x4096,8x131072,4x829440,1x5250000,1x1429440,1x256000
-
-
-# insert DSP/BIOS Link driver
-#
+modprobe cmemk phys_start=0x86300000 phys_end=0x87200000 pools=20x4096,8x131072,4x829440,1x5250000,1x1429440,1x256000 allowOverlap=1
 modprobe dsplinkk
+modprobe lpm_omap3530
+modprobe sdmak
 
-# make /dev/dsplink
 rm -f /dev/dsplink
 mknod /dev/dsplink c `awk "\\$2==\"dsplink\" {print \\$1}" /proc/devices` 0
-
-
-# insert Local Power Manager driver
-#
-modprobe lpm_omap3530
 

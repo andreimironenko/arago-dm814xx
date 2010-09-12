@@ -1,5 +1,7 @@
 require ti-c6accel.inc
 
+SRC_URI_append = "file://fix-loadmodule.patch"
+
 PV = "1_00_00_04"
 
 SRC_URI[c6accelbin.md5sum] = "a1146d7b23252b4ac2ff927d79dcdc4b"
