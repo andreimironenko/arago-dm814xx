@@ -1,0 +1,60 @@
+diff -uNr codec_engine_2_26_00_08_orig/examples/ti/sdo/ce/examples/apps/audio1_ires/rtcfg_local_evm3530_linux/makefile codec_engine_2_26_00_08/examples/ti/sdo/ce/examples/apps/audio1_ires/rtcfg_local_evm3530_linux/makefile
+--- codec_engine_2_26_00_08_orig/examples/ti/sdo/ce/examples/apps/audio1_ires/rtcfg_local_evm3530_linux/makefile	2010-08-30 22:37:37.000000000 -0500
++++ codec_engine_2_26_00_08/examples/ti/sdo/ce/examples/apps/audio1_ires/rtcfg_local_evm3530_linux/makefile	2010-09-11 22:30:02.237409816 -0500
+@@ -79,7 +79,7 @@
+ 	$(XDAIS_INSTALL_DIR)/packages \
+ 	$(FC_INSTALL_DIR)/packages \
+ 	$(FC_INSTALL_DIR)/examples \
+-	$(CMEM_INSTALL_DIR)/packages \
++	$(CMEM_INSTALL_DIR)/packages $(LPM_INSTALL_DIR)/packages \
+ 	$(BIOSUTILS_INSTALL_DIR)/packages \
+ 	$(EXAMPLES_ROOTDIR)
+ 
+diff -uNr codec_engine_2_26_00_08_orig/examples/ti/sdo/ce/examples/apps/speech1_copy/rtcfg_local_evm3530_linux/makefile codec_engine_2_26_00_08/examples/ti/sdo/ce/examples/apps/speech1_copy/rtcfg_local_evm3530_linux/makefile
+--- codec_engine_2_26_00_08_orig/examples/ti/sdo/ce/examples/apps/speech1_copy/rtcfg_local_evm3530_linux/makefile	2010-08-30 22:38:09.000000000 -0500
++++ codec_engine_2_26_00_08/examples/ti/sdo/ce/examples/apps/speech1_copy/rtcfg_local_evm3530_linux/makefile	2010-09-11 22:30:02.229409891 -0500
+@@ -73,7 +73,7 @@
+ 	$(CE_REPO) \
+ 	$(XDAIS_INSTALL_DIR)/packages \
+ 	$(FC_INSTALL_DIR)/packages \
+-	$(CMEM_INSTALL_DIR)/packages \
++	$(CMEM_INSTALL_DIR)/packages $(LPM_INSTALL_DIR)/packages \
+ 	$(BIOSUTILS_INSTALL_DIR)/packages \
+ 	$(EXAMPLES_ROOTDIR)
+ 
+diff -uNr codec_engine_2_26_00_08_orig/examples/ti/sdo/ce/examples/apps/speech1_copy/rtcfg_remote_evm3530_linux/makefile codec_engine_2_26_00_08/examples/ti/sdo/ce/examples/apps/speech1_copy/rtcfg_remote_evm3530_linux/makefile
+--- codec_engine_2_26_00_08_orig/examples/ti/sdo/ce/examples/apps/speech1_copy/rtcfg_remote_evm3530_linux/makefile	2010-08-30 22:38:09.000000000 -0500
++++ codec_engine_2_26_00_08/examples/ti/sdo/ce/examples/apps/speech1_copy/rtcfg_remote_evm3530_linux/makefile	2010-09-11 22:30:02.225410021 -0500
+@@ -75,7 +75,7 @@
+ 	$(DSPLINK_INSTALL_DIR) \
+ 	$(XDAIS_INSTALL_DIR)/packages \
+ 	$(FC_INSTALL_DIR)/packages \
+-	$(CMEM_INSTALL_DIR)/packages \
++	$(CMEM_INSTALL_DIR)/packages $(LPM_INSTALL_DIR)/packages \
+ 	$(BIOSUTILS_INSTALL_DIR)/packages \
+ 	$(EXAMPLES_ROOTDIR)
+ 
+diff -uNr codec_engine_2_26_00_08_orig/examples/ti/sdo/ce/examples/apps/video1_copy/rtcfg_local_evm3530_linux/makefile codec_engine_2_26_00_08/examples/ti/sdo/ce/examples/apps/video1_copy/rtcfg_local_evm3530_linux/makefile
+--- codec_engine_2_26_00_08_orig/examples/ti/sdo/ce/examples/apps/video1_copy/rtcfg_local_evm3530_linux/makefile	2010-08-30 22:38:28.000000000 -0500
++++ codec_engine_2_26_00_08/examples/ti/sdo/ce/examples/apps/video1_copy/rtcfg_local_evm3530_linux/makefile	2010-09-11 22:30:02.233410287 -0500
+@@ -73,7 +73,7 @@
+ 	$(CE_REPO) \
+ 	$(XDAIS_INSTALL_DIR)/packages \
+ 	$(FC_INSTALL_DIR)/packages \
+-	$(CMEM_INSTALL_DIR)/packages \
++	$(CMEM_INSTALL_DIR)/packages $(LPM_INSTALL_DIR)/packages \
+ 	$(BIOSUTILS_INSTALL_DIR)/packages \
+ 	$(EXAMPLES_ROOTDIR)
+ 
+diff -uNr codec_engine_2_26_00_08_orig/examples/ti/sdo/ce/examples/apps/video1_copy/rtcfg_remote_evm3530_linux/makefile codec_engine_2_26_00_08/examples/ti/sdo/ce/examples/apps/video1_copy/rtcfg_remote_evm3530_linux/makefile
+--- codec_engine_2_26_00_08_orig/examples/ti/sdo/ce/examples/apps/video1_copy/rtcfg_remote_evm3530_linux/makefile	2010-08-30 22:38:29.000000000 -0500
++++ codec_engine_2_26_00_08/examples/ti/sdo/ce/examples/apps/video1_copy/rtcfg_remote_evm3530_linux/makefile	2010-09-11 22:30:02.229409891 -0500
+@@ -74,7 +74,7 @@
+ 	$(DSPLINK_INSTALL_DIR) \
+ 	$(XDAIS_INSTALL_DIR)/packages \
+ 	$(FC_INSTALL_DIR)/packages \
+-	$(CMEM_INSTALL_DIR)/packages \
++	$(CMEM_INSTALL_DIR)/packages $(LPM_INSTALL_DIR)/packages \
+ 	$(BIOSUTILS_INSTALL_DIR)/packages \
+ 	$(EXAMPLES_ROOTDIR)
+ 
