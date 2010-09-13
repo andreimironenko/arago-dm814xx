@@ -11,17 +11,17 @@ PATH := ${PATH}:${CSTOOL_PATH}
 #==============================================================================
 # The default build target builds components to enable all other build targets.
 #==============================================================================
-all: linux dsplink
+all: linux cmem sdma dsplink lpm c6run c6accel codecs dmai  
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	linux_clean dsplink_clean
+clean:	linux_clean dsplink_clean cmem_clean lpm_clean sdma_clean c6run_clean codecs_clean dmai_clean c6accel_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: all u-boot cmem lpm sdma codecs ceexamples dmai dvtb demos psp_examples c6accel opengldemos xload c6run c6run_examples
+everything: all u-boot ceexamples dvtb demos psp_examples opengldemos xload c6run_examples
 
 #==============================================================================
 # Install everything
@@ -31,7 +31,7 @@ install: linux_install cmem_install ceexamples_install codecs_install lpm_instal
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber: clean dmai_clean ceexamples_clean cmem_clean sdma_clean codecs_clean lpm_clean u-boot_clean dvtb_clean demos_clean psp_examples_clean opengldemos_clean xload_clean c6run_clean
+clobber: clean ceexamples_clean u-boot_clean dvtb_clean demos_clean psp_examples_clean opengldemos_clean xload_clean
 
 #==============================================================================
 # A help message target.
@@ -139,9 +139,9 @@ demos_install:
 #==============================================================================
 # Build the Linux kernel. Also, an explicit cleanup target is defined.
 #==============================================================================
-linux:	u-boot
+linux:
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_LINUXKERNEL_CONFIG)
-	PATH="$(PATH):$(PSP_INSTALL_DIR)/u-boot-*/tools" $(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
+	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) modules
 linux_clean:
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) mrproper
@@ -255,7 +255,27 @@ lpm_install:
 # explicit cleanup target is defined.
 #==============================================================================
 dvtb:
-	$(MAKE) -C $(DVTB_INSTALL_DIR) $(PLATFORM) CODECS=TSPA
+	$(MAKE) -C $(DVTB_INSTALL_DIR) PLATFORM=$(PLATFORM) \
+		VERBOSE="true" \
+		DMAI_INSTALL_DIR="${DMAI_INSTALL_DIR}" \
+		XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
+		CE_INSTALL_DIR="${CE_INSTALL_DIR}" \
+		FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
+		CODEC_INSTALL_DIR="${CODEC_INSTALL_DIR}" \
+		CODEGEN_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
+		BIOS_INSTALL_DIR="${BIOS_INSTALL_DIR}"\
+		CROSS_COMPILE="${CSTOOL_PREFIX}" \
+		XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
+		LINK_INSTALL_DIR="${LINK_INSTALL_DIR}" \
+		CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
+		LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
+		LINUXKERNEL_INSTALL_DIR="${LINUXKERNEL_INSTALL_DIR}" \
+		LINUXLIBS_INSTALL_DIR="${LINUXLIBS_INSTALL_DIR}" \
+		MVTOOL_DIR="${CSTOOL_DIR}" \
+		CSTOOL_DIR="${CSTOOL_DIR}" \
+		MVTOOL_PREFIX="${CSTOOL_PREFIX}" \
+		CSTOOL_PREFIX="${CSTOOL_PREFIX}" \
+		${PLATFORM}
 	@echo
 	@echo "dvtb can be found under $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/$(PLATFORM)/linux/bin"
 
