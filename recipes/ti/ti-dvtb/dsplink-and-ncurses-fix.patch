@@ -1,0 +1,21 @@
+diff -uNr dvtb_4_20_10_orig/packages/ti/sdo/dvtb/omap3530/linux/Makefile dvtb_4_20_10/packages/ti/sdo/dvtb/omap3530/linux/Makefile
+--- dvtb_4_20_10_orig/packages/ti/sdo/dvtb/omap3530/linux/Makefile	2010-09-13 14:18:04.249909969 -0500
++++ dvtb_4_20_10/packages/ti/sdo/dvtb/omap3530/linux/Makefile	2010-09-13 14:18:49.054011726 -0500
+@@ -48,7 +48,7 @@
+ REL_BIN = $(TARGET_DIR)/$(TARGET)-r
+ DBG_BIN = $(TARGET_DIR)/$(TARGET)-d
+ 
+-XDC_PATH = $(CODEC_INSTALL_DIR)/packages;$(FC_INSTALL_DIR)/packages;$(CE_INSTALL_DIR)/packages;$(LINK_INSTALL_DIR)/packages;$(XDAIS_INSTALL_DIR)/packages;$(CMEM_INSTALL_DIR)/packages;$(LINUXLIBS_INSTALL_DIR)/include;$(LPM_INSTALL_DIR)/packages;$(BIOS_INSTALL_DIR)/packages;$(BIOS_INSTALL_DIR)/packages/ti/bios/include;$(BIOS_INSTALL_DIR)/packages;
++XDC_PATH = $(CODEC_INSTALL_DIR)/packages;$(FC_INSTALL_DIR)/packages;$(CE_INSTALL_DIR)/packages;$(LINK_INSTALL_DIR);$(XDAIS_INSTALL_DIR)/packages;$(CMEM_INSTALL_DIR)/packages;$(LINUXLIBS_INSTALL_DIR)/include;$(LPM_INSTALL_DIR)/packages;$(BIOS_INSTALL_DIR)/packages;$(BIOS_INSTALL_DIR)/packages/ti/bios/include;$(BIOS_INSTALL_DIR)/packages;
+ #Configuro related
+ #Base name of app's config script
+ CONFIGPKG = $(TARGET)_omap3530
+@@ -71,7 +71,7 @@
+ CC = $(MVTOOL_PREFIX)gcc $(INCLUDES) $(C_FLAGS) $(shell cat $(XDC_COMPILER_FILE)) -c
+ AR = $(MVTOOL_PREFIX)ar
+ LN = $(MVTOOL_PREFIX)gcc
+-LD_LIBS = -lpthread $(LINUXLIBS_INSTALL_DIR)/lib/libasound.so.2 $(LINUXLIBS_INSTALL_DIR)/lib/libncurses.so $(EDITLINE_LIB)
++LD_LIBS = -lpthread -L$(LINUXLIBS_INSTALL_DIR)/lib -Wl,-rpath-link,$(LINUXLIBS_INSTALL_DIR)/lib -lasound -lncurses $(EDITLINE_LIB)
+ 
+ VPATH= $(PAL_SRCVPATH)
+ 
