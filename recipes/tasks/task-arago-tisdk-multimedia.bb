@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r26"
+PR = "r27"
 LICENSE = "MIT"
 
 inherit task
@@ -11,6 +11,7 @@ MULTIMEDIA_dm365 = " \
     ti-dmai-apps \
     ti-codec-engine-examples \
     ti-dvsdk-demos \
+    ti-dvsdk-demos-qtinterface \
     ti-data \
 #    ti-dvtb \
     task-arago-gst \
