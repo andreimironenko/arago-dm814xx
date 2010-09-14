@@ -16,9 +16,9 @@ COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm37x-evm)"
 
 PROVIDES += "ti-c6accel-apps"
 
-PR = "r8"
+PR = "r9"
 
-S = "${WORKDIR}/c6accel_${PV}/c6accel_${PV}"
+S = "${WORKDIR}/c6accel_${PV}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/c6000/web/c6accel/latest/exports//c6accel_${PV}_Linux-x86_Setup.bin;name=c6accelbin "
 
@@ -32,7 +32,7 @@ DEPENDS += "ti-biosutils"
 do_compile() {
     # Build C6Accel package
     cd ${S}
-    PLATFORM="${PLATFORM}" make \
+    make \
     PLATFORM="${PLATFORM}" \
     CE_INSTALL_DIR="${CE_INSTALL_DIR}" \
     XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
@@ -46,9 +46,9 @@ do_compile() {
     BIOSUTILS_INSTALL_DIR="${BIOSUTILS_INSTALL_DIR}" \
     LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
     SERVER_INSTALL_DIR="${CODEC_INSTALL_DIR}" \
-    C6ACCEL_INSTALL_DIR="${S}/soc" \
+    C6ACCEL_INSTALL_DIR="${S}" \
     CSTOOL_DIR="${TOOLCHAIN_PATH}" \
-    CSTOOLS_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+    CSTOOL_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
     all
 
 }
@@ -63,7 +63,7 @@ do_install() {
       CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
       LINK_INSTALL_DIR="${LINK_INSTALL_DIR}" \
       LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
-      C6ACCEL_INSTALL_DIR="${S}/soc" \
+      C6ACCEL_INSTALL_DIR="${S}" \
       EXEC_DIR_C6ACCEL="${D}/${installdir}/c6accel-apps" \
       install
 }
