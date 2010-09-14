@@ -119,8 +119,7 @@ do_install() {
     CSTOOLS_PREFIX="${TARGET_PREFIX}" \
     install_programs
 
-    # remove prebuilt *.ko files
-    rm -rf ${D}/${installdir}/c6run_apps/*.ko
+    sed -i 's/{CMEMK_OPTS}/{CMEMK_OPTS} allowOverlap=1 /g' ${D}/${installdir}/c6run-apps/loadmodules.sh
 
 }
 
