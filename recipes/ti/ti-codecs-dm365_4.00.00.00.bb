@@ -12,10 +12,10 @@ CODEC_SUITE_NAME="${WORKDIR}/${PN}_${PV}"
 
 require ti-eula-unpack.inc
 
-SRC_URI="http://software-dl.ti.com/dsps/dsps_public_sw/codecs/DM365//DM365_latest/dm365_h264dec_01_10_00_05_production.bin;name=h264dec \
-    http://software-dl.ti.com/dsps/dsps_public_sw/codecs/DM365//DM365_latest/dm365_h264enc_01_10_00_08_production.bin;name=h264enc \
-    http://software-dl.ti.com/dsps/dsps_public_sw/codecs/DM365//DM365_latest/dm365_mpeg4dec_hdvicp_02_00_00_05_production.bin;name=mpeg4dec_hdvicp \
+SRC_URI="http://software-dl.ti.com/dsps/dsps_public_sw/codecs/DM365//DM365_latest/dm365_mpeg4dec_hdvicp_02_00_00_05_production.bin;name=mpeg4dec_hdvicp \
     http://software-dl.ti.com/dsps/dsps_public_sw/codecs/DM365//DM365_latest/dm365_mpeg4enc_hdvicp_02_00_00_05_production.bin;name=mpeg4enc_hdvicp \
+#    http://software-dl.ti.com/dsps/dsps_public_sw/codecs/DM365//DM365_latest/dm365_h264dec_01_10_00_05_production.bin;name=h264dec \
+#    http://software-dl.ti.com/dsps/dsps_public_sw/codecs/DM365//DM365_latest/dm365_h264enc_01_10_00_08_production.bin;name=h264enc \
     http://software-dl.ti.com/dsps/dsps_public_sw/codecs/DM365//DM365_latest/dm365_mpeg2dec_01_00_00_04_production.bin;name=mpeg2dec \
     http://software-dl.ti.com/dsps/dsps_public_sw/codecs/DM365//DM365_latest/dm365_mpeg2enc_01_00_00_04_production.bin;name=mpeg2enc \
     http://software-dl.ti.com/dsps/dsps_public_sw/codecs/DM365//DM365_latest/dm365_vc1dec_01_00_00_04_production.bin;name=vc1dec \
@@ -27,19 +27,21 @@ SRC_URI="http://software-dl.ti.com/dsps/dsps_public_sw/codecs/DM365//DM365_lates
     http://software-dl.ti.com/dsps/dsps_public_sw/codecs/DM365//DM365_latest/dm365_aaclcenc_3_5_00_production.bin;name=aaclcenc \
     http://software-dl.ti.com/dsps/dsps_public_sw/codecs/DM365//DM365_latest/dm365_g711dec_2_0_00_production.bin;name=g711dec \
     http://software-dl.ti.com/dsps/dsps_public_sw/codecs/DM365//DM365_latest/dm365_g711enc_2_0_00_production.bin;name=g711enc \
+    http://install.dir.local.com/dm365_h264enc_02_00_00_10_production.tar;name=h264enc \
+    http://install.dir.local.com/dm365_h264dec_02_00_00_07_production.tar;name=h264dec \
 "
-
-SRC_URI[h264dec.md5sum] = "b1f3f073bd1b9db57c8d3d824b60511a"
-SRC_URI[h264dec.sha256sum] = "da4f2e77229589094c145a4a57ad04a9e9404798e44c9a0a661eac4594bbd5c3"
-
-SRC_URI[h264enc.md5sum] = "f48be5e052707e0099afd9ad91aa201a"
-SRC_URI[h264enc.sha256sum] = "4326ea03ba25d7eba6466a7dac32fb6930a19f973a6903cf5ae5a11e7930d9f4"
 
 SRC_URI[mpeg4dec_hdvicp.md5sum] = "a9ebad2a72969c6e202ca2e2b5c1abe8"
 SRC_URI[mpeg4dec_hdvicp.sha256sum] = "a3e2b07182116a4d99ba10b7f1eb2c89fb80f54b43203e2404eae197b05f613d"
 
 SRC_URI[mpeg4enc_hdvicp.md5sum] = "855c295225d4aae27892b933d337ca03"
 SRC_URI[mpeg4enc_hdvicp.sha256sum] = "70222da40e24c01121d7364b132281eb3bac92272f42378f7d36e3695a87c66b"
+
+#SRC_URI[h264dec.md5sum] = "b1f3f073bd1b9db57c8d3d824b60511a"
+#SRC_URI[h264dec.sha256sum] = "da4f2e77229589094c145a4a57ad04a9e9404798e44c9a0a661eac4594bbd5c3"
+
+#SRC_URI[h264enc.md5sum] = "f48be5e052707e0099afd9ad91aa201a"
+#SRC_URI[h264enc.sha256sum] = "4326ea03ba25d7eba6466a7dac32fb6930a19f973a6903cf5ae5a11e7930d9f4"
 
 SRC_URI[mpeg2dec.md5sum] = "f090637bcc5b6ae921232c5d3fe6ab4f"
 SRC_URI[mpeg2dec.sha256sum] = "611c8e8ac0046c3a06ee61c794d8ab8583a5c590e782224f7a67dadfad7139e0"
@@ -74,20 +76,19 @@ SRC_URI[g711dec.sha256sum] = "ec4d4312e9f21d2b25e75f98cc013deca75e5373e955fa32a7
 SRC_URI[g711enc.md5sum] = "416030f1c56aff8e0a9c78020de6fefc"
 SRC_URI[g711enc.sha256sum] = "7bcea809aff63e258dfaf7a7e72f82fd6aac1af10e42b2ade12f1d9c15e33198"
 
+SRC_URI[h264enc.md5sum] = "8e6efc99a85652f767d7efbac1a42616"
+SRC_URI[h264enc.sha256sum] = "8e2c989df6f426387d2a651bebb02fb9c238fdb1bc8c82bbc27b21fd038d54f0"
+
+SRC_URI[h264dec.md5sum] = "4eeb7ce6b95f420ed0b3af4700e895ff"
+SRC_URI[h264dec.sha256sum] = "12173250779f7203105cab2121ca7964ad2376c7854be850efb2898f263cf388"
+
+
 TI_BIN_UNPK_CMDS = "Y:workdir"
 S = "${CODEC_SUITE_NAME}"
 PROVIDES += "ti-codecs-dm365-server"
 
 python do_unpack () {
     bb.build.exec_func('base_do_unpack', d)
-
-    bb.data.setVar("BINFILE", "dm365_h264enc_01_10_00_08_production.bin", d)
-    bb.data.setVar("TARFILE", "h264enc_dm6467_1_20_00_08/dm365_h264enc_01_10_00_08_production.tar", d)
-    bb.build.exec_func('ti_bin_do_unpack', d)
-
-    bb.data.setVar("BINFILE", "dm365_h264dec_01_10_00_05_production.bin", d)
-    bb.data.setVar("TARFILE", "h264enc_dm6467_1_20_00_08/dm365_h264dec_01_10_00_05_production.tar", d)
-    bb.build.exec_func('ti_bin_do_unpack', d)
 
     bb.data.setVar("BINFILE", "dm365_mpeg4dec_hdvicp_02_00_00_05_production.bin", d)
     bb.data.setVar("TARFILE", "h264enc_dm6467_1_20_00_08/dm365_mpeg4dec_hdvicp_02_00_00_05_production.tar", d)
@@ -96,6 +97,14 @@ python do_unpack () {
     bb.data.setVar("BINFILE", "dm365_mpeg4enc_hdvicp_02_00_00_05_production.bin", d)
     bb.data.setVar("TARFILE", "h264enc_dm6467_1_20_00_08/dm365_mpeg4enc_hdvicp_02_00_00_05_production.tar", d)
     bb.build.exec_func('ti_bin_do_unpack', d)
+
+#    bb.data.setVar("BINFILE", "dm365_h264enc_01_10_00_08_production.bin", d)
+#    bb.data.setVar("TARFILE", "h264enc_dm6467_1_20_00_08/dm365_h264enc_01_10_00_08_production.tar", d)
+#    bb.build.exec_func('ti_bin_do_unpack', d)
+
+#    bb.data.setVar("BINFILE", "dm365_h264dec_01_10_00_05_production.bin", d)
+#    bb.data.setVar("TARFILE", "h264enc_dm6467_1_20_00_08/dm365_h264dec_01_10_00_05_production.tar", d)
+#    bb.build.exec_func('ti_bin_do_unpack', d)
 
     bb.data.setVar("BINFILE", "dm365_mpeg2dec_01_00_00_04_production.bin", d)
     bb.data.setVar("TARFILE", "h264enc_dm6467_1_20_00_08/dm365_mpeg2dec_01_00_00_04_production.tar", d)
@@ -144,8 +153,8 @@ do_prepsources() {
 
     mkdir -p ${CODEC_SUITE_NAME}/packages/ti/sdo/codecs
     mkdir -p ${CODEC_SUITE_NAME}/packages/ittiam/codecs
-    cp -a "${WORKDIR}/dm365_h264dec_01_10_00_05_production/packages/ti/sdo/codecs/h264dec" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
-    cp -a "${WORKDIR}/dm365_h264enc_01_10_00_08_production/packages/ti/sdo/codecs/h264enc" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
+#    cp -a "${WORKDIR}/dm365_h264dec_01_10_00_05_production/packages/ti/sdo/codecs/h264dec" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
+#    cp -a "${WORKDIR}/dm365_h264enc_01_10_00_08_production/packages/ti/sdo/codecs/h264enc" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
     cp -a "${WORKDIR}/dm365_mpeg4dec_hdvicp_02_00_00_05_production/packages/ti/sdo/codecs/mpeg4dec_hdvicp" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
     cp -a "${WORKDIR}/dm365_mpeg4enc_hdvicp_02_00_00_05_production/packages/ti/sdo/codecs/mpeg4enc_hdvicp" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
     cp -a "${WORKDIR}/dm365_mpeg2dec_01_00_00_04_production/packages/ti/sdo/codecs/mpeg2dec" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
@@ -159,6 +168,8 @@ do_prepsources() {
     cp -a "${WORKDIR}/dm365_aaclcenc_3_5_00_production/aaclc_enc_3_5_00_production_dm365_mvl/packages-production/ittiam/codecs/aaclc_enc" "${CODEC_SUITE_NAME}/packages/ittiam/codecs"
     cp -a "${WORKDIR}/dm365_g711dec_2_0_00_production/g711_dec_2_0_00_production_dm365_mvl/packages-production/ittiam/codecs/g711_dec" "${CODEC_SUITE_NAME}/packages/ittiam/codecs"
     cp -a "${WORKDIR}/dm365_g711enc_2_0_00_production/g711_enc_2_0_00_production_dm365_mvl/packages-production/ittiam/codecs/g711_enc" "${CODEC_SUITE_NAME}/packages/ittiam/codecs"
+    cp -a "${WORKDIR}/dm365_h264dec_02_00_00_07_production/packages/ti/sdo/codecs/h264dec" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
+    cp -a "${WORKDIR}/dm365_h264enc_02_00_00_10_production/packages/ti/sdo/codecs/h264enc" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
 }
 
 do_install() {
