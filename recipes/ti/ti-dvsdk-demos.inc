@@ -48,7 +48,7 @@ do_configure_prepend() {
 
 do_compile () {
 	cd ${S}
-	make -e clean
+	make -e XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" clean
 	make -e PLATFORM=${DEMOSPLATFORM} \
 		DMAI_INSTALL_DIR="${DMAI_INSTALL_DIR}" \
 		XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
