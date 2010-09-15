@@ -34,7 +34,8 @@ fi
 uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyS0,115200n8 rw mem=99M mpurate=1000"
+baseargs="console=ttyS0,115200n8 rw mem=99M@0x80000000 mpurate=1000"
+extendbaseargs="mem=128M@0x88000000"
 videoargs1="omap_vout.vid1_static_vrfb_alloc=y"
 videoargs2="omapfb.mode=dvi:720x480MR-16@60"
 videoargs="$videoargs1 $videoargs2"
@@ -82,19 +83,19 @@ if [ "$kernel" -eq "1" ]; then
     bootfile="setenv bootfile $uimage"
 
     if [ "$fs" -eq "1" ]; then
-        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
+        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fsnfsargs ip=dhcp"
         cfg="uimage-tftp_fs-nfs"
     else
-        bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
+        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fssdargs ip=off"
         cfg="uimage-tftp_fs-sd"
     fi
 else
     if [ "$fs" -eq "1" ]; then
-        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
+        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fsnfsargs ip=dhcp"
         bootcmd="setenv bootcmd 'mmc init;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
         cfg="uimage-sd_fs-nfs"
     else
-        bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
+        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fssdargs ip=off"
         bootcmd="setenv bootcmd 'mmc init;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
         cfg="uimage-sd_fs-sd"
     fi
@@ -160,6 +161,7 @@ if [ "$minicom" == "y" ]; then
     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv oldbootargs \$\{bootargs\}\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs \c\"" $minicomfilepath
+    echo "send \"$extendbaseargs \c\"" >> $minicomfilepath
     echo "send \"$videoargs1 \c\"" >> $minicomfilepath
     echo "send \"$videoargs2 \c\"" >> $minicomfilepath
     if [ "$fs" -eq "1" ]; then
