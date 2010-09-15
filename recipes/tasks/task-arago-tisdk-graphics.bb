@@ -11,7 +11,6 @@ QTWIDGET_DEMO_omapl138 = "qt-embedded-widgets-demo"
 
 MATRIX_APPS = "\
     libxml2 \
-    matrix-gui \
     ${QTWIDGET_DEMO} \
     "
 
@@ -21,7 +20,6 @@ GRAPHICS_3D_omap3 = "libgles-omap3-rawdemos"
 
 RDEPENDS_${PN} = "\
     task-arago-qte \
-    qt4-embedded-plugin-phonon-backend-gstreamer \
     ${MATRIX_APPS} \
     ${GRAPHICS_3D} \
     "
