@@ -21,6 +21,10 @@ do_configure() {
 	make omap3_evm_defconfig
 }
 
+do_configure_ti816x() {
+        make ti8168_evm_defconfig
+}
+
 do_install_append () {
     	install -d ${D}/${LINUXKERNEL_SOURCE_DIR}
 	cp -pPrf ${S}/* ${D}/${LINUXKERNEL_SOURCE_DIR}
