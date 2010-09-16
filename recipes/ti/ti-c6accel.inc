@@ -16,7 +16,7 @@ COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm37x-evm)"
 
 PROVIDES += "ti-c6accel-apps"
 
-PR = "r9"
+PR = "r10"
 
 S = "${WORKDIR}/c6accel_${PV}"
 
@@ -30,6 +30,7 @@ DEPENDS += "ti-edma3lld ti-cgt6x ti-xdctools ti-framework-components"
 DEPENDS += "ti-biosutils" 
 
 do_compile() {
+    unset VERBOSE
     # Build C6Accel package
     cd ${S}
     make \
