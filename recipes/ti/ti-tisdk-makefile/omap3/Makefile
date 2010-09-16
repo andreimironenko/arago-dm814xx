@@ -730,8 +730,8 @@ c6run:
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
 	omap3530_config
 
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
@@ -741,8 +741,8 @@ c6run:
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
 	clean
 
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
@@ -752,9 +752,9 @@ c6run:
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
-	oe_build
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	all
 
 c6run_clean:
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
@@ -764,11 +764,12 @@ c6run_clean:
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
 	distclean
 
 c6run_examples:
+	source $(C6RUN_INSTALL_DIR)/environment.sh; \
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
 	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
 	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
@@ -776,10 +777,12 @@ c6run_examples:
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	C6RUN_TOOLCHAIN_PATH="$(C6RUN_INSTALL_DIR)" \
 	examples
 
+	source $(C6RUN_INSTALL_DIR)/environment.sh; \
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
 	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
 	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
@@ -787,8 +790,9 @@ c6run_examples:
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	C6RUN_TOOLCHAIN_PATH="$(C6RUN_INSTALL_DIR)" \
 	tests
 
 c6run_install:
@@ -802,7 +806,7 @@ c6run_install:
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
 	install_programs
 
