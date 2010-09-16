@@ -53,6 +53,10 @@ DSP_SOURCETREE_omap3 = "\
     ti-c6run-src \
     "
 
+DSP_SOURCETREE_c6a816x-evm = "\
+    ti-cgt6x-src \
+    "
+
 DSP_SOURCETREE = " "
 
 RRECOMMENDS_${PN} = "\
