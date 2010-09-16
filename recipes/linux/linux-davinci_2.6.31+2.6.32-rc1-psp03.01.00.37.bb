@@ -13,4 +13,8 @@ SRC_URI += " \
     file://0005-DM365-MMAP-buffer-allocation-for-display-driver.patch \
     file://0006-DM365-capture-MMAP-buffer-allocation.patch \
     file://0007-Patch-MMAP-buffer-bufsize-support-upto-1080p-resolut.patch \
+    file://0008-DM365-davinci_video-Enable-VENC-clock-for-COMPONEN.patch \
+    file://0009-Implement-V4L2-PARM-display-ioctls.patch \
+    file://0010-Replace-usage-of-cbcr_ofst-with-davinci_fb_desc.patch \
+    file://0011-dm365-Add-custom-display-ioctl-VIDIOC_S_YDOFST.patch \
     "
