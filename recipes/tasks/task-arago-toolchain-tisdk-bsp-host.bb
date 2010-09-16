@@ -8,6 +8,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 BSP_COMPONENTS_COMMON = "\
     ti-tisdk-licenses \
+    u-boot-src \
     "
 
 BSP_COMPONENTS = ""
@@ -21,22 +22,18 @@ BSP_COMPONENTS_dm365 = "\
     ti-board-utilities \
     ti-linux-driver-examples-src \
     linux-davinci-src \
-    u-boot-davinci \
     "
 
 BSP_COMPONENTS_dm355 = "\
     ti-linux-driver-examples-src \
-    u-boot-davinci \
     "
 
 BSP_COMPONENTS_dm6446 = "\
     ti-linux-driver-examples-src \
-    u-boot-davinci \
     "
 
 BSP_COMPONENTS_dm6467 = "\
     ti-linux-driver-examples-src \
-    u-boot-davinci \
     "
 
 BSP_COMPONENTS_da850-omapl138-evm = "\
@@ -49,13 +46,11 @@ BSP_COMPONENTS_da850-omapl138-evm = "\
     linux-omapl1-src \
     ti-board-utilities \
     ti-linux-driver-examples-omapl-src \
-    u-boot-omapl1 \
     "
 
 BSP_COMPONENTS_append_omap3 = "\
     linux-omap3-src \
     x-load-src \
-    u-boot-omap3 \
     "
 
 # Add components to omap3 components

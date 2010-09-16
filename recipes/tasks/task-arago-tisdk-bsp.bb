@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install Board Support Package binaries on ${MACHINE}"
-PR = "r18"
+PR = "r17"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -7,11 +7,6 @@ inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 BSP_COMPONENTS = ""
-
-PRIMARY_BOOTLOADER_omap3 = "u-boot-omap3"
-PRIMARY_BOOTLOADER_dm365 = "u-boot-davinci"
-PRIMARY_BOOTLOADER_omapl138 = "u-boot-omapl1"
-PRIMARY_BOOTLOADER ?= "u-boot"
 
 BSP_COMPONENTS_dm355 = "\
     ti-linux-driver-examples \
@@ -67,6 +62,6 @@ RRECOMMENDS_${PN} = "\
     kernel-modules \
     kernel-image \
     kernel-vmlinux \
-    ${PRIMARY_BOOTLOADER} \
+    u-boot \
     "
 
