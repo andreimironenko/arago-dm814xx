@@ -21,15 +21,43 @@ echo "Note! This command requires you to have administrator priviliges (sudo acc
 echo "on your host."
 read -p "Press return to continue"
 
-if [ -d $dst ]; then
-    echo "$dst already exists, skipping extraction..."
-else
-    sudo mkdir -p $dst
-    check_status
-
+extract_fs() {
     fstar=`ls -1 $cwd/../filesystem/dvsdk*rootfs.tar.gz`
-    sudo tar xzf $fstar -C $dst
+    sudo mkdir -p $1
     check_status
+    sudo tar xzf $fstar -C $1
+    check_status
+    echo
+    echo "Successfully extracted `basename $fstar` to $1"
+}
+
+if [ -d $dst ]; then
+    echo "$dst already exists"
+    echo "(r) rename existing filesystem (o) overwrite existing filesystem (s) skip filesystem extraction"
+    read -p "[r] " exists
+    case "$exists" in
+      s) echo "Skipping filesystem extraction"
+         echo "WARNING! Keeping the previous filesystem may cause compatibility problems if you are upgrading the DVSDK"
+         ;; 
+      o) sudo rm -rf $dst
+         echo "Old $dst removed"
+         extract_fs $dst
+         ;;
+      *) dte="`date +%m%d%Y`_`date +%H`.`date +%M`"
+         echo "Path for old filesystem:"
+         read -p "[ $dst.$dte ]" old
+         if [ ! -n "$old" ]; then
+             old="$dst.$dte"
+         fi
+         sudo mv $dst $old
+         check_status
+         echo
+         echo "Successfully moved old $dst to $old"
+         extract_fs $dst
+         ;;
+    esac
+else
+    extract_fs $dst
 fi
 echo $dst > $cwd/../.targetfs
 echo "--------------------------------------------------------------------------------"
@@ -74,6 +102,9 @@ else
 fi
 
 echo
-sudo /etc/init.d/nfs-kernel-server restart
+sudo /etc/init.d/nfs-kernel-server stop
+check_status
+sleep 1
+sudo /etc/init.d/nfs-kernel-server start
 check_status
 echo "--------------------------------------------------------------------------------"
