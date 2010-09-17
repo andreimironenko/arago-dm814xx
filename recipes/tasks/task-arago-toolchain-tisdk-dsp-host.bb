@@ -55,6 +55,11 @@ DSP_SOURCETREE_omap3 = "\
 
 DSP_SOURCETREE_c6a816x-evm = "\
     ti-cgt6x-src \
+    ti-sysbios-src \
+    ti-xdctools-src \
+    ti-framework-components-src \
+    ti-linuxutils-src \
+    ti-xdais-src \
     "
 
 DSP_SOURCETREE = " "
