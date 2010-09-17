@@ -53,6 +53,17 @@ BLUETOOTH_SUPPORT_omap3 = "\
     ussp-push \
     "
 
+BLUETOOTH_SUPPORT_ti816x = "\
+    bluez4 \
+    bluez4-agent \
+    libasound-module-bluez \
+    bluez-hcidump \
+    openobex \
+    openobex-apps \
+    obexftp \
+    ussp-push \
+    "
+
 RDEPENDS_${PN} = "\
     ${BSP_COMPONENTS} \
     ${BLUETOOTH_SUPPORT} \

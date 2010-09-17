@@ -53,6 +53,10 @@ BSP_COMPONENTS_append_omap3 = "\
     x-load-src \
     "
 
+BSP_COMPONENTS_append_ti816x = "\
+    linux-omap3-src \
+    "
+
 # Add components to omap3 components
 BSP_COMPONENTS_append_omap3evm = "\
     ti-tisdk-setup \
