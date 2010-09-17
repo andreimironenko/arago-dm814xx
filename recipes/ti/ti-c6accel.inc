@@ -16,7 +16,7 @@ COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm37x-evm)"
 
 PROVIDES += "ti-c6accel-apps"
 
-PR = "r10"
+PR = "r11"
 
 S = "${WORKDIR}/c6accel_${PV}"
 
