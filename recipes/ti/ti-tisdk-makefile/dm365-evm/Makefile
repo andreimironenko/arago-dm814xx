@@ -8,17 +8,17 @@ DEFAULT_UBOOT_CONFIG=davinci_dm365_evm_config
 #==============================================================================
 # The default build target builds components to enable all other build targets.
 #==============================================================================
-all:	linux
+all:	linux cmem dm365mm irq edma dmai 
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	linux_clean
+clean:	linux_clean cmem_clean dm365mm_clean irq_clean edma_clean dmai_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: linux psp_examples cmem dm365mm irq edma ceexamples dmai demos u-boot dvtb ubl
+everything: all psp_examples ceexamples demos u-boot dvtb ubl
 
 #==============================================================================
 # Install everything
@@ -132,9 +132,9 @@ dvtb_install:
 #==============================================================================
 # Build the Linux kernel. Also, an explicit cleanup target is defined.
 #==============================================================================
-linux:	u-boot
+linux:
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_LINUXKERNEL_CONFIG)
-	PATH="$(PATH):$(PSP_INSTALL_DIR)/u-boot-*/tools" $(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
+	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) modules
 linux_clean:
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) mrproper
