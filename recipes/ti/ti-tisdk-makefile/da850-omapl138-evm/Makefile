@@ -10,17 +10,17 @@ DMAI_PLATFORM=ol138
 #==============================================================================
 # The default build target builds components to enable all other build targets.
 #==============================================================================
-all: linux dsplink
+all: linux dsplink cmem c6accel dmai codecs c6run
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean: linux_clean dsplink_clean
+clean: linux_clean dsplink_clean c6run_clean cmem_clean dmai_clean codecs_clean c6accel_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: all u-boot ubl psp_examples cmem dmai codecs ceexamples audio_soc_example c6accel c6run c6run_examples
+everything: all u-boot ubl psp_examples ceexamples audio_soc_example c6run_examples
 
 #==============================================================================
 # Install everything
@@ -30,7 +30,7 @@ install: linux_install dsplink_install u-boot_install ubl_install psp_examples_i
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber: clean u-boot_clean ubl_clean psp_examples_clean cmem_clean dmai_clean ceexamples_clean codecs_clean audio_soc_example_clean c6accel_clean c6run_clean
+clobber: clean u-boot_clean ubl_clean psp_examples_clean ceexamples_clean audio_soc_example_clean 
 
 #==============================================================================
 # A help message target.
@@ -110,9 +110,9 @@ help:
 #==============================================================================
 # Build the Linux kernel. Also, an explicit cleanup target is defined.
 #==============================================================================
-linux:	u-boot
+linux:	
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_LINUXKERNEL_CONFIG)
-	PATH="$(PATH):$(PSP_INSTALL_DIR)/u-boot-*/tools" $(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
+	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) modules
 linux_clean:
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) mrproper
