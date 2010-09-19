@@ -15,7 +15,7 @@ all: linux dsplink cmem c6accel dmai codecs c6run
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean: linux_clean dsplink_clean c6run_clean cmem_clean dmai_clean codecs_clean c6accel_clean
+clean: linux_clean c6run_clean cmem_clean dmai_clean codecs_clean c6accel_clean
 
 #==============================================================================
 # Build everything rebuildable.
