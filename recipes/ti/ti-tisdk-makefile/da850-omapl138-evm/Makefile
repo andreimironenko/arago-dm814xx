@@ -5,7 +5,7 @@ DEFAULT_UBOOT_CONFIG=da850_omapl138_evm_config
 
 DMAI_PLATFORM=ol138
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install ubl ubl_clean ubl_install dsplink dsplink_clean dsplink_install audio_soc_exmaple audio_soc_example_clean audio_soc_example_install audio_soc_example_kernel c6accel c6accel_clean c6accel_install c6run c6run_clean c6run_examples c6run_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install ubl ubl_clean ubl_install dsplink dsplink_clean dsplink_install audio_soc_exmaple audio_soc_example_clean audio_soc_example_install audio_soc_example_kernel c6accel c6accel_clean c6accel_install c6run c6run_clean c6run_examples c6run_install matrix matrix_clean matrix_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -20,17 +20,17 @@ clean: linux_clean c6run_clean cmem_clean dmai_clean codecs_clean c6accel_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: all u-boot ubl psp_examples ceexamples audio_soc_example c6run_examples
+everything: all u-boot ubl psp_examples ceexamples audio_soc_example c6run_examples matrix
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install dsplink_install u-boot_install ubl_install psp_examples_install cmem_install dmai_install codecs_install ceexamples_install audio_soc_example_install c6accel_install c6run_install
+install: linux_install dsplink_install u-boot_install ubl_install psp_examples_install cmem_install dmai_install codecs_install ceexamples_install audio_soc_example_install c6accel_install c6run_install matrix_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber: clean u-boot_clean ubl_clean psp_examples_clean ceexamples_clean audio_soc_example_clean 
+clobber: clean u-boot_clean ubl_clean psp_examples_clean ceexamples_clean audio_soc_example_clean  matrix_clean
 
 #==============================================================================
 # A help message target.
@@ -99,6 +99,10 @@ help:
 	@echo "    c6run_clean                  : Remove c6run backend libraries"
 	@echo "    c6run_examples               : Build c6run examples & tests"
 	@echo "    c6run_install                : Install c6run examples & tests"
+	@echo
+	@echo "    matrix                       : Build matrix application launcher"
+	@echo "    matrix_clean                 : Remove all matrix files"
+	@echo "    matrix_install               : Install matrix"
 	@echo
 	@echo "    everything                   : Rebuild everything"
 	@echo "    clobber                      : Remove all generated files"
@@ -747,4 +751,20 @@ c6run_install:
 	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
 	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
 	install_programs
+
+matrix:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd matrix-gui-1.0 ; qmake ; $(MAKE) PLATFORM=$(PLATFORM)
+
+matrix_clean:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; 	$(MAKE) -C matrix-gui-1.0 distclean
+
+matrix_install:
+	install -d $(EXEC_DIR)/matrix
+	install -m 0755 $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/matrix_gui $(EXEC_DIR)/matrix
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/bin \
+	$(EXEC_DIR)/matrix/
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/html \
+	$(EXEC_DIR)/matrix/
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/images/ \
+	$(EXEC_DIR)/matrix/
 

@@ -3,7 +3,7 @@ include Rules.make
 DEFAULT_LINUXKERNEL_CONFIG=davinci_dm365_defconfig
 DEFAULT_UBOOT_CONFIG=davinci_dm365_evm_config
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm365mm dm365mm_clean dm365mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install irq irq_clean irq_install edma edma_clean edma_install install demos demos_clean demos_install u-boot u-boot_clean u-boot_install dvtb_install ubl ubl_clean ubl_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm365mm dm365mm_clean dm365mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install irq irq_clean irq_install edma edma_clean edma_install install demos demos_clean demos_install u-boot u-boot_clean u-boot_install dvtb_install ubl ubl_clean ubl_install matrix matrix_clean matrix_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -18,17 +18,17 @@ clean:	linux_clean cmem_clean dm365mm_clean irq_clean edma_clean dmai_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: all psp_examples ceexamples demos u-boot dvtb ubl
+everything: all psp_examples ceexamples demos u-boot dvtb ubl matrix
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install dm365mm_install dmai_install psp_examples_install ceexamples_install irq_install edma_install demos_install u-boot_install ubl_install
+install: linux_install cmem_install dm365mm_install dmai_install psp_examples_install ceexamples_install irq_install edma_install demos_install u-boot_install ubl_install matrix_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean dm365mm_clean irq_clean edma_clean demos_clean u-boot_clean dvtb_clean ubl_clean
+clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean dm365mm_clean irq_clean edma_clean demos_clean u-boot_clean dvtb_clean ubl_clean matrix_clean
 
 #==============================================================================
 # A help message target.
@@ -86,6 +86,10 @@ help:
 	@echo "    psp_examples                 : Build Linux examples"
 	@echo "    psp_examples_clean           : Remove all generated PSP examples"
 	@echo "    psp_examples_install         : Install psp examples"
+	@echo
+	@echo "    matrix                       : Build matrix application launcher"
+	@echo "    matrix_clean                 : Remove all matrix files"
+	@echo "    matrix_install               : Install matrix"
 	@echo
 	@echo "    everything                   : Rebuild everything"
 	@echo "    clobber                      : Remove all generated files"
@@ -420,4 +424,19 @@ ceexamples_clean: ceexamples_codecs_clean ceexamples_extensions_clean ceexamples
 ceexamples_install: ceexamples_codecs_install ceexamples_extensions_install ceexamples_servers_install ceexamples_apps_install
 
 
+matrix:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd matrix-gui-1.0 ; qmake ; $(MAKE) PLATFORM=$(PLATFORM)
+
+matrix_clean:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; 	$(MAKE) -C matrix-gui-1.0 distclean
+
+matrix_install:
+	install -d $(EXEC_DIR)/matrix
+	install -m 0755 $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/matrix_gui $(EXEC_DIR)/matrix
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/bin \
+	$(EXEC_DIR)/matrix/
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/html \
+	$(EXEC_DIR)/matrix/
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/images/ \
+	$(EXEC_DIR)/matrix/
 
