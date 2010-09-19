@@ -245,29 +245,6 @@ echo "
 "
 }
 
-# 
-# check supported host
-#
-host_check ()
-{
-  echo "Checking host ..."
-  if [ "$force_host" = "yes" ]; then
-    echo "Forcing installation on unsupported host"
-  else
-    lsb_release -a > /tmp/.log
-    if [ $? -ne 0 ]; then
-      echo "Unsupported host machine"
-      exit 1;
-    fi
-    host="`cat /tmp/.log | grep Codename: | awk {'print $2'}`"
-    if [ "$host" != "hardy" ]; then
-      echo "Unsupported host machine" ;
-      exit 1;
-    fi
-    echo " Found Ubuntu 8.04"
-  fi
-}
-
 #
 # prepare installer tools - this requires building opkg and fakeroot natively
 # 
