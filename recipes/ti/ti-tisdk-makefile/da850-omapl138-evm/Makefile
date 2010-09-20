@@ -5,7 +5,7 @@ DEFAULT_UBOOT_CONFIG=da850_omapl138_evm_config
 
 DMAI_PLATFORM=ol138
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install ubl ubl_clean ubl_install dsplink dsplink_clean dsplink_install audio_soc_exmaple audio_soc_example_clean audio_soc_example_install audio_soc_example_kernel c6accel c6accel_clean c6accel_install c6run c6run_clean c6run_examples c6run_install matrix matrix_clean matrix_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install ubl ubl_clean ubl_install dsplink dsplink_clean dsplink_install audio_soc_exmaple audio_soc_example_clean audio_soc_example_install audio_soc_example_kernel c6accel c6accel_clean c6accel_install c6run c6run_clean c6run_examples c6run_install matrix matrix_clean matrix_install dsp_benchmark dsp_benchmark_clean dsp_benchmark_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -20,17 +20,17 @@ clean: linux_clean c6run_clean cmem_clean dmai_clean codecs_clean c6accel_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: all u-boot ubl psp_examples ceexamples audio_soc_example c6run_examples matrix
+everything: all u-boot ubl psp_examples ceexamples audio_soc_example c6run_examples matrix dsp_benchmark
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install dsplink_install u-boot_install ubl_install psp_examples_install cmem_install dmai_install codecs_install ceexamples_install audio_soc_example_install c6accel_install c6run_install matrix_install
+install: linux_install dsplink_install u-boot_install ubl_install psp_examples_install cmem_install dmai_install codecs_install ceexamples_install audio_soc_example_install c6accel_install c6run_install matrix_install dsp_benchmark_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber: clean u-boot_clean ubl_clean psp_examples_clean ceexamples_clean audio_soc_example_clean  matrix_clean
+clobber: clean u-boot_clean ubl_clean psp_examples_clean ceexamples_clean audio_soc_example_clean  matrix_clean dsp_benchmark_clean
 
 #==============================================================================
 # A help message target.
@@ -99,6 +99,10 @@ help:
 	@echo "    c6run_clean                  : Remove c6run backend libraries"
 	@echo "    c6run_examples               : Build c6run examples & tests"
 	@echo "    c6run_install                : Install c6run examples & tests"
+	@echo
+	@echo "    dsp_benchmark                : Build DSP Benchmark application launcher"
+	@echo "    dsp_benchmark_clean          : Remove all DSP Benchmark files"
+	@echo "    dsp_benchmark_install        : Install DSP Benchmark application"
 	@echo
 	@echo "    matrix                       : Build matrix application launcher"
 	@echo "    matrix_clean                 : Remove all matrix files"
@@ -665,7 +669,7 @@ c6accel_install:
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
-	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel" \
+	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel-apps" \
 	install
 
 ################################################################################
@@ -739,10 +743,10 @@ c6run_examples:
 	tests
 
 c6run_install:
-	install -d $(EXEC_DIR)/c6run
+	install -d $(EXEC_DIR)/c6run-apps
 
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	INSTALL_DIR="$(EXEC_DIR)/c6run" \
+	INSTALL_DIR="$(EXEC_DIR)/c6run-apps" \
 	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
 	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
 	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
@@ -752,6 +756,62 @@ c6run_install:
 	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
 	install_programs
 
+################################################################################
+# Build DSP Benchmark application
+################################################################################
+dsp_benchmark:
+	$(MAKE) -C $(DSP_BENCHMARK_INSTALL_DIR) \
+	PLATFORM="$(PLATFORM)" \
+	DEMO_INSTALL_DIR="$(DSP_BENCHMARK_INSTALL_DIR)" \
+	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
+	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	EDMA3_LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	FC_INSTALL_DIR="$(FC_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	BIOSUTILS_INSTALL_DIR="$(BIOSUTILS_INSTALL_DIR)" \
+	SERVER_INSTALL_DIR="$(CODEC_INSTALL_DIR)" \
+	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	all
+
+dsp_benchmark_clean:
+	$(MAKE) -C $(DSP_BENCHMARK_INSTALL_DIR) \
+	PLATFORM="$(PLATFORM)" \
+	DEMO_INSTALL_DIR="$(DSP_BENCHMARK_INSTALL_DIR)" \
+	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
+	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	EDMA3_LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	FC_INSTALL_DIR="$(FC_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	BIOSUTILS_INSTALL_DIR="$(BIOSUTILS_INSTALL_DIR)" \
+	SERVER_INSTALL_DIR="$(CODEC_INSTALL_DIR)" \
+	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	clean
+
+dsp_benchmark_install:
+	$(MAKE) -C $(DSP_BENCHMARK_INSTALL_DIR) \
+	PLATFORM="$(PLATFORM)" \
+	EXEC_DIR_DEMO="$(EXEC_DIR)/dsp-benchmark-apps" \
+	DEMO_INSTALL_DIR="$(DSP_BENCHMARK_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
+	install
+
+################################################################################
+# Build Martix GUI Appication Launcher
+################################################################################
 matrix:
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd matrix-gui-1.0 ; qmake ; $(MAKE) PLATFORM=$(PLATFORM)
 

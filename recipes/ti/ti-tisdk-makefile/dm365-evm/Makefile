@@ -423,7 +423,9 @@ ceexamples_clean: ceexamples_codecs_clean ceexamples_extensions_clean ceexamples
 
 ceexamples_install: ceexamples_codecs_install ceexamples_extensions_install ceexamples_servers_install ceexamples_apps_install
 
-
+################################################################################
+# Build Martix GUI Appication Launcher
+################################################################################
 matrix:
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd matrix-gui-1.0 ; qmake ; $(MAKE) PLATFORM=$(PLATFORM)
 

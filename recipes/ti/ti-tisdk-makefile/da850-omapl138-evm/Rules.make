@@ -60,6 +60,9 @@ LINUXLIBS_INSTALL_DIR=$(SDK_INSTALL_DIR)/linuxlibs
 # Where c6accel package is installed.
 C6ACCEL_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__c6accel__>
 
+# Where DSP Benchmark package is installed.
+DSP_BENCHMARK_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__dsp-benchmark__>
+
 # Where c6run package is installed.
 C6RUN_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__c6run__>
 
