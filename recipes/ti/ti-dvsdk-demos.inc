@@ -2,7 +2,7 @@ DESCRIPTION = "DVSDK Demo applications for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-INC_PR = "r15"
+INC_PR = "r16"
  
 DEPENDS += "ti-dmai"
 DEPENDS += "alsa-lib libpng freetype jpeg"
@@ -24,23 +24,23 @@ SRC_URI = "svn://winsvn.sanb.design.ti.com/SDOApps/apps/dvsdk_demos/;module=${DE
 	file://arago-tdox "
 
 PR = "${INC_PR}.1"
-S  = "${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/demos"
+S  = "${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/dvsdk_demos_${PV}"
 
 do_preparesource () {
-	# run release step 
-    find ${S} -name .svn -type d | xargs rm -rf
-    cp -pPrf ${WORKDIR}/doxygen_templates ${S}
-    cp -pPrf ${WORKDIR}/arago-tdox ${S}/tdox
-    chmod a+x ${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/release.sh
-    chmod a+x ${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/demos/tdox
-    ${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/release.sh ${PV}
-    rm -rf ${S}/doxygen_templates
-    rm -rf ${S}/tdox
-    rm -rf ${S}/dvsdk_demos_${PV}
+    DEMOS=${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos
+    find ${DEMOS} -name .svn -type d | xargs rm -rf
+    cp -pPrf ${WORKDIR}/doxygen_templates ${DEMOS}
+    cp -pPrf ${WORKDIR}/arago-tdox ${DEMOS}/tdox
+    chmod a+x ${DEMOS}/release.sh
+    chmod a+x ${DEMOS}/tdox
+    cd ${DEMOS}
+    ./release.sh ${PV} ${DEMOSPLATFORM}
+    rm -rf ${DEMOS}/doxygen_templates
+    rm -rf ${DEMOS}/tdox
 }
 
 # run prepare sources before do_patch to ensure that sourceipk picks the right sources.
-addtask prepsources after do_unpack before do_patch
+addtask preparesource after do_unpack before do_patch
 
 do_configure_prepend() {
     sed -i -e 's:INSTALLSUBDIRS = $(addsuffix .install, $(SUBDIRS)):INSTALLSUBDIRS = $(addsuffix .install, $(PLATFORM)):g' ${S}/Makefile
@@ -48,9 +48,7 @@ do_configure_prepend() {
 
 do_compile () {
 	cd ${S}
-	make -e XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" clean
-	make -e PLATFORM=${DEMOSPLATFORM} \
-		DMAI_INSTALL_DIR="${DMAI_INSTALL_DIR}" \
+	make -e DMAI_INSTALL_DIR="${DMAI_INSTALL_DIR}" \
 		XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
 		CE_INSTALL_DIR="${CE_INSTALL_DIR}" \
 		FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
@@ -75,7 +73,6 @@ do_compile () {
 do_install () {
 	cd ${S}
 	make -e EXEC_DIR=${D}/${installdir}/dvsdk-demos \
-		PLATFORM=${DEMOSPLATFORM} \
 		install
 }
 
