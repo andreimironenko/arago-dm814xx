@@ -4,9 +4,6 @@ LICENSE = "GPLv2"
 
 inherit kernel siteinfo
 
-require ../ti/ti-staging.inc
-require ../ti/ti-paths.inc
-
 RPSRC = "http://www.rpsys.net/openzaurus/patches/archive"
 
 # Enable OABI compat for people stuck with obsolete userspace
@@ -248,13 +245,5 @@ pkg_postinst_kernel-devicetree () {
 
 pkg_postrm_kernel-devicetree () {
 	cd /${KERNEL_IMAGEDEST}; update-alternatives --remove devicetree devicetree-${KERNEL_VERSION} || true
-}
-
-do_install_append () {
-    	install -d ${D}/${LINUXKERNEL_SOURCE_DIR}
-	cp -pPrf ${S}/* ${D}/${LINUXKERNEL_SOURCE_DIR}
-        cd ${D}/${LINUXKERNEL_SOURCE_DIR} 
-        make distclean
-
 }
 
