@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install source (or development) packages on host"
-PR = "r10"
+PR = "r11"
 LICENSE="MIT"
 
 inherit task
@@ -41,6 +41,7 @@ DSP_SOURCETREE_da850-omapl138-evm = "\
     ti-audio-soc-example-src \
     ti-c6accel-src \
     ti-c6run-src \
+    ti-dsp-benchmark-src \
     "
 
 DSP_SOURCETREE_omap3 = "\

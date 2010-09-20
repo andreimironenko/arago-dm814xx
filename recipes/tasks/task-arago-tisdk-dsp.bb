@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install dsp binaries on ${MACHINE}"
-PR = "r10"
+PR = "r11"
 LICENSE="MIT"
 
 inherit task
@@ -24,6 +24,7 @@ DSP_COMPONENTS_da850-omapl138-evm = "\
     ti-c6accel-apps \
     ti-c6run-apps \
     qt-mandelbrot-accel \
+    dsp-benchmark-apps \
     "
 
 DSP_COMPONENTS_omap3 = "\
