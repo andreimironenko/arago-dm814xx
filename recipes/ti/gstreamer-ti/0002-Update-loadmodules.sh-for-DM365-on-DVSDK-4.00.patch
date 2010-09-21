@@ -1,0 +1,36 @@
+From c5d9e623cc63983ffd0de3dd2b0d032e1b32d64e Mon Sep 17 00:00:00 2001
+From: don.darling <don.darling@24075187-2e39-4e88-bbb8-bc8aa768f540>
+Date: Fri, 30 Jul 2010 15:46:03 +0000
+Subject: [PATCH 2/8] Update loadmodules.sh for DM365 on DVSDK 4.00.
+
+Change the loadmodules.sh to use modprobe instead of insmod.
+---
+ gstreamer_ti/gstreamer_demo/dm365/loadmodules.sh |   10 ++++++----
+ 1 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/gstreamer_ti/gstreamer_demo/dm365/loadmodules.sh b/gstreamer_ti/gstreamer_demo/dm365/loadmodules.sh
+index a4ef6ea..c7020b1 100644
+--- a/gstreamer_ti/gstreamer_demo/dm365/loadmodules.sh
++++ b/gstreamer_ti/gstreamer_demo/dm365/loadmodules.sh
+@@ -4,12 +4,14 @@ rmmod irqk 2>/dev/null
+ rmmod edmak 2>/dev/null
+ rmmod dm365mmap 2>/dev/null
+ 
++depmod -a
++
+ # Pools configuration
+-insmod cmemk.ko phys_start=0x84d00000 phys_end=0x88000000 pools=1x16539648,1x4841472,4x1843200,14x1646592,1x282624,1x176128,1x147456,1x69632,1x61440,1x32768,2x20480,1x16384,1x12288,4x8192,69x4096
++modprobe cmemk phys_start=0x84d00000 phys_end=0x88000000 pools=1x16539648,1x4841472,4x1843200,14x1646592,1x282624,1x176128,1x147456,1x69632,1x61440,1x32768,2x20480,1x16384,1x12288,4x8192,69x4096
+ 
+-insmod irqk.ko 
+-insmod edmak.ko
+-insmod dm365mmap.ko
++modprobe irqk
++modprobe edmak
++modprobe dm365mmap
+ 
+ rm -f /dev/dm365mmap
+ mknod /dev/dm365mmap c `awk "\\$2==\"dm365mmap\" {print \\$1}" /proc/devices` 0
+-- 
+1.7.0.4
+
