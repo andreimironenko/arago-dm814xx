@@ -61,6 +61,7 @@ DSP_SOURCETREE_c6a816x-evm = "\
     ti-linuxutils-src \
     ti-xdais-src \
     ti-osal-src \
+    ti-ipc-src \
     "
 
 DSP_SOURCETREE = " "
