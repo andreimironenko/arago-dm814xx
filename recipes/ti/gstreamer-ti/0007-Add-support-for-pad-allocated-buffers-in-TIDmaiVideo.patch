@@ -159,7 +159,7 @@ index 0125ed2..7b84a8e 100644
 +        desired_caps = gst_caps_copy (caps);
 +        desired_struct = gst_caps_get_structure (desired_caps, 0);
 +
-+        GST_DEBUG ("we prefer to receive a %dx%d video; %dx%d was requested",
++        GST_DEBUG ("we prefer to receive a %ldx%ld video; %ldx%ld was requested",
 +            gfxAttrs.dim.width, gfxAttrs.dim.height,
 +            dmaisink->dGfxAttrs.dim.width, dmaisink->dGfxAttrs.dim.height);
 +        gst_structure_set (desired_struct, "width", G_TYPE_INT,
