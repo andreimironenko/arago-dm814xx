@@ -24,6 +24,7 @@ DEPENDS_append_dm6467 	= " ti-dspbios ti-dsplink ti-cgt6x ti-biosutils ti-edma3l
 DEPENDS_append_omap3	= " ti-dspbios ti-dsplink ti-local-power-manager ti-cgt6x ti-biosutils ti-edma3lld"
 DEPENDS_append_omapl137 = " ti-dspbios ti-dsplink ti-cgt6x ti-biosutils ti-edma3lld"
 DEPENDS_append_omapl138 = " ti-dspbios ti-dsplink ti-cgt6x ti-biosutils ti-edma3lld"
+DEPENDS_append_c6a816x-evm = " ti-sysbios ti-cgt6x ti-osal"
 
 # SOC_FAMILY configuration
 
@@ -35,6 +36,7 @@ CEEXAMPLESDEVICES_dm355      = "DM355"
 CEEXAMPLESDEVICES_dm365      = "DM365"
 CEEXAMPLESDEVICES_omapl137   = "OMAPL137"
 CEEXAMPLESDEVICES_omapl138   = "OMAPL138"
+CEEXAMPLESDEVICES_c6a816x-evm   = "DM8168"
 CEEXAMPLESDEVICES           ?= "<UNDEFINED_CEEXAMPLESDEVICES>"
 
 # Define GPPOS variable
@@ -45,6 +47,7 @@ CEEXAMPLESGPPOS_dm355        = "LINUX_GCC"
 CEEXAMPLESGPPOS_dm365        = "LINUX_GCC"
 CEEXAMPLESGPPOS_omapl137     = "LINUX_GCC"
 CEEXAMPLESGPPOS_omapl138     = "LINUX_GCC"
+CEEXAMPLESGPPOS_c6a816x-evm  = "LINUX_GCC"
 CEEXAMPLESGPPOS             ?= "<UNDEFINED_CEEXAMPLESGPPOS>"
 
 # Define PROGRAM variable
@@ -55,6 +58,7 @@ CEEXAMPLESPROGRAMS_dm355     = "APP_LOCAL"
 CEEXAMPLESPROGRAMS_dm365     = "APP_LOCAL"
 CEEXAMPLESPROGRAMS_omapl137  = "APP_CLIENT DSP_SERVER"
 CEEXAMPLESPROGRAMS_omapl138  = "APP_CLIENT DSP_SERVER"
+CEEXAMPLESPROGRAMS_c6a816x-evm  = "APP_CLIENT DSP_SERVER"
 CEEXAMPLESPROGRAMS          ?= "<UNDEFINED_CEEXAMPLESPROGRAMS>"
 
 do_configure() {
@@ -74,7 +78,7 @@ do_prepsources() {
                      PROGRAMS="${CEEXAMPLESPROGRAMS}" \
                      CE_INSTALL_DIR="${S}" \
                      XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
-                     BIOS_INSTALL_DIR="${BIOS_INSTALL_DIR}" \
+                     BIOS_INSTALL_DIR="${SYSBIOS_INSTALL_DIR}" \
                      BIOSUTILS_INSTALL_DIR="${BIOSUTILS_INSTALL_DIR}" \
 		     DSPLINK_INSTALL_DIR="${LINK_INSTALL_DIR}" \
                      XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
@@ -104,7 +108,7 @@ do_compile () {
                      PROGRAMS="${CEEXAMPLESPROGRAMS}" \
                      CE_INSTALL_DIR="${S}" \
                      XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
-                     BIOS_INSTALL_DIR="${BIOS_INSTALL_DIR}" \
+                     BIOS_INSTALL_DIR="${SYSBIOS_INSTALL_DIR}" \
                      BIOSUTILS_INSTALL_DIR="${BIOSUTILS_INSTALL_DIR}" \
 		     DSPLINK_INSTALL_DIR="${LINK_INSTALL_DIR}" \
                      XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \

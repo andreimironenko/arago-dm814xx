@@ -2,7 +2,7 @@
 #
 
 PREFERRED_VERSION_ti-codec-engine = "3_20_00_13_eng"
-PREFERRED_VERSION_ti-codec-engine-examples = "2_26_00_08"
+PREFERRED_VERSION_ti-codec-engine-examples = "3_20_00_13_eng"
 
 PREFERRED_VERSION_ti-biosutils = "1_02_02"
 PREFERRED_VERSION_ti-cgt6x = "7_2_0"

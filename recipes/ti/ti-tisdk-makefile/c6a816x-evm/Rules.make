@@ -13,6 +13,9 @@ BIOS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__dspbios__>
 # Where the DSPBIOS Utils package is installed.
 BIOSUTILS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__biosutils__>
 
+# Where the DSPBIOS Utils package is installed.
+OSAL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__osal__>
+
 # Where the Codec Engine package is installed.
 CE_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__codec-engine__>
 
