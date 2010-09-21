@@ -24,7 +24,7 @@ DEPENDS_append_dm6467 	= " ti-dspbios ti-dsplink ti-cgt6x ti-biosutils ti-edma3l
 DEPENDS_append_omap3	= " ti-dspbios ti-dsplink ti-local-power-manager ti-cgt6x ti-biosutils ti-edma3lld"
 DEPENDS_append_omapl137 = " ti-dspbios ti-dsplink ti-cgt6x ti-biosutils ti-edma3lld"
 DEPENDS_append_omapl138 = " ti-dspbios ti-dsplink ti-cgt6x ti-biosutils ti-edma3lld"
-DEPENDS_append_c6a816x-evm = " ti-sysbios ti-cgt6x ti-osal"
+DEPENDS_append_c6a816x-evm = " ti-sysbios ti-cgt6x ti-osal ti-ipc ti-cgt-tms470"
 
 # SOC_FAMILY configuration
 

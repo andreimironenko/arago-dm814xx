@@ -57,6 +57,9 @@ XDC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__xdctools__>
 # Where the Code Gen is installed.
 CODEGEN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__cgt6x__>
 
+# Where the Code Gen is installed.
+TMS470_CODEGEN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__cgt-tms470__>
+
 # Where the PSP is installed.
 PSP_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/psp
 
