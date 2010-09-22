@@ -7,7 +7,7 @@
 #  Script to install TI SDK
 #
 
-VERSION="1.2"
+VERSION="1.3"
 
 #
 # Display program usage
@@ -15,7 +15,7 @@ VERSION="1.2"
 usage()
 {
   echo "
-Usage: `basename $1` [options] --machine <machine_name> <install_dir>
+Usage: `basename $1` [options] --machine <machine_name> --toolchain <toolchain path> <install_dir>
 
   --help                Print this help message
   --graphics            Install graphics packages
@@ -24,6 +24,7 @@ Usage: `basename $1` [options] --machine <machine_name> <install_dir>
   --dsp                 Install c64p dsp packages
   --multimedia          Install multimedia packages
   --force               Force installation on unsupported host
+  --toolchain           Where is toolchain installed
 "
   exit 1
 }
@@ -381,6 +382,9 @@ install_arago_sdk ()
     $install_dir/linux-devkit/bin/libtoolize 
 }
 
+# unset TOOLCHAIN_PATH exported by other script.
+unset TOOLCHAIN_PATH
+
 # Process command line...
 while [ $# -gt 0 ]; do
   case $1 in
@@ -432,6 +436,11 @@ while [ $# -gt 0 ]; do
       shift
       force_host="yes";
       ;;
+    --toolchain)
+      shift
+      TOOLCHAIN_PATH=$1;
+      shift;
+      ;;
      *)
       install_dir=$1;
       shift;
@@ -441,6 +450,9 @@ done
 
 # check if machine is defined.
 test -z $machine && usage $0
+
+# check if toolchain path is defined.
+test -z $TOOLCHAIN_PATH && usage $0
 
 # check if install_dir variable is set.
 test -z $install_dir && usage $0
