@@ -7,8 +7,8 @@ DVSDK_INSTALL_DIR=<__SDK__INSTALL_DIR__>
 # For backwards compatibility
 DVEVM_INSTALL_DIR=$(DVSDK_INSTALL_DIR)
 
-# Where DSP/BIOS is installed.
-BIOS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__dspbios__>
+# Where SYS/BIOS is installed.
+SYSBIOS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__sysbios__>
 
 # Where the DSPBIOS Utils package is installed.
 BIOSUTILS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__biosutils__>
@@ -22,8 +22,8 @@ IPC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__ipc__>
 # Where the Codec Engine package is installed.
 CE_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__codec-engine__>
 
-# Where the DSP Link package is installed.
-LINK_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__dsplink__>
+# Where the SYS Link package is installed.
+SYSLINK_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__syslink__>
 
 # Where the codecs are installed.
 CODEC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__codecs-omap3530__>
