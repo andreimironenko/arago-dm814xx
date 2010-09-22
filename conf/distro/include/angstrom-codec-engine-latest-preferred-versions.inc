@@ -16,7 +16,7 @@ PREFERRED_VERSION_ti-linuxutils = "3_20_00_01_eng"
 PREFERRED_VERSION_ti-local-power-manager = "1_24_02_09"
 PREFERRED_VERSION_ti-lpm-module = "1_24_02_09"
 PREFERRED_VERSION_ti-lpm-utils = "1_24_02_09"
-PREFERRED_VERSION_ti-xdais = "7_20_00_01_eng"
+PREFERRED_VERSION_ti-xdais = "7_20_00_04_eng"
 PREFERRED_VERSION_ti-xdctools = "3_20_03_63"
 
 PREFERRED_VERSION_ti-codecs-dm355 = "3_10_00_02"
