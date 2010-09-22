@@ -85,6 +85,10 @@ BSP_COMPONENTS_append_dm37x-evm = "\
     flash-utility \
     "
 
+BSP_COMPONENTS_c6a816x-evm = "\
+    linux-omap3-src \
+    "
+
 RRECOMMENDS_${PN} = "\
     ${BSP_COMPONENTS_COMMON} \
     ${BSP_COMPONENTS} \
