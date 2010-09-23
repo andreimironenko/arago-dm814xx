@@ -16,7 +16,7 @@ COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm37x-evm)"
 
 PROVIDES += "ti-c6accel-apps"
 
-PR = "r11"
+PR = "r12"
 
 S = "${WORKDIR}/c6accel_${PV}"
 
@@ -57,7 +57,10 @@ do_compile() {
 do_install() {
     install -d ${D}${C6ACCEL_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${C6ACCEL_INSTALL_DIR_RECIPE}
-    
+
+    # update linker.cmd file to point to sysroot 
+    sed -i ${i} -e s=${S}=${C6ACCEL_INSTALL_DIR}=g ${D}${C6ACCEL_INSTALL_DIR_RECIPE}/soc/app/c6accel_app_config/linker.cmd
+
     cd ${S} 
     make \
       PLATFORM="${PLATFORM}" \
