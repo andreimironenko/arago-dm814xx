@@ -1,18 +1,18 @@
 LICENSE = GPLv2
 
-require ti-paths.inc
-require ti-staging.inc
+PR = "r17"
+installdir="/"
 
-PR = "r15"
+PLATFORM_da850-omapl138-evm = "omapl138"
+PLATFORM_omap3 = "omap35x"
 
 SRC_URI = "file://mksdboot.sh \
 	   file://README \
+           file://setup.htm \
+           file://top_${PLATFORM}_evm.png \
+           file://README.boot.scr \
+           file://windows_users.htm \
 "
-
-SRC_URI_append_omap3 = "file://setup.htm \
- file://top_omap35x_evm.png \
- file://README.boot.scr \
- file://windows_users.htm"
 
 do_compile () {
 	:
@@ -32,14 +32,12 @@ do_install () {
 	mkdir -p ${D}/${installdir}/bin/
 	cp ${WORKDIR}/mksdboot.sh ${D}/${installdir}/bin/
     	chmod +x ${D}/${installdir}/bin/mksdboot.sh
-}
-
-do_install_append_omap3 () {
 	cp ${WORKDIR}/setup.htm ${D}/${installdir}/bin/
-	cp ${WORKDIR}/top_omap35x_evm.png ${D}/${installdir}/bin/
+	cp ${WORKDIR}/top_${PLATFORM}_evm.png ${D}/${installdir}/bin/
 	cp ${WORKDIR}/windows_users.htm ${D}/${installdir}/bin
 	cp ${WORKDIR}/README.boot.scr ${D}/${installdir}/bin
 }
 
 FILES_${PN} = "${installdir}/*"
+PACKAGE_ARCH = "${MACHINE_ARCH}"
 
