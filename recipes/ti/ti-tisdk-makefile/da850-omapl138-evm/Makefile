@@ -5,7 +5,7 @@ DEFAULT_UBOOT_CONFIG=da850_omapl138_evm_config
 
 DMAI_PLATFORM=ol138
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install ubl ubl_clean ubl_install dsplink dsplink_clean dsplink_install audio_soc_exmaple audio_soc_example_clean audio_soc_example_install audio_soc_example_kernel c6accel c6accel_clean c6accel_install c6run c6run_clean c6run_examples c6run_install matrix matrix_clean matrix_install dsp_benchmark dsp_benchmark_clean dsp_benchmark_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install dsplink dsplink_clean dsplink_install audio_soc_exmaple audio_soc_example_clean audio_soc_example_install audio_soc_example_kernel c6accel c6accel_clean c6accel_install c6run c6run_clean c6run_examples c6run_install matrix matrix_clean matrix_install dsp_benchmark dsp_benchmark_clean dsp_benchmark_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -20,17 +20,17 @@ clean: linux_clean c6run_clean cmem_clean dmai_clean codecs_clean c6accel_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: all u-boot ubl psp_examples ceexamples audio_soc_example c6run_examples matrix dsp_benchmark
+everything: all u-boot psp_examples ceexamples audio_soc_example c6run_examples matrix dsp_benchmark
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install dsplink_install u-boot_install ubl_install psp_examples_install cmem_install dmai_install codecs_install ceexamples_install audio_soc_example_install c6accel_install c6run_install matrix_install dsp_benchmark_install
+install: linux_install dsplink_install u-boot_install psp_examples_install cmem_install dmai_install codecs_install ceexamples_install audio_soc_example_install c6accel_install c6run_install matrix_install dsp_benchmark_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber: clean u-boot_clean ubl_clean psp_examples_clean ceexamples_clean audio_soc_example_clean  matrix_clean dsp_benchmark_clean
+clobber: clean u-boot_clean psp_examples_clean ceexamples_clean audio_soc_example_clean  matrix_clean dsp_benchmark_clean
 
 #==============================================================================
 # A help message target.
@@ -73,10 +73,6 @@ help:
 	@echo "    linux                        : Build Linux kernel uImage and module"
 	@echo "    linux_clean                  : Remove generated Linux kernel files"
 	@echo "    linux_install                : Install kernel binary and modules"
-	@echo
-	@echo "    ubl                          : Build the ubl boot loader"
-	@echo "    ubl_clean                    : Remove generated ubl files"
-	@echo "    ubl_install                  : Install the ubl image"
 	@echo
 	@echo "    u-boot                       : Build the u-boot boot loader"
 	@echo "    u-boot_clean                 : Remove generated u-boot files"
@@ -132,19 +128,6 @@ linux_install:
 	install  $(LINUXKERNEL_INSTALL_DIR)/vmlinux $(EXEC_DIR)/boot
 	install  $(LINUXKERNEL_INSTALL_DIR)/System.map $(EXEC_DIR)/boot
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) INSTALL_MOD_PATH=$(EXEC_DIR)/ modules_install
-
-#==============================================================================
-# Build ubl. Also, an explicit cleanup target is defined.
-#==============================================================================
-ubl:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP-L138/GNU/ubl CROSSCOMPILE=$(CSTOOL_PREFIX)
-
-ubl_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP-L138/GNU/ubl CROSSCOMPILE=$(CSTOOL_PREFIX) clean
-
-ubl_install:
-	install -d $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/board-utilities/OMAP-L138/GNU/ubl/*.bin $(EXEC_DIR)/boot
 
 #==============================================================================
 # Build u-boot. Also, an explicit cleanup target is defined.
@@ -814,10 +797,10 @@ dsp_benchmark_install:
 # Build Martix GUI Appication Launcher
 ################################################################################
 matrix:
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd matrix-gui-1.0 ; qmake ; $(MAKE) PLATFORM=$(PLATFORM)
+	. $(SDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd matrix-gui-1.0 ; qmake ; $(MAKE) PLATFORM=$(PLATFORM)
 
 matrix_clean:
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; 	$(MAKE) -C matrix-gui-1.0 distclean
+	. $(SDK_INSTALL_DIR)/linux-devkit/environment-setup; 	$(MAKE) -C matrix-gui-1.0 distclean
 
 matrix_install:
 	install -d $(EXEC_DIR)/matrix
