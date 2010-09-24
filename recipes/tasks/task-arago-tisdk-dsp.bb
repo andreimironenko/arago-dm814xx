@@ -32,6 +32,10 @@ DSP_COMPONENTS_omap3 = "\
     ti-c6run-apps \
     "
 
+DSP_COMPONENTS_c6a816x-evm = "\
+    ti-codec-engine-examples \
+    "
+
 DSP_COMPONENTS = ""
 
 RDEPENDS = "\

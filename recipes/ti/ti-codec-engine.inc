@@ -24,7 +24,7 @@ DEPENDS_append_dm6467 	= " ti-dspbios ti-dsplink ti-cgt6x ti-biosutils ti-edma3l
 DEPENDS_append_omap3	= " ti-dspbios ti-dsplink ti-local-power-manager ti-cgt6x ti-biosutils ti-edma3lld"
 DEPENDS_append_omapl137 = " ti-dspbios ti-dsplink ti-cgt6x ti-biosutils ti-edma3lld"
 DEPENDS_append_omapl138 = " ti-dspbios ti-dsplink ti-cgt6x ti-biosutils ti-edma3lld"
-DEPENDS_append_c6a816x-evm = " ti-sysbios ti-cgt6x ti-osal ti-ipc ti-cgt-tms470"
+DEPENDS_append_c6a816x-evm = " ti-sysbios ti-cgt6x ti-osal ti-ipc ti-cgt-tms470 ti-syslink"
 
 # SOC_FAMILY configuration
 
@@ -80,7 +80,7 @@ do_prepsources() {
                      XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
                      BIOS_INSTALL_DIR="${SYSBIOS_INSTALL_DIR}" \
                      BIOSUTILS_INSTALL_DIR="${BIOSUTILS_INSTALL_DIR}" \
-		     DSPLINK_INSTALL_DIR="${LINK_INSTALL_DIR}" \
+		     SYSLINK_INSTALL_DIR="${SYSLINK_INSTALL_DIR}" \
                      XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
                      FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
                      CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
@@ -89,6 +89,8 @@ do_prepsources() {
                      CGTOOLS_V5T="${TOOLCHAIN_PATH}" \
                      CGTOOLS_C64P="${CODEGEN_INSTALL_DIR}" \
                      CGTOOLS_C674="${CODEGEN_INSTALL_DIR}" \
+                     CGTOOLS_C674ELF="${CODEGEN_INSTALL_DIR}" \
+                     CGTOOLS_M3ELF="${TMS470_CODEGEN_INSTALL_DIR}" \
                      clean
 		     # '.make' target was used in CE < 2.26, but its no longer
 		     # supported in CE >= 2.26. Now we are moved to >=2.26 
@@ -110,7 +112,7 @@ do_compile () {
                      XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
                      BIOS_INSTALL_DIR="${SYSBIOS_INSTALL_DIR}" \
                      BIOSUTILS_INSTALL_DIR="${BIOSUTILS_INSTALL_DIR}" \
-		     DSPLINK_INSTALL_DIR="${LINK_INSTALL_DIR}" \
+		     SYSLINK_INSTALL_DIR="${SYSLINK_INSTALL_DIR}" \
                      XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
                      FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
                      CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
@@ -119,6 +121,8 @@ do_compile () {
                      CGTOOLS_V5T="${TOOLCHAIN_PATH}" \
                      CGTOOLS_C64P="${CODEGEN_INSTALL_DIR}" \
                      CGTOOLS_C674="${CODEGEN_INSTALL_DIR}" \
+                     CGTOOLS_C674ELF="${CODEGEN_INSTALL_DIR}" \
+                     CGTOOLS_M3ELF="${TMS470_CODEGEN_INSTALL_DIR}" \
                      all
         done
 }

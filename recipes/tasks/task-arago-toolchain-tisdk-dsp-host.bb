@@ -64,6 +64,7 @@ DSP_SOURCETREE_c6a816x-evm = "\
     ti-osal-src \
     ti-ipc-src \
     ti-syslink-src \
+    ti-codec-engine-src \
     "
 
 DSP_SOURCETREE = " "
