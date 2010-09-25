@@ -86,6 +86,9 @@ BSP_COMPONENTS_append_dm37x-evm = "\
     "
 
 BSP_COMPONENTS_c6a816x-evm = "\
+    ti-tisdk-setup \
+    ti-tisdk-relnotes \
+    ti-docs-sdg \
     linux-omap3-src \
     "
 

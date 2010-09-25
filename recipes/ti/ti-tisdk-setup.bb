@@ -7,6 +7,7 @@ UBOOT_ENV_dm365 = "setup-uboot-env-dm365.sh"
 UBOOT_ENV_omapl138 = "setup-uboot-env-omapl138.sh"
 UBOOT_ENV_dm37x-evm = "setup-uboot-env-dm3730.sh"
 UBOOT_ENV_omap3evm = "setup-uboot-env-omap3530.sh"
+UBOOT_ENV_c6a816x-evm = "setup-uboot-env-c6a816x.sh"
 
 SRC_URI = "\
 	file://setup/setup.sh \
@@ -20,6 +21,7 @@ SRC_URI = "\
   	file://setup/setup-uboot-env-omapl138.sh \
   	file://setup/setup-uboot-env-dm3730.sh \
   	file://setup/setup-uboot-env-omap3530.sh \
+  	file://setup/setup-uboot-env-c6a816x.sh \
 "
 PR = "r12"
 
@@ -33,6 +35,7 @@ do_install () {
         cp -pPf ${WORKDIR}/setup/setup-package-install.sh ${D}/${installdir}/bin
         cp -pPf ${WORKDIR}/setup/setup-targetfs-nfs.sh ${D}/${installdir}/bin
         cp -pPf ${WORKDIR}/setup/setup-tftp.sh ${D}/${installdir}/bin
+        cp -pPf ${WORKDIR}/setup/${UBOOT_ENV} ${D}/${installdir}/bin/setup-uboot-env.sh
         cp -pPf ${WORKDIR}/setup/${UBOOT_ENV} ${D}/${installdir}/bin/setup-uboot-env.sh
 }
 
