@@ -2,7 +2,7 @@ DESCRIPTION = "Media files for TI DVSDK"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-PR = "r5"
+PR = "r6"
 
 S = "${WORKDIR}/${DEMOSPLATFORM}"
 
@@ -14,6 +14,7 @@ DEMOSPLATFORM_dm355    = "dm355"
 DEMOSPLATFORM_dm365    = "dm365"
 DEMOSPLATFORM_dm6467   = "dm6467"
 DEMOSPLATFORM_omapl138   = "omapl138"
+DEMOSPLATFORM_omap3   = "omap3530"
 
 do_compile () {
        cd ${S}
