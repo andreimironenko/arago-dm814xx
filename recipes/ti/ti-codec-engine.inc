@@ -189,6 +189,7 @@ RDEPENDS_ti-codec-engine-examples_append_dm6467   = " ti-dsplink-module"
 RDEPENDS_ti-codec-engine-examples_append_omap3    = " ti-dsplink-module ti-lpm-module"
 RDEPENDS_ti-codec-engine-examples_append_omapl137 = " ti-dsplink-module"
 RDEPENDS_ti-codec-engine-examples_append_omapl138 = " ti-dsplink-module"
+RDEPENDS_ti-codec-engine-examples_append_c6a816x-evm = " ti-syslink-module"
 FILES_ti-codec-engine-examples = "${installdir}/ti-codec-engine-examples/*"
 INSANE_SKIP_ti-codec-engine-examples = True
 

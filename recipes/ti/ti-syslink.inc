@@ -126,18 +126,40 @@ do_compile() {
 
 do_install() {
     # Install the kernel module
-    install -d ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/syslink
-    install -m 0755 ${SYSLINK_ROOT}/ti/syslink/lib/modules/${SYSLINKPLATFORM}/syslink.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/syslink/ 
+    install -d ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp
+    install -m 0755 ${SYSLINK_ROOT}/ti/syslink/lib/modules/${SYSLINKPLATFORM}/syslink.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp/ 
 
     # Install the Syslink library in the filesystem 
-    install -d ${D}/${installdir}/ti-syslink/lib
-    install -m 0755 ${SYSLINK_ROOT}/ti/syslink/lib/syslink.a ${D}/${installdir}/ti-syslink/lib/
+    install -d ${D}/${installdir}/ti-syslink-samples
+    install -m 0755 ${SYSLINK_ROOT}/ti/syslink/lib/syslink.a ${D}/${installdir}/ti-syslink-samples/
 
     # Install the Syslink samples in the filesystem 
-    install -d ${D}/${installdir}/ti-syslink-samples
-    cp -pPrf ${SYSLINK_ROOT}/ti/syslink/lib/samples/* ${D}/${installdir}/ti-syslink-samples
+    cp -pPrf ${SYSLINK_ROOT}/ti/syslink/lib/samples/* ${D}/${installdir}/ti-syslink-samples/
 
     install -d ${D}${SYSLINK_INSTALL_DIR_RECIPE}/packages
     cp -pPrf ${S}/* ${D}${SYSLINK_INSTALL_DIR_RECIPE}/packages
 }
 
+PACKAGES += "ti-syslink-module"
+FILES_ti-syslink-module = "/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp/syslink.ko" 
+RDEPENDS_ti-syslink-module += "update-modules"
+
+pkg_postinst_ti-syslink-module () {
+#!/bin/sh
+if [ -n "$D" ]; then
+	exit 1
+fi
+
+depmod -a
+update-modules || true
+}
+
+pkg_postrm_ti-syslink-module () {
+#!/bin/sh
+update-modules || true
+}
+
+PACKAGES += "ti-syslink-samples"
+RDEPENDS_ti-syslink-samples_append = " ti-syslink-module"
+FILES_ti-syslink-samples = "${installdir}/ti-syslink-samples/*"
+INSANE_SKIP_ti-syslink-samples = True

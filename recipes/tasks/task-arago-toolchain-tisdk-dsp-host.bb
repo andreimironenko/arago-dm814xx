@@ -58,6 +58,7 @@ DSP_SOURCETREE_c6a816x-evm = "\
     ti-cgt-tms470-src \
     ti-sysbios-src \
     ti-xdctools-src \
+    ti-edma3lld-src \
     ti-framework-components-src \
     ti-linuxutils-src \
     ti-xdais-src \
