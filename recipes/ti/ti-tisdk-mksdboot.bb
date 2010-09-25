@@ -1,7 +1,9 @@
 LICENSE = GPLv2
 
 PR = "r17"
-installdir="/"
+
+require ti-paths.inc
+require ti-staging.inc
 
 PLATFORM_da850-omapl138-evm = "omapl138"
 PLATFORM_omap3 = "omap35x"
