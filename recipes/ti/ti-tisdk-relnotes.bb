@@ -45,7 +45,7 @@ do_install () {
         sed -i "s/__DATE__/${TODAYS_DATE}/g" $file
     done
 
-    htmldoc --webpage -f ${D}/${installdir}/dvsdk_${SDK_VERSION}_${SDK_SHORT_PLATFORM}_Release_Notes.pdf $htmlfiles
+    htmldoc --webpage -f ${D}/${installdir}/ezsdk_${SDK_VERSION}_${SDK_SHORT_PLATFORM}_Release_Notes.pdf $htmlfiles
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
