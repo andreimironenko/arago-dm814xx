@@ -2,16 +2,16 @@
 PLATFORM=c6a816x-evm
 
 # The installation directory of the SDK.
-DVSDK_INSTALL_DIR=<__SDK__INSTALL_DIR__>
+EZSDK_INSTALL_DIR=<__SDK__INSTALL_DIR__>
 
 # For backwards compatibility
-DVEVM_INSTALL_DIR=$(DVSDK_INSTALL_DIR)
+DVSDK_INSTALL_DIR=<EZSDK_INSTALL_DIR>
+
+# For backwards compatibility
+DVEVM_INSTALL_DIR=$(EZSDK_INSTALL_DIR)
 
 # Where SYS/BIOS is installed.
 SYSBIOS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__sysbios__>
-
-# Where the DSPBIOS Utils package is installed.
-BIOSUTILS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__biosutils__>
 
 # Where the OSAL package is installed.
 OSAL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__osal__>
@@ -24,18 +24,6 @@ CE_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__codec-engine__>
 
 # Where the SYS Link package is installed.
 SYSLINK_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__syslink__>
-
-# Where the codecs are installed.
-CODEC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__codecs-omap3530__>
-
-# Where DMAI package is installed.
-DMAI_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__dmai__>
-
-# Where the SDK demos are installed
-DEMO_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__dvsdk-demos__>
-
-# Where the DVTB package is installed.
-DVTB_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__dvtb__>
 
 # Where the EDMA3 LLD package is installed.
 EDMA3_LLD_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__edma3lld__>
@@ -75,12 +63,6 @@ LINUXLIBS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/linuxlibs
 
 # Where c6accel package is installed.
 C6ACCEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__c6accel__>
-
-# Where c6run package is installed.
-C6RUN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__c6run__>
-
-# Where opengl graphics package is installed.
-GRAPHICS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__libgles-omap3__>
 
 # The prefix to be added before the GNU compiler tools (optionally including # path), i.e. "arm_v5t_le-" or "/opt/bin/arm_v5t_le-".
 CSTOOL_DIR=<__CROSS_COMPILER_PATH__>
