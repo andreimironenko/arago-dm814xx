@@ -121,12 +121,12 @@ move_to_install_dir()
     echo " from ti-psp-tree => psp"
     mv ${install_dir}/usr/share/ti/ti-psp-tree/* ${install_dir}/psp/
 
-    # copy prebuilt kernel image and uboot in psp/prebuilt directory
-    mkdir -p ${install_dir}/psp/prebuilt-images/
-    cp deploy/images/$machine/*.bin ${install_dir}/psp/prebuilt-images/
-
     rm -rf ${install_dir}/usr/share/ti/ti-psp-tree
   fi
+
+  # copy prebuilt kernel image and uboot in psp/prebuilt directory
+  mkdir -p ${install_dir}/psp/prebuilt-images/
+  cp deploy/images/$machine/*.bin ${install_dir}/psp/prebuilt-images/
 
   if [ -d ${install_dir}/usr/share/ti/ti-docs-tree ]; then
     echo " from ti-docs-tree => docs"

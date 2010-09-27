@@ -189,6 +189,20 @@ sub build_image
         print "\n ERROR: failed to build sdk";
         exit 1;
     }
+
+    print "\nRunning uboot and uImage deploy for $machine\n";
+    $cmd = "MACHINE=$machine bitbake virtual/kernel -c deploy -f";
+    $result = system($cmd);
+    if ($result) {
+        print "\n ERROR: failed to deploy uImage";
+        exit 1;
+    }
+    $cmd = "MACHINE=$machine bitbake virtual/bootloader -c deploy -f";
+    $result = system($cmd);
+    if ($result) {
+        print "\n ERROR: failed to deploy uboot";
+        exit 1;
+    }
 }
 
 ################################################################################
