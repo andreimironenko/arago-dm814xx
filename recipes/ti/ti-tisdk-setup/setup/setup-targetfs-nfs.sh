@@ -27,7 +27,7 @@ else
     sudo mkdir -p $dst
     check_status
 
-    fstar=`ls -1 $cwd/../filesystem/dvsdk*rootfs.tar.gz`
+    fstar=`ls -1 $cwd/../filesystem/??sdk*rootfs.tar.gz`
     sudo tar xzf $fstar -C $dst
     check_status
 fi
@@ -37,7 +37,7 @@ echo "--------------------------------------------------------------------------
 platform=`grep PLATFORM= $cwd/../Rules.make | cut -d= -f2`
 echo
 echo "--------------------------------------------------------------------------------"
-echo "This step will set up the DVSDK to install binaries in to:"
+echo "This step will set up the SDK to install binaries in to:"
 echo "    $dst/home/root/$platform"
 echo
 echo "The files will be available from /home/root/$platform on the target."

@@ -9,7 +9,7 @@ minicomcfg=${HOME}/.minirc.dfl
 echo
 echo "--------------------------------------------------------------------------------"
 echo "This step will set up minicom (serial communication application) for"
-echo "DVSDK development"
+echo "SDK development"
 echo
 echo "Which serial port do you want to use with minicom?"
 read -p "[ $portdefault ] " port

@@ -2,9 +2,9 @@
 
 echo
 echo "--------------------------------------------------------------------------------"
-echo "DVSDK setup script"
+echo "SDK setup script"
 echo
-echo "This script will set up your development host for dvsdk development."
+echo "This script will set up your development host for sdk development."
 echo "Parts of this script require administrator priviliges (sudo access)."
 echo "--------------------------------------------------------------------------------"
 
@@ -30,6 +30,6 @@ $cwd/bin/setup-uboot-env.sh
 check_status
 
 echo
-echo "DVSDK setup completed!"
+echo "SDK setup completed!"
 echo "Please continue reading the Software Developer's Guide for more information on"
 echo "how to develop software on the EVM"
