@@ -15,7 +15,7 @@ PLATFORM ?= "<UNDEFINED_PLATFORM>"
 
 COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm37x-evm|c6a816x-evm)"
 
-# PROVIDES += "ti-c6accel-apps"
+PROVIDES += "ti-c6accel-apps"
 
 PR = "r8"
 
@@ -30,10 +30,50 @@ DEPENDS = "ti-codec-engine ti-xdais ti-syslink ti-sysbios"
 DEPENDS += "ti-edma3lld ti-cgt6x ti-xdctools ti-framework-components" 
 
 do_compile() {
-    :
+    # Build C6Accel package
+    cd ${S}
+    make \
+    PLATFORM="${PLATFORM}" \
+    CE_INSTALL_DIR="${CE_INSTALL_DIR}" \
+    XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
+    LINK_INSTALL_DIR="${SYSLINK_INSTALL_DIR}" \
+    CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
+    EDMA3_LLD_INSTALL_DIR="${EDMA3_LLD_INSTALL_DIR}" \
+    CODEGEN_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
+    XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
+    FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
+    BIOS_INSTALL_DIR="${SYSBIOS_INSTALL_DIR}" \
+    BIOSUTILS_INSTALL_DIR="${BIOSUTILS_INSTALL_DIR}" \
+    LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
+    SERVER_INSTALL_DIR="${CODEC_INSTALL_DIR}" \
+    C6ACCEL_INSTALL_DIR="${S}" \
+    CSTOOL_DIR="${TOOLCHAIN_PATH}" \
+    CSTOOL_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+    BUILD_TYPE=debug \
+    all
+
 }
 
 do_install() {
     install -d ${D}${C6ACCEL_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${C6ACCEL_INSTALL_DIR_RECIPE}
+
+    # update linker.cmd file to point to sysroot 
+    sed -i ${i} -e s=${S}=${C6ACCEL_INSTALL_DIR}=g ${D}${C6ACCEL_INSTALL_DIR_RECIPE}/soc/app/c6accel_app_config/linker.cmd
+    
+    cd ${S} 
+    make \
+      PLATFORM="${PLATFORM}" \
+      CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
+      LINK_INSTALL_DIR="${SYSLINK_INSTALL_DIR}/packages" \
+      LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
+      C6ACCEL_INSTALL_DIR="${S}" \
+      EXEC_DIR_C6ACCEL="${D}/${installdir}/c6accel-apps" \
+      install
 }
+
+PACKAGES += "ti-c6accel-apps"
+FILES_ti-c6accel-apps = "${installdir}/c6accel-apps/*"
+INSANE_SKIP_ti-c6accel-apps = True
+RDEPENDS_ti-c6accel-apps += "ti-cmem-module ti-syslink-module"
+
