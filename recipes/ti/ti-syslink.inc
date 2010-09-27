@@ -65,6 +65,17 @@ do_configure() {
 
 }
 
+do_prepsources () {
+	
+    # Prepare the tree for rebuiling - clean and generate interfaces
+    cd ${SYSLINK_ROOT}/ti/syslink
+    ${XDC_INSTALL_DIR}/xdc .make -PR .
+    ${XDC_INSTALL_DIR}/xdc clean -PR .
+    ${XDC_INSTALL_DIR}/xdc .interfaces -PR .
+}
+
+addtask prepsources after do_configure before do_compile
+
 do_compile() {
     # Build the Kernel Module
     # Followed instructions from DSP/LINK recipe to unset exported variables
