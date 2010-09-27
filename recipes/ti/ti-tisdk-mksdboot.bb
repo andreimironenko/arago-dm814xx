@@ -1,3 +1,5 @@
+DESCRIPTION = "Scripts to create bootable SD card for ${MACHINE}"
+HOMEPAGE_dm365 = "http://processors.wiki.ti.com/index.php/SD_card_boot_and_flashing_tool_for_DM355_and_DM365"
 LICENSE = GPLv2
 
 PR = "r17"
@@ -15,6 +17,10 @@ SRC_URI = "file://mksdboot.sh \
            file://README.boot.scr \
            file://windows_users.htm \
 "
+
+SRCREV_dm365 = "9713"
+SRC_URI_dm365 = "svn://winsvn.sanb.design.ti.com/SDOApps/apps/sdk_productization/trunk/sdk_productization/boot;module=dm365;proto=http;user=anonymous;pswd='' "
+S_dm365 = "${WORKDIR}/dm365"
 
 do_compile () {
 	:
@@ -40,6 +46,20 @@ do_install () {
 	cp ${WORKDIR}/README.boot.scr ${D}/${installdir}/bin
 }
 
+do_install_dm365 () {
+	mkdir -p ${D}/${installdir}/bin/
+	mkdir -p ${D}/${installdir}/bin/dm3xx_sd_boot-6.1
+	mkdir -p ${D}/${installdir}/bin/dm3xx_sd_boot-6.1/bin.x86
+	cp ${S}/mksdboot.sh ${D}/${installdir}/bin/
+	cp ${S}/dm3xx_sd_boot-6.1/dm3xx_sd_boot ${D}/${installdir}/bin/dm3xx_sd_boot-6.1
+	cp ${S}/dm3xx_sd_boot-6.1/dm3xx_sd.config ${D}/${installdir}/bin/dm3xx_sd_boot-6.1
+	cp ${S}/dm3xx_sd_boot-6.1/bin.x86/dm3xx_boot_make_image ${D}/${installdir}/bin/dm3xx_sd_boot-6.1/bin.x86/
+        mkdir -p ${D}/${installdir}/bin/dm3xx_sd_boot-6.1/sdcard_flash
+	cp ${S}/dm3xx_sd_boot-6.1/sdcard_flash/sdcard_flash_DM36x.bin ${D}/${installdir}/bin/dm3xx_sd_boot-6.1/sdcard_flash
+	
+}
+
 FILES_${PN} = "${installdir}/*"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
+INSANE_SKIP_${PN} = True
 
