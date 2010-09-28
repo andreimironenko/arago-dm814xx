@@ -1,3 +1,9 @@
+# NOTE:  This version of the recipe is used only in Arago because the
+#        version of the CodeSourcery toolchain (2009q1) currently
+#        used by Arago does not yield ideal performance, whereas the
+#        version used to build the Dhrystone binary (2008q1) does.
+#        This issue does not affect the OE mainline which does not
+#        use the CodeSourcery toolchain.
 DESCRIPTION = "AM Benchmarks"
 HOMEPAGE = "https://gforge.ti.com/gf/project/am_benchmarks/"
 LICENSE = "BSD"
@@ -8,12 +14,10 @@ SRCREV = "56"
 PV = "1.1"
 PR = "r2+svnr${SRCPV}"
 
-ARCHITECTURE_dm365 = "cortex-a8"
+ARCHITECTURE_dm365 = "arm9"
 ARCHITECTURE_da850-omapl138-evm = "arm9"
-ARCHITECTURE_omap3evm = "cortex-a8"
-ARCHITECTURE_dm37x-evm = "cortex-a8"
-ARCHITECTURE_am37x-evm = "cortex-a8"
-ARCHITECTURE_beagleboard = "cortex-a8"
+ARCHITECTURE_omap3 = "cortex-a8"
+ARCHITECTURE_ti816x = "cortex-a8"
 ARCHITECTURE ?= "<UNDEFINED>"
 
 INSANE_SKIP_${PN} = "True"
@@ -35,7 +39,6 @@ do_compile() {
 
 do_install() {
 	make DESTDIR=${D} install
-        install -d ${D}/${bindir}
-        cp -ar ${WORKDIR}/${ARCHITECTURE}/dhrystone_${ARCHITECTURE}_static ${D}/${bindir}/dhrystone_static
-	chmod 755 ${D}/${bindir}/dhrystone_static
+    install -d ${D}/${bindir}
+    install -m 0755 ${WORKDIR}/${ARCHITECTURE}/dhrystone_${ARCHITECTURE}_static ${D}/${bindir}/dhrystone_static
 }
