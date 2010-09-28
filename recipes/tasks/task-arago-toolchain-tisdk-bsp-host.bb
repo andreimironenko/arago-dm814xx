@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support Package sources (or development header) packages on host"
-PR = "r35"
+PR = "r36"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -22,6 +22,7 @@ BSP_COMPONENTS_dm365 = "\
     ti-board-utilities \
     ti-linux-driver-examples-src \
     linux-davinci-src \
+    ti-tisdk-mksdboot \
     "
 
 BSP_COMPONENTS_dm355 = "\
