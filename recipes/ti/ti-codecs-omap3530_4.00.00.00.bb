@@ -5,13 +5,13 @@ LICENSE = "TI"
 require ti-paths.inc
 require ti-staging.inc
 
-PR="r4"
+PR="r5"
 
 PV="4_00_00_00"
 
 CODEC_SUITE_NAME="${WORKDIR}/${PN}_${PV}"
 
-SRCREV = "4b302127310970d617ff8a768059f86110938cb7"
+SRCREV = "6847b0c5e2b18a1a44b14d1230246c724c38bbfd"
 
 require ti-eula-unpack.inc
 
@@ -64,9 +64,7 @@ TI_BIN_UNPK_CMDS = "Y:workdir"
 
 S = "${CODEC_SUITE_NAME}"
 
-# Using C6accel will require to modify the server (in git)
-#DEPENDS = "ti-cgt6x ti-xdctools ti-dspbios ti-codec-engine ti-linuxutils ti-c6accel"
-DEPENDS = "ti-cgt6x ti-xdctools ti-dspbios ti-codec-engine ti-linuxutils"
+DEPENDS = "ti-cgt6x ti-xdctools ti-dspbios ti-codec-engine ti-linuxutils ti-c6accel"
 
 #generic codec
 DSPSUFFIX_omap3530 = "x64P"
@@ -156,6 +154,7 @@ do_compile() {
              XDC_INSTALL_DIR=${XDC_INSTALL_DIR} \
              CODEC_INSTALL_DIR="${S}" \
              XDCARGS="prod" \
+             C6ACCEL_INSTALL_DIR=${C6ACCEL_INSTALL_DIR} \
              clean
 
     make \
@@ -169,6 +168,7 @@ do_compile() {
              XDC_INSTALL_DIR=${XDC_INSTALL_DIR} \
              CODEC_INSTALL_DIR="${S}" \
              XDCARGS="prod" \
+             C6ACCEL_INSTALL_DIR=${C6ACCEL_INSTALL_DIR} \
              all
 }
 
