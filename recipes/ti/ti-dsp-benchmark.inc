@@ -1,5 +1,5 @@
 DESCRIPTION = "TI DSP Benchmark applications"
-HOMEPAGE = ""
+HOMEPAGE = "http://software-dl.ti.com/dsps/dsps_public_sw/c6000/web/c6accel/latest/index_FDS.html"
 
 SECTION = "devel"
 LICENSE = "TI TSPA"
@@ -15,11 +15,11 @@ COMPATIBLE_MACHINE = "(da850-omapl138-evm)"
 
 PROVIDES += "ti-dsp-benchmark-apps"
 
-PR = "r0"
+PR = "r1"
 
 S = "${WORKDIR}/dsp_benchmark_demo_${PV}"
 
-SRC_URI = "https://gforge01.dal.design.ti.com/gf/download/frsrelease/459/4083/dsp_benchmark_demo_${PV}_Linux-x86_Setup.bin;name=dspbenchmarksbin"
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/c6000/web/c6accel/latest/exports//dsp_benchmark_demo_${PV}_Linux-x86_Setup.bin;name=dspbenchmarksbin"
 
 BINFILE="dsp_benchmark_demo_${PV}_Linux-x86_Setup.bin"
 TI_BIN_UNPK_CMDS="Y:workdir"
@@ -51,8 +51,6 @@ do_compile() {
     all
 
 }
-
-
 
 do_install() {
     install -d ${D}${DSP_BENCHMARK_INSTALL_DIR_RECIPE}
