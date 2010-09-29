@@ -4,7 +4,7 @@ cwd=`dirname $0`
 . $cwd/common.sh
 
 tftpcfg=/etc/xinetd.d/tftp
-tftproot=/tftpboot
+tftprootdefault=/tftpboot
 
 tftp() {
     echo "
@@ -24,6 +24,15 @@ disable = no
      echo
      echo "$tftpcfg successfully created"
 }
+
+echo "--------------------------------------------------------------------------------"
+echo "In which directory do you want to keep your tftp root directory?"
+read -p "[ $tftprootdefault ] " tftproot
+
+if [ ! -n "$tftproot" ]; then
+    tftproot=$tftprootdefault
+fi
+echo "--------------------------------------------------------------------------------"
 
 echo
 echo "--------------------------------------------------------------------------------"
@@ -49,7 +58,29 @@ uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimage=`basename $uimagesrc`
 if [ -f $tftproot/$uimage ]; then
     echo
-    echo "$tftproot/$uimage already exists, skipping copy.."
+    echo "$tftproot/$uimage already exists"
+    echo "(r) replace (s) skip copy (e) rename"
+    read -p "[r] " exists
+    case "$exists" in
+      s) echo "Skipping copy of $uimage, existing version will be used"
+         ;;
+      e) dte="`date +%m%d%Y`_`date +%H`.`date +%M`"
+         echo "Name of new uimage: "
+         read -p "[ $uimage.$dte ]" newname
+         if [ ! -n "$newname" ]; then
+             newname="$uimage.$dte"
+         fi
+         sudo cp $uimagesrc $tftproot/$newname 
+         check_status
+         echo
+         echo "Successfully copied $uimage to tftp root directory $tftproot as $newname"
+         ;;
+      *) sudo cp $uimagesrc $tftproot
+         check_status
+         echo
+         echo "Successfully replaced $uimage in tftp root directory $tftproot"
+         ;;
+    esac
 else
     sudo cp $uimagesrc $tftproot
     check_status
@@ -61,8 +92,8 @@ echo
 if [ -f $tftpcfg ]; then
     echo "$tftpcfg already exists.."
 
-    grep "$tftproot" $tftpcfg > /dev/null
-    if [ "$?" -eq "0" ]; then
+    if [ "`cat $tftpcfg | grep server_args | cut -d= -f2 | sed 's/^[ ]*//'`" \
+          == "$tftproot" ]; then
         echo "$tftproot already exported for TFTP, skipping.."
     else
         echo "Copying old $tftpcfg to $tftpcfg.old"
@@ -77,5 +108,8 @@ fi
 echo
 echo "Restarting tftp server"
 sudo /etc/init.d/xinetd stop
+check_status
+sleep 1
 sudo /etc/init.d/xinetd start
+check_status
 echo "--------------------------------------------------------------------------------"

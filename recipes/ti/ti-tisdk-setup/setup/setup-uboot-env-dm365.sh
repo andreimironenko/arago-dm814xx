@@ -34,7 +34,7 @@ fi
 uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyS0,115200n8 rw mem=59M"
+baseargs="console=ttyS0,115200n8 rw mem=48M"
 videoargs1="video=davincifb:vid0=OFF:vid1=OFF:osd0=720x576x16,4050K"
 videoargs2="dm365_imp.oper_mode=0 davinci_capture.device_type=4"
 videoargs3="davinci_display.cont2_bufsize=6291456"

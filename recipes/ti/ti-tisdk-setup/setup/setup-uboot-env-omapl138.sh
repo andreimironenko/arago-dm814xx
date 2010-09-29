@@ -35,8 +35,19 @@ uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
 baseargs="console=ttyS2,115200n8 noinitrd rw mem=32M@0xc0000000"
+extendbaseargs=" "
 fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3 rootwait"
 fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath,nolock"
+
+echo "Select board memory:"
+echo " 1: 128MB"
+echo " 2:  64MB"
+echo
+read -p "[ 1 ] " memory
+
+if [ ! -n "$memory" ]; then
+    memory="1"
+fi
 
 echo "Select Linux kernel location:"
 echo " 1: TFTP"
@@ -57,6 +68,10 @@ read -p "[ 1 ] " fs
 
 if [ ! -n "$fs" ]; then
     fs="1"
+fi
+
+if [ "$memory" -eq "1" ]; then
+    extendbaseargs=" mem=64M@0xc4000000"
 fi
 
 if [ "$kernel" -eq "1" ]; then
@@ -80,19 +95,19 @@ if [ "$kernel" -eq "1" ]; then
     bootfile="setenv bootfile $uimage"
 
     if [ "$fs" -eq "1" ]; then
-        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
+        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fsnfsargs ip=dhcp"
         cfg="uimage-tftp_fs-nfs"
     else
-        bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
+        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fssdargs ip=off"
         cfg="uimage-tftp_fs-sd"
     fi
 else
     if [ "$fs" -eq "1" ]; then
-        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
+        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fsnfsargs ip=dhcp"
         bootcmd="setenv bootcmd 'sf probe 0; sf read 0xc0700000 0x80000 0x280000; bootm 0xc0700000'"
         cfg="uimage-flash_fs-nfs"
     else
-        bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
+        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fssdargs ip=off"
         bootcmd="setenv bootcmd 'sf probe 0; sf read 0xc0700000 0x80000 0x280000; bootm 0xc0700000'"
         cfg="uimage-flash_fs-sd"
     fi
@@ -158,6 +173,7 @@ if [ "$minicom" == "y" ]; then
     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv oldbootargs \$\{bootargs\}\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs \c\"" $minicomfilepath
+    echo "send \"$extendbaseargs \c\"" >> $minicomfilepath
     echo "send \"$videoargs1 \c\"" >> $minicomfilepath
     echo "send \"$videoargs2 \c\"" >> $minicomfilepath
     echo "send \"$videoargs3 \c\"" >> $minicomfilepath

@@ -5,6 +5,12 @@ COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|dm37x-evm|dm365-evm|da830-omapl138-evm
 
 require ti-paths.inc
 
+UBOOT_ENV_dm365 = "setup-uboot-env-dm365.sh"
+UBOOT_ENV_omapl138 = "setup-uboot-env-omapl138.sh"
+UBOOT_ENV_dm37x-evm = "setup-uboot-env-dm3730.sh"
+UBOOT_ENV_omap3evm = "setup-uboot-env-omap3530.sh"
+UBOOT_ENV_am37x-evm = "setup-uboot-env-am37x.sh"
+
 SRC_URI = "\
 	file://setup/setup.sh \
   	file://setup/common.sh \
@@ -13,16 +19,22 @@ SRC_URI = "\
   	file://setup/setup-package-install.sh \
   	file://setup/setup-targetfs-nfs.sh \
   	file://setup/setup-tftp.sh \
-  	file://setup/setup-uboot-env.sh \
+        file://setup/${UBOOT_ENV} \
 "
 
-PR = "r11"
+PR = "r15"
 
 do_install () {
+	install -d ${D}/${installdir}
+        cp -pPf ${WORKDIR}/setup/setup.sh ${D}/${installdir} 
 	install -d ${D}/${installdir}/bin
-	install -m 0755 ${WORKDIR}/setup/* ${D}/${installdir}/bin/
-        # Place the setup.sh script one directory higher
-        mv ${D}/${installdir}/bin/setup.sh ${D}/${installdir}/setup.sh
+        cp -pPf ${WORKDIR}/setup/common.sh ${D}/${installdir}/bin
+        cp -pPf ${WORKDIR}/setup/setup-host-check.sh ${D}/${installdir}/bin
+        cp -pPf ${WORKDIR}/setup/setup-minicom.sh ${D}/${installdir}/bin
+        cp -pPf ${WORKDIR}/setup/setup-package-install.sh ${D}/${installdir}/bin
+        cp -pPf ${WORKDIR}/setup/setup-targetfs-nfs.sh ${D}/${installdir}/bin
+        cp -pPf ${WORKDIR}/setup/setup-tftp.sh ${D}/${installdir}/bin
+        cp -pPf ${WORKDIR}/setup/${UBOOT_ENV} ${D}/${installdir}/bin/setup-uboot-env.sh
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
