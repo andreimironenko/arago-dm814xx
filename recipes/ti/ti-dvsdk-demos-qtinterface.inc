@@ -23,6 +23,8 @@ do_install() {
 	install -m 0755 ${S}/qtInterface ${D}/${installdir}/dvsdk-demos
 }
 
+PACKAGE_ARCH = "${MACHINE_ARCH}"
+
 FILES_${PN} = "${installdir}/dvsdk-demos/*"
 RRECOMMENDS_${PN} = "qt4-embedded-plugin-mousedriver-tslib"
 
