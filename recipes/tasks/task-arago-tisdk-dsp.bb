@@ -15,12 +15,10 @@ DSP_COMPONENTS_dm6467 = "\
 
 DSP_COMPONENTS_da830-omapl137-evm = "\
     ti-dsplink-examples \
-    ti-audio-soc-example \
     "
 
 DSP_COMPONENTS_da850-omapl138-evm = "\
     ti-dsplink-examples \
-    ti-audio-soc-example \
     ti-c6accel-apps \
     ti-c6run-apps \
     qt-mandelbrot-accel \
