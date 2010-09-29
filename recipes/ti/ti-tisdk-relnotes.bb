@@ -18,7 +18,7 @@ SDK_SHORT_PLATFORM_dm365 = "dm365"
 SDK_SHORT_PLATFORM_omapl138 = "omapl138"
 SDK_SHORT_PLATFORM_omap3evm = "omap3530"
 SDK_SHORT_PLATFORM_dm37x-evm = "dm3730"
-SDK_SHORT_PLATFORM_c6a816x-evm = "omap3530"
+SDK_SHORT_PLATFORM_c6a816x-evm = "c6a816x"
 
 require ti-paths.inc
 
