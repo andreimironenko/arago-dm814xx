@@ -3,7 +3,7 @@ include Rules.make
 DEFAULT_LINUXKERNEL_CONFIG=davinci_dm365_defconfig
 DEFAULT_UBOOT_CONFIG=davinci_dm365_evm_config
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm365mm dm365mm_clean dm365mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install irq irq_clean irq_install edma edma_clean edma_install install demos demos_clean demos_install u-boot u-boot_clean u-boot_install dvtb_install ubl ubl_clean ubl_install matrix matrix_clean matrix_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm365mm dm365mm_clean dm365mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install irq irq_clean irq_install edma edma_clean edma_install install demos demos_clean demos_install u-boot u-boot_clean u-boot_install dvtb_install ubl ubl_clean ubl_install matrix matrix_clean matrix_install gstreamer_ti gstreamer_ti_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -18,12 +18,12 @@ clean:	linux_clean cmem_clean dm365mm_clean irq_clean edma_clean dmai_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: all psp_examples ceexamples demos u-boot dvtb ubl matrix
+everything: all psp_examples ceexamples demos u-boot dvtb ubl matrix gstreamer_ti
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install dm365mm_install dmai_install psp_examples_install ceexamples_install irq_install edma_install demos_install u-boot_install ubl_install matrix_install
+install: linux_install cmem_install dm365mm_install dmai_install psp_examples_install ceexamples_install irq_install edma_install demos_install u-boot_install ubl_install matrix_install gstreamer_ti_install
 
 #==============================================================================
 # Clean up all targets.
@@ -90,6 +90,9 @@ help:
 	@echo "    matrix                       : Build matrix application launcher"
 	@echo "    matrix_clean                 : Remove all matrix files"
 	@echo "    matrix_install               : Install matrix"
+	@echo
+	@echo "    gstreamer_ti                 : Build gstreamer-ti plugins"
+	@echo "    gstreamer_ti_install         : Install gstreamer-ti plugins"
 	@echo
 	@echo "    everything                   : Rebuild everything"
 	@echo "    clobber                      : Remove all generated files"
@@ -441,4 +444,14 @@ matrix_install:
 	$(EXEC_DIR)/matrix/
 	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/images/ \
 	$(EXEC_DIR)/matrix/
+
+################################################################################
+# Build Martix GUI Appication Launcher
+################################################################################
+gstreamer_ti:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn* ;$(MAKE) -f Makefile.external DVSDK_PATH=$(DVSDK_INSTALL_DIR) dm365
+
+gstreamer_ti_install:
+	install -d $(EXEC_DIR)/gstreamer-ti
+	cp $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn*/src/.libs/*.so $(EXEC_DIR)/gstreamer-ti
 

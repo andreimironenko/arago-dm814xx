@@ -5,7 +5,7 @@ DEFAULT_UBOOT_CONFIG=da850_omapl138_evm_config
 
 DMAI_PLATFORM=ol138
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install dsplink dsplink_clean dsplink_install audio_soc_exmaple audio_soc_example_clean audio_soc_example_install audio_soc_example_kernel c6accel c6accel_clean c6accel_install c6run c6run_clean c6run_examples c6run_install matrix matrix_clean matrix_install dsp_benchmark dsp_benchmark_clean dsp_benchmark_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install dsplink dsplink_clean dsplink_install audio_soc_exmaple audio_soc_example_clean audio_soc_example_install audio_soc_example_kernel c6accel c6accel_clean c6accel_install c6run c6run_clean c6run_examples c6run_install matrix matrix_clean matrix_install dsp_benchmark dsp_benchmark_clean dsp_benchmark_install gstreamer_ti gstreamer_ti_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -20,12 +20,12 @@ clean: linux_clean c6run_clean cmem_clean dmai_clean codecs_clean c6accel_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: all u-boot psp_examples ceexamples audio_soc_example c6run_examples matrix dsp_benchmark
+everything: all u-boot psp_examples ceexamples audio_soc_example c6run_examples matrix dsp_benchmark gstreamer_ti
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install dsplink_install u-boot_install psp_examples_install cmem_install dmai_install codecs_install ceexamples_install audio_soc_example_install c6accel_install c6run_install matrix_install dsp_benchmark_install
+install: linux_install dsplink_install u-boot_install psp_examples_install cmem_install dmai_install codecs_install ceexamples_install audio_soc_example_install c6accel_install c6run_install matrix_install dsp_benchmark_install gstreamer_ti_install
 
 #==============================================================================
 # Clean up all targets.
@@ -103,6 +103,9 @@ help:
 	@echo "    matrix                       : Build matrix application launcher"
 	@echo "    matrix_clean                 : Remove all matrix files"
 	@echo "    matrix_install               : Install matrix"
+	@echo
+	@echo "    gstreamer_ti                 : Build gstreamer-ti plugins"
+	@echo "    gstreamer_ti_install         : Install gstreamer-ti plugins"
 	@echo
 	@echo "    everything                   : Rebuild everything"
 	@echo "    clobber                      : Remove all generated files"
@@ -811,4 +814,14 @@ matrix_install:
 	$(EXEC_DIR)/matrix/
 	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/images/ \
 	$(EXEC_DIR)/matrix/
+
+################################################################################
+# Build Gstreamer plugins
+################################################################################
+gstreamer_ti:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn* ;$(MAKE) -f Makefile.external DVSDK_PATH=$(DVSDK_INSTALL_DIR) omapl138
+
+gstreamer_ti_install:
+	install -d $(EXEC_DIR)/gstreamer-ti
+	cp $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn*/src/.libs/*.so $(EXEC_DIR)/gstreamer-ti
 

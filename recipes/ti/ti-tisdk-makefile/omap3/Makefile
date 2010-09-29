@@ -6,7 +6,7 @@ DMAI_PLATFORM=o3530_al
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install xload xload_clean xload_install c6accel c6accel_clean c6accel_install opengldemos opengldemos_clean opengldemos_install demos demos_clean demos_install dvtb dvtb_clean dvtb_install dsplink dsplink_clean dsplink_install c6run c6run_clean c6run_examples c6run_install  matrix matrix_clean matrix_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install xload xload_clean xload_install c6accel c6accel_clean c6accel_install opengldemos opengldemos_clean opengldemos_install demos demos_clean demos_install dvtb dvtb_clean dvtb_install dsplink dsplink_clean dsplink_install c6run c6run_clean c6run_examples c6run_install  matrix matrix_clean matrix_install gstreamer_ti gstreamer_ti_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -21,12 +21,12 @@ clean:	linux_clean cmem_clean lpm_clean sdma_clean c6run_clean codecs_clean dmai
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: all u-boot ceexamples dvtb demos psp_examples opengldemos xload c6run_examples matrix
+everything: all u-boot ceexamples dvtb demos psp_examples opengldemos xload c6run_examples matrix gstreamer_ti 
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install c6accel_install opengldemos_install xload_install c6run_install matrix_install
+install: linux_install cmem_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install c6accel_install opengldemos_install xload_install c6run_install matrix_install gstreamer_ti_install
 
 #==============================================================================
 # Clean up all targets.
@@ -118,6 +118,9 @@ help:
 	@echo "    matrix                       : Build matrix application launcher"
 	@echo "    matrix_clean                 : Remove all matrix files"
 	@echo "    matrix_install               : Install matrix"
+	@echo
+	@echo "    gstreamer_ti                 : Build gstreamer-ti plugins"
+	@echo "    gstreamer_ti_install         : Install gstreamer-ti plugins"
 	@echo
 	@echo "    everything                   : Rebuild everything"
 	@echo "    clobber                      : Remove all generated files"
@@ -837,4 +840,14 @@ matrix_install:
 	$(EXEC_DIR)/matrix/
 	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/images/ \
 	$(EXEC_DIR)/matrix/
+
+################################################################################
+# Build Gstreamer plugins
+################################################################################
+gstreamer_ti:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn* ;$(MAKE) -f Makefile.external DVSDK_PATH=$(DVSDK_INSTALL_DIR) omap3530_dv400
+
+gstreamer_ti_install:
+	install -d $(EXEC_DIR)/gstreamer-ti
+	cp $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn*/src/.libs/*.so $(EXEC_DIR)/gstreamer-ti
 
