@@ -5,13 +5,13 @@ LICENSE = "TI"
 require ti-paths.inc
 require ti-staging.inc
 
-PR="r5"
+PR="r7"
 
 PV="4_00_00_00"
 
 CODEC_SUITE_NAME="${WORKDIR}/${PN}_${PV}"
 
-SRCREV = "6847b0c5e2b18a1a44b14d1230246c724c38bbfd"
+SRCREV = "283547998367dc1f3283725696fccd4751b43591"
 
 require ti-eula-unpack.inc
 
@@ -24,8 +24,8 @@ SRC_URI="http://software-dl.ti.com/dsps/dsps_public_sw/codecs/OMAP35xx//OMAP35xx
     http://software-dl.ti.com/dsps/dsps_public_sw/codecs/C64XPlus_Video//C64XPlus_Video_latest/c64xplus_mpeg4dec_02_01_00_00_production.bin;name=mpeg4dec \
     http://software-dl.ti.com/dsps/dsps_public_sw/codecs/C64XPlus_Audio//C64XPlus_Audio_latest/c64xplus_aachedec_01_30_03_00_production.bin;name=aachedec \
     http://software-dl.ti.com/dsps/dsps_public_sw/codecs/C64XPlus_Speech//C64XPlus_Speech_latest/c64xplus_g711_1_12_00_000_production.bin;name=g711 \
+    http://software-dl.ti.com/dsps/dsps_public_sw/sdo_tii/OMAP35xx_DM37xx_C64xPLUS_Algorithms/01_00_00_08//exports/c64xplus_deinterlacer_01_00_00_08_production.bin;name=deint \
     git://arago-project.org/git/projects/codec-servers.git;protocol=git \
-    http://install.dir.local.com/deinterlacer_1_00_00_00.tgz \
 
 "
 
@@ -56,8 +56,9 @@ SRC_URI[aachedec.sha256sum] = "34d19e40d624ccdc1b371f9a5d6594b4793bdf3b7223ac659
 SRC_URI[g711.md5sum] = "fd8e9f939cc505dc5761705ed17a726c"
 SRC_URI[g711.sha256sum] = "c87021e8df2a3f494f47e5bdce8a5fad04d667aa1b792fd9b3ecff634867b48d"
 
-SRC_URI[md5sum] = "3a9d077af4a065c3c2ea003db4000170"
-SRC_URI[sha256sum] = "8fb8998bd9b8560a47f38ad4b37d969a7d703b398c6e0088cc5a51d3e2c5fa8d"
+SRC_URI[deint.md5sum] = "d33cb1e1b870a528bb6c3af7c7b82099"
+SRC_URI[deint.sha256sum] = "dd139c07262124aa75ab96effd1d25ffc632bd836484c06bc8eae559ebb979f4"
+
 
 
 TI_BIN_UNPK_CMDS = "Y:workdir"
@@ -71,6 +72,11 @@ DSPSUFFIX_omap3530 = "x64P"
 
 python do_unpack () {
     bb.build.exec_func('base_do_unpack', d)
+
+    bb.data.setVar("BINFILE", "c64xplus_deinterlacer_01_00_00_08_production.bin", d)
+    bb.data.setVar("TARFILE", "c64xplus_deinterlacer_01_00_00_08/c64xplus_deinterlacer_01_00_00_08_production.tar", d)
+    bb.data.setVar("TI_BIN_UNPK_CMDS", "y: :q: ", d)
+    bb.build.exec_func('ti_bin_do_unpack', d)
 
     bb.data.setVar("BINFILE", "omap3530_h264enc_2_01_013_production.bin", d)
     bb.data.setVar("TARFILE", "h264enc_dm6467_1_20_00_08/omap3530_h264enc_2_01_013_production.tar", d)
@@ -94,7 +100,7 @@ python do_unpack () {
 
     bb.data.setVar("BINFILE", "omap3530_mpeg4enc_02_04_00_00_production.bin", d)
     bb.data.setVar("TARFILE", "omap3530_mpeg4enc_02_04_00_00_production/omap3530_mpeg4enc_02_04_00_00_production.tar", d)
-    bb.build.exec_func('ti_bin_do_unpack', d)
+    bb.build.exec_func('ti_bin_do_unpack', d)   
 
     bb.data.setVar("BINFILE", "c64xplus_mpeg4dec_02_01_00_00_production.bin", d)
     bb.data.setVar("TARFILE", "h264enc_dm6467_1_20_00_08/c64xplus_mpeg4dec_02_01_00_00_production.tar", d)
@@ -135,7 +141,7 @@ do_prepsources () {
     cp -a "${WORKDIR}/dm6446_aachedec_01_30_03_00_production/packages/ti/sdo/codecs/aachedec" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
     cp -a "${WORKDIR}/dm6446_g711enc_1_12_00_000_production/packages/ti/sdo/codecs/g711enc" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
     cp -a "${WORKDIR}/dm6446_g711dec_1_12_00_000_production/packages/ti/sdo/codecs/g711dec" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
-    cp -a "${WORKDIR}/deinterlacer_1_00_00_00/packages/ti/sdo/codecs/deinterlacer" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
+    cp -a "${WORKDIR}/c64xplus_deinterlacer_01_00_00_08_production/packages/ti/sdo/codecs/deinterlacer" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
     chmod 755 -R ${CODEC_SUITE_NAME}
 }
 
