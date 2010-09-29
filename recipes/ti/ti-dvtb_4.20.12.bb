@@ -1,5 +1,6 @@
 
-SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvtb/4.20.12/exports/dvtb_${PV}.tar.gz;name=dvtbtarball "
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvtb/4.20.12/exports/dvtb_${PV}.tar.gz;name=dvtbtarball \
+file://add-c6accel-path.patch "
 
 require ti-dvtb.inc
 

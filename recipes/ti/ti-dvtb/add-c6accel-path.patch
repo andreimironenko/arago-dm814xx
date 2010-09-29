@@ -1,0 +1,11 @@
+--- dvtb_4_20_12_original/packages/ti/sdo/dvtb/omap3530/linux/Makefile	2010-09-27 00:48:18.000000000 -0500
++++ dvtb_4_20_12/packages/ti/sdo/dvtb/omap3530/linux/Makefile	2010-09-29 11:05:39.000000000 -0500
+@@ -48,7 +48,7 @@
+ REL_BIN = $(TARGET_DIR)/$(TARGET)-r
+ DBG_BIN = $(TARGET_DIR)/$(TARGET)-d
+ 
+-XDC_PATH = $(CODEC_INSTALL_DIR)/packages;$(FC_INSTALL_DIR)/packages;$(CE_INSTALL_DIR)/packages;$(LINK_INSTALL_DIR)/packages;$(LINK_INSTALL_DIR);$(XDAIS_INSTALL_DIR)/packages;$(CMEM_INSTALL_DIR)/packages;$(LINUXLIBS_INSTALL_DIR)/include;$(LPM_INSTALL_DIR)/packages;$(BIOS_INSTALL_DIR)/packages;$(BIOS_INSTALL_DIR)/packages/ti/bios/include;$(BIOS_INSTALL_DIR)/packages;
++XDC_PATH = $(C6ACCEL_INSTALL_DIR)/soc/packages;$(CODEC_INSTALL_DIR)/packages;$(FC_INSTALL_DIR)/packages;$(CE_INSTALL_DIR)/packages;$(LINK_INSTALL_DIR)/packages;$(LINK_INSTALL_DIR);$(XDAIS_INSTALL_DIR)/packages;$(CMEM_INSTALL_DIR)/packages;$(LINUXLIBS_INSTALL_DIR)/include;$(LPM_INSTALL_DIR)/packages;$(BIOS_INSTALL_DIR)/packages;$(BIOS_INSTALL_DIR)/packages/ti/bios/include;$(BIOS_INSTALL_DIR)/packages;
+ #Configuro related
+ #Base name of app's config script
+ CONFIGPKG = $(TARGET)_omap3530
