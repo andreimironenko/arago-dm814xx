@@ -51,7 +51,8 @@ fi
 
 echo "Select Linux kernel location:"
 echo " 1: TFTP"
-echo " 2: flash"
+echo " 2: SD card"
+echo " 3: flash"
 echo
 read -p "[ 1 ] " kernel
 
@@ -102,14 +103,27 @@ if [ "$kernel" -eq "1" ]; then
         cfg="uimage-tftp_fs-sd"
     fi
 else
-    if [ "$fs" -eq "1" ]; then
-        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fsnfsargs ip=dhcp"
-        bootcmd="setenv bootcmd 'sf probe 0; sf read 0xc0700000 0x80000 0x280000; bootm 0xc0700000'"
-        cfg="uimage-flash_fs-nfs"
+    if [ "$kernel" -eq "2" ]; then
+
+        if [ "$fs" -eq "1" ]; then
+            bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fsnfsargs ip=dhcp"
+            bootcmd="setenv bootcmd 'mmc rescan 0; fatload mmc 0 0xc0700000 uImage; bootm 0xc0700000'"
+            cfg="uimage-sd_fs-nfs"
+        else
+            bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fssdargs ip=off"
+            bootcmd="setenv bootcmd 'mmc rescan 0; fatload mmc 0 0xc0700000 uImage; bootm 0xc0700000'"
+            cfg="uimage-sd_fs-sd"
+        fi
     else
-        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fssdargs ip=off"
-        bootcmd="setenv bootcmd 'sf probe 0; sf read 0xc0700000 0x80000 0x280000; bootm 0xc0700000'"
-        cfg="uimage-flash_fs-sd"
+        if [ "$fs" -eq "1" ]; then
+            bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fsnfsargs ip=dhcp"
+            bootcmd="setenv bootcmd 'sf probe 0; sf read 0xc0700000 0x80000 0x280000; bootm 0xc0700000'"
+            cfg="uimage-flash_fs-nfs"
+        else
+            bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fssdargs ip=off"
+            bootcmd="setenv bootcmd 'sf probe 0; sf read 0xc0700000 0x80000 0x280000; bootm 0xc0700000'"
+            cfg="uimage-flash_fs-sd"
+	fi
     fi
 fi
 
