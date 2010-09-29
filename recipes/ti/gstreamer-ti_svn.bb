@@ -17,6 +17,7 @@ file://0005-Enable-setting-the-framerate-directly-on-DM365.patch;striplevel=4 \
 file://0006-Remove-the-repeat_with_refresh-feature.patch;striplevel=4 \
 file://0007-Add-support-for-pad-allocated-buffers-in-TIDmaiVideo.patch;striplevel=4 \
 file://0008-Add-support-for-pad-allocated-buffers-in-TIViddec2.patch;striplevel=4 \
+file://0009-update-dm365-cfg-to-work-with-platinum-codecs.patch \
 "
 
 # use local loadmodules.sh for these platform
