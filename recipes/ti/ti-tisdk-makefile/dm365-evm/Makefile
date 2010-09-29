@@ -3,32 +3,32 @@ include Rules.make
 DEFAULT_LINUXKERNEL_CONFIG=davinci_dm365_defconfig
 DEFAULT_UBOOT_CONFIG=davinci_dm365_evm_config
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm365mm dm365mm_clean dm365mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install irq irq_clean irq_install edma edma_clean edma_install install demos demos_clean demos_install u-boot u-boot_clean u-boot_install dvtb_install ubl ubl_clean ubl_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm365mm dm365mm_clean dm365mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install irq irq_clean irq_install edma edma_clean edma_install install demos demos_clean demos_install u-boot u-boot_clean u-boot_install dvtb_install ubl ubl_clean ubl_install matrix matrix_clean matrix_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
 #==============================================================================
-all:	linux
+all:	linux cmem dm365mm irq edma dmai 
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	linux_clean
+clean:	linux_clean cmem_clean dm365mm_clean irq_clean edma_clean dmai_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: linux psp_examples cmem dm365mm irq edma ceexamples dmai demos u-boot dvtb ubl
+everything: all psp_examples ceexamples demos u-boot dvtb ubl matrix
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install dm365mm_install dmai_install psp_examples_install ceexamples_install irq_install edma_install demos_install u-boot_install dvtb_install ubl_install
+install: linux_install cmem_install dm365mm_install dmai_install psp_examples_install ceexamples_install irq_install edma_install demos_install u-boot_install ubl_install matrix_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean dm365mm_clean irq_clean edma_clean demos_clean u-boot_clean dvtb_clean ubl_clean
+clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean dm365mm_clean irq_clean edma_clean demos_clean u-boot_clean dvtb_clean ubl_clean matrix_clean
 
 #==============================================================================
 # A help message target.
@@ -87,6 +87,10 @@ help:
 	@echo "    psp_examples_clean           : Remove all generated PSP examples"
 	@echo "    psp_examples_install         : Install psp examples"
 	@echo
+	@echo "    matrix                       : Build matrix application launcher"
+	@echo "    matrix_clean                 : Remove all matrix files"
+	@echo "    matrix_install               : Install matrix"
+	@echo
 	@echo "    everything                   : Rebuild everything"
 	@echo "    clobber                      : Remove all generated files"
 	@echo
@@ -99,13 +103,16 @@ help:
 # target is defined.
 #==============================================================================
 demos:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(DEMO_INSTALL_DIR)/$(PLATFORM)/qtInterface ; qmake ; $(MAKE) 
 	$(MAKE) -C $(DEMO_INSTALL_DIR) $(PLATFORM) DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc AR=$(CSTOOL_PREFIX)ar CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) PLATFORM=$(PLATFORM)
 
 demos_clean:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(DEMO_INSTALL_DIR)/$(PLATFORM)/qtInterface ; qmake ; $(MAKE) clean
 	$(MAKE) -C $(DEMO_INSTALL_DIR) clean DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) PLATFORM=$(PLATFORM)
 
 demos_install:
 	install -d $(EXEC_DIR)/dvsdk-demos
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(DEMO_INSTALL_DIR)/$(PLATFORM)/qtInterface ; qmake ; EXEC_DIR=$(EXEC_DIR)/dvsdk-demos $(MAKE) install
 	$(MAKE) -C $(DEMO_INSTALL_DIR) install DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) EXEC_DIR=$(EXEC_DIR)/dvsdk-demos PLATFORM=$(PLATFORM)
 
 #==============================================================================
@@ -129,9 +136,9 @@ dvtb_install:
 #==============================================================================
 # Build the Linux kernel. Also, an explicit cleanup target is defined.
 #==============================================================================
-linux:	u-boot
+linux:
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_LINUXKERNEL_CONFIG)
-	PATH="$(PATH):$(PSP_INSTALL_DIR)/u-boot-source/tools" $(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
+	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) modules
 linux_clean:
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) mrproper
@@ -161,28 +168,28 @@ ubl_install:
 # Build u-boot. Also, an explicit cleanup target is defined.
 #==============================================================================
 u-boot:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-source CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_UBOOT_CONFIG)
-	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-source CROSS_COMPILE=$(CSTOOL_PREFIX)
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_UBOOT_CONFIG)
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX)
 
 u-boot_clean: 
-	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-source CROSS_COMPILE=$(CSTOOL_PREFIX) distclean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) distclean
 
 u-boot_install:
 	install -d $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/u-boot-source/u-boot.bin $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/u-boot-source/u-boot.map $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/u-boot-*/u-boot.bin $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/u-boot-*/u-boot.map $(EXEC_DIR)/boot
 
 #==============================================================================
 # Build the PSP Linux examples. Also, an explicit cleanup target is defined.
 #==============================================================================
 psp_examples:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) all
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) all
 
 psp_examples_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) clean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) clean
 
 psp_examples_install:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) EXEC_DIR=$(EXEC_DIR)/psp-examples install
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) EXEC_DIR=$(EXEC_DIR)/psp-examples install
 	
 #==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the
@@ -222,11 +229,12 @@ irq_install:
 # is defined.
 #==============================================================================
 edma:
-	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/interface
+	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/interface ../../lib/edma.a470MV
 	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/module
 
 edma_clean:
 	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/module clean
+	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/interface clean
 
 edma_install:
 	install -d $(EXEC_DIR)/edma
@@ -263,7 +271,7 @@ dmai:
 	LINUXKERNEL_INSTALL_DIR_$(PLATFORM)_al=$(LINUXKERNEL_INSTALL_DIR) \
 	CROSS_COMPILE_$(PLATFORM)_al=$(CSTOOL_PREFIX) \
 	XDC_INSTALL_DIR_$(PLATFORM)_al=$(XDC_INSTALL_DIR) \
-	VERBOSE=true \
+	VERBOSE=false \
 	all
 	
 dmai_clean:
@@ -415,5 +423,22 @@ ceexamples_clean: ceexamples_codecs_clean ceexamples_extensions_clean ceexamples
 
 ceexamples_install: ceexamples_codecs_install ceexamples_extensions_install ceexamples_servers_install ceexamples_apps_install
 
+################################################################################
+# Build Martix GUI Appication Launcher
+################################################################################
+matrix:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd matrix-gui-1.0 ; qmake ; $(MAKE) PLATFORM=$(PLATFORM)
 
+matrix_clean:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; 	$(MAKE) -C matrix-gui-1.0 distclean
+
+matrix_install:
+	install -d $(EXEC_DIR)/matrix
+	install -m 0755 $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/matrix_gui $(EXEC_DIR)/matrix
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/bin \
+	$(EXEC_DIR)/matrix/
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/html \
+	$(EXEC_DIR)/matrix/
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/images/ \
+	$(EXEC_DIR)/matrix/
 

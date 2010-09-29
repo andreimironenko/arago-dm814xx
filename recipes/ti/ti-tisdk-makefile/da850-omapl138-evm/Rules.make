@@ -52,13 +52,19 @@ CODEGEN_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__cgt6x__>
 PSP_INSTALL_DIR=$(SDK_INSTALL_DIR)/psp
 
 # The directory that points to your kernel source directory.
-LINUXKERNEL_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__kernel__>
+LINUXKERNEL_INSTALL_DIR=$(SDK_INSTALL_DIR)/psp/<__kernel__>
 
-# Where temporary Linux headers and libs are installed.
+# Where the development headers and libs are installed.
 LINUXLIBS_INSTALL_DIR=$(SDK_INSTALL_DIR)/linuxlibs
 
-# Where temporary Linux headers and libs are installed.
+# Where c6accel package is installed.
 C6ACCEL_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__c6accel__>
+
+# Where DSP Benchmark package is installed.
+DSP_BENCHMARK_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__dsp-benchmark__>
+
+# Where c6run package is installed.
+C6RUN_INSTALL_DIR=$(SDK_INSTALL_DIR)/<__c6run__>
 
 # The prefix to be added before the GNU compiler tools (optionally including # path), i.e. "arm_v5t_le-" or "/opt/bin/arm_v5t_le-".
 CSTOOL_DIR=<__CROSS_COMPILER_PATH__>

@@ -2,34 +2,36 @@ include Rules.make
 
 DEFAULT_LINUXKERNEL_CONFIG=omap3_evm_defconfig
 DEFAULT_UBOOT_CONFIG=omap3_evm_config
-DMAI_PLATFORM="o3530_al"
+DMAI_PLATFORM=o3530_al
+# export cross compiler location in PATH
+PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install ubl ubl_clean ubl_install
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install xload xload_clean xload_install c6accel c6accel_clean c6accel_install opengldemos opengldemos_clean opengldemos_install demos demos_clean demos_install dvtb dvtb_clean dvtb_install dsplink dsplink_clean dsplink_install c6run c6run_clean c6run_examples c6run_install  matrix matrix_clean matrix_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
 #==============================================================================
-all:	linux dsplink
+all: linux cmem sdma dsplink lpm c6run c6accel codecs dmai  
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	linux_clean dsplink_clean
+clean:	linux_clean cmem_clean lpm_clean sdma_clean c6run_clean codecs_clean dmai_clean c6accel_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: linux psp_examples cmem lpm dsplink codecs ceexamples dmai u-boot ubl
+everything: all u-boot ceexamples dvtb demos psp_examples opengldemos xload c6run_examples matrix
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install dmai_install psp_examples_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install ubl_install
+install: linux_install cmem_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install c6accel_install opengldemos_install xload_install c6run_install matrix_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean codecs_clean lpm_clean dsplink_clean u-boot_clean ubl_clean
+clobber: clean ceexamples_clean u-boot_clean dvtb_clean demos_clean psp_examples_clean opengldemos_clean xload_clean
 
 #==============================================================================
 # A help message target.
@@ -49,9 +51,20 @@ help:
 	@echo "    lpm_clean                    : Remove generated lpm files."
 	@echo "    lpm_install                  : Install lpm module"
 	@echo
+	@echo "    sdma                         : Build SDMA for $(PLATFORM)"
+	@echo "    sdma_clean                   : Remove generated SDMA files."
+	@echo
+	@echo "    demos                        : Build the DVSDK demos for $(PLATFORM)"
+	@echo "    demos_clean                  : Remove generated DVSDK demo files."
+	@echo "    demos_install                : install DVSDK demo executables."
+	@echo
 	@echo "    dmai                         : Build DMAI"
 	@echo "    dmai_clean                   : Remove generated DMAI files."
 	@echo "    dmai_install                 : Install dmai app"
+	@echo
+	@echo "    dvtb                         : Build DVTB for $(PLATFORM)"
+	@echo "    dvtb_clean                   : Remove generated DVTB files"
+	@echo "    dvtb_install                 : install DVTB files"
 	@echo
 	@echo "    codecs                       : Build codec package"
 	@echo "    codecs_clean                 : Remove generated codec files."
@@ -77,9 +90,9 @@ help:
 	@echo "    linux_clean                  : Remove generated Linux kernel files"
 	@echo "    linux_install                : Install kernel binary and  modules"
 	@echo
-	@echo "    ubl                          : Build the ubl boot loader"
-	@echo "    ubl_clean                    : Remove generated ubl files"
-	@echo "    ubl_install                  : Install the ubl image"
+	@echo "    xload                        : Build the xload boot loader"
+	@echo "    xload_clean                  : Remove generated xload files"
+	@echo "    xload_install                : Install the xload image"
 	@echo
 	@echo "    u-boot                       : Build the u-boot boot loader"
 	@echo "    u-boot_clean                 : Remove generated u-boot files"
@@ -89,6 +102,23 @@ help:
 	@echo "    psp_examples_clean           : Remove all generated PSP examples"
 	@echo "    psp_examples_install         : Install psp examples"
 	@echo
+	@echo "    c6accel                      : Build c6accel package"
+	@echo "    c6accel_clean                : Remove generated c6accel files"
+	@echo "    c6accel_install              : Install c6accel examples"
+	@echo
+	@echo "    c6run                        : Build c6run backend libraries"
+	@echo "    c6run_clean                  : Remove c6run backend libraries"
+	@echo "    c6run_examples               : Build c6run examples & tests"
+	@echo "    c6run_install                : Install c6run examples & tests"
+	@echo 
+	@echo "    opengldemos                  : Build the OPENGL graphics SDK demos for $(PLATFORM)"
+	@echo "    opengldemos_clean            : Remove OPENGL graphics SDK demo files."
+	@echo "    opengldemos_install          : install OPENGL graphics SDK demo executables."
+	@echo
+	@echo "    matrix                       : Build matrix application launcher"
+	@echo "    matrix_clean                 : Remove all matrix files"
+	@echo "    matrix_install               : Install matrix"
+	@echo
 	@echo "    everything                   : Rebuild everything"
 	@echo "    clobber                      : Remove all generated files"
 	@echo
@@ -97,11 +127,25 @@ help:
 	@echo
 
 #==============================================================================
+# Build the dvsdk demos for the configured platform. Also, an explicit cleanup
+# target is defined.
+#==============================================================================
+demos:
+	$(MAKE) -C $(DEMO_INSTALL_DIR) $(PLATFORM) DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc AR=$(CSTOOL_PREFIX)ar CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) C6ACCEL_INSTALL_DIR=$(C6ACCEL_INSTALL_DIR)  PLATFORM=$(PLATFORM)
+
+demos_clean:
+	$(MAKE) -C $(DEMO_INSTALL_DIR) clean DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) C6ACCEL_INSTALL_DIR=$(C6ACCEL_INSTALL_DIR) PLATFORM=$(PLATFORM)
+
+demos_install:
+	install -d $(EXEC_DIR)/dvsdk-demos
+	$(MAKE) -C $(DEMO_INSTALL_DIR)/$(PLATFORM) install DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) C6ACCEL_INSTALL_DIR=$(C6ACCEL_INSTALL_DIR) EXEC_DIR=$(EXEC_DIR)/dvsdk-demos PLATFORM=$(PLATFORM)
+
+#==============================================================================
 # Build the Linux kernel. Also, an explicit cleanup target is defined.
 #==============================================================================
-linux:	u-boot
+linux:
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_LINUXKERNEL_CONFIG)
-	PATH="$(PATH):$(PSP_INSTALL_DIR)/u-boot-source/tools" $(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
+	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) uImage
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) modules
 linux_clean:
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) mrproper
@@ -115,44 +159,53 @@ linux_install:
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) INSTALL_MOD_PATH=$(EXEC_DIR)/ modules_install
 
 #==============================================================================
-# Build ubl. Also, an explicit cleanup target is defined.
+# Build xload. Also, an explicit cleanup target is defined.
 #==============================================================================
-ubl:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP35xx/GNU/ubl CROSSCOMPILE=$(CSTOOL_PREFIX)
+xload:
+	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm distclean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm omap3evm_config
+	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm
+	$(DVSDK_INSTALL_DIR)/linux-devkit/bin/signGP $(PSP_INSTALL_DIR)/x-load-*/x-load.bin
 
-ubl_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/OMAP35xx/GNU/ubl clean
+xload_clean:
+	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* clean
 
-ubl_install:
+xload_install:
 	install -d $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/board-utilities/OMAP35xx/GNU/ubl/*.bin $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/x-load-*/x-load.bin $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/x-load-*/x-load.bin.ift $(EXEC_DIR)/boot
 
 #==============================================================================
 # Build u-boot. Also, an explicit cleanup target is defined.
 #==============================================================================
 u-boot:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-source CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_UBOOT_CONFIG)
-	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-source CROSS_COMPILE=$(CSTOOL_PREFIX)
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_UBOOT_CONFIG)
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX)
 
 u-boot_clean: 
-	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-source CROSS_COMPILE=$(CSTOOL_PREFIX) distclean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) distclean
 
 u-boot_install:
 	install -d $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/u-boot-source/u-boot.bin $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/u-boot-source/u-boot.map $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/u-boot-*/u-boot.bin $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/u-boot-*/u-boot.map $(EXEC_DIR)/boot
 
 #==============================================================================
 # Build the PSP Linux examples. Also, an explicit cleanup target is defined.
 #==============================================================================
 psp_examples:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) all
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib all
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/video PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib all
 
 psp_examples_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) clean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib clean
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/video PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib clean
 
 psp_examples_install:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) EXEC_DIR=$(EXEC_DIR)/psp-examples install
+	mkdir -p $(EXEC_DIR)/psp-examples/audio
+	cp  $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio/bin/* $(EXEC_DIR)/psp-examples/audio
+	mkdir -p $(EXEC_DIR)/psp-examples/video
+	cp  $(PSP_INSTALL_DIR)/linux-driver-examples-*/video/bin/* $(EXEC_DIR)/psp-examples/video
 	
 #==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the
@@ -170,6 +223,16 @@ cmem_clean:
 cmem_install:
 	install -d $(EXEC_DIR)/cmem
 	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/cmem
+
+#==============================================================================
+# Build SDMA for the configured platform. Also, an explicit cleanup
+# target is defined.
+#==============================================================================
+sdma:
+	$(MAKE) -C $(LINUXUTILS_INSTALL_DIR)/packages/ti/sdo/linuxutils/sdma/src/module RULES_MAKE=$(DVSDK_INSTALL_DIR)/Rules.make
+
+sdma_clean:
+	$(MAKE) -C $(LINUXUTILS_INSTALL_DIR)/packages/ti/sdo/linuxutils/sdma/src/module clean RULES_MAKE=$(DVSDK_INSTALL_DIR)/Rules.make
 
 #==============================================================================
 # Build LPM for the configured platform. Also, an explicit cleanup
@@ -191,6 +254,42 @@ lpm_install:
 	install -d $(EXEC_DIR)/lpm
 	install $(LPM_INSTALL_DIR)/packages/ti/bios/power/modules/omap3530/lpm/lpm_omap3530.ko $(EXEC_DIR)/lpm
 
+#==============================================================================
+# Build the Digital Video Test Bench for the configured platform. Also, an
+# explicit cleanup target is defined.
+#==============================================================================
+dvtb:
+	$(MAKE) -C $(DVTB_INSTALL_DIR) PLATFORM=$(PLATFORM) \
+		VERBOSE="true" \
+		DMAI_INSTALL_DIR="${DMAI_INSTALL_DIR}" \
+		XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
+		CE_INSTALL_DIR="${CE_INSTALL_DIR}" \
+		FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
+		CODEC_INSTALL_DIR="${CODEC_INSTALL_DIR}" \
+		CODEGEN_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
+		BIOS_INSTALL_DIR="${BIOS_INSTALL_DIR}"\
+		CROSS_COMPILE="${CSTOOL_PREFIX}" \
+		XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
+		LINK_INSTALL_DIR="${LINK_INSTALL_DIR}" \
+		CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
+		LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
+		LINUXKERNEL_INSTALL_DIR="${LINUXKERNEL_INSTALL_DIR}" \
+		LINUXLIBS_INSTALL_DIR="${LINUXLIBS_INSTALL_DIR}" \
+		MVTOOL_DIR="${CSTOOL_DIR}" \
+		CSTOOL_DIR="${CSTOOL_DIR}" \
+		MVTOOL_PREFIX="${CSTOOL_PREFIX}" \
+		CSTOOL_PREFIX="${CSTOOL_PREFIX}" \
+		${PLATFORM}
+	@echo
+	@echo "dvtb can be found under $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/$(PLATFORM)/linux/bin"
+
+dvtb_clean:
+	$(MAKE) -C $(DVTB_INSTALL_DIR) clean
+
+dvtb_install:
+	install -d $(EXEC_DIR)/dvtb/scripts
+	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/$(PLATFORM)/linux/bin/* $(EXEC_DIR)/dvtb
+	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/scripts/$(PLATFORM)/* $(EXEC_DIR)/dvtb/scripts
 
 #==============================================================================
 # Build codec package for the configured platform. Also, an explicit cleanup
@@ -248,7 +347,9 @@ dmai:
 	CROSS_COMPILE_$(DMAI_PLATFORM)=$(CSTOOL_PREFIX) \
 	XDC_INSTALL_DIR_$(DMAI_PLATFORM)=$(XDC_INSTALL_DIR) \
 	LINK_INSTALL_DIR_$(DMAI_PLATFORM)=$(LINK_INSTALL_DIR) \
+	C6ACCEL_INSTALL_DIR_$(DMAI_PLATFORM)=$(C6ACCEL_INSTALL_DIR) \
 	LPM_INSTALL_DIR_$(DMAI_PLATFORM)=$(LPM_INSTALL_DIR) \
+	C6ACCEL_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(C6ACCEL_INSTALL_DIR) \
 	VERBOSE=false \
 	all
 	
@@ -259,7 +360,7 @@ dmai_clean:
 
 dmai_install:
 	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM) \
-	EXEC_DIR_$(DMAI_PLATFORM)_al=$(EXEC_DIR)/dmai \
+	EXEC_DIR_$(DMAI_PLATFORM)=$(EXEC_DIR)/dmai \
 	install
 
 ###############################################################################
@@ -532,14 +633,205 @@ dsplink_samples:
 	KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
 	all
 
-dsplink: dsplink_arm dsplink_dsp dsplink_samples
+dsplink_dsp_genpackage:
+	$(XDC_INSTALL_DIR)/xdc -C $(LINK_INSTALL_DIR)/dsplink/dsp clean
+	$(XDC_INSTALL_DIR)/xdc -C $(LINK_INSTALL_DIR)/dsplink/dsp .interfaces
+
+dsplink_gpp_genpackage:
+	$(XDC_INSTALL_DIR)/xdc -C $(LINK_INSTALL_DIR)/dsplink/gpp clean
+	$(XDC_INSTALL_DIR)/xdc -C $(LINK_INSTALL_DIR)/dsplink/gpp .interfaces
+
+dsplink: dsplink_arm dsplink_dsp dsplink_samples dsplink_dsp_genpackage dsplink_gpp_genpackage 
 
 dsplink_clean: dsplink_arm_clean dsplink_dsp_clean dsplink_samples_clean
+    XDCPATH=${DSPLINK} ${XDC_INSTALL_DIR}/xdc .make -PR .
+    XDCPATH=${DSPLINK} ${XDC_INSTALL_DIR}/xdc clean -PR .
+    XDCPATH=${DSPLINK} ${XDC_INSTALL_DIR}/xdc .interfaces -PR .
 
 dsplink_install:
 	install -d $(EXEC_DIR)/dsplink
-	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/DAVINCI/RELEASE/dsplinkk.ko $(EXEC_DIR)/dsplink
-	cp ${LINK_INSTALL_DIR}/packages/dsplink/gpp/export/BIN/Linux/DAVINCI/RELEASE/*gpp $(EXEC_DIR)/dsplink
+	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAP3530/RELEASE/dsplinkk.ko $(EXEC_DIR)/dsplink
+	cp ${LINK_INSTALL_DIR}/dsplink/gpp/export/BIN/Linux/OMAP3530/RELEASE/*gpp $(EXEC_DIR)/dsplink
 	@for file in $(shell find $(LINK_INSTALL_DIR)/dsplink/dsp/BUILD -name *.out); do \
 	cp $$file $(EXEC_DIR)/dsplink ; \
 	done
+
+##############################################################################
+#  Build c6accel
+##############################################################################
+c6accel:
+	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
+	PLATFORM="$(PLATFORM)" \
+	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
+	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	EDMA3_LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	FC_INSTALL_DIR="$(FC_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	BIOSUTILS_INSTALL_DIR="$(BIOSUTILS_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	SERVER_INSTALL_DIR="$(CODEC_INSTALL_DIR)" \
+	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	all
+
+c6accel_clean:
+	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
+	PLATFORM="$(PLATFORM)" \
+	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
+	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	EDMA3_LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	FC_INSTALL_DIR="$(FC_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	BIOSUTILS_INSTALL_DIR="$(BIOSUTILS_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	SERVER_INSTALL_DIR="$(CODEC_INSTALL_DIR)" \
+	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
+	CSTOOL_DIR="$(CSTOOL_DIR)" \
+	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	clean
+
+c6accel_install:
+	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
+	PLATFORM="$(PLATFORM)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
+	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel-apps" \
+	install
+
+################################################################################
+# Build openGL demos
+################################################################################
+opengldemos:
+	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x all
+
+opengldemos_clean:
+	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x clean
+
+opengldemos_install:
+	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x install EXEC_DIR=$(EXEC_DIR)/opengl-demos
+	for file in `find $(GRAPHICS_INSTALL_DIR)/gfx_rel_es3.x -name "*.ko"`; do \
+	    install $${file} $(EXEC_DIR)/opengl-demos; \
+	done
+
+
+################################################################################
+# Build C6run
+################################################################################
+c6run:
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	omap3530_config
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	clean
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	all
+
+c6run_clean:
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	distclean
+
+c6run_examples:
+	source $(C6RUN_INSTALL_DIR)/environment.sh; \
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	C6RUN_TOOLCHAIN_PATH="$(C6RUN_INSTALL_DIR)" \
+	examples
+
+	source $(C6RUN_INSTALL_DIR)/environment.sh; \
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	C6RUN_TOOLCHAIN_PATH="$(C6RUN_INSTALL_DIR)" \
+	tests
+
+c6run_install:
+	install -d $(EXEC_DIR)/c6run-apps
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	INSTALL_DIR="$(EXEC_DIR)/c6run-apps" \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	install_programs
+
+################################################################################
+# Build Martix GUI Appication Launcher
+################################################################################
+matrix:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd matrix-gui-1.0 ; qmake ; $(MAKE) PLATFORM=$(PLATFORM)
+
+matrix_clean:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; 	$(MAKE) -C matrix-gui-1.0 distclean
+
+matrix_install:
+	install -d $(EXEC_DIR)/matrix
+	install -m 0755 $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/matrix_gui $(EXEC_DIR)/matrix
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/bin \
+	$(EXEC_DIR)/matrix/
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/html \
+	$(EXEC_DIR)/matrix/
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/images/ \
+	$(EXEC_DIR)/matrix/
+

@@ -26,7 +26,7 @@ CODEC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__codecs-omap3530__>
 DMAI_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__dmai__>
 
 # Where the SDK demos are installed
-DEMO_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__demo__>
+DEMO_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__dvsdk-demos__>
 
 # Where the DVTB package is installed.
 DVTB_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__dvtb__>
@@ -55,17 +55,28 @@ CODEGEN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__cgt6x__>
 PSP_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/psp
 
 # The directory that points to your kernel source directory.
-LINUXKERNEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__kernel__>
+LINUXKERNEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/psp/<__kernel__>
+KERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR)
 
 # Where the local power manager is installed.
 LPM_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__local-power-manager__>
 
-# Where temporary Linux headers and libs are installed.
+# Where the development headers and libs are installed.
 LINUXLIBS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/linuxlibs
+
+# Where c6accel package is installed.
+C6ACCEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__c6accel__>
+
+# Where c6run package is installed.
+C6RUN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__c6run__>
+
+# Where opengl graphics package is installed.
+GRAPHICS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__libgles-omap3__>
 
 # The prefix to be added before the GNU compiler tools (optionally including # path), i.e. "arm_v5t_le-" or "/opt/bin/arm_v5t_le-".
 CSTOOL_DIR=<__CROSS_COMPILER_PATH__>
 CSTOOL_PREFIX=$(CSTOOL_DIR)/bin/arm-none-linux-gnueabi-
+CSTOOL_PATH=$(CSTOOL_DIR)/bin
 
 MVTOOL_DIR=$(CSTOOL_DIR)
 MVTOOL_PREFIX=$(CSTOOL_PREFIX)
