@@ -7,7 +7,7 @@ EVM.
 1. Download OMAP-L138 DVSDK from ....
 
 2. Install the DVSDK on supported Linux host machine.
-   host# ./dvsdk_da850-omapl138-evm_4_00_00_05_setuplinux.bin
+   host# ./dvsdk_omapl138-evm_4_00_00_00_setuplinux
 
 3. Follow the instruction from Software Developer Guide section 'Flashing boot 
    loader using serial flash utility' to copy ubl on SPI NAND flash.
@@ -28,12 +28,11 @@ EVM.
 6. Run mksdboot script on host machine to create SD card.
 
    host # sudo ./mksdboot.sh --device /dev/sdd --sdk <sdk_installation_location>
-     --copy <installation bin file name>
+    <optionally copy installation file or any other needed file>
 
 
    e.g
-    sudo ./mksdboot --device /dev/sdd --sdk /dvsdk/dvsdk_omapl18_4_0_0 --copy
-    /downloads/dvsdk_da850-omapl138-evm_4_00_00_05_setuplinux.bin
+    sudo ./mksdboot --device /dev/sdd --sdk /dvsdk/ti-dvsdk_omapl138-evm_4_00_00_00 /downloads/dvsdk_omapl138-evm_4_00_00_00_setuplinux
 
 9. On completion, plug the SD card on EVM and power ON the EVM.
 

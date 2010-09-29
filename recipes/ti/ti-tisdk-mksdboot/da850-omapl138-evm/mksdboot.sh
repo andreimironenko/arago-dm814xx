@@ -5,7 +5,7 @@
 #
 # Licensed under terms of GPLv2
 
-VERSION="0.3"
+VERSION="0.4"
 
 execute ()
 {
@@ -33,9 +33,11 @@ usage ()
   echo "
 Usage: `basename $1` [options] <sdk_install_dir> <device>
 
+Mandatory options:
   --device              SD block device node (e.g /dev/sdd)
   --sdk                 Where is sdk installed ?
-  --copy                Copy file on third partition.
+
+Optional options:
   --version             Print version.
   --help                Print this help message.
 "
@@ -50,9 +52,8 @@ while [ $# -gt 0 ]; do
       ;;
     --device) shift; device=$1; shift; ;;
     --sdk) shift; sdkdir=$1; shift; ;;
-    --copy) shift; copy=$1; shift; ;;
     --version) version $0;;
-    *) usage $0;;
+    *) copy="$copy $1"; shift; ;;
   esac
 done
 
@@ -72,13 +73,6 @@ fi
 if [ ! -b $device ]; then
    echo "ERROR: $device is not a block device file"
    exit 1;
-fi
-
-if [ "$copy" != "" ]; then
-  if [ ! -f $copy ]; then
-    echo "ERROR: $copy does not exist"
-    exit 1
-  fi
 fi
 
 echo "************************************************************"
@@ -114,7 +108,7 @@ pc2_start=$(($pc1_start + $pc1_end))
 
 # calculate number of cylinder for the second parition
 if [ "$copy" != "" ]; then
- pc2_end=$((($total_cyln - $pc1_end) / 2))
+ pc2_end=$((($total_cyln - $pc1_end) / 4))
  pc3_start=$(($pc2_start + $pc2_end))
 fi
 
@@ -146,7 +140,7 @@ fi
 # creating boot.scr
 execute "mkdir -p /tmp/sdk"
 cat <<EOF >/tmp/sdk/boot.cmd
-mmc init
+mmc rescan 0
 setenv bootargs 'console=ttyS2,115200n8 root=/dev/mmcblk0p2 rw ip=off mem=32M rootwait'
 fatload mmc 0 c0700000 uImage
 bootm c0700000
@@ -205,7 +199,7 @@ if [ "$copy" != "" ]; then
   execute "mount ${device}3 /tmp/sdk/$$"
   execute "cp -ar $copy /tmp/sdk/$$"
   execute "cp $sdkdir/bin/setup.htm /tmp/sdk/$$"
-  execute "cp $sdkdir/bin/top_omapl138x_evm.png /tmp/sdk/$$/"
+  execute "cp $sdkdir/bin/top_omapl138_evm.png /tmp/sdk/$$/"
   execute "cp $sdkdir/docs/OMAPL138_EVM_Quick_Start_Guide.pdf /tmp/sdk/$$/quickstartguide.pdf"
   echo "unmounting ${device}3"
   execute "umount /tmp/sdk/$$"
