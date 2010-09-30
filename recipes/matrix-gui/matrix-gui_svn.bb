@@ -4,7 +4,7 @@ LICENSE = "BSD"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-SRCREV = "149"
+SRCREV = "150"
 PV = "1.0"
 PR = "r13+svnr${SRCPV}"
 
