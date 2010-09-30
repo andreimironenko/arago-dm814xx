@@ -9,7 +9,7 @@ require ti-staging.inc
 
 PROVIDES += "ti-c6run-apps"
 
-PR = "r1"
+PR = "r2"
 
 SRC_URI = "svn://gforge.ti.com/svn/dspeasy/;module=tags/${PV};proto=https;user=anonymous;pswd='' "
 
@@ -68,6 +68,7 @@ do_configure() {
 
 do_prepsources() {
 
+    find ${S} -name .svn -type d | xargs rm -rf
     # Clean the DSP/GPP backend libraries
     cd ${S}
     make \
