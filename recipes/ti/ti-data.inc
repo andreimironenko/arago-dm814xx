@@ -8,6 +8,8 @@ S = "${WORKDIR}/${DEMOSPLATFORM}"
 
 require ti-paths.inc
 
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/avdata/latest/exports/${DEMOSPLATFORM}_avdata_${PV}.tar.gz;name=${DEMOSPLATFORM}_datatarball"
+
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DEMOSPLATFORM_dm355    = "dm355"
