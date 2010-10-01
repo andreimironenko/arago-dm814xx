@@ -2,7 +2,7 @@ DESCRIPTION = "DVSDK Demo applications for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-INC_PR = "r16"
+INC_PR = "r17"
  
 DEPENDS += "ti-dmai"
 DEPENDS += "alsa-lib libpng freetype jpeg"
@@ -78,7 +78,6 @@ do_install () {
 
 pkg_postinst_${PN} () {
 	ln -sf ${installdir}/ti-codecs-server/*.${DSPSUFFIX} ${installdir}/dvsdk-demos/
-	ln -sf ${installdir}/c6accel/*.${DSPSUFFIX} ${installdir}/dvsdk-demos/
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
