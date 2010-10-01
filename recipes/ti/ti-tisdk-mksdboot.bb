@@ -2,7 +2,7 @@ DESCRIPTION = "Scripts to create bootable SD card for ${MACHINE}"
 HOMEPAGE_dm365 = "http://processors.wiki.ti.com/index.php/SD_card_boot_and_flashing_tool_for_DM355_and_DM365"
 LICENSE = GPLv2
 
-PR = "r18"
+PR = "r19"
 
 require ti-paths.inc
 require ti-staging.inc
@@ -29,6 +29,7 @@ do_compile () {
 do_configure_prepend_omap3evm () {
    sed -i -e s:mpurate=1000:mpurate=720:g ${WORKDIR}/mksdboot.sh
    sed -i -e s:TMS320DM3730:OMAP3530:g ${WORKDIR}/mksdboot.sh
+   sed -i -e s:mem=128M@0x88000000::g ${WORKDIR}/mksdboot.sh
    sed -i -e s:TMS320DM3730:OMAP3530:g ${WORKDIR}/windows_users.htm
    sed -i -e s:TMS320DM3730:OMAP3530:g ${WORKDIR}/setup.htm
    sed -i -e s:DM37x:OMAP3530:g ${WORKDIR}/windows_users.htm

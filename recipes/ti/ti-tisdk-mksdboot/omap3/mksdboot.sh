@@ -140,7 +140,7 @@ fi
 # creating boot.scr
 execute "mkdir -p /tmp/sdk"
 cat <<EOF >/tmp/sdk/boot.cmd
-setenv bootargs 'console=ttyS0,115200n8 root=/dev/mmcblk0p2 rw ip=off mem=99M mpurate=1000  omap_vout.vid1_static_vrfb_alloc=y omapfb.mode=dvi:720x480MR-16@60 omapdss.def_disp=lcd rootwait'
+setenv bootargs 'console=ttyS0,115200n8 root=/dev/mmcblk0p2 rw ip=off mem=99M mpurate=1000  omap_vout.vid1_static_vrfb_alloc=y omapfb.vram=0:3M mem=128M@0x88000000 rootwait'
 fatload mmc 0 80200000 uImage
 bootm 80200000
 EOF
