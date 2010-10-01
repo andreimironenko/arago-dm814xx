@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install additional utilities/demos for SDKs"
-PR = "r4"
+PR = "r5"
 LICENSE = "MIT"
 
 inherit task
@@ -19,6 +19,11 @@ UTILS_am37x-evm = " \
     "
 
 UTILS_omap3evm = " \
+    am-sysinfo \
+    am-benchmarks \
+    "
+
+UTILS_dm37x-evm = " \
     am-sysinfo \
     am-benchmarks \
     "
