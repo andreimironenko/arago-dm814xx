@@ -32,6 +32,7 @@ read -p "[ $tftprootdefault ] " tftproot
 if [ ! -n "$tftproot" ]; then
     tftproot=$tftprootdefault
 fi
+echo $tftproot > $cwd/../.tftproot
 echo "--------------------------------------------------------------------------------"
 
 echo

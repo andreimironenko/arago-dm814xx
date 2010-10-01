@@ -31,6 +31,18 @@ else
     echo
 fi
 
+if [ -f $cwd/../.tftproot ]; then
+    tftproot=`cat $cwd/../.tftproot`
+else
+    echo "Where is your TFTP root?"
+    read -p "[ /tftpboot ] " tftproot
+
+    if [ ! -n "$tftproot" ]; then
+        tftproot="/tftpboot"
+    fi
+    echo
+fi
+
 uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
@@ -82,11 +94,15 @@ fi
 
 if [ "$kernel" -eq "1" ]; then
     echo
-    echo "Available kernel images in /tftproot:"
-    for file in /tftpboot/*; do
+    echo "Available kernel images in $tftproot:"
+    for file in $tftproot/*; do
         basefile=`basename $file`
         echo "    $basefile"
     done
+    if [ ! -f $tftproot/$uimagedefault ]; then
+        uimagedefault=`ls -1 $tftproot/* | head -1`
+        uimagedefault=`basename $uimagedefault`
+    fi
     echo
     echo "Which kernel image do you want to boot from TFTP?"
     read -p "[ $uimagedefault ] " uimage
