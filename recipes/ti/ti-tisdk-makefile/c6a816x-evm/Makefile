@@ -1,37 +1,41 @@
 include Rules.make
 
-DEFAULT_LINUXKERNEL_CONFIG=omap3_evm_defconfig
-DEFAULT_UBOOT_CONFIG=omap3_evm_config
+DEFAULT_LINUXKERNEL_CONFIG=ti8168_evm_defconfig
+DEFAULT_UBOOT_CONFIG=ti8168_evm_config
 DMAI_PLATFORM=o3530_al
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install xload xload_clean xload_install c6accel c6accel_clean c6accel_install opengldemos opengldemos_clean opengldemos_install demos demos_clean demos_install dvtb dvtb_clean dvtb_install dsplink dsplink_clean dsplink_install c6run c6run_clean c6run_examples c6run_install
+# .PHONY:	all clean everything clobber help cmem cmem_clean cmem_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install u-boot u-boot_clean u-boot_install c6accel c6accel_clean c6accel_install opengldemos opengldemos_clean opengldemos_install syslink syslink_clean syslink_install 
+.PHONY:	all clean everything clobber help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_clean c6accel_install syslink syslink_clean syslink_install 
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
 #==============================================================================
-all: linux cmem sdma dsplink lpm c6run c6accel codecs dmai  
+all: linux cmem syslink c6accel 
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	linux_clean dsplink_clean cmem_clean lpm_clean sdma_clean c6run_clean codecs_clean dmai_clean c6accel_clean
+clean:	linux_clean syslink_clean cmem_clean c6accel_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-everything: all u-boot ceexamples dvtb demos psp_examples opengldemos xload c6run_examples
+# everything: all u-boot syslink_examples ceexamples psp_examples opengldemos c6run_examples
+everything: all u-boot syslink_examples ceexamples
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install c6accel_install opengldemos_install xload_install c6run_install
+# install: linux_install cmem_install ceexamples_install syslink_install u-boot_install psp_examples_install c6accel_install opengldemos_install 
+install: linux_install cmem_install ceexamples_install syslink_install u-boot_install c6accel_install 
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clobber: clean ceexamples_clean u-boot_clean dvtb_clean demos_clean psp_examples_clean opengldemos_clean xload_clean
+# clobber: clean ceexamples_clean u-boot_clean psp_examples_clean opengldemos_clean 
+clobber: clean ceexamples_clean u-boot_clean 
 
 #==============================================================================
 # A help message target.
@@ -47,41 +51,18 @@ help:
 	@echo "    cmem_clean                   : Remove generated cmem files."
 	@echo "    cmem_install                 : Install cmemk module"
 	@echo
-	@echo "    lpm                          : Build LPM"
-	@echo "    lpm_clean                    : Remove generated lpm files."
-	@echo "    lpm_install                  : Install lpm module"
+	@echo "    syslink                      : Configure and build SYS Link for HLOS and HLOS without sample examples"
+	@echo "    syslink_clean                : Remove generated SysLink files"
+	@echo "    syslink_install              : Install HLOS and RTOS link files"
 	@echo
-	@echo "    sdma                         : Build SDMA for $(PLATFORM)"
-	@echo "    sdma_clean                   : Remove generated SDMA files."
-	@echo
-	@echo "    demos                        : Build the DVSDK demos for $(PLATFORM)"
-	@echo "    demos_clean                  : Remove generated DVSDK demo files."
-	@echo "    demos_install                : install DVSDK demo executables."
-	@echo
-	@echo "    dmai                         : Build DMAI"
-	@echo "    dmai_clean                   : Remove generated DMAI files."
-	@echo "    dmai_install                 : Install dmai app"
-	@echo
-	@echo "    dvtb                         : Build DVTB for $(PLATFORM)"
-	@echo "    dvtb_clean                   : Remove generated DVTB files"
-	@echo "    dvtb_install                 : install DVTB files"
-	@echo
-	@echo "    codecs                       : Build codec package"
-	@echo "    codecs_clean                 : Remove generated codec files."
-	@echo "    codecs_install               : Install codec executable"
-	@echo
-	@echo "    dsplink                      : Configure and build DSP Link for ARM and DSP and sample examples"
-	@echo "    dsplink_clean                : Remove generated DSP Link files"
-	@echo "    dsplink_install              : Install ARM and DSP link files"
-	@echo
-	@echo "    dsplink_arm                  : Configure and build DSP Link for ARM"
-	@echo "    dsplink_arm_clean            : Clean DSP Link for ARM"
+	@echo "    syslink_hlos                 : Configure and build DSP Link for ARM"
+	@echo "    syslink_hlos_clean           : Clean DSP Link for ARM"
 	@echo 
-	@echo "    dsplink_dsp                  : Configure and build DSP Link for DSP"
-	@echo "    dsplink_dsp_clean            : Clean DSP Link for DSP"
+	@echo "    syslink_rtos                 : Configure and build SysLink for RTOS"
+	@echo "    syslink_rtos_clean           : Clean SysLink for RTOS"
 	@echo 
-	@echo "    dsplink_samples              : Build DSP Link ARM and DSP sample applications"
-	@echo "    dsplink_samples_clean        : Build DSP Link ARM and DSP sample applications"
+	@echo "    syslink_samples              : Build SysLink HLOS and RTOS sample applications"
+	@echo "    syslink_samples_clean        : Build SysLink HLOS and RTOS sample applications"
 	@echo
 	@echo "    ceexamples                   : Build CE codecs, extensions, servers and apps"
 	@echo "    ceexamples_clean             : Remove generated CE example files."
@@ -90,51 +71,28 @@ help:
 	@echo "    linux_clean                  : Remove generated Linux kernel files"
 	@echo "    linux_install                : Install kernel binary and  modules"
 	@echo
-	@echo "    xload                        : Build the xload boot loader"
-	@echo "    xload_clean                  : Remove generated xload files"
-	@echo "    xload_install                : Install the xload image"
-	@echo
 	@echo "    u-boot                       : Build the u-boot boot loader"
 	@echo "    u-boot_clean                 : Remove generated u-boot files"
 	@echo "    u-boot_install               : Install the u-boot image"
 	@echo
-	@echo "    psp_examples                 : Build Linux examples"
-	@echo "    psp_examples_clean           : Remove all generated PSP examples"
-	@echo "    psp_examples_install         : Install psp examples"
-	@echo
+#	@echo "    psp_examples                 : Build Linux examples"
+#	@echo "    psp_examples_clean           : Remove all generated PSP examples"
+#	@echo "    psp_examples_install         : Install psp examples"
+#	@echo
 	@echo "    c6accel                      : Build c6accel package"
 	@echo "    c6accel_clean                : Remove generated c6accel files"
 	@echo "    c6accel_install              : Install c6accel examples"
 	@echo
-	@echo "    c6run                        : Build c6run backend libraries"
-	@echo "    c6run_clean                  : Remove c6run backend libraries"
-	@echo "    c6run_examples               : Build c6run examples & tests"
-	@echo "    c6run_install                : Install c6run examples & tests"
-	@echo 
-	@echo "    opengldemos                  : Build the OPENGL graphics SDK demos for $(PLATFORM)"
-	@echo "    opengldemos_clean            : Remove OPENGL graphics SDK demo files."
-	@echo "    opengldemos_install          : install OPENGL graphics SDK demo executables."
-	@echo
+#	@echo "    opengldemos                  : Build the OPENGL graphics SDK demos for $(PLATFORM)"
+#	@echo "    opengldemos_clean            : Remove OPENGL graphics SDK demo files."
+#	@echo "    opengldemos_install          : install OPENGL graphics SDK demo executables."
+#	@echo
 	@echo "    everything                   : Rebuild everything"
 	@echo "    clobber                      : Remove all generated files"
 	@echo
 	@echo "    install                      : Install all the targets in "
 	@echo "                            $(EXEC_DIR)"
 	@echo
-
-#==============================================================================
-# Build the dvsdk demos for the configured platform. Also, an explicit cleanup
-# target is defined.
-#==============================================================================
-demos:
-	$(MAKE) -C $(DEMO_INSTALL_DIR) $(PLATFORM) DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc AR=$(CSTOOL_PREFIX)ar CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) C6ACCEL_INSTALL_DIR=$(C6ACCEL_INSTALL_DIR)  PLATFORM=$(PLATFORM)
-
-demos_clean:
-	$(MAKE) -C $(DEMO_INSTALL_DIR) clean DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) C6ACCEL_INSTALL_DIR=$(C6ACCEL_INSTALL_DIR) PLATFORM=$(PLATFORM)
-
-demos_install:
-	install -d $(EXEC_DIR)/dvsdk-demos
-	$(MAKE) -C $(DEMO_INSTALL_DIR)/$(PLATFORM) install DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) C6ACCEL_INSTALL_DIR=$(C6ACCEL_INSTALL_DIR) EXEC_DIR=$(EXEC_DIR)/dvsdk-demos PLATFORM=$(PLATFORM)
 
 #==============================================================================
 # Build the Linux kernel. Also, an explicit cleanup target is defined.
@@ -155,23 +113,6 @@ linux_install:
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) INSTALL_MOD_PATH=$(EXEC_DIR)/ modules_install
 
 #==============================================================================
-# Build xload. Also, an explicit cleanup target is defined.
-#==============================================================================
-xload:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm distclean
-	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm omap3evm_config
-	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* CROSS_COMPILE=$(CSTOOL_PREFIX) ARCH=arm
-	$(DVSDK_INSTALL_DIR)/linux-devkit/bin/signGP $(PSP_INSTALL_DIR)/x-load-*/x-load.bin
-
-xload_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/x-load-* clean
-
-xload_install:
-	install -d $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/x-load-*/x-load.bin $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/x-load-*/x-load.bin.ift $(EXEC_DIR)/boot
-
-#==============================================================================
 # Build u-boot. Also, an explicit cleanup target is defined.
 #==============================================================================
 u-boot:
@@ -189,20 +130,20 @@ u-boot_install:
 #==============================================================================
 # Build the PSP Linux examples. Also, an explicit cleanup target is defined.
 #==============================================================================
-psp_examples:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib all
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/video PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib all
-
-psp_examples_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib clean
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/video PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib clean
-
-psp_examples_install:
-	mkdir -p $(EXEC_DIR)/psp-examples/audio
-	cp  $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio/bin/* $(EXEC_DIR)/psp-examples/audio
-	mkdir -p $(EXEC_DIR)/psp-examples/video
-	cp  $(PSP_INSTALL_DIR)/linux-driver-examples-*/video/bin/* $(EXEC_DIR)/psp-examples/video
-	
+# psp_examples:
+#	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib all
+#	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/video PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib all
+#
+#psp_examples_clean:
+#	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib clean
+#	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/video PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib clean
+#
+#psp_examples_install:
+#	mkdir -p $(EXEC_DIR)/psp-examples/audio
+#	cp  $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio/bin/* $(EXEC_DIR)/psp-examples/audio
+#	mkdir -p $(EXEC_DIR)/psp-examples/video
+#	cp  $(PSP_INSTALL_DIR)/linux-driver-examples-*/video/bin/* $(EXEC_DIR)/psp-examples/video
+#	
 #==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the
 # kernel_binaries directory is kept in sync. Also, an explicit cleanup target
@@ -220,181 +161,46 @@ cmem_install:
 	install -d $(EXEC_DIR)/cmem
 	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/cmem
 
-#==============================================================================
-# Build SDMA for the configured platform. Also, an explicit cleanup
-# target is defined.
-#==============================================================================
-sdma:
-	$(MAKE) -C $(LINUXUTILS_INSTALL_DIR)/packages/ti/sdo/linuxutils/sdma/src/module RULES_MAKE=$(DVSDK_INSTALL_DIR)/Rules.make
-
-sdma_clean:
-	$(MAKE) -C $(LINUXUTILS_INSTALL_DIR)/packages/ti/sdo/linuxutils/sdma/src/module clean RULES_MAKE=$(DVSDK_INSTALL_DIR)/Rules.make
-
-#==============================================================================
-# Build LPM for the configured platform. Also, an explicit cleanup
-# target is defined.
-#==============================================================================
-lpm:
-	$(MAKE) -C $(LPM_INSTALL_DIR)/packages/ti/bios/power/modules/omap3530/lpm \
-		LINUXKERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
-		MVTOOL_PREFIX=$(CSTOOL_PREFIX) \
-		DSPLINK_REPO=$(LINK_INSTALL_DIR)
-
-lpm_clean:
-	$(MAKE)  -C $(LPM_INSTALL_DIR)/packages/ti/bios/power/modules/omap3530/lpm \
-	LINUXKERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
-	MVTOOL_PREFIX=$(CSTOOL_PREFIX) \
-	DSPLINK_REPO=$(LINK_INSTALL_DIR) clean
-
-lpm_install:
-	install -d $(EXEC_DIR)/lpm
-	install $(LPM_INSTALL_DIR)/packages/ti/bios/power/modules/omap3530/lpm/lpm_omap3530.ko $(EXEC_DIR)/lpm
-
-#==============================================================================
-# Build the Digital Video Test Bench for the configured platform. Also, an
-# explicit cleanup target is defined.
-#==============================================================================
-dvtb:
-	$(MAKE) -C $(DVTB_INSTALL_DIR) PLATFORM=$(PLATFORM) \
-		VERBOSE="true" \
-		DMAI_INSTALL_DIR="${DMAI_INSTALL_DIR}" \
-		XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
-		CE_INSTALL_DIR="${CE_INSTALL_DIR}" \
-		FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
-		CODEC_INSTALL_DIR="${CODEC_INSTALL_DIR}" \
-		CODEGEN_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
-		BIOS_INSTALL_DIR="${BIOS_INSTALL_DIR}"\
-		CROSS_COMPILE="${CSTOOL_PREFIX}" \
-		XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
-		LINK_INSTALL_DIR="${LINK_INSTALL_DIR}" \
-		CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
-		LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
-		LINUXKERNEL_INSTALL_DIR="${LINUXKERNEL_INSTALL_DIR}" \
-		LINUXLIBS_INSTALL_DIR="${LINUXLIBS_INSTALL_DIR}" \
-		MVTOOL_DIR="${CSTOOL_DIR}" \
-		CSTOOL_DIR="${CSTOOL_DIR}" \
-		MVTOOL_PREFIX="${CSTOOL_PREFIX}" \
-		CSTOOL_PREFIX="${CSTOOL_PREFIX}" \
-		${PLATFORM}
-	@echo
-	@echo "dvtb can be found under $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/$(PLATFORM)/linux/bin"
-
-dvtb_clean:
-	$(MAKE) -C $(DVTB_INSTALL_DIR) clean
-
-dvtb_install:
-	install -d $(EXEC_DIR)/dvtb/scripts
-	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/$(PLATFORM)/linux/bin/* $(EXEC_DIR)/dvtb
-	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/scripts/$(PLATFORM)/* $(EXEC_DIR)/dvtb/scripts
-
-#==============================================================================
-# Build codec package for the configured platform. Also, an explicit cleanup
-# target is defined.
-#==============================================================================
-codecs:
-	$(MAKE) -C $(CODEC_INSTALL_DIR) \
-	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
-	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
-	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
-	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
-	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	LPM_INSTALL_DIR=$(LPM_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(BIOS_INSTALL_DIR) \
-	CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
-	BIOSUTILS_INSTALL_DIR=$(BIOSUTILS_INSTALL_DIR) \
-	XDCARGS="eval" \
-	all
-
-codecs_clean:
-	$(MAKE) -C $(CODEC_INSTALL_DIR) \
-	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
-	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
-	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
-	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
-	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	LPM_INSTALL_DIR=$(LPM_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(BIOS_INSTALL_DIR) \
-	CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
-	BIOSUTILS_INSTALL_DIR=$(BIOSUTILS_INSTALL_DIR) \
-	XDCARGS="eval" \
-	clean
-
-codecs_install:
-	install -d $(EXEC_DIR)/codecs-server
-	for file in $(shell find $(CODEC_INSTALL_DIR) -name *.x64P); do \
-	cp $$file $(EXEC_DIR)/codecs-server ; \
-	done
-		
-#==============================================================================
-# Build the Davinci Multimedia Application Interface for the configured
-# platform. Also, an explicit cleanup target is defined.
-#==============================================================================
-dmai:
-	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM) \
-	CE_INSTALL_DIR_$(DMAI_PLATFORM)=$(CE_INSTALL_DIR) \
-	CODEC_INSTALL_DIR_$(DMAI_PLATFORM)=$(CODEC_INSTALL_DIR) \
-	CMEM_INSTALL_DIR_$(DMAI_PLATFORM)=$(CMEM_INSTALL_DIR) \
-	FC_INSTALL_DIR_$(DMAI_PLATFORM)=$(FC_INSTALL_DIR) \
-	XDAIS_INSTALL_DIR_$(DMAI_PLATFORM)=$(XDAIS_INSTALL_DIR) \
-	LINUXLIBS_INSTALL_DIR_$(DMAI_PLATFORM)=$(LINUXLIBS_INSTALL_DIR) \
-	LINUXKERNEL_INSTALL_DIR_$(DMAI_PLATFORM)=$(LINUXKERNEL_INSTALL_DIR) \
-	CROSS_COMPILE_$(DMAI_PLATFORM)=$(CSTOOL_PREFIX) \
-	XDC_INSTALL_DIR_$(DMAI_PLATFORM)=$(XDC_INSTALL_DIR) \
-	LINK_INSTALL_DIR_$(DMAI_PLATFORM)=$(LINK_INSTALL_DIR) \
-	LPM_INSTALL_DIR_$(DMAI_PLATFORM)=$(LPM_INSTALL_DIR) \
-	VERBOSE=false \
-	all
-	
-dmai_clean:
-	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM) \
-	XDC_INSTALL_DIR_$(DMAI_PLATFORM)=$(XDC_INSTALL_DIR) \
-	clean
-
-dmai_install:
-	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM) \
-	EXEC_DIR_$(DMAI_PLATFORM)=$(EXEC_DIR)/dmai \
-	install
-
 ###############################################################################
 # Build codec engine examples
 ###############################################################################
 ceexamples_apps:
 	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/apps \
-	DEVICES="OMAP3530" \
+	DEVICES="DM8168" \
 	GPPOS=LINUX_GCC \
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
+	SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	LPM_INSTALL_DIR=$(LPM_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(BIOS_INSTALL_DIR) \
+	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
 	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
-	BIOSUTILS_INSTALL_DIR=$(BIOSUTILS_INSTALL_DIR) \
+	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
+	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
+	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
 	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
 	CGTOOLS_V5T=$(CSTOOL_DIR) \
 	all 
 
 ceexamples_apps_clean:
 	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/apps \
-	DEVICES="OMAP3530" \
+	DEVICES="DM8168" \
 	GPPOS=LINUX_GCC \
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
+	SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	LPM_INSTALL_DIR=$(LPM_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(BIOS_INSTALL_DIR) \
+	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
 	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
 	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
-	BIOSUTILS_INSTALL_DIR=$(BIOSUTILS_INSTALL_DIR) \
+	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
+	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
+	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
 	CGTOOLS_V5T=$(CSTOOL_DIR) \
 	clean 
 
@@ -406,39 +212,41 @@ ceexamples_apps_install:
 
 ceexamples_extensions:
 	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/extensions \
-	DEVICES="OMAP3530" \
+	DEVICES="DM8168" \
 	GPPOS=LINUX_GCC \
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
+	SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	LPM_INSTALL_DIR=$(LPM_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(BIOS_INSTALL_DIR) \
+	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
 	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
 	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
-	BIOSUTILS_INSTALL_DIR=$(BIOSUTILS_INSTALL_DIR) \
+	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
+	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
+	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
 	CGTOOLS_V5T=$(CSTOOL_DIR) \
 	all 
 
 ceexamples_extensions_clean:
 	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/apps \
-	DEVICES="OMAP3530" \
+	DEVICES="DM8168" \
 	GPPOS=LINUX_GCC \
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
+	SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	LPM_INSTALL_DIR=$(LPM_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(BIOS_INSTALL_DIR) \
+	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
 	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
 	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
-	BIOSUTILS_INSTALL_DIR=$(BIOSUTILS_INSTALL_DIR) \
+	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
+	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
+	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
 	CGTOOLS_V5T=$(CSTOOL_DIR) \
 	clean 
 
@@ -451,41 +259,41 @@ ceexamples_extensions_install:
 
 ceexamples_servers:
 	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/servers  \
-	DEVICES="OMAP3530" \
+	DEVICES="DM8168" \
 	GPPOS="LINUX_GCC" \
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
+	SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	LPM_INSTALL_DIR=$(LPM_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(BIOS_INSTALL_DIR) \
+	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
 	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
 	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
 	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
-	BIOSUTILS_INSTALL_DIR=$(BIOSUTILS_INSTALL_DIR) \
+	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
+	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
 	CGTOOLS_V5T=$(CSTOOL_DIR) \
 	all 
 
 ceexamples_servers_clean:
 	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/servers \
-	DEVICES="OMAP3530" \
+	DEVICES="DM8168" \
 	GPPOS=LINUX_GCC \
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
+	SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	LPM_INSTALL_DIR=$(LPM_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(BIOS_INSTALL_DIR) \
+	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
 	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
 	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
 	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
-	BIOSUTILS_INSTALL_DIR=$(BIOSUTILS_INSTALL_DIR) \
+	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
+	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
 	CGTOOLS_V5T=$(CSTOOL_DIR) \
 	clean 
 
@@ -498,41 +306,41 @@ ceexamples_servers_install:
 
 ceexamples_codecs:
 	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/codecs \
-	DEVICES="OMAP3530" \
+	DEVICES="DM8168" \
 	GPPOS=LINUX_GCC \
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
+	DSPLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	LPM_INSTALL_DIR=$(LPM_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(BIOS_INSTALL_DIR) \
+	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
 	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
 	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
 	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
-	BIOSUTILS_INSTALL_DIR=$(BIOSUTILS_INSTALL_DIR) \
+	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
+	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
 	CGTOOLS_V5T=$(CSTOOL_DIR) \
 	all 
 
 ceexamples_codecs_clean:
 	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/codecs \
-	DEVICES="OMAP3530" \
+	DEVICES="DM8168" \
 	GPPOS=LINUX_GCC \
 	PROGRAMS="APP_CLIENT DSP_SERVER" \
 	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
 	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
+	SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
 	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
 	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
 	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	LPM_INSTALL_DIR=$(LPM_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(BIOS_INSTALL_DIR) \
+	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
 	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
 	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
 	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
-	BIOSUTILS_INSTALL_DIR=$(BIOSUTILS_INSTALL_DIR) \
+	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
+	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
 	CGTOOLS_V5T=$(CSTOOL_DIR) \
 	clean 
 
@@ -549,103 +357,84 @@ ceexamples_clean: ceexamples_codecs_clean ceexamples_extensions_clean ceexamples
 ceexamples_install: ceexamples_codecs_install ceexamples_extensions_install ceexamples_servers_install ceexamples_apps_install
 
 
-dsplink_cfg:
-	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
-	perl $(LINK_INSTALL_DIR)/dsplink/config/bin/dsplinkcfg.pl \
-	--platform=OMAP3530  --nodsp=1 --dspcfg_0=OMAP3530SHMEM \
-	--dspos_0=DSPBIOS5XX --gppos=OMAPLSP --comps=ponslrmc
+###############################################################################
+# Build codec engine examples
+###############################################################################
+SYSLINK_ROOT=${SYSLINK_INSTALL_DIR}
+SYSLINK_XDCPATH="${IPC_INSTALL_DIR}/packages;${SYSBIOS_INSTALL_DIR}/packages"
 
-dsplink_arm_clean:
-	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
-	$(MAKE) -C $(LINK_INSTALL_DIR)/dsplink/gpp/src \
-	CROSS_COMPILE=$(CSTOOL_PREFIX) \
-	CC=$(CSTOOL_PREFIX)gcc \
-	AR=$(CSTOOL_PREFIX)ar \
-	LD=$(CSTOOL_PREFIX)ld \
-	COMPILER=$(CSTOOL_PREFIX)gcc \
-	ARCHIVER=$(CSTOOL_PREFIX)ar \
-	KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
-	BASE_BUILDOS=$(LINUXKERNEL_INSTALL_DIR) \
-	clean 
+syslink_cfg:
+	sed -i \
+        -e s:^C64.rootDir.*:C64.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
+        -e s:^C64P_COFF.rootDir.*:C64P_COFF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
+        -e s:^C64P_ELF.rootDir.*:C64P_ELF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
+        -e s:^C67P_ELF.rootDir.*:C67P_ELF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
+        -e s:^C674_ELF.rootDir.*:C674_ELF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
+        -e s:^C674_COFF.rootDir.*:C674_COFF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
+        -e s:^Arm9.rootDir.*:Arm9.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
+        -e s:^M3_ELF.rootDir.*:M3_ELF.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
+        -e s:C64P_COFF,://C64P_COFF:g \
+        -e s:C64P_ELF,://C64P_ELF:g \
+        ${SYSLINK_INSTALL_DIR}/config.bld
+	mkdir -p ${SYSLINK_INSTALL_DIR}/packages
+	ln -s ${SYSLINK_INSTALL_DIR}/ti  ${SYSLINK_INSTALL_DIR}/packages/ti
 
-dsplink_arm: dsplink_cfg
-	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
-	$(MAKE) -C $(LINK_INSTALL_DIR)/dsplink/gpp/src \
-	CROSS_COMPILE=$(CSTOOL_PREFIX) \
-	CC=$(CSTOOL_PREFIX)gcc \
-	COMPILER=$(CSTOOL_PREFIX)gcc \
-	ARCHIVER=$(CSTOOL_PREFIX)ar \
-	AR=$(CSTOOL_PREFIX)ar \
-	LD=$(CSTOOL_PREFIX)ld \
-	KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
-	BASE_BUILDOS=$(LINUXKERNEL_INSTALL_DIR) \
-	all
+syslink_hlos: 
+	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/knl/Linux/ \
+		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
+		SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages;${SYSLINK_INSTALL_DIR}" \
+		ARCH=arm \
+		CROSS_COMPILE=${CSTOOL_PREFIX} \
+		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
+		SYSLINK_PLATFORM=DM8168 \
+		KDIR=$(LINUXKERNEL_INSTALL_DIR)
+	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/usr/Linux/ \
+		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
+		SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages;${SYSLINK_INSTALL_DIR}" \
+		ARCH=arm \
+		CROSS_COMPILE=${CSTOOL_PREFIX} \
+		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
+		SYSLINK_PLATFORM=DM8168 \
+		KDIR=$(LINUXKERNEL_INSTALL_DIR)
 
-dsplink_dsp_clean:
-	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
-	$(MAKE) -C $(LINK_INSTALL_DIR)/dsplink/dsp/src \
-	BASE_CGTOOLS=$(CODEGEN_INSTALL_DIR) \
-	BASE_SABIOS=$(BIOS_INSTALL_DIR) \
-	clean 
+syslink_hlos_clean: 
+	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/knl/Linux/ \
+		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
+		SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages;${SYSLINK_INSTALL_DIR}" \
+		ARCH=arm \
+		CROSS_COMPILE=${CSTOOL_PREFIX} \
+		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
+		SYSLINK_PLATFORM=DM8168 \
+		KDIR=$(LINUXKERNEL_INSTALL_DIR) clean
+	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/usr/Linux/ \
+		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
+		SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages;${SYSLINK_INSTALL_DIR}" \
+		ARCH=arm \
+		CROSS_COMPILE=${CSTOOL_PREFIX} \
+		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
+		SYSLINK_PLATFORM=DM8168 \
+		KDIR=$(LINUXKERNEL_INSTALL_DIR) clean
 
-dsplink_dsp: dsplink_cfg
-	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
-	$(MAKE) -C $(LINK_INSTALL_DIR)/dsplink/dsp/src \
-	BASE_CGTOOLS=$(CODEGEN_INSTALL_DIR) \
-	BASE_SABIOS=$(BIOS_INSTALL_DIR) \
-	all
+syslink_rtos: syslink_cfg
+	XDCPATH=${SYSLINK_XDCPATH} \
+		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
+		${XDC_INSTALL_DIR}/xdc -P \
+		`${XDC_INSTALL_DIR}/bin/xdcpkg ${SYSLINK_INSTALL_DIR}/ti/syslink | grep -v samples`
 
-dsplink_samples_clean:
-	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
-	$(MAKE)	-C $(LINK_INSTALL_DIR)/dsplink/gpp/src/samples \
-	BASE_TOOLCHAIN=$(CSTOOL_DIR) \
-	BASE_CGTOOLS=${CSTOOL_DIR}/bin \
-	OSINC_PLATFORM="$(CSTOOL_PREFIX)/lib/gcc/arm-none-linux-gnueabi/$($(CSTOOL_PREFIX) --dumversion)/include" \
-	OSINC_TARGET="${CSTOOL_DIR}/target/usr/include" \
-	CROSS_COMPILE="$(CSTOOL_PREFIX)" \
-	CC=$(CSTOOL_PREFIX)gcc \
-	COMPILER=$(CSTOOL_PREFIX)gcc \
-	ARCHIVER=$(CSTOOL_PREFIX)ar \
-	AR=$(CSTOOL_PREFIX)ar \
-	LD=$(CSTOOL_PREFIX)ld \
-	KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
-	clean
-	
-dsplink_samples:
-	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
-	$(MAKE)	-C $(LINK_INSTALL_DIR)/dsplink/gpp/src/samples \
-	BASE_TOOLCHAIN=$(CSTOOL_DIR) \
-	BASE_CGTOOLS=${CSTOOL_DIR}/bin \
-	OSINC_PLATFORM="$(CSTOOL_PREFIX)/lib/gcc/arm-none-linux-gnueabi/$($(CSTOOL_PREFIX) --dumversion)/include" \
-	OSINC_TARGET="${CSTOOL_DIR}/target/usr/include" \
-	CROSS_COMPILE="$(CSTOOL_PREFIX)" \
-	CC=$(CSTOOL_PREFIX)gcc \
-	COMPILER=$(CSTOOL_PREFIX)gcc \
-	ARCHIVER=$(CSTOOL_PREFIX)ar \
-	AR=$(CSTOOL_PREFIX)ar \
-	LD=$(CSTOOL_PREFIX)ld \
-	KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
-	all
+syslink_rtos_clean: syslink_cfg
+	XDCPATH=${SYSLINK_XDCPATH} ${XDC_INSTALL_DIR}/xdc .make -PR ${SYSLINK_INSTALL_DIR}/ti/syslink/.
+	XDCPATH=${SYSLINK_XDCPATH} ${XDC_INSTALL_DIR}/xdc clean -PR ${SYSLINK_INSTALL_DIR}/ti/syslink/.
+	XDCPATH=${SYSLINK_XDCPATH} ${XDC_INSTALL_DIR}/xdc .interfaces -PR ${SYSLINK_INSTALL_DIR}/ti/syslink/.
 
-dsplink_dsp_genpackage:
-	$(XDC_INSTALL_DIR)/xdc -C $(LINK_INSTALL_DIR)/dsplink/dsp clean
-	$(XDC_INSTALL_DIR)/xdc -C $(LINK_INSTALL_DIR)/dsplink/dsp .interfaces
+# syslink_clean: syslink_hlos_clean syslink_rtos_clean syslink_samples_clean
+syslink_clean: syslink_hlos_clean syslink_rtos_clean
 
-dsplink_gpp_genpackage:
-	$(XDC_INSTALL_DIR)/xdc -C $(LINK_INSTALL_DIR)/dsplink/gpp clean
-	$(XDC_INSTALL_DIR)/xdc -C $(LINK_INSTALL_DIR)/dsplink/gpp .interfaces
+syslink: syslink_hlos syslink_rtos
 
-dsplink: dsplink_arm dsplink_dsp dsplink_samples dsplink_dsp_genpackage dsplink_gpp_genpackage 
-
-dsplink_clean: dsplink_arm_clean dsplink_dsp_clean dsplink_samples_clean
-    XDCPATH=${DSPLINK} ${XDC_INSTALL_DIR}/xdc .make -PR .
-    XDCPATH=${DSPLINK} ${XDC_INSTALL_DIR}/xdc clean -PR .
-    XDCPATH=${DSPLINK} ${XDC_INSTALL_DIR}/xdc .interfaces -PR .
-
-dsplink_install:
-	install -d $(EXEC_DIR)/dsplink
-	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAP3530/RELEASE/dsplinkk.ko $(EXEC_DIR)/dsplink
-	cp ${LINK_INSTALL_DIR}/dsplink/gpp/export/BIN/Linux/OMAP3530/RELEASE/*gpp $(EXEC_DIR)/dsplink
+syslink_install:
+	install -d $(EXEC_DIR)/syslink
+	install ${SYSLINK_INSTALL_DIR}/ti/syslink/lib/modules/DM8168/syslink.ko $(EXEC_DIR)/syslink
+	cp ${SYSLINK_INSTALL_DIR}/ti/syslink/lib/syslink.a $(EXEC_DIR)/syslink
 	@for file in $(shell find $(LINK_INSTALL_DIR)/dsplink/dsp/BUILD -name *.out); do \
 	cp $$file $(EXEC_DIR)/dsplink ; \
 	done
@@ -654,23 +443,24 @@ dsplink_install:
 #  Build c6accel
 ##############################################################################
 c6accel:
+	XDCPATH=${C6ACCEL_XDCPATH} \
 	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
-	PLATFORM="$(PLATFORM)" \
+	PLATFORM="DM8168" \
 	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
 	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
-	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
+	IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
+	OSAL_INSTALL_DIR="${OSAL_INSTALL_DIR}" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	EDMA3_LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
 	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
 	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
 	FC_INSTALL_DIR="$(FC_INSTALL_DIR)" \
-	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
-	BIOSUTILS_INSTALL_DIR="$(BIOSUTILS_INSTALL_DIR)" \
-	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
-	SERVER_INSTALL_DIR="$(CODEC_INSTALL_DIR)" \
-	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)/soc" \
+	BIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
+	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
 	CSTOOL_DIR="$(CSTOOL_DIR)" \
 	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
+	BUILD_TYPE=debug \
 	all
 
 c6accel_clean:
@@ -679,14 +469,14 @@ c6accel_clean:
 	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
 	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
+	OSAL_INSTALL_DIR="${OSAL_INSTALL_DIR}" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	EDMA3_LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
 	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
 	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
 	FC_INSTALL_DIR="$(FC_INSTALL_DIR)" \
 	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
-	BIOSUTILS_INSTALL_DIR="$(BIOSUTILS_INSTALL_DIR)" \
-	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
 	SERVER_INSTALL_DIR="$(CODEC_INSTALL_DIR)" \
 	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)/soc" \
 	CSTOOL_DIR="$(CSTOOL_DIR)" \
@@ -698,7 +488,6 @@ c6accel_install:
 	PLATFORM="$(PLATFORM)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
-	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
 	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)/soc" \
 	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel" \
 	install
@@ -706,103 +495,15 @@ c6accel_install:
 ################################################################################
 # Build openGL demos
 ################################################################################
-opengldemos:
-	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x all
-
-opengldemos_clean:
-	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x clean
-
-opengldemos_install:
-	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x install EXEC_DIR=$(EXEC_DIR)/opengl-demos
-	for file in `find $(GRAPHICS_INSTALL_DIR)/gfx_rel_es3.x -name "*.ko"`; do \
-	    install $${file} $(EXEC_DIR)/opengl-demos; \
-	done
-
-
-################################################################################
-# Build C6run
-################################################################################
-c6run:
-	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
-	omap3530_config
-
-	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
-	clean
-
-	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
-	oe_build
-
-c6run_clean:
-	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
-	distclean
-
-c6run_examples:
-	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
-	examples
-
-	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
-	tests
-
-c6run_install:
-	install -d $(EXEC_DIR)/6run
-
-	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	INSTALL_DIR="$(EXEC_DIR)/c6run" \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="arm-none-linux-gnueabi-" \
-	install_programs
-
+# opengldemos:
+# 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x all
+# 
+# opengldemos_clean:
+# 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x clean
+# 
+# opengldemos_install:
+# 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x install EXEC_DIR=$(EXEC_DIR)/opengl-demos
+# 	for file in `find $(GRAPHICS_INSTALL_DIR)/gfx_rel_es3.x -name "*.ko"`; do \
+# 	    install $${file} $(EXEC_DIR)/opengl-demos; \
+# 	done
+# 
