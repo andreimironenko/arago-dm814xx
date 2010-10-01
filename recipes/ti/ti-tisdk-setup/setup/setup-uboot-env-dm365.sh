@@ -45,6 +45,7 @@ videoargs7="davinci_enc_mngr.ch0_mode=480P-60"
 videoargs="$videoargs1 $videoargs2 $videoargs3 $videoargs4 $videoargs5 $videoargs6 $videoargs7"
 fssdargs="root=/dev/mmcblk0p2 rootwait"
 fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath"
+fsflashargs="root=/dev/mtdblock4 rootfstype=jffs2"
 
 #echo "Select UBL location:"
 #echo " 1: flash"
@@ -59,6 +60,7 @@ fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath"
 echo "Select Linux kernel location:"
 echo " 1: TFTP"
 echo " 2: SD card"
+echo " 3: flash (refer to SDG on how to flash kernel)"
 echo
 read -p "[ 1 ] " kernel
 
@@ -70,6 +72,7 @@ echo
 echo "Select root file system location:"
 echo " 1: NFS"
 echo " 2: SD card"
+echo " 3: flash (refer to SDG on how to flash file system)"
 echo
 read -p "[ 1 ] " fs
 
@@ -99,19 +102,41 @@ if [ "$kernel" -eq "1" ]; then
     if [ "$fs" -eq "1" ]; then
         bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
         cfg="uimage-tftp_fs-nfs"
-    else
+    elif [ "$fs" -eq "2" ]; then
         bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
         cfg="uimage-tftp_fs-sd"
+    else
+        bootargs="setenv bootargs $baseargs $videoargs $fsflashargs ip=off"
+        cfg="uimage-tftp_fs-flas"
     fi
-else
+elif [ "$kernel" -eq "2" ]; then
     if [ "$fs" -eq "1" ]; then
         bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
         bootcmd="setenv bootcmd 'bootm 0x80700000'"
         cfg="uimage-sd_fs-nfs"
-    else
+    elif [ "$fs" -eq "2" ]; then
         bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
         bootcmd="setenv bootcmd 'bootm 0x80700000'"
         cfg="uimage-sd_fs-sd"
+    else
+        bootargs="setenv bootargs $baseargs $videoargs $fsflashargs ip=off"
+        bootcmd="setenv bootcmd 'bootm 0x80700000'"
+        cfg="uimage-sd_fs-flash"
+    fi
+else
+    if [ "$fs" -eq "1" ]; then
+        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
+        bootcmd="setenv bootcmd 'nboot 0x80700000 0 0x400000;bootm'"
+        cfg="uimage-flash_fs-nfs"
+    elif [ "$fs" -eq "2" ]; then
+
+        bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
+        bootcmd="setenv bootcmd 'nboot 0x80700000 0 0x400000;bootm'"
+        cfg="uimage-flash_fs-sd"
+    else
+        bootargs="setenv bootargs $baseargs $videoargs $fsflashargs ip=off"
+        bootcmd="setenv bootcmd 'nboot 0x80700000 0 0x400000;bootm'"
+        cfg="uimage-flash_fs-fla"
     fi
 fi
 
@@ -188,8 +213,11 @@ if [ "$minicom" == "y" ]; then
     if [ "$fs" -eq "1" ]; then
         echo "send \"$fsnfsargs \c\"" >> $minicomfilepath
         echo "send \"ip=dhcp\"" >> $minicomfilepath
-    else
+    elif [ "$fs" -eq "2" ]; then
         echo "send \"$fssdargs \c\"" >> $minicomfilepath
+        echo "send \"ip=off\"" >> $minicomfilepath
+    else
+        echo "send \"$fsflashargs \c\"" >> $minicomfilepath
         echo "send \"ip=off\"" >> $minicomfilepath
     fi
     if [ "$kernel" -eq "1" ]; then
