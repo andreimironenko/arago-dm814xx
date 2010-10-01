@@ -820,9 +820,9 @@ matrix_install:
 # Build Gstreamer plugins
 ################################################################################
 gstreamer_ti:
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn* ;$(MAKE) -f Makefile.external DVSDK_PATH=$(DVSDK_INSTALL_DIR) omapl138
+	. $(SDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(SDK_INSTALL_DIR)/gstreamer-ti_svn* ;$(MAKE) -f Makefile.external DVSDK_PATH=$(SDK_INSTALL_DIR) omapl138
 
 gstreamer_ti_install:
 	install -d $(EXEC_DIR)/gstreamer-ti
-	cp $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn*/src/.libs/*.so $(EXEC_DIR)/gstreamer-ti
+	cp $(SDK_INSTALL_DIR)/gstreamer-ti_svn*/src/.libs/*.so $(EXEC_DIR)/gstreamer-ti
 
