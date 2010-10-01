@@ -9,9 +9,15 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 QTWIDGET_DEMO = ""
 QTWIDGET_DEMO_omapl138 = "qt-embedded-widgets-demo"
 
+FFT_DEMO = ""
+FFT_DEMO_c6a816x-evm = "\
+    qwt \
+    "
+
 MATRIX_APPS = "\
     libxml2 \
     ${QTWIDGET_DEMO} \
+    ${FFT_DEMO} \
     "
 
 # Install 3D graphics for all omap3 SOC_FAMILY devices

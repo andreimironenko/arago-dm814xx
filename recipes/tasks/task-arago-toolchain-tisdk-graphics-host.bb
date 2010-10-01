@@ -29,10 +29,6 @@ GRAPHICS_APPS_dm365-evm = " \
     matrix-gui-src \
     "
 
-GRAPHICS_APPS_c6a816x-evm = " \
-    qwt \
-    "
-
 RDEPENDS_${PN} = "\
     ${GRAPHICS_APPS} \
     "
