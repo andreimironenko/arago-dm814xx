@@ -37,7 +37,7 @@ uimagedefault=`basename $uimagesrc`
 baseargs="console=ttyS0,115200n8 rw mem=99M@0x80000000 mpurate=1000"
 extendbaseargs="mem=128M@0x88000000"
 videoargs1="omap_vout.vid1_static_vrfb_alloc=y"
-videoargs2="omapfb.mode=dvi:720x480MR-16@60"
+videoargs2="omapfb.vram=0:3M"
 videoargs="$videoargs1 $videoargs2"
 fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3"
 fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath"
