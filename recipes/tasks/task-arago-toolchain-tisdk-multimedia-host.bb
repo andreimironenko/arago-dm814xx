@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install multimedia source (or development header) packages on host"
-PR = "r16"
+PR = "r17"
 LICENSE = "MIT"
 
 inherit task
@@ -16,6 +16,19 @@ MULTIMEDIA_SOURCETREE_dm37x-evm = " \
     ti-dmai-src \
     ti-xdais-src \
     ti-local-power-manager-src \
+    gstreamer-ti-src \
+    "
+
+MULTIMEDIA_SOURCETREE_omap3evm = " \
+    ti-framework-components-src \
+    ti-codec-engine-src \
+    ti-codecs-omap3530-src \
+    ti-linuxutils-src \
+    ti-xdctools-src \
+    ti-dmai-src \
+    ti-xdais-src \
+    ti-local-power-manager-src \
+    gstreamer-ti-src \
     "
 
 MULTIMEDIA_SOURCETREE_dm355 = " \
@@ -26,8 +39,7 @@ MULTIMEDIA_SOURCETREE_dm355 = " \
     ti-xdctools-src \
     ti-dmai-src \
     ti-xdais-src \
-    ti-dvsdk-demos-src \
-#    ti-dvtb-src \
+    gstreamer-ti-src \
     "
 
 MULTIMEDIA_SOURCETREE_dm365 = " \
@@ -39,8 +51,8 @@ MULTIMEDIA_SOURCETREE_dm365 = " \
     ti-dmai-src \
     ti-dm365mm-module-src \
     ti-xdais-src \
-    ti-dvsdk-demos-src \
     ti-dvtb-src \
+    gstreamer-ti-src \
     "
 
 MULTIMEDIA_SOURCETREE_dm6446 = " \
@@ -52,6 +64,7 @@ MULTIMEDIA_SOURCETREE_dm6446 = " \
     ti-dmai-src \
     ti-xdais-src \
     ti-local-power-manager-src \
+    gstreamer-ti-src \
     "
 
 MULTIMEDIA_SOURCETREE_dm6467 = " \
@@ -62,8 +75,7 @@ MULTIMEDIA_SOURCETREE_dm6467 = " \
     ti-xdctools-src \
     ti-dmai-src \
     ti-xdais-src \
-    ti-dvsdk-demos-src \
-#    ti-dvtb-src \
+    gstreamer-ti-src \
     "
 
 MULTIMEDIA_SOURCETREE_da830-omapl137-evm = " \
@@ -74,6 +86,7 @@ MULTIMEDIA_SOURCETREE_da830-omapl137-evm = " \
     ti-xdctools-src \
     ti-dmai-src \
     ti-xdais-src \
+    gstreamer-ti-src \
     "
 
 MULTIMEDIA_SOURCETREE_da850-omapl138-evm = " \
@@ -84,6 +97,7 @@ MULTIMEDIA_SOURCETREE_da850-omapl138-evm = " \
     ti-xdctools-src \
     ti-dmai-src \
     ti-xdais-src \
+    gstreamer-ti-src \
     "
 
 RRECOMMENDS_${PN} = "\
