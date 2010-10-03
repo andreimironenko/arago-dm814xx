@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support Package sources (or development header) packages on host"
-PR = "r30"
+PR = "r31"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -14,20 +14,24 @@ BSP_COMPONENTS_COMMON = "\
 BSP_COMPONENTS = ""
 
 BSP_COMPONENTS_dm365 = "\
-    ti-linux-driver-examples-src \
     ti-tisdk-setup \
+    linux-davinci-src \
+    ti-tisdk-mksdboot \
     "
 
 BSP_COMPONENTS_dm355 = "\
     ti-linux-driver-examples-src \
+    linux-davinci-src \
     "
 
 BSP_COMPONENTS_dm6446 = "\
     ti-linux-driver-examples-src \
+    linux-davinci-src \
     "
 
 BSP_COMPONENTS_dm6467 = "\
     ti-linux-driver-examples-src \
+    linux-davinci-src \
     "
 
 BSP_COMPONENTS_append_omap3 = "\
@@ -42,6 +46,14 @@ BSP_COMPONENTS_append_ti816x = "\
 # Add components to omap3 components
 BSP_COMPONENTS_append_omap3evm = "\
     ti-tisdk-setup \
+    ti-tisdk-mksdboot \
+    flash-utility \
+    "
+
+BSP_COMPONENTS_append_dm37x-evm = "\
+    ti-tisdk-setup \
+    ti-tisdk-mksdboot \
+    flash-utility \
     "
 
 # Add components to omap3 components
@@ -50,9 +62,10 @@ BSP_COMPONENTS_append_am37x-evm = "\
     flash-utility \
     "
 
-# Add components to omap3 components
-BSP_COMPONENTS_append_dm37x-evm = "\
+BSP_COMPONENTS_da850-omapl138-evm = "\
     ti-tisdk-setup \
+    ti-tisdk-mksdboot \
+    linux-omapl1-src \
     "
 
 RRECOMMENDS_${PN} = "\
