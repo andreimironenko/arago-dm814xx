@@ -7,7 +7,8 @@ DESCRIPTION = "u-boot bootloader for OMAP3 devices"
 
 COMPATIBLE_MACHINE = "omap3"
 
-SRC_URI = "git://arago-project.org/git/projects/u-boot-omap3.git;protocol=git"
+BRANCH ?= "master"
+SRC_URI = "git://arago-project.org/git/projects/u-boot-omap3.git;protocol=git;branch=${BRANCH}"
 
 S = "${WORKDIR}/git"
 
