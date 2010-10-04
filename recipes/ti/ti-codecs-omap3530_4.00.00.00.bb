@@ -5,13 +5,13 @@ LICENSE = "TI"
 require ti-paths.inc
 require ti-staging.inc
 
-PR="r8"
+PR="r9"
 
 PV="4_00_00_00"
 
 CODEC_SUITE_NAME="${WORKDIR}/${PN}_${PV}"
 
-SRCREV = "283547998367dc1f3283725696fccd4751b43591"
+SRCREV = "8393c892b09e0ac42b19ff1531e232478c3b1a6c"
 
 require ti-eula-unpack.inc
 
