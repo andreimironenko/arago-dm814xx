@@ -849,7 +849,7 @@ matrix_install:
 # Build Gstreamer plugins
 ################################################################################
 gstreamer_ti:
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn* ;$(MAKE) -f Makefile.external DVSDK_PATH=$(DVSDK_INSTALL_DIR) omap3530_dv400
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn* ;$(MAKE) -f Makefile.external DVSDK_PATH=$(DVSDK_INSTALL_DIR) omap3530
 
 gstreamer_ti_install:
 	install -d $(EXEC_DIR)/gstreamer-ti

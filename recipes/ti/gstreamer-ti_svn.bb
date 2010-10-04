@@ -18,7 +18,7 @@ file://0006-Remove-the-repeat_with_refresh-feature.patch;striplevel=4 \
 file://0007-Add-support-for-pad-allocated-buffers-in-TIDmaiVideo.patch;striplevel=4 \
 file://0008-Add-support-for-pad-allocated-buffers-in-TIViddec2.patch;striplevel=4 \
 file://0009-update-dm365-cfg-to-work-with-platinum-codecs.patch \
-file://0010-export-c6accel-install-dir.patch \
+file://0010-replace-omap3530_dv400-platform-support-with-omap353.patch \
 "
 
 # use local loadmodules.sh for these platform
