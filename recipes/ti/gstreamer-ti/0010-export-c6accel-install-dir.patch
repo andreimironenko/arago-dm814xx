@@ -1,0 +1,11 @@
+diff -uNr gstreamer-ti_svnr822/Makefile.external gstreamer-ti_svnr822-old/Makefile.external
+--- gstreamer-ti_svnr822/Makefile.external	2010-10-04 10:41:35.043478114 -0500
++++ gstreamer-ti_svnr822-old/Makefile.external	2010-10-04 10:35:24.211478117 -0500
+@@ -109,6 +109,7 @@
+     export PLATFORM_XDC  = ${XDC_PLATFORM}
+     export CROSS_COMPILE = ${CSTOOL_PREFIX}
+     export LINK_XDC_ROOT = $(LINK_INSTALL_DIR)
++    export C6ACCEL_INSTALL_DIR 
+ endif
+ 
+ CPPFLAGS=-DPlatform_$(GST_TI_PLATFORM) 
