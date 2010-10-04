@@ -804,7 +804,7 @@ matrix:
 	. $(SDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd matrix-gui-1.0 ; qmake ; $(MAKE) PLATFORM=$(PLATFORM)
 
 matrix_clean:
-	. $(SDK_INSTALL_DIR)/linux-devkit/environment-setup; 	$(MAKE) -C matrix-gui-1.0 distclean
+	. $(SDK_INSTALL_DIR)/linux-devkit/environment-setup;  cd matrix-gui-1.0 ; qmake ; $(MAKE)  distclean
 
 matrix_install:
 	install -d $(EXEC_DIR)/matrix
