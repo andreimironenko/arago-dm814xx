@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics application sources on host"
-PR = "r4"
+PR = "r5"
 LICENSE = "MIT"
 
 inherit task
@@ -7,6 +7,10 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 GRAPHICS_APPS = ""
 
+GRAPHICS_APPS_omap3 = " \
+    matrix-gui-e-src \
+    "
+   
 GRAPHICS_APPS_am37x-evm = " \
     matrix-gui-e-src \
     "
@@ -23,7 +27,7 @@ GRAPHICS_APPS_omap3evm = " \
     matrix-gui-e-src \
     "
 
-GRAPHICS_APPS_da850-omapl138-evm = " \
+GRAPHICS_APPS_omapl138 = " \
     matrix-gui-e-src \
     "
 
