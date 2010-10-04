@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support Package sources (or development header) packages on host"
-PR = "r31"
+PR = "r32"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -62,7 +62,7 @@ BSP_COMPONENTS_append_am37x-evm = "\
     flash-utility \
     "
 
-BSP_COMPONENTS_da850-omapl138-evm = "\
+BSP_COMPONENTS_omapl138 = "\
     ti-tisdk-setup \
     ti-tisdk-mksdboot \
     linux-omapl1-src \
