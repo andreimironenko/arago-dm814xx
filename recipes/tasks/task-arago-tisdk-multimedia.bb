@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r27"
+PR = "r28"
 LICENSE = "MIT"
 
 inherit task
@@ -28,15 +28,15 @@ MULTIMEDIA_dm6446 = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
     "
 
-MULTIMEDIA_da830-omapl137-evm = " \
+MULTIMEDIA_omapl137 = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
     "
 
-MULTIMEDIA_da850-omapl138-evm = " \
+MULTIMEDIA_omapl138 = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
     "
 
-MULTIMEDIA_dm6467-evm = " \
+MULTIMEDIA_dm6467 = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
     "
 
