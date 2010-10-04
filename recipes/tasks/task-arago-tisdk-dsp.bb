@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install dsp binaries on ${MACHINE}"
-PR = "r12"
+PR = "r13"
 LICENSE="MIT"
 
 inherit task
@@ -17,11 +17,11 @@ DSP_COMPONENTS_dm6467 = "\
     ${DSP_DVSDK_COMMON} \
     "
 
-DSP_COMPONENTS_da830-omapl137-evm = "\
+DSP_COMPONENTS_omapl137 = "\
     ${DSP_DVSDK_COMMON} \
     "
 
-DSP_COMPONENTS_da850-omapl138-evm = "\
+DSP_COMPONENTS_omapl138 = "\
     ${DSP_DVSDK_COMMON} \
     ti-c6accel-apps \
     ti-dsp-benchmark-apps \
