@@ -5,7 +5,7 @@ KERNEL_IMAGETYPE = "uImage"
 
 inherit kernel
 
-SRC_URI = "git://arago-project.org/git/projects/linux-omap3.git;protocol=git \
+SRC_URI = "git://arago-project.org/git/projects/linux-omap3.git;protocol=git;branch=ti816x-master \
 	file://defconfig"
 
 # Requires support for SOC_FAMILY matching in COMPATIBLE_MACHINE
