@@ -166,8 +166,7 @@ execute "cp $sdkdir/bin/README.boot.scr /tmp/sdk/$$/"
 execute "umount /tmp/sdk/$$"
 
 echo "Executing uflash tool to write u-boot.bin"
-(cd $sdkdir/psp/board-utilities/uflash/src/uflash/; gcc -o uflash uflash.c)
-$sdkdir/psp/board-utilities/uflash/src/uflash/uflash -d ${device} -b ${sdkdir}/psp/prebuilt-images/u-boot.bin -p omapl138 -vv
+$sdkdir/psp/board-utilities/images/utils/uflash -d ${device} -b ${sdkdir}/psp/prebuilt-images/u-boot.bin -p omapl138 -vv
 
 if [ $? -ne 0 ]; then
   echo "Failed to execute uflash"
