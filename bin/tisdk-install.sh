@@ -161,7 +161,7 @@ echo "
     package="`cat $i | grep Package: | awk {'print $2'}`"
     version="`cat $i | grep Version: | awk {'print $2'} | cut -f1-2 -d-`"
     license="`cat $i | grep License: | awk {'print $2,$3,$4'} `"
-    source="`cat $i | grep Source: | awk {'print $2'}`"
+    source="`cat $i | grep Source: | awk {'print $2'} | cut -f1 -d\;`"
     case "$license" in 
       *unknown*) highlight="bgcolor=yellow" ;;
       *GPLv3*) highlight="bgcolor=yellow" ;;
@@ -170,6 +170,7 @@ echo "
 
     case "$source" in
       file://*) source="";;
+      http://install.source.dir.local*) source="";;
       *) ;;
     esac
 
@@ -198,7 +199,7 @@ echo "
         fi
         mv ${install_dir}/linux-devkit/licenses/$package ${install_dir}/docs/licenses/ > /dev/null 2>&1
     fi
-
+    
     echo "
 <tr><td>${package} </td><td>${version}</td> <td $highlight> ${license} </td><td>$location</td><td>$delivered_as</td><td>$modified</td> <td><a href=$source>$source</a></td></tr>
 "
@@ -497,6 +498,7 @@ generate_sw_manifest "Packages installed on arago-sdk target side:" "$install_di
 
 # add manifest footer.
 sw_manifest_footer >> ${install_dir}/docs/software_manifest.htm
+
 
 rm -rf ${opkg_conf}
 rm -rf ${opkg_sdk_conf}
