@@ -6,7 +6,7 @@ PRIORITY = "optional"
 
 SRCREV = "153"
 PV = "1.0"
-PR = "r13+svnr${SRCPV}"
+PR = "r14+svnr${SRCPV}"
 
 PLATFORM_dm365 = "dm365"
 PLATFORM_da850-omapl138-evm = "omapl138"
@@ -21,6 +21,14 @@ SRC_URI = "svn://gforge.ti.com/svn/matrix_gui/;module=branches/BRANCH_BRIJESH;pr
 "
 
 S = "${WORKDIR}/branches/BRANCH_BRIJESH"
+
+do_prepsources() {
+    # remove .svn files.
+    find ${S} -name .svn -type d | xargs rm -rf
+}
+
+# run prepare sources before do_patch to ensure that sourceipk picks the right sources.
+addtask prepsources after do_unpack before do_patch
 
 INITSCRIPT_NAME = "matrix-gui"
 INITSCRIPT_PARAMS = "defaults 99"
