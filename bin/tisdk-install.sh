@@ -7,7 +7,7 @@
 #  Script to install TI SDK
 #
 
-VERSION="1.2"
+VERSION="1.3"
 
 #
 # Display program usage
@@ -15,7 +15,7 @@ VERSION="1.2"
 usage()
 {
   echo "
-Usage: `basename $1` [options] --machine <machine_name> <install_dir>
+Usage: `basename $1` [options] --machine <machine_name> --toolchain <toolchain path> <install_dir>
 
   --help                Print this help message
   --graphics            Install graphics packages
@@ -24,6 +24,7 @@ Usage: `basename $1` [options] --machine <machine_name> <install_dir>
   --dsp                 Install c64p dsp packages
   --multimedia          Install multimedia packages
   --force               Force installation on unsupported host
+  --toolchain           Where is toolchain installed
 "
   exit 1
 }
@@ -160,7 +161,7 @@ echo "
     package="`cat $i | grep Package: | awk {'print $2'}`"
     version="`cat $i | grep Version: | awk {'print $2'} | cut -f1-2 -d-`"
     license="`cat $i | grep License: | awk {'print $2,$3,$4'} `"
-    source="`cat $i | grep Source: | awk {'print $2'}`"
+    source="`cat $i | grep Source: | awk {'print $2'} | cut -f1 -d\;`"
     case "$license" in 
       *unknown*) highlight="bgcolor=yellow" ;;
       *GPLv3*) highlight="bgcolor=yellow" ;;
@@ -169,6 +170,7 @@ echo "
 
     case "$source" in
       file://*) source="";;
+      http://install.source.dir.local*) source="";;
       *) ;;
     esac
 
@@ -197,7 +199,7 @@ echo "
         fi
         mv ${install_dir}/linux-devkit/licenses/$package ${install_dir}/docs/licenses/ > /dev/null 2>&1
     fi
-
+    
     echo "
 <tr><td>${package} </td><td>${version}</td> <td $highlight> ${license} </td><td>$location</td><td>$delivered_as</td><td>$modified</td> <td><a href=$source>$source</a></td></tr>
 "
@@ -243,29 +245,6 @@ echo "
 </body>
 </html>
 "
-}
-
-# 
-# check supported host
-#
-host_check ()
-{
-  echo "Checking host ..."
-  if [ "$force_host" = "yes" ]; then
-    echo "Forcing installation on unsupported host"
-  else
-    lsb_release -a > /tmp/.log
-    if [ $? -ne 0 ]; then
-      echo "Unsupported host machine"
-      exit 1;
-    fi
-    host="`cat /tmp/.log | grep Codename: | awk {'print $2'}`"
-    if [ "$host" != "hardy" ]; then
-      echo "Unsupported host machine" ;
-      exit 1;
-    fi
-    echo " Found Ubuntu 8.04"
-  fi
 }
 
 #
@@ -404,6 +383,9 @@ install_arago_sdk ()
     $install_dir/linux-devkit/bin/libtoolize 
 }
 
+# unset TOOLCHAIN_PATH exported by other script.
+unset TOOLCHAIN_PATH
+
 # Process command line...
 while [ $# -gt 0 ]; do
   case $1 in
@@ -455,6 +437,11 @@ while [ $# -gt 0 ]; do
       shift
       force_host="yes";
       ;;
+    --toolchain)
+      shift
+      TOOLCHAIN_PATH=$1;
+      shift;
+      ;;
      *)
       install_dir=$1;
       shift;
@@ -464,6 +451,9 @@ done
 
 # check if machine is defined.
 test -z $machine && usage $0
+
+# check if toolchain path is defined.
+test -z $TOOLCHAIN_PATH && usage $0
 
 # check if install_dir variable is set.
 test -z $install_dir && usage $0
@@ -508,6 +498,7 @@ generate_sw_manifest "Packages installed on arago-sdk target side:" "$install_di
 
 # add manifest footer.
 sw_manifest_footer >> ${install_dir}/docs/software_manifest.htm
+
 
 rm -rf ${opkg_conf}
 rm -rf ${opkg_sdk_conf}

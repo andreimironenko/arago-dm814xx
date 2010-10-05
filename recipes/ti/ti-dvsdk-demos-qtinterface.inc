@@ -18,10 +18,15 @@ SRC_URI = "svn://winsvn.sanb.design.ti.com/SDOApps/apps/dvsdk_demos/;module=${DE
 
 S  = "${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/demos/${DEMOSPLATFORM}/qtInterface"
 
+CXXFLAGS_dm365_append = " -DPlatform_dm365 "
+CXXFLAGS_omap3_append = " -DPlatform_omap3530 "
+
 do_install() {
 	install -d ${D}/${installdir}/dvsdk-demos
 	install -m 0755 ${S}/qtInterface ${D}/${installdir}/dvsdk-demos
 }
+
+PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 FILES_${PN} = "${installdir}/dvsdk-demos/*"
 RRECOMMENDS_${PN} = "qt4-embedded-plugin-mousedriver-tslib"

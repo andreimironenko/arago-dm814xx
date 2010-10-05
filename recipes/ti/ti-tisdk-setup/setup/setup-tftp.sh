@@ -32,6 +32,7 @@ read -p "[ $tftprootdefault ] " tftproot
 if [ ! -n "$tftproot" ]; then
     tftproot=$tftprootdefault
 fi
+echo $tftproot > $cwd/../.tftproot
 echo "--------------------------------------------------------------------------------"
 
 echo
@@ -58,7 +59,29 @@ uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimage=`basename $uimagesrc`
 if [ -f $tftproot/$uimage ]; then
     echo
-    echo "$tftproot/$uimage already exists, skipping copy.."
+    echo "$tftproot/$uimage already exists"
+    echo "(r) replace (s) skip copy (e) rename"
+    read -p "[r] " exists
+    case "$exists" in
+      s) echo "Skipping copy of $uimage, existing version will be used"
+         ;;
+      e) dte="`date +%m%d%Y`_`date +%H`.`date +%M`"
+         echo "Name of new uimage: "
+         read -p "[ $uimage.$dte ]" newname
+         if [ ! -n "$newname" ]; then
+             newname="$uimage.$dte"
+         fi
+         sudo cp $uimagesrc $tftproot/$newname 
+         check_status
+         echo
+         echo "Successfully copied $uimage to tftp root directory $tftproot as $newname"
+         ;;
+      *) sudo cp $uimagesrc $tftproot
+         check_status
+         echo
+         echo "Successfully replaced $uimage in tftp root directory $tftproot"
+         ;;
+    esac
 else
     sudo cp $uimagesrc $tftproot
     check_status
@@ -86,5 +109,8 @@ fi
 echo
 echo "Restarting tftp server"
 sudo /etc/init.d/xinetd stop
+check_status
+sleep 1
 sudo /etc/init.d/xinetd start
+check_status
 echo "--------------------------------------------------------------------------------"

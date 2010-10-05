@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support Package sources (or development header) packages on host"
-PR = "r33"
+PR = "r36"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -21,7 +21,8 @@ BSP_COMPONENTS_dm365 = "\
     ti-docs-psp \
     ti-board-utilities \
     ti-linux-driver-examples-src \
-    linux-davinci-staging-src \
+    linux-davinci-src \
+    ti-tisdk-mksdboot \
     "
 
 BSP_COMPONENTS_dm355 = "\
@@ -51,6 +52,10 @@ BSP_COMPONENTS_da850-omapl138-evm = "\
 BSP_COMPONENTS_append_omap3 = "\
     linux-omap3-src \
     x-load-src \
+    "
+
+BSP_COMPONENTS_append_ti816x = "\
+    linux-omap3-src \
     "
 
 # Add components to omap3 components

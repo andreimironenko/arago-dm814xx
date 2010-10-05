@@ -2,7 +2,7 @@ DESCRIPTION = "DVTB for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-PR = "r14"
+PR = "r15"
  
 DEPENDS = "virtual/kernel alsa-lib ti-framework-components ti-codec-engine ti-xdctools ti-linuxutils alsa-lib jpeg ncurses ti-xdais "
 
@@ -43,6 +43,7 @@ do_compile () {
 		CSTOOL_DIR="${TOOLCHAIN_PATH}" \
 		MVTOOL_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
 		CSTOOL_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+		C6ACCEL_INSTALL_DIR=${C6ACCEL_INSTALL_DIR} \
 		${DVTBPLATFORM}
 }
 

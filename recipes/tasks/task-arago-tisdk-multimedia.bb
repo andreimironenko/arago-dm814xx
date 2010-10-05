@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r27"
+PR = "r29"
 LICENSE = "MIT"
 
 inherit task
@@ -13,7 +13,7 @@ MULTIMEDIA_dm365 = " \
     ti-dvsdk-demos \
     ti-dvsdk-demos-qtinterface \
     ti-data \
-#    ti-dvtb \
+    ti-dvtb \
     task-arago-gst \
     gstreamer-ti \
     "
@@ -65,6 +65,7 @@ MULTIMEDIA_dm37x-evm = " \
     task-arago-gst \
     gstreamer-ti \
     ti-dvsdk-demos \
+    ti-dvsdk-demos-qtinterface \
     ti-dvtb \
     ti-data \
     "
@@ -75,11 +76,17 @@ MULTIMEDIA_omap3evm = " \
     task-arago-gst \
     gstreamer-ti \
     ti-dvsdk-demos \
+    ti-dvsdk-demos-qtinterface \
     ti-dvtb \
     ti-data \
     "
 
 MULTIMEDIA_am37x-evm = " \
+    task-arago-gst \
+    gst-ffmpeg \
+    "
+
+MULTIMEDIA_c6a816x-evm = " \
     task-arago-gst \
     gst-ffmpeg \
     "

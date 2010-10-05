@@ -33,11 +33,11 @@ DEPENDS = "virtual/kernel alsa-lib ti-framework-components ti-codec-engine ti-xd
 
 DEPENDS_append_dm6446 	= " ti-codecs-dm6446   ti-dspbios ti-cgt6x ti-linuxutils"
 DEPENDS_append_dm6467 	= " ti-codecs-dm6467   ti-dspbios ti-cgt6x ti-linuxutils"
-DEPENDS_append_omap3    = " ti-codecs-omap3530 ti-dspbios ti-cgt6x ti-linuxutils"
+DEPENDS_append_omap3    = " ti-codecs-omap3530 ti-dspbios ti-cgt6x ti-linuxutils ti-c6accel"
 DEPENDS_append_dm355  	= " ti-codecs-dm355"
 DEPENDS_append_dm365    = " ti-codecs-dm365"
 DEPENDS_append_omapl137 = " ti-codecs-omapl137 ti-dspbios ti-cgt6x ti-linuxutils"
-DEPENDS_append_omapl138 = " ti-codecs-omapl138 ti-dspbios ti-cgt6x ti-linuxutils"
+DEPENDS_append_omapl138 = " ti-codecs-omapl138 ti-dspbios ti-cgt6x ti-linuxutils ti-c6accel"
 
 # Define DMAI build time variables
 DMAIPLATFORM_dm6446    = "dm6446_al"
@@ -75,6 +75,7 @@ do_prepsources() {
     chmod a+x ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/tdox
     sed -i 's|tdox|./tdox|g' ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/release.sh
     (cd ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface; ./release.sh ${PV})
+    rm -rf ${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/dmai_${PV}/wince_pb
 }
 
 # run prepare sources before do_patch to ensure that sourceipk picks the right sources.
@@ -108,6 +109,7 @@ do_compile () {
             CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
             LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \	
             MVTOOL_PREFIX="${TARGET_PREFIX}" \
+	    C6ACCEL_INSTALL_DIR="${C6ACCEL_INSTALL_DIR}" \
             PLATFORM="${DMAIPLATFORM}" 
 	done
 }

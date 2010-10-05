@@ -15,13 +15,15 @@ require ti-paths.inc
 require ti-staging.inc
 
 # Rebuild on kernel change since it links statically to ti-dmai, ti-codec-engine, etc
-PR = "r72+${MACHINE_KERNEL_PR}"
+PR = "r78+${MACHINE_KERNEL_PR}"
 
 DEPENDS = "ti-dmai gstreamer gst-plugins-base"
 
 # enable c6accel elements on omapl138
 DEPENDS_append_da850-omapl138-evm = " ti-c6accel "
+DEPENDS_append_omap3 = " ti-c6accel "
 EXTRA_OECONF_omapl138 = "--enable-c6accel"
+EXTRA_OECONF_omap3 = "--enable-c6accel"
 export C6ACCEL_INSTALL_DIR
 
 # gstreamer_ti picks up some config variables from the environment

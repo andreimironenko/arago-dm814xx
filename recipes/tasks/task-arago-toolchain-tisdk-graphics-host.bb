@@ -29,6 +29,10 @@ GRAPHICS_APPS_dm365-evm = " \
     matrix-gui-src \
     "
 
+GRAPHICS_APPS_ti816x = " \
+    matrix-gui-e-src \
+    "
+
 RDEPENDS_${PN} = "\
     ${GRAPHICS_APPS} \
     "

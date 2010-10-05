@@ -1,11 +1,3 @@
-#
-# Default Memory Map - for OMAP3530 dsplink examples
-#
-# Start Addr    Size    Description
-# -------------------------------------------
-# 0x80000000   126 MB   Linux
-# 0x87E00000     2 MB   DSPLINK (MEM) + DDR + DSPLINK (RESET)
-
 # sanity check to verify that we're using the right mem=xxM (126M in this case)
 awk '/MemTotal:/ {
     mem=$2

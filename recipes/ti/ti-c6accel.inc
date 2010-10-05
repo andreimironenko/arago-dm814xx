@@ -17,7 +17,7 @@ COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm37x-evm|c6a816x-evm)"
 
 PROVIDES += "ti-c6accel-apps"
 
-PR = "r8"
+PR = "r12"
 
 S = "${WORKDIR}/c6accel_${PV}"
 
@@ -30,6 +30,7 @@ DEPENDS = "ti-codec-engine ti-xdais ti-syslink ti-sysbios"
 DEPENDS += "ti-edma3lld ti-cgt6x ti-xdctools ti-framework-components" 
 
 do_compile() {
+    unset VERBOSE
     # Build C6Accel package
     cd ${S}
     make \
@@ -49,7 +50,6 @@ do_compile() {
     C6ACCEL_INSTALL_DIR="${S}" \
     CSTOOL_DIR="${TOOLCHAIN_PATH}" \
     CSTOOL_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
-    BUILD_TYPE=debug \
     all
 
 }
@@ -60,7 +60,7 @@ do_install() {
 
     # update linker.cmd file to point to sysroot 
     sed -i ${i} -e s=${S}=${C6ACCEL_INSTALL_DIR}=g ${D}${C6ACCEL_INSTALL_DIR_RECIPE}/soc/app/c6accel_app_config/linker.cmd
-    
+
     cd ${S} 
     make \
       PLATFORM="${PLATFORM}" \

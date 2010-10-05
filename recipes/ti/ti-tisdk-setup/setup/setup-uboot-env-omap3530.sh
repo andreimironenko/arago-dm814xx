@@ -31,15 +31,39 @@ else
     echo
 fi
 
+if [ -f $cwd/../.tftproot ]; then
+    tftproot=`cat $cwd/../.tftproot`
+else
+    echo "Where is your TFTP root?"
+    read -p "[ /tftpboot ] " tftproot
+
+    if [ ! -n "$tftproot" ]; then
+        tftproot="/tftpboot"
+    fi
+    echo
+fi
+
 uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyS0,115200n8 rw mem=99M mpurate=720"
+baseargs="console=ttyS0,115200n8 rw mem=99M@0x80000000 mpurate=720"
+extendbaseargs=" "
 videoargs1="omap_vout.vid1_static_vrfb_alloc=y"
-videoargs2="omapfb.mode=dvi:720x480MR-16@60"
+videoargs2="omapfb.vram=0:3M"
 videoargs="$videoargs1 $videoargs2"
 fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3"
 fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath"
+
+echo "Select board memory:"
+echo " 1: 128MB"
+echo " 2: 256MB"
+echo
+read -p "[ 1 ] " memory
+
+if [ ! -n "$memory" ]; then
+    memory="1"
+fi
+
 
 echo "Select Linux kernel location:"
 echo " 1: TFTP"
@@ -62,13 +86,24 @@ if [ ! -n "$fs" ]; then
     fs="1"
 fi
 
+if [ "$memory" -eq "1" ]; then
+    extendbaseargs=" "
+else
+    extendbaseargs=" mem=128@0x88000000"
+fi
+
+
 if [ "$kernel" -eq "1" ]; then
     echo
-    echo "Available kernel images in /tftproot:"
-    for file in /tftpboot/*; do
+    echo "Available kernel images in $tftproot:"
+    for file in $tftproot/*; do
         basefile=`basename $file`
         echo "    $basefile"
     done
+    if [ ! -f $tftproot/$uimagedefault ]; then
+        uimagedefault=`ls -1 $tftproot/* | head -1`
+        uimagedefault=`basename $uimagedefault`
+    fi
     echo
     echo "Which kernel image do you want to boot from TFTP?"
     read -p "[ $uimagedefault ] " uimage
@@ -82,19 +117,19 @@ if [ "$kernel" -eq "1" ]; then
     bootfile="setenv bootfile $uimage"
 
     if [ "$fs" -eq "1" ]; then
-        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
+        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fsnfsargs ip=dhcp"
         cfg="uimage-tftp_fs-nfs"
     else
-        bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
+        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fssdargs ip=off"
         cfg="uimage-tftp_fs-sd"
     fi
 else
     if [ "$fs" -eq "1" ]; then
-        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
+        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fsnfsargs ip=dhcp"
         bootcmd="setenv bootcmd 'mmc init;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
         cfg="uimage-sd_fs-nfs"
     else
-        bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
+        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fssdargs ip=off"
         bootcmd="setenv bootcmd 'mmc init;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
         cfg="uimage-sd_fs-sd"
     fi
@@ -160,6 +195,7 @@ if [ "$minicom" == "y" ]; then
     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv oldbootargs \$\{bootargs\}\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs \c\"" $minicomfilepath
+    echo "send \"$extendbaseargs \c\"" >> $minicomfilepath
     echo "send \"$videoargs1 \c\"" >> $minicomfilepath
     echo "send \"$videoargs2 \c\"" >> $minicomfilepath
     if [ "$fs" -eq "1" ]; then

@@ -31,16 +31,40 @@ else
     echo
 fi
 
+if [ -f $cwd/../.tftproot ]; then
+    tftproot=`cat $cwd/../.tftproot`
+else
+    echo "Where is your TFTP root?"
+    read -p "[ /tftpboot ] " tftproot
+
+    if [ ! -n "$tftproot" ]; then
+        tftproot="/tftpboot"
+    fi
+    echo
+fi
+
 uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
 baseargs="console=ttyS2,115200n8 noinitrd rw mem=32M@0xc0000000"
+extendbaseargs=" "
 fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3 rootwait"
 fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath,nolock"
 
+echo "Select board memory:"
+echo " 1: 128MB"
+echo " 2:  64MB"
+echo
+read -p "[ 1 ] " memory
+
+if [ ! -n "$memory" ]; then
+    memory="1"
+fi
+
 echo "Select Linux kernel location:"
 echo " 1: TFTP"
-echo " 2: flash"
+echo " 2: SD card"
+echo " 3: flash"
 echo
 read -p "[ 1 ] " kernel
 
@@ -59,13 +83,21 @@ if [ ! -n "$fs" ]; then
     fs="1"
 fi
 
+if [ "$memory" -eq "1" ]; then
+    extendbaseargs=" mem=64M@0xc4000000"
+fi
+
 if [ "$kernel" -eq "1" ]; then
     echo
-    echo "Available kernel images in /tftproot:"
-    for file in /tftpboot/*; do
+    echo "Available kernel images in $tftproot:"
+    for file in $tftproot/*; do
         basefile=`basename $file`
         echo "    $basefile"
     done
+    if [ ! -f $tftproot/$uimagedefault ]; then
+        uimagedefault=`ls -1 $tftproot/* | head -1`
+        uimagedefault=`basename $uimagedefault`
+    fi
     echo
     echo "Which kernel image do you want to boot from TFTP?"
     read -p "[ $uimagedefault ] " uimage
@@ -80,21 +112,34 @@ if [ "$kernel" -eq "1" ]; then
     bootfile="setenv bootfile $uimage"
 
     if [ "$fs" -eq "1" ]; then
-        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
+        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fsnfsargs ip=dhcp"
         cfg="uimage-tftp_fs-nfs"
     else
-        bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
+        bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fssdargs ip=off"
         cfg="uimage-tftp_fs-sd"
     fi
 else
-    if [ "$fs" -eq "1" ]; then
-        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
-        bootcmd="setenv bootcmd 'sf probe 0; sf read 0xc0700000 0x80000 0x280000; bootm 0xc0700000'"
-        cfg="uimage-flash_fs-nfs"
+    if [ "$kernel" -eq "2" ]; then
+
+        if [ "$fs" -eq "1" ]; then
+            bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fsnfsargs ip=dhcp"
+            bootcmd="setenv bootcmd 'mmc rescan 0; fatload mmc 0 0xc0700000 uImage; bootm 0xc0700000'"
+            cfg="uimage-sd_fs-nfs"
+        else
+            bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fssdargs ip=off"
+            bootcmd="setenv bootcmd 'mmc rescan 0; fatload mmc 0 0xc0700000 uImage; bootm 0xc0700000'"
+            cfg="uimage-sd_fs-sd"
+        fi
     else
-        bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
-        bootcmd="setenv bootcmd 'sf probe 0; sf read 0xc0700000 0x80000 0x280000; bootm 0xc0700000'"
-        cfg="uimage-flash_fs-sd"
+        if [ "$fs" -eq "1" ]; then
+            bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fsnfsargs ip=dhcp"
+            bootcmd="setenv bootcmd 'sf probe 0; sf read 0xc0700000 0x80000 0x280000; bootm 0xc0700000'"
+            cfg="uimage-flash_fs-nfs"
+        else
+            bootargs="setenv bootargs $baseargs $extendbaseargs $videoargs $fssdargs ip=off"
+            bootcmd="setenv bootcmd 'sf probe 0; sf read 0xc0700000 0x80000 0x280000; bootm 0xc0700000'"
+            cfg="uimage-flash_fs-sd"
+	fi
     fi
 fi
 
@@ -158,6 +203,7 @@ if [ "$minicom" == "y" ]; then
     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv oldbootargs \$\{bootargs\}\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs \c\"" $minicomfilepath
+    echo "send \"$extendbaseargs \c\"" >> $minicomfilepath
     echo "send \"$videoargs1 \c\"" >> $minicomfilepath
     echo "send \"$videoargs2 \c\"" >> $minicomfilepath
     echo "send \"$videoargs3 \c\"" >> $minicomfilepath

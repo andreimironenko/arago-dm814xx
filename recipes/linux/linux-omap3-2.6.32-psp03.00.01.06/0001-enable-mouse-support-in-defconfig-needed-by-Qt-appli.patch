@@ -1,0 +1,25 @@
+From 1125f9ebbd12c3ad20915f12324750067a2e5210 Mon Sep 17 00:00:00 2001
+From: Brijesh Singh <bksingh@ti.com>
+Date: Tue, 28 Sep 2010 15:32:05 -0500
+Subject: [PATCH] enable mouse support in defconfig needed by Qt applications.
+
+---
+ arch/arm/configs/omap3_evm_defconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/configs/omap3_evm_defconfig b/arch/arm/configs/omap3_evm_defconfig
+index 44e0005..41513bf 100644
+--- a/arch/arm/configs/omap3_evm_defconfig
++++ b/arch/arm/configs/omap3_evm_defconfig
+@@ -788,7 +788,7 @@ CONFIG_INPUT=y
+ #
+ # Userland interfaces
+ #
+-# CONFIG_INPUT_MOUSEDEV is not set
++CONFIG_INPUT_MOUSEDEV=y
+ # CONFIG_INPUT_JOYDEV is not set
+ CONFIG_INPUT_EVDEV=y
+ # CONFIG_INPUT_EVBUG is not set
+-- 
+1.7.0.4
+
