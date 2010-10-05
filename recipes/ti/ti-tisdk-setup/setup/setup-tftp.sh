@@ -26,7 +26,7 @@ disable = no
 }
 
 echo "--------------------------------------------------------------------------------"
-echo "In which directory do you want to keep your tftp root directory?"
+echo "Which directory do you want to be your tftp root directory?(if this directory does not exist it will be created for you)"
 read -p "[ $tftprootdefault ] " tftproot
 
 if [ ! -n "$tftproot" ]; then
@@ -60,12 +60,17 @@ uimage=`basename $uimagesrc`
 if [ -f $tftproot/$uimage ]; then
     echo
     echo "$tftproot/$uimage already exists"
-    echo "(r) replace (s) skip copy (e) rename"
+    echo "(r) rename (o) overwrite (s) skip copy "
     read -p "[r] " exists
     case "$exists" in
       s) echo "Skipping copy of $uimage, existing version will be used"
          ;;
-      e) dte="`date +%m%d%Y`_`date +%H`.`date +%M`"
+      o) sudo cp $uimagesrc $tftproot
+         check_status
+         echo
+         echo "Successfully overwritten $uimage in tftp root directory $tftproot"
+         ;;
+      *) dte="`date +%m%d%Y`_`date +%H`.`date +%M`"
          echo "Name of new uimage: "
          read -p "[ $uimage.$dte ]" newname
          if [ ! -n "$newname" ]; then
@@ -75,11 +80,6 @@ if [ -f $tftproot/$uimage ]; then
          check_status
          echo
          echo "Successfully copied $uimage to tftp root directory $tftproot as $newname"
-         ;;
-      *) sudo cp $uimagesrc $tftproot
-         check_status
-         echo
-         echo "Successfully replaced $uimage in tftp root directory $tftproot"
          ;;
     esac
 else

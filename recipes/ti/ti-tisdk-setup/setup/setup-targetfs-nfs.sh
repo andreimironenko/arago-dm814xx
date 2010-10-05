@@ -5,7 +5,7 @@ cwd=`dirname $0`
 
 dstdefault="${HOME}/targetfs"
 echo "--------------------------------------------------------------------------------"
-echo "In which directory do you want to keep your target filesystem?"
+echo "In which directory do you want to install the target filesystem?(if this directory does not exist it will be created)"
 read -p "[ $dstdefault ] " dst
 
 if [ ! -n "$dst" ]; then
