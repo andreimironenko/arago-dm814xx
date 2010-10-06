@@ -103,24 +103,17 @@ total_cyln=`echo $total_size/255/63/512 | bc`
 pc1_start=20
 pc1_end=10
 
+# recalculate number of cylinder for the first parition
+if [ "$copy" != "" ]; then
+ pc1_end=$(((($total_cyln - $pc1_end) / 4) * 3))
+fi
+
 # start of rootfs partition
 pc2_start=$(($pc1_start + $pc1_end))
 
-# calculate number of cylinder for the second parition
-if [ "$copy" != "" ]; then
- pc2_end=$((($total_cyln - $pc1_end) / 4))
- pc3_start=$(($pc2_start + $pc2_end))
-fi
-
 {
-if [ "$copy" != "" ]; then
- echo $pc1_start,$pc1_end,0x0C,-
- echo $pc2_start,$pc2_end,,-
- echo $pc3_start,,-
-else
- echo $pc1_start,$pc1_end,,-
- echo $pc2_start,,-
-fi
+echo $pc1_start,$pc1_end,0x0B,-
+echo $pc2_start,,-
 } | sfdisk -D -H 255 -S 63 -C $total_cyln $device
 
 if [ $? -ne 0 ]; then
@@ -129,13 +122,9 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Formating ${device}1 ..."
-execute "mkfs.vfat -F 32 -n "BOOT" ${device}1"
+execute "mkfs.vfat -F 32 -n "START_HERE" ${device}1"
 echo "Formating ${device}2 ..."
 execute "mke2fs -j -L "ROOTFS" ${device}2"
-if [ "$copy" != "" ]; then
- echo "Formating ${device}3 ..."
- execute "mke2fs -j -L "START_HERE" ${device}3"
-fi
 
 # creating boot.scr
 execute "mkdir -p /tmp/sdk"
@@ -160,9 +149,15 @@ execute "mount ${device}1 /tmp/sdk/$$"
 execute "cp /tmp/sdk/boot.scr /tmp/sdk/$$/"
 execute "cp /tmp/sdk/boot.cmd /tmp/sdk/$$/"
 execute "cp $sdkdir/psp/prebuilt-images/uImage /tmp/sdk/$$"
+execute "cp $sdkdir/bin/setup.htm /tmp/sdk/$$"
 execute "cp $sdkdir/bin/top_omapl138_evm.png /tmp/sdk/$$/"
-execute "cp $sdkdir/bin/windows_users.htm /tmp/sdk/$$/"
+execute "cp $sdkdir/docs/OMAPL138_EVM_Quick_Start_Guide.pdf /tmp/sdk/$$/quickstartguide.pdf"
 execute "cp $sdkdir/bin/README.boot.scr /tmp/sdk/$$/"
+if [ "$copy" != "" ]; then
+  echo "Copying additional file(s) on ${device}1"
+  execute "cp -r $copy /tmp/sdk/$$"
+fi
+sync
 execute "umount /tmp/sdk/$$"
 
 echo "Executing uflash tool to write u-boot.bin"
@@ -177,6 +172,7 @@ echo "Extracting filesystem on ${device}2 ..."
 execute "mkdir -p /tmp/sdk/$$"
 execute "mount ${device}2 /tmp/sdk/$$"
 execute "tar zxf $sdkdir/filesystem/dvsdk-da850-omapl138-evm-rootfs.tar.gz -C /tmp/sdk/$$"
+sync
 
 # check if we need to create symbolic link for matrix 
 echo -n "Creating matrix-gui symbolic link..."
@@ -190,19 +186,9 @@ if [ -f /tmp/sdk/$$/etc/init.d/matrix-gui ]; then
   fi
 fi
 
+sync
 echo "unmounting ${device}2"
 execute "umount /tmp/sdk/$$"
-
-if [ "$copy" != "" ]; then
-  echo "Copying $copy on ${device}3 ..."
-  execute "mount ${device}3 /tmp/sdk/$$"
-  execute "cp -ar $copy /tmp/sdk/$$"
-  execute "cp $sdkdir/bin/setup.htm /tmp/sdk/$$"
-  execute "cp $sdkdir/bin/top_omapl138_evm.png /tmp/sdk/$$/"
-  execute "cp $sdkdir/docs/OMAPL138_EVM_Quick_Start_Guide.pdf /tmp/sdk/$$/quickstartguide.pdf"
-  echo "unmounting ${device}3"
-  execute "umount /tmp/sdk/$$"
-fi
 
 execute "rm -rf /tmp/sdk/$$"
 echo "completed!"

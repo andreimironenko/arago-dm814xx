@@ -2,7 +2,7 @@ DESCRIPTION = "Scripts to create bootable SD card for ${MACHINE}"
 HOMEPAGE_dm365 = "http://processors.wiki.ti.com/index.php/SD_card_boot_and_flashing_tool_for_DM355_and_DM365"
 LICENSE = GPLv2
 
-PR = "r21"
+PR = "r22"
 
 require ti-paths.inc
 require ti-staging.inc
@@ -46,6 +46,16 @@ do_install () {
 	cp ${WORKDIR}/windows_users.htm ${D}/${installdir}/bin
 	cp ${WORKDIR}/README.boot.scr ${D}/${installdir}/bin
 }
+
+do_install_da850-omapl138-evm () {
+        mkdir -p ${D}/${installdir}/bin/
+        cp ${WORKDIR}/mksdboot.sh ${D}/${installdir}/bin/
+        chmod +x ${D}/${installdir}/bin/mksdboot.sh
+        cp ${WORKDIR}/setup.htm ${D}/${installdir}/bin/
+        cp ${WORKDIR}/top_${PLATFORM}_evm.png ${D}/${installdir}/bin/
+        cp ${WORKDIR}/README.boot.scr ${D}/${installdir}/bin
+}
+
 
 do_install_dm365 () {
 	mkdir -p ${D}/${installdir}/bin/
