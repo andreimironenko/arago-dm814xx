@@ -34,9 +34,9 @@ fi
 uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyS0,115200n8 rw mem=99M mpurate=720"
-videoargs1="omap_vout.vid1_static_vrfb_alloc=y"
-videoargs2="omapfb.mode=dvi:720x480MR-16@60"
+baseargs="console=ttyS2,115200n8 rw mem=166M earlyprintk"
+videoargs1="vram=50M"
+videoargs2="ti816xfb.vram=0:16M,1:16M,2:6M"
 videoargs="$videoargs1 $videoargs2"
 fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3"
 fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath"
@@ -116,6 +116,9 @@ fi
 if [ -n "$bootfile" ]; then
     echo $bootfile
 fi
+echo "--------------------------------------------------------------------------------"
+echo "Please setup ethaddr manually by choosing your MAC Address"
+echo "setenv ethaddr xx:xx:xx:xx:xx"
 echo "--------------------------------------------------------------------------------"
 
 do_expect() {
