@@ -1,9 +1,6 @@
 DESCRIPTION = "TI TI816x HDVPSS Display Utilities"
 SECTION = "devel"
-LICENSE = "TI"
-
-require ti-paths.inc
-require ti-staging.inc
+LICENSE = "GPLv2, TI"
 
 inherit update-rc.d
 
@@ -21,7 +18,7 @@ S = "${WORKDIR}/hdvpss_display_utils_${PV}"
 
 KERNEL_VERSION = "${@base_read_file('${STAGING_KERNEL_DIR}/kernel-abiversion')}"
 
-INITSCRIPT_NAME = "load-firmware"
+INITSCRIPT_NAME = "load-firmware.sh"
 INITSCRIPT_PARAMS = "defaults 15"
 
 do_install() {

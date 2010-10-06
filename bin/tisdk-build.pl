@@ -384,6 +384,16 @@ sub copy_output
         print "\n ERROR: failed to execute $cmd";
     }
 
+    # FIXME - Hack to ship prebuild uImage
+    print "\nReplacing uImage from HDVPSS Display Utils...";
+    $cmd = "cp $arago_tmp/work/$machine-none-linux-gnueabi/ti-hdvpss-display-utils*/hdvpss_display_utils_1_00_00_01/kernel/uImage $arago_images_output_dir/$machine/uImage-$machine.bin";
+    $result = system($cmd);
+    
+    if ($result) {
+        print "\n ERROR: failed to execute $cmd";
+        exit 1;
+    }
+
     $cmd = "cp $arago_images_output_dir/$machine/uImage-$machine.bin $sdkpath/deploy/images/$machine";
     $result = system($cmd);
     
@@ -657,7 +667,7 @@ sub get_input
         $input =~ s/\s+$//;
 
         if ($input) {
-            $sdkpath = "$arago_dir/$input";
+            $sdkpath = "$input";
         }
         else {
             $sdkpath = "$arago_dir/$sdkpath_default";
