@@ -1,9 +1,8 @@
-<<<<<<< HEAD
 # Define target platform.
 PLATFORM=c6a816x-evm
 
 # The installation directory of the SDK.
-EZSDK_INSTALL_DIR=/home/dvsdkval/ti-ezsdk_c6a816x-evm_5_00_00_20100930
+EZSDK_INSTALL_DIR=<__SDK__INSTALL_DIR__>
 
 # For backwards compatibility
 DVSDK_INSTALL_DIR=$(EZSDK_INSTALL_DIR)
@@ -12,61 +11,59 @@ DVSDK_INSTALL_DIR=$(EZSDK_INSTALL_DIR)
 DVEVM_INSTALL_DIR=$(EZSDK_INSTALL_DIR)
 
 # Where SYS/BIOS is installed.
-SYSBIOS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/sysbios_6_30_03_43_eng
+SYSBIOS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__sysbios__>
 
 # Where the OSAL package is installed.
-OSAL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/osal_1_20_00_08_eng
+OSAL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__osal__>
 
 # Where the IPC package is installed.
-IPC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/ipc_1_21_03_24_eng
+IPC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__ipc__>
 
 # Where the Codec Engine package is installed.
-CE_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/codec-engine_3_20_00_13_eng
+CE_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__codec-engine__>
 
 # Where the SYS Link package is installed.
-SYSLINK_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/syslink_02_00_00_53_alpha2
+SYSLINK_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__syslink__>
 
 # Where the EDMA3 LLD package is installed.
-EDMA3_LLD_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/edma3lld_01_11_00_03
+EDMA3_LLD_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__edma3lld__>
 EDMA3LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR)
 
 # Where the Framework Components package is installed.
-FC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/framework-components_3_20_00_15_eng
+FC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__framework-components__>
 
 # Where the MFC Linux Utils package is installed.
-LINUXUTILS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/linuxutils_3_20_00_01_eng
+LINUXUTILS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__linuxutils__>
 CMEM_INSTALL_DIR=$(LINUXUTILS_INSTALL_DIR)
 
 # Where the XDAIS package is installed.
-XDAIS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/xdais_7_20_00_04_eng
+XDAIS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__xdais__>
 
 # Where the RTSC tools package is installed.
-XDC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/xdctools_3_20_03_63
+XDC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__xdctools__>
 
 # Where the Code Gen is installed.
-CODEGEN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/cgt6x_7_2_0
+CODEGEN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__cgt6x__>
 
 # Where the Code Gen is installed.
-TMS470_CODEGEN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/cgt-tms470_4_6_1
+TMS470_CODEGEN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__cgt-tms470__>
 
 # Where the PSP is installed.
 PSP_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/psp
 
 # The directory that points to your kernel source directory.
-LINUXKERNEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/psp/linux-2.6.34-psp4.0.0.6
+LINUXKERNEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/psp/<__kernel__>
 KERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR)
 
-# Where the local power manager is installed.
-LPM_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__local-power-manager__>
-
 # Where the development headers and libs are installed.
-LINUXLIBS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit/arm-none-linux-gnueabi/usr
+LINUX_DEVKIT_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit
+export ENV_SETUP=$(LINUX_DEVKIT_PATH)/environment-setup
 
 # Where c6accel package is installed.
-C6ACCEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/c6accel_2_01_00_02
+C6ACCEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__c6accel__>
 
 # The prefix to be added before the GNU compiler tools (optionally including # path), i.e. "arm_v5t_le-" or "/opt/bin/arm_v5t_le-".
-CSTOOL_DIR=/home/dvsdkval/CodeSourcery/Sourcery_G++_Lite/
+CSTOOL_DIR=<__CROSS_COMPILER_PATH__>
 CSTOOL_PREFIX=$(CSTOOL_DIR)/bin/arm-none-linux-gnueabi-
 CSTOOL_PATH=$(CSTOOL_DIR)/bin
 
@@ -75,21 +72,5 @@ MVTOOL_PREFIX=$(CSTOOL_PREFIX)
 
 # Where to copy the resulting executables
 EXEC_DIR=$(HOME)/install/$(PLATFORM)
-=======
-#Points to the root of the TI SDK
-export TI_SDK_PATH=__SDK__INSTALL_DIR__
 
-#root of the target file system for installing applications
-DESTDIR=__DESTDIR__
-
-#Points to the root of the Linux libraries and headers matching the
-#demo file system.
-export LINUX_DEVKIT_PATH=$(TI_SDK_PATH)/linux-devkit
-
-#Cross compiler prefix
-export CROSS_COMPILE=__CROSS_COMPILE__
-
-#Location of environment-setup file
-export ENV_SETUP=$(LINUX_DEVKIT_PATH)/environment-setup
->>>>>>> 58bdc3464fb20861820435506a170b5a5ad96209
 
