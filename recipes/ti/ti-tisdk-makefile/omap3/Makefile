@@ -17,7 +17,7 @@ default: components
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	linux_clean cmem_clean lpm_clean sdma_clean c6run_clean codecs_clean dmai_clean c6accel_clean
+clean:	linux_clean dsplink_clean cmem_clean lpm_clean sdma_clean c6run_clean codecs_clean dmai_clean c6accel_clean ceexamples_clean u-boot_clean dvtb_clean demos_clean psp_examples_clean opengldemos_clean xload_clean
 
 #==============================================================================
 # Build everything rebuildable.
@@ -28,11 +28,6 @@ all: components u-boot ceexamples dvtb demos psp_examples opengldemos xload c6ru
 # Install everything
 #==============================================================================
 install: linux_install cmem_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install c6accel_install opengldemos_install xload_install c6run_install matrix_install gstreamer_ti_install
-
-#==============================================================================
-# Clean up all targets.
-#==============================================================================
-clobber: clean ceexamples_clean u-boot_clean dvtb_clean demos_clean psp_examples_clean opengldemos_clean xload_clean
 
 #==============================================================================
 # A help message target.
