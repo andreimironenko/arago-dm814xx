@@ -1,8 +1,8 @@
 #!/bin/sh
 
 rmmod cmemk
-rmmod dsplinkk
 rmmod lpm_omap3530
+rmmod dsplinkk
 rmmod sdmak
 #
 # CMEM Allocation
