@@ -808,12 +808,12 @@ matrix_clean:
 
 matrix_install:
 	install -d $(EXEC_DIR)/matrix
-	install -m 0755 $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/matrix_gui $(EXEC_DIR)/matrix
-	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/bin \
+	install -m 0755 $(SDK_INSTALL_DIR)/matrix-gui-1.0/matrix_gui $(EXEC_DIR)/matrix
+	cp -ar $(SDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/bin \
 	$(EXEC_DIR)/matrix/
-	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/html \
+	cp -ar $(SDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/html \
 	$(EXEC_DIR)/matrix/
-	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/images/ \
+	cp -ar $(SDK_INSTALL_DIR)/matrix-gui-1.0/images/ \
 	$(EXEC_DIR)/matrix/
 
 ################################################################################
