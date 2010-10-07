@@ -1,6 +1,9 @@
 DESCRIPTION = "TI TI816x HDVPSS Display Utilities"
 SECTION = "devel"
-LICENSE = "GPLv2, TI"
+LICENSE = "GPLv2/TI"
+
+require ti-paths.inc
+require ti-staging.inc
 
 inherit update-rc.d
 
