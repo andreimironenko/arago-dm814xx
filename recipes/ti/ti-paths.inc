@@ -2,6 +2,7 @@ installdir = "${datadir}/ti"
 
 # This is where do_install will put it
 export CODEGEN_INSTALL_DIR_RECIPE    = "${installdir}/ti-cgt6x-tree"
+export CODEGEN_ARM_INSTALL_DIR_RECIPE    = "${installdir}/ti-cgt470-tree"
 export XDC_INSTALL_DIR_RECIPE        = "${installdir}/ti-xdctools-tree"
 export XDAIS_INSTALL_DIR_RECIPE      = "${installdir}/ti-xdais-tree"
 export BIOS_INSTALL_DIR_RECIPE       = "${installdir}/ti-dspbios-tree"
@@ -27,6 +28,7 @@ export C6ACCEL_INSTALL_DIR_RECIPE    = "${installdir}/ti-c6accel-tree"
 
 # This is where the tools will end up in staging provided PACKAGE_ARCH = ${MACHINE_ARCH} is set
 export CODEGEN_INSTALL_DIR    = "${STAGING_DIR}/${MULTIMACH_TARGET_SYS}${CODEGEN_INSTALL_DIR_RECIPE}"
+export CODEGEN_ARM_INSTALL_DIR    = "${STAGING_DIR}/${MULTIMACH_TARGET_SYS}${CODEGEN_ARM_INSTALL_DIR_RECIPE}"
 export XDC_INSTALL_DIR        = "${STAGING_DIR}/${MULTIMACH_TARGET_SYS}${XDC_INSTALL_DIR_RECIPE}"
 export XDAIS_INSTALL_DIR      = "${STAGING_DIR}/${MULTIMACH_TARGET_SYS}${XDAIS_INSTALL_DIR_RECIPE}"
 export BIOS_INSTALL_DIR       = "${STAGING_DIR}/${MULTIMACH_TARGET_SYS}${BIOS_INSTALL_DIR_RECIPE}"
