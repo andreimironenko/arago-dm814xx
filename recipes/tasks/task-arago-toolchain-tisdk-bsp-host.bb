@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support Package sources (or development header) packages on host"
-PR = "r36"
+PR = "r37"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -42,7 +42,7 @@ BSP_COMPONENTS_da850-omapl138-evm = "\
     ti-tisdk-mksdboot \
     ti-tisdk-relnotes \
     ti-docs-sdg \
-    ti-docs-quickstart \
+    ti-docs-qsg-hardcopy \
     ti-docs-psp \
     linux-omapl1-src \
     ti-board-utilities \
