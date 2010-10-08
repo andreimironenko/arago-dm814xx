@@ -59,7 +59,7 @@ uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimage=`basename $uimagesrc`
 if [ -f $tftproot/$uimage ]; then
     echo
-    echo "$tftproot/$uimage already exists"
+    echo "$tftproot/$uimage already exists. The new installed file can be renamed and saved under the new name."
     echo "(r) rename (o) overwrite (s) skip copy "
     read -p "[r] " exists
     case "$exists" in
