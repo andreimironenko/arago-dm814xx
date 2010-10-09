@@ -8,13 +8,13 @@ DEFAULT_UBOOT_CONFIG=davinci_dm365_evm_config
 #==============================================================================
 # The default build target builds components to enable all other build targets.
 #==============================================================================
-components:	linux cmem dm365mm irq edma dmai 
+components: linux cmem dm365mm irq edma dmai 
 default: components
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	linux_clean cmem_clean dm365mm_clean irq_clean edma_clean dmai_clean
+clean:	linux_clean cmem_clean dm365mm_clean irq_clean edma_clean dmai_clean psp_examples_clean ceexamples_clean demos_clean u-boot_clean dvtb_clean ubl_clean matrix_clean
 
 #==============================================================================
 # Build everything rebuildable.
@@ -25,11 +25,6 @@ all: components psp_examples ceexamples demos u-boot dvtb ubl matrix gstreamer_t
 # Install everything
 #==============================================================================
 install: linux_install cmem_install dm365mm_install dmai_install psp_examples_install ceexamples_install irq_install edma_install demos_install u-boot_install ubl_install matrix_install gstreamer_ti_install
-
-#==============================================================================
-# Clean up all targets.
-#==============================================================================
-clobber:    linux_clean psp_examples_clean dmai_clean ceexamples_clean cmem_clean dm365mm_clean irq_clean edma_clean demos_clean u-boot_clean dvtb_clean ubl_clean matrix_clean
 
 #==============================================================================
 # A help message target.
@@ -434,7 +429,7 @@ matrix:
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd matrix-gui-1.0 ; qmake ; $(MAKE) PLATFORM=$(PLATFORM)
 
 matrix_clean:
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; 	$(MAKE) -C matrix-gui-1.0 distclean
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; cd matrix-gui-1.0 ; qmake ; $(MAKE) distclean
 
 matrix_install:
 	install -d $(EXEC_DIR)/matrix
