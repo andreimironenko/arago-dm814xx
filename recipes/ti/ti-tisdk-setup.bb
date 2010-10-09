@@ -22,7 +22,7 @@ SRC_URI = "\
         file://setup/${UBOOT_ENV} \
 "
 
-PR = "r18"
+PR = "r19"
 
 do_install () {
 	install -d ${D}/${installdir}
