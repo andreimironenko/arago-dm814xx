@@ -16,6 +16,8 @@ case "$1" in
         modprobe vpss mode=hdmi:1080p-60,dvo2:1080i-60 debug=1
         modprobe ti81xxfb
         modprobe TI81xx_hdmi hdmi_mode=2
+        sleep 1
+        fbset -depth 32 -rgba 8/16,8/8,8/0,0/0
       ;;
     stop)
         echo "Unloading HDVPSS Firmware"

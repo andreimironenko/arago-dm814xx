@@ -7,7 +7,7 @@ require ti-staging.inc
 
 inherit update-rc.d
 
-PR = "r1"
+PR = "r2"
 
 SRC_URI = "\
            http://install.source.dir.local/hdvpss_display_utils_${PV}.tar.gz;name=hdvpss \
@@ -38,20 +38,7 @@ do_install() {
   
     # Install the init script
     install -d ${D}${sysconfdir}/init.d
-    install -d ${D}${sysconfdir}/rcS.d
-    install -d ${D}${sysconfdir}/rc0.d
-    install -d ${D}${sysconfdir}/rc1.d
-    install -d ${D}${sysconfdir}/rc2.d
-    install -d ${D}${sysconfdir}/rc3.d
-    install -d ${D}${sysconfdir}/rc4.d
-    install -d ${D}${sysconfdir}/rc5.d
     install -m 0755 ${WORKDIR}/load-firmware.sh ${D}${sysconfdir}/init.d/
-    ln -sf ../init.d/load-firmware.sh ${D}${sysconfdir}/rcS.d/S15firmware
-    ln -sf ../init.d/load-firmware.sh ${D}${sysconfdir}/rc1.d/S15firmware
-    ln -sf ../init.d/load-firmware.sh ${D}${sysconfdir}/rc2.d/S15firmware
-    ln -sf ../init.d/load-firmware.sh ${D}${sysconfdir}/rc3.d/S15firmware
-    ln -sf ../init.d/load-firmware.sh ${D}${sysconfdir}/rc4.d/S15firmware
-    ln -sf ../init.d/load-firmware.sh ${D}${sysconfdir}/rc5.d/S15firmware
 }
 
 PACKAGES += "ti-hdvpss-display-utils-module"
