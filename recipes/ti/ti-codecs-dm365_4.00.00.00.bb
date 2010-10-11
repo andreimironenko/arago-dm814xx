@@ -1,7 +1,9 @@
 DESCRIPTION = "TI Codecs for DM365"
 SECTION = "multimedia"
 LICENSE = "TI"
-PR="r3"
+
+PR="${MACHINE_KERNEL_PR}"
+PR_append = "a"
 
 require ti-paths.inc
 require ti-staging.inc

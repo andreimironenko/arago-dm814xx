@@ -6,6 +6,7 @@ require ti-paths.inc
 require ti-staging.inc
 
 PR="${MACHINE_KERNEL_PR}"
+PR_append = "a"
 
 PV="4_00_00_00"
 
