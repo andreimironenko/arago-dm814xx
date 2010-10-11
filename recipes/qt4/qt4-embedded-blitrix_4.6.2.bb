@@ -21,7 +21,7 @@ FILESPATHBASE .= ":${OEBASE}/arago-oe-dev/recipes/qt4"
 # than just within the current directory.
 require recipes/qt4/qt4-embedded.inc
 
-PR = "${INC_PR}.1"
+PR = "${INC_PR}.2"
 
 # This recipe is valid for SOC_FAMILY devices that are based on the
 # cortex-A8 with neon.
@@ -62,9 +62,8 @@ do_install_append () {
 
 # This package will be renamed libticpublt-bx1.0 by the SHLIBS part of
 # package.bbclass.
-PACKAGES += "${PN}-libs "
-FILES_${PN}-libs = "${libdir}/libTI*"
-LICENSE_${PN}-libs = "TI"
+LICENSE_${QT_BASE_LIB}ticpublt-bx4 = "TI"
+QT_EXTRA_LIBS += "TICPUBLT_BX"
 
 ALLOW_EMPTY = "1"
 
@@ -73,7 +72,8 @@ FILES_${QT_BASE_NAME}-demos += "${datadir}/ti/blitrix/*"
 # Add TI to the demos license because of the blitrix demo
 LICENSE_${QT_BASE_NAME}-demos = "LGPLv2.1 TI"
 
-INSANE_SKIP_${PN}-libs = True
+INSANE_SKIP_${QT_BASE_LIB}ticpublt-bx4 = True
+INSANE_SKIP_${QT_BASE_LIB}ticpublt-bx4-dev = True
 INSANE_SKIP_${QT_BASE_NAME}-demos = True
 
 pkg_postinst_${QT_BASE_NAME}-demos () {
