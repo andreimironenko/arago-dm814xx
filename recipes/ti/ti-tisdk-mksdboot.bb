@@ -19,8 +19,14 @@ SRC_URI = "file://mksdboot.sh \
 "
 
 SRCREV_dm365 = "9713"
-SRC_URI_dm365 = "svn://winsvn.sanb.design.ti.com/SDOApps/apps/sdk_productization/trunk/sdk_productization/boot;module=dm365;proto=http;user=anonymous;pswd='' "
-S_dm365 = "${WORKDIR}/dm365"
+SRC_URI_dm365 = "http://www.linux-davinci.info/data/boot/dm3xx_sd_boot-6.1.tgz;name=dm365sdboot \
+  file://mksdboot.sh "
+S_dm365 = "${WORKDIR}"
+
+SRC_URI[dm365sdboot.md5sum] = "3e3360a1c539b48a9229babdfd6a0dbb"
+SRC_URI[dm365sdboot.sha256sum] = "9047b6faa751169b96c9ca55bcc173259895fd5fb01c74f3226d19fce4c5eea4"
+
+
 
 do_compile () {
 	:
