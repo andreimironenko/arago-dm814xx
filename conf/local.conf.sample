@@ -175,4 +175,4 @@ IMAGE_FSTYPES = "jffs2 tar.gz ext2.gz"
 BBINCLUDELOGS = "yes"
 
 # Uncomment this to remove work directory after packaging to save disk space
-# INHERIT += "rm_work"
+INHERIT += "rm_work"
