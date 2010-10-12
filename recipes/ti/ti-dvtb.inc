@@ -9,7 +9,7 @@ DEPENDS = "virtual/kernel alsa-lib ti-framework-components ti-codec-engine ti-xd
 DEPENDS_append_dm365 = "ti-codecs-dm365"
 DEPENDS_append_omap3 = "ti-codecs-omap3530"
 
-SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvtb/${PV_dot}/exports/dvtb_${PV}.tar.gz;name=dvtbtarball \
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvtb/${PV}/exports/dvtb_${PV}.tar.gz;name=dvtbtarball \
   file://make-include-rules.make-conditional.patch \
   file://loadmodules-ti-dvtb-${DVTBPLATFORM}.sh \
 "
