@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r28"
+PR = "r29"
 LICENSE = "MIT"
 
 inherit task
@@ -18,6 +18,8 @@ MULTIMEDIA_DVSDK_COMMON = " \
 MULTIMEDIA_dm365 = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
     ti-dvtb \
+    ti-dvsdk-demos \
+    ti-dvsdk-demos-qtinterface \
     "
 
 MULTIMEDIA_dm355 = " \
@@ -43,11 +45,15 @@ MULTIMEDIA_dm6467 = " \
 MULTIMEDIA_dm37x-evm = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
     ti-dvtb \
+    ti-dvsdk-demos \
+    ti-dvsdk-demos-qtinterface \
     "
 
 MULTIMEDIA_omap3evm = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
     ti-dvtb \
+    ti-dvsdk-demos \
+    ti-dvsdk-demos-qtinterface \
     "
 
 MULTIMEDIA_am37x-evm = " \

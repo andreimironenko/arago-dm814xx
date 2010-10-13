@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install multimedia source (or development header) packages on host"
-PR = "r18"
+PR = "r19"
 LICENSE = "MIT"
 
 inherit task
@@ -22,6 +22,7 @@ MULTIMEDIA_SOURCETREE_omap3 = " \
     ti-codecs-omap3530-src \
     ti-local-power-manager-src \
     ti-dvtb-src \
+    ti-dvsdk-demos-src\
     "
 
 MULTIMEDIA_SOURCETREE_dm355 = " \
@@ -34,6 +35,7 @@ MULTIMEDIA_SOURCETREE_dm365 = " \
     ti-codecs-dm365-src \
     ti-dm365mm-module-src \
     ti-dvtb-src \
+    ti-dvsdk-demos-src\
     "
 
 MULTIMEDIA_SOURCETREE_dm6446 = " \
