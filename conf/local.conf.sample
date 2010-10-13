@@ -72,6 +72,8 @@ PREFERRED_PROVIDER_ti-dsplink-module = "ti-dsplink"
 PREFERRED_PROVIDER_qt4-embedded = "qt4-embedded"
 PREFERRED_VERSION_iperf = "1.7.0"
 PREFERRED_PROVIDER_qt4-embedded_omap3 = "qt4-embedded-blitrix"
+PREFERRED_PROVIDER_qt4-embedded_ti816x = "qt4-embedded-blitrix"
+
 
 include conf/arago-bom.conf
 
