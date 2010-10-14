@@ -1,7 +1,7 @@
 ﻿<head>
 <meta http-equiv="Content-Language" content="en-us" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>OMAPL138 EVM - Start Your Development</title>
+<title>OMAP-L138 EVM - Start Your Development</title>
 <style type="text/css">
 .style1 {
 	font-family: Arial, Helvetica, sans-serif;
@@ -24,24 +24,30 @@
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: xx-small;
 }
+.style9 {
+	color: #0000FF;
+}
 </style>
 </head>
 
 <body>
 
-<p class="style6"><strong>Welcome - Linux Users</strong></p>
-<p class="style2">Thank you for choosing the OMAPL138 Evaluation Module (EVM).&nbsp; Please 
+<p class="style6"><strong>Welcome</strong></p>
+<p class="style2">Thank you for choosing the OMAP-L138 Evaluation Module (EVM).&nbsp; Please 
 refer back to this page if you are not sure how to proceed with your evaluation.&nbsp; 
 Its purpose is to easily provide the information you need while 
-evaluating the OMAPL138.&nbsp; </p>
+evaluating the OMAP-L138.&nbsp; </p>
+<p class="style2"><span class="style9"><strong>IMPORTANT NOTE</strong> - The Digital Video Software Development Kit (DVSDK) on the OMAP-L138 is for Linux Development only. This kit is only supported on an Ubuntu 10.04 LTS host machine.  A CD with the supported Linux distribution is provided in the kit.&nbsp; If you don't have a dedicated host Linux PC to install Ubuntu 10.4, visit </span>
+<a href="http://processors.wiki.ti.com/index.php/How_to_Build_a_Ubuntu_Linux_host_under_VirtualBox">How to create a Linux host machine on your Windows PC</a><span class="style9">. </span></p>
+<p class="style2"><span class="style9"> Development for the TMS320C6748 device is supported on a host Windows PC only.  Installation information can be found in below.</span></p>
 <p class="style2">
-<img src="top_omapl138_evm.png" width="640" height="480"></p>
-<p class="style6"><strong>Starting your Development </strong></p>
+<img src="top_omapl138_evm.png" width="874" height="434"></p>
+<p class="style6"><strong>Starting your Development on OMAP-L138</strong></p>
 
 <p class="style2"><b>1.</b>&nbsp;
-Hopefully you have already enjoyed the demos described in the <a href="quickstartguide.pdf">Quick Start Guide</a>. This is the same print out which is provided with your OMAPL138 EVM. If not, this Quick Start Guide quickly and easily explains how to run the applications and demos provided on the OMAPL138 EVM. </p>
+Hopefully you have already enjoyed the demos described in the <a href="quickstartguide.pdf">OMAP-L138 Quick Start Guide</a>. This is the same print out which is provided with your OMAP-L138 EVM.  To get started ensure you have a Linux Ubuntu 10.04 LTS host environment setup to proceed.  Information can be found at the top of this document or in the Quick Start Guide.</p>
 
-<p class="style2"><b>2.</b>&nbsp; When your board is set up as described above, insert the Code Sourcery Toolchain CD in to the CD-ROM drive of your development host. </p>
+<p class="style2"><b>2.</b>&nbsp; When your board is set up as described in the Quick Start Guide, insert the Code Sourcery Toolchain CD in to the CD-ROM drive of your development host. </p>
 
 <p class="style2"><b>3.</b>&nbsp;On Ubuntu 10.04 LTS open a terminal window as follows: Applications->Accessories->Terminal. </p>
 
@@ -70,8 +76,13 @@ host# ./dvsdk_omapl138-evm_4_00_00_00_setuplinux
 
 <p class="style2"><b>8.</b>&nbsp; Once installation is complete, the Software Developer's Guide (SDG) will open as a pdf file. Follow its instructions to start developing software for the OMAPL138. The SDG and other documentation can be found in the docs folder of the DVSDK installation directory.
 
+<p class="style6"><strong>Starting your Development on a TMS320C6748 (DSP-only)</strong></p>
+<p class="style2">&nbsp;For description and installation instructions for the TMS320C6748 software components available on Windows only refer to <a href="c6748/c6748.htm">TMS320C6748 Software Installation Guide</a>
+<p class="style2">&nbsp;Additional information related to the TMS320C6748 board and SOM can be found in the <a href="OMAP-L138_EVM_Users_Guide.pdf">Zoom OMAP-L138 EVM Users Guide</a>
+</p>
 <p class="style6"><strong>EVM Hardware Overview</strong></p>
-<p class="style2">&nbsp;To better understand the OMAPL138 EVM hardware, you may want to review OMAPL138 EVM Hardware User's Guide which can be found in the /docs directory of your SDK installation or by visiting <a href="http://logicpd.com/products/development-kits/zoom-omap-l138-evm-development-kit">LogicPD website</a>.
+<p class="style2">&nbsp;To better understand the OMAP-L138 EVM hardware, you may want to review the<a href="OMAP-L138_EVM_Users_Guide.pdf">Zoom OMAP-L138 EVM Users Guide</a>. This document can also be found by visiting <a href="http://logicpd.com/products/development-kits/zoom-omap-l138-evm-development-kit">LogicPD website</a>.
+
 <p>
 <p class="style6"><strong>Support</strong></p>
 <p class="style2">
@@ -85,7 +96,7 @@ answers you need.&nbsp; </p>
 Support@ti.com</a> - a support email list you may submit your question to.</p>
 <p class="style6"><strong>Software Updates</strong></p>
 <p class="style2">We are continually improving the quality and content of the 
-software we provide in the OMAPL138 EVM.&nbsp; Updates to the SDK may be obtained
+software we provide on the OMAPL138 EVM.&nbsp; Updates to the DVSDK may be obtained
 at <a href="http://www.ti.com/omapl138">Software Updates</a> as they become available.</p>
 <p class="style2">&nbsp;</p>
 <p class="style7"><strong>Copyright 2010 - Texas Instrument, Incorporated</strong></p>

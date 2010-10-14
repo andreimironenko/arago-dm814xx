@@ -3,4 +3,4 @@
 # only provide own versions of init and mount.sh
 
 # Set the suffix to specify amended packages
-PR_append = "-arago1"
+PR_append = "-arago2"

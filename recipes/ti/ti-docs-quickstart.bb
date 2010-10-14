@@ -5,10 +5,9 @@ require ti-paths.inc
 
 DEPENDS = "ti-post-process-wiki-native"
 
-PR = "r2"
+PR = "r3"
 
 TOPIC_dm365 = "TMS320DM365_EVM_Quick_Start_Guide"
-TOPIC_omapl138 = "OMAPL138_EVM_Quick_Start_Guide"
 
 TOPICFILE = "${@bb.data.getVar('TOPIC', d, 1).replace('/','_')}"
 TOPICURL = "http://ap-fpdsp-swapps.dal.design.ti.com/index.php/${TOPIC}"

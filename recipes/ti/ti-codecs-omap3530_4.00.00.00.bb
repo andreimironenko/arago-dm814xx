@@ -5,7 +5,7 @@ LICENSE = "TI"
 require ti-paths.inc
 require ti-staging.inc
 
-PR="r9"
+PR="r10"
 
 PV="4_00_00_00"
 
@@ -24,7 +24,7 @@ SRC_URI="http://software-dl.ti.com/dsps/dsps_public_sw/codecs/OMAP35xx//OMAP35xx
     http://software-dl.ti.com/dsps/dsps_public_sw/codecs/C64XPlus_Video//C64XPlus_Video_latest/c64xplus_mpeg4dec_02_01_00_00_production.bin;name=mpeg4dec \
     http://software-dl.ti.com/dsps/dsps_public_sw/codecs/C64XPlus_Audio//C64XPlus_Audio_latest/c64xplus_aachedec_01_30_03_00_production.bin;name=aachedec \
     http://software-dl.ti.com/dsps/dsps_public_sw/codecs/C64XPlus_Speech//C64XPlus_Speech_latest/c64xplus_g711_1_12_00_000_production.bin;name=g711 \
-    http://install.dir.local.com/deinterlacer_1_00_00_00.tgz \
+    http://software-dl.ti.com/dsps/dsps_public_sw/sdo_tii/OMAP35xx_DM37xx_C64xPLUS_Algorithms/01_00_00_07//exports/c64xplus_deinterlacer_01_00_00_07_production.bin;name=i2p \
     git://arago-project.org/git/projects/codec-servers.git;protocol=git \
 
 "
@@ -56,8 +56,8 @@ SRC_URI[aachedec.sha256sum] = "34d19e40d624ccdc1b371f9a5d6594b4793bdf3b7223ac659
 SRC_URI[g711.md5sum] = "fd8e9f939cc505dc5761705ed17a726c"
 SRC_URI[g711.sha256sum] = "c87021e8df2a3f494f47e5bdce8a5fad04d667aa1b792fd9b3ecff634867b48d"
 
-SRC_URI[md5sum] = "3a9d077af4a065c3c2ea003db4000170"
-SRC_URI[sha256sum] = "8fb8998bd9b8560a47f38ad4b37d969a7d703b398c6e0088cc5a51d3e2c5fa8d"
+SRC_URI[i2p.md5sum] = "f67c04eec9ee49c7a686eecf5d54be33"
+SRC_URI[i2p.sha256sum] = "3fbf8801f3ce2aabb6d31eb18e1e24e41ca861696b3140536f1d66adc76f0323"
 
 
 TI_BIN_UNPK_CMDS = "Y:workdir"
@@ -112,6 +112,11 @@ python do_unpack () {
     bb.data.setVar("TARFILE", "h264enc_dm6467_1_20_00_08/dm6446_g711dec_1_12_00_000_production.tar", d)
     bb.build.exec_func('ti_bin_do_unpack', d)
 
+    bb.data.setVar("BINFILE", "c64xplus_deinterlacer_01_00_00_07_production.bin", d)
+    bb.data.setVar("TARFILE", "c64xplus_deinterlacer_01_00_00_07/c64xplus_deinterlacer_01_00_00_07_production.tar", d)
+    bb.data.setVar("TI_BIN_UNPK_CMDS", "y: :q: ", d)
+    bb.build.exec_func('ti_bin_do_unpack', d)
+
 }
 
 addtask prepsources after do_unpack before do_patch
@@ -135,7 +140,7 @@ do_prepsources () {
     cp -a "${WORKDIR}/dm6446_aachedec_01_30_03_00_production/packages/ti/sdo/codecs/aachedec" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
     cp -a "${WORKDIR}/dm6446_g711enc_1_12_00_000_production/packages/ti/sdo/codecs/g711enc" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
     cp -a "${WORKDIR}/dm6446_g711dec_1_12_00_000_production/packages/ti/sdo/codecs/g711dec" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
-    cp -a "${WORKDIR}/deinterlacer_1_00_00_00/packages/ti/sdo/codecs/deinterlacer" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
+    cp -a "${WORKDIR}/c64xplus_deinterlacer_01_00_00_07_production/packages/ti/sdo/codecs/deinterlacer" "${CODEC_SUITE_NAME}/packages/ti/sdo/codecs"
     chmod 755 -R ${CODEC_SUITE_NAME}
 }
 

@@ -176,7 +176,7 @@ echo "
 
     case "$package" in
       task-*) continue ;;
-      *-src_*) delivered_as="Source and Binary"
+      *-src) delivered_as="Source and Binary"
             modified="Yes" 
             location="$2"
             ;; 
