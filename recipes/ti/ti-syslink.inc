@@ -1,154 +1,243 @@
-DESCRIPTION = "C6000 SYSLINK  Software"
+DESCRIPTION = "SYSLINK Inter-Processor Communications (IPC) for TI ARM/DSP processors"
 HOMEPAGE = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/syslink/index.html"
-
 SECTION = "devel"
-LICENSE = "TI" 
+LICENSE = "TI"
+
+# TODO :: multi-machine, add m3 build as well?
+# TODO :: proper staging?
+# TODO :: kernel module examples?
+# TODO :: smarter handling of config.bld
+# TODO :: review XDC parallel make - why not happening automatically?
+# TODO :: smarter suffix management
 
 require ti-paths.inc
 require ti-staging.inc
 
 PROVIDES = "ti-syslink-module"
-PROVIDES += "ti-syslink-samples"
+PROVIDES += "ti-syslink-examples"
 
 # This package builds a kernel module, use kernel PR as base and append a local version
 PR = "${MACHINE_KERNEL_PR}"
-PR_append = "h"
+PR_append = "i"
 
-S = "${WORKDIR}/syslink_${PV}"
+S = "${WORKDIR}/syslink_${PV}${PVextra}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/syslink/${PV}/exports/syslink_${PV}.tar.gz;name=syslinktarball"
 
-DEPENDS = "ti-sysbios ti-cgt6x ti-cgt-tms470 ti-xdctools ti-ipc"
-DEPENDS += "virtual/kernel"
+DEPENDS = "ti-sysbios ti-xdctools ti-cgt6x ti-ipc"  
+# Need to add M3 support in subsequent update
+#DEPENDS_append_ti816x = " ti-cgt470"
+DEPENDS += "virtual/kernel" 
 
-SYSLINKPLATFORM_c6a816x-evm          = "DM8168"
+SYSLINKHLOSSAMPLES = "procMgr frameq gateMP heapBufMP heapMemMP listMP messageQ notify ringIO ringIO_gpp sharedRegion"
+#SYSLINKRTOSSAMPLES = "frameq gateMP heapBufMP heapMemMP listMP messageQ notify ringIO ringIO_gpp sharedRegion"
+
+# SOC_FAMILY configuration
+
+SYSLINKPLATFORM_omap3     = "OMAP3530"
+SYSLINKPLATFORM_omapl137  = "OMAPL1XX"
+SYSLINKPLATFORM_omapl138  = "OMAPL1XX"
+SYSLINKPLATFORM_ti816x    = "TI81XX"
 SYSLINKPLATFORM          ?= "<UNDEFINED_SYSLINKPLATFORM>"
 
-SYSLINKXDCTARGETS_c6a816x-evm          = "ti.targets.arm.elf.M3 ti.targets.elf.C674"
-SYSLINKXDCTARGETS          ?= "<UNDEFINED_SYSLINKXDCTARGETS>"
+# COFF/ELF config - omap3 can be coff/elf, omapl only coff, ti816x only elf
 
-SYSLINKHLOSSAMPLES = "frameq gateMP heapBufMP heapMemMP listMP messageQ notify procMgr ringIO ringIO_gpp sharedRegion"
+# this really needs to be a list... in the case of ELF/COFF (and this could use DSPSUFFIX?)
+SYSLINKSUFFIX_omap3       = "x64P"
+SYSLINKSUFFIX_omapl137    = "x674"
+SYSLINKSUFFIX_omapl138    = "x674"
+SYSLINKSUFFIX_ti816x      = "xe674"
+SYSLINKSUFFIX            ?= "<UNDEFINED_SYSLINKSUFFIX>"
 
-SYSLINKRTOSSAMPLES = "notify messageQ frameq heapBufMP heapBufMP listMP ringIO ringIO_gpp "
-SYSLINKRTOSSAMPLES += "sharedRegion gateMP ringIO_dm8168 singlecore/frameq singlecore/ringio"
+SYSLINKLOADER_omap3       = "COFF"
+SYSLINKLOADER_omapl137    = "COFF"
+SYSLINKLOADER_omapl138    = "COFF"
+SYSLINKLOADER_ti816x      = "ELF"
+SYSLINKLOADER            ?= "<UNDEFINED_SYSLINKLOADER>"
 
-KERNEL_VERSION = "${@base_read_file('${STAGING_KERNEL_DIR}/kernel-abiversion')}"
+# Do we really need to configure this? - configured already in config.bld
+XDCTARGETS_omap3          = "ti.targets.C64P"
+XDCTARGETS_omapl137       = "ti.targets.C674"
+XDCTARGETS_omapl138       = "ti.targets.C674"
+# for ti816x, we should later also build for ti.targets.arm.elf.M3
+XDCTARGETS_ti816x         = "ti.targets.elf.C674"
+XDCTARGETS               ?= "<UNDEFINED_XDCTARGETS>"
+export XDCTARGETS
 
-# Exported Variables needed by build
+# Exported Variable needed by build
 SYSLINK_ROOT = "${S}"
 export SYSLINK_ROOT
 
 XDCPATH = "${IPC_INSTALL_DIR}/packages;${SYSBIOS_INSTALL_DIR}/packages" 
 export XDCPATH
 
-XDCTARGETS="${SYSLINKXDCTARGETS}" 
-export XDCTARGETS
-
 XDCBUILDCFG="${SYSLINK_ROOT}/config.bld"
 export XDCBUILDCFG
 
 do_configure() {
-    # Update config.bld for CGTools
-    # TODO: The regex of removing targets is DM1868 specific and needs to be cleaned up.
+
+    # Update config.bld with rootDir paths for CodeGen Tools
     sed -i \
-        -e s:^C64.rootDir.*:C64.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
         -e s:^C64P_COFF.rootDir.*:C64P_COFF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
         -e s:^C64P_ELF.rootDir.*:C64P_ELF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
-        -e s:^C67P_ELF.rootDir.*:C67P_ELF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
-        -e s:^C674_ELF.rootDir.*:C674_ELF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
         -e s:^C674_COFF.rootDir.*:C674_COFF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
-        -e s:^Arm9.rootDir.*:Arm9.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
-        -e s:^M3_ELF.rootDir.*:M3_ELF.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
+        -e s:^C674_ELF.rootDir.*:C674_ELF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
+        -e s:^M3_ELF.rootDir.*:M3_ELF.rootDir\ =\ \"${CODEGEN_ARM_INSTALL_DIR}\":g \
+        ${S}/config.bld
+}
+
+do_configure_append_ti816x() {
+
+    # Update config.bld to remove unused build targets
+    # - This will leave 'only the C674_ELF target'
+    sed -i \
         -e s:C64P_COFF,://C64P_COFF:g \
         -e s:C64P_ELF,://C64P_ELF:g \
+        -e s:C674_COFF,://C674_COFF:g \
         ${S}/config.bld
 
+    sed -i \
+        -e 's/"ti.platforms.evmDA830:dsp",//g' \
+        ${S}/config.bld
+}
+
+do_configure_append_omap3() {
+
+    # Update config.bld to remove unused build targets
+    # - This will leave 'only the C64P_COFF target'
+    sed -i \
+        -e s:C64P_ELF,://C64P_ELF:g \
+        -e s:C674_COFF,://C674_COFF:g \
+        -e s:C674_ELF,://C674_ELF:g \
+        ${S}/config.bld
+}
+
+do_configure_append_omapl137() {
+
+    # Update config.bld to remove unused build targets
+    # - This will leave 'only the C674_COFF target'
+    sed -i \
+        -e s:C64P_COFF,://C64P_COFF:g \
+        -e s:C64P_ELF,://C64P_ELF:g \
+        -e s:C674_ELF,://C674_ELF:g \
+        ${S}/config.bld
+
+    sed -i \
+        -e 's/"ti.syslink.samples.rtos.platforms.ti816x.dsp",//g' \
+        ${S}/config.bld
+}
+
+do_configure_append_omapl138() {
+
+    # Update config.bld to remove unused build targets
+    # - This will leave 'only the C674_COFF target'
+    sed -i \
+        -e s:C64P_COFF,://C64P_COFF:g \
+        -e s:C64P_ELF,://C64P_ELF:g \
+        -e s:C674_ELF,://C674_ELF:g \
+        ${S}/config.bld
+
+    sed -i \
+        -e 's/"ti.syslink.samples.rtos.platforms.ti816x.dsp",//g' \
+        ${S}/config.bld
 }
 
 do_prepsources () {
 	
     # Prepare the tree for rebuiling - clean and generate interfaces
-    cd ${SYSLINK_ROOT}/ti/syslink
-    ${XDC_INSTALL_DIR}/xdc .make -PR .
-    ${XDC_INSTALL_DIR}/xdc clean -PR .
-    ${XDC_INSTALL_DIR}/xdc .interfaces -PR .
+    cd ${SYSLINK_ROOT}/ti/syslink    
+    ${XDC_INSTALL_DIR}/xdc --jobs=${BB_NUMBER_THREADS} .make -PR .
+    ${XDC_INSTALL_DIR}/xdc --jobs=${BB_NUMBER_THREADS} clean -PR .
+    ${XDC_INSTALL_DIR}/xdc --jobs=${BB_NUMBER_THREADS} .interfaces -PR .
 }
 
 addtask prepsources after do_configure before do_compile
 
 do_compile() {
-    # Build the Kernel Module
-    # Followed instructions from DSP/LINK recipe to unset exported variables
+    # TODO :: KERNEL_CC, should use for kernel module build?
+    # TODO :: Check the 'unset's
+
     unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
 
+    # Build the gpp (hlos) kernel space
     cd ${SYSLINK_ROOT}/ti/syslink/utils/hlos/knl/Linux && make \
         ARCH="${TARGET_ARCH}" \
         CROSS_COMPILE="${TARGET_PREFIX}" \
         SYSLINK_PLATFORM="${SYSLINKPLATFORM}" \
+        SYSLINK_LOADER="${SYSLINKLOADER}" \
+        SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages" \
         KDIR="${STAGING_KERNEL_DIR}"
 
-    # Build the knl samples. 
+    # Build the gpp (hlos) kernel space samples. 
     for sample in ${SYSLINKHLOSSAMPLES}; do
-        cd ${SYSLINK_ROOT}/ti/syslink/samples/hlos/$sample/knl/Linux
-        make ARCH="${TARGET_ARCH}" \
+        cd ${SYSLINK_ROOT}/ti/syslink/samples/hlos/$sample/knl/Linux && make \
+            ARCH="${TARGET_ARCH}" \
             CROSS_COMPILE="${TARGET_PREFIX}" \
             SYSLINK_PLATFORM="${SYSLINKPLATFORM}" \
+            SYSLINK_LOADER="${SYSLINKLOADER}" \
+            SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages" \
             KDIR="${STAGING_KERNEL_DIR}"
     done
 
-    # Build the User Library
-    cd ${SYSLINK_ROOT}/ti/syslink/utils/hlos/usr/Linux && make CROSS_COMPILE="${TARGET_PREFIX}"
-
-    # Build the User side samples
-    cd ${SYSLINK_ROOT}/ti/syslink/utils/hlos/usr/Linux &&
-        make ARCH="${TARGET_ARCH}" \
+    # Build the gpp (hlos) user space
+    cd ${SYSLINK_ROOT}/ti/syslink/utils/hlos/usr/Linux && make \
+        ARCH="${TARGET_ARCH}" \
         CROSS_COMPILE="${TARGET_PREFIX}" \
-        SYSLINK_PLATFORM="${SYSLINKPLATFORM}"
+        TOOLCHAIN_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+        SYSLINK_PLATFORM="${SYSLINKPLATFORM}" \
+        SYSLINK_LOADER="${SYSLINKLOADER}" \
+        SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages"
 
-    cd ${SYSLINK_ROOT}/ti/syslink/samples/hlos/procMgr/usr/Linux &&
-        make ARCH="${TARGET_ARCH}" \
-        CROSS_COMPILE="${TARGET_PREFIX}" \
-        SYSLINK_PLATFORM="${SYSLINKPLATFORM}"
- 
+    # Build the gpp (hlos) user space samples 
     for sample in ${SYSLINKHLOSSAMPLES}; do
-        cd ${SYSLINK_ROOT}/ti/syslink/samples/hlos/$sample/usr/Linux
-        make ARCH="${TARGET_ARCH}" \
+        cd ${SYSLINK_ROOT}/ti/syslink/samples/hlos/$sample/usr/Linux && make \
+            ARCH="${TARGET_ARCH}" \
             CROSS_COMPILE="${TARGET_PREFIX}" \
-            SYSLINK_PLATFORM="${SYSLINKPLATFORM}"
+            TOOLCHAIN_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+            SYSLINK_PLATFORM="${SYSLINKPLATFORM}" \
+            SYSLINK_LOADER="${SYSLINKLOADER}" \
+            SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages"
     done
 
-    # Build the RTOS code.
-    # Don't build samples yet. As a hack, we move the samples out and after the build move them back.
-    mv ${SYSLINK_ROOT}/ti/syslink/samples ${S}
+    # Build the dsp/arm (rtos) code (system and samples)
     cd ${SYSLINK_ROOT}/ti/syslink && \
-        ${XDC_INSTALL_DIR}/xdc all -PR . 
-    mv ${S}/samples ${SYSLINK_ROOT}/ti/syslink
-
-    # Now build the RTOS samples in parallel. 
-    # First build platforms.
-    cd ${SYSLINK_ROOT}/ti/syslink/samples/rtos/platforms && \
-        ${XDC_INSTALL_DIR}/xdc all -PR . 
-
-    # Now build the remaining samples. Build in parallel as per local.conf. 
-    cd ${SYSLINK_ROOT}/ti/syslink/samples/rtos && \
-        echo ${SYSLINKRTOSSAMPLES} | xargs -n 1 -P ${BB_NUMBER_THREADS} -t ${XDC_INSTALL_DIR}/xdc all -P
-
+        ${XDC_INSTALL_DIR}/xdc --jobs=${BB_NUMBER_THREADS} -PR .
 }
 
-do_install() {
-    # Install the kernel module
+KERNEL_VERSION = "${@base_read_file('${STAGING_KERNEL_DIR}/kernel-abiversion')}"
+
+do_install () {
+
+    # Install the hlos kernel module
     install -d ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp
-    install -m 0755 ${SYSLINK_ROOT}/ti/syslink/lib/modules/${SYSLINKPLATFORM}/syslink.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp/ 
+    install -m 0755 ${SYSLINK_ROOT}/ti/syslink/lib/modules/${SYSLINKPLATFORM}/syslink.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp/
 
-    # Install the Syslink library in the filesystem 
-    install -d ${D}/${installdir}/ti-syslink-samples
-    install -m 0755 ${SYSLINK_ROOT}/ti/syslink/lib/syslink.a ${D}/${installdir}/ti-syslink-samples/
+    # TODO :: Should these be put in the kernel modules tree, and installed using modprobe - unsure since these are example modules
+    # Install the hlos example kernel module apps and remove duplicate copy of syslink.ko
+    install -d ${D}/${installdir}/ti-syslink-examples
+    install -m 0755 ${SYSLINK_ROOT}/ti/syslink/lib/modules/${SYSLINKPLATFORM}/*.ko ${D}/${installdir}/ti-syslink-examples/
+    rm ${D}/${installdir}/ti-syslink-examples/syslink.ko
 
-    # Install the Syslink samples in the filesystem 
-    cp -pPrf ${SYSLINK_ROOT}/ti/syslink/lib/samples/* ${D}/${installdir}/ti-syslink-samples/
+    # Install the hlos example apps 
+    install -d ${D}/${installdir}/ti-syslink-examples/
+    cp -pPrf ${SYSLINK_ROOT}/ti/syslink/lib/samples/*.exe ${D}/${installdir}/ti-syslink-examples/
 
-    install -d ${D}${SYSLINK_INSTALL_DIR_RECIPE}/packages
-    cp -pPrf ${S}/* ${D}${SYSLINK_INSTALL_DIR_RECIPE}/packages
+    # Install the rtos example apps 
+    cd ${SYSLINK_ROOT}/ti/syslink/samples/rtos
+    for i in $(find . -name "*.${SYSLINKSUFFIX}"); do
+        install -d ${D}/${installdir}/ti-syslink-examples/`dirname ${i} | cut -f4 -d /`
+        install ${i} ${D}/${installdir}/ti-syslink-examples/`dirname ${i} | cut -f4 -d /`
+    done
+
+    # TODO :: Fixup - library/headers installation - this shouldn't go into the examples directory....
+    # Needs proper staging
+    # Install the library in the filesystem
+    # install -d ${D}/${installdir}/ti-syslink-examples
+    # install -m 0755 ${SYSLINK_ROOT}/ti/syslink/lib/syslink.a ${D}/${installdir}/ti-syslink-examples/
+    
+    # Install/Stage the Source Tree
+    install -d ${D}${SYSLINK_INSTALL_DIR_RECIPE}
+    cp -pPrf ${S}/* ${D}${SYSLINK_INSTALL_DIR_RECIPE}
 }
 
 PACKAGES += "ti-syslink-module"
@@ -170,7 +259,7 @@ pkg_postrm_ti-syslink-module () {
 update-modules || true
 }
 
-PACKAGES += "ti-syslink-samples"
-RDEPENDS_ti-syslink-samples_append = " ti-syslink-module"
-FILES_ti-syslink-samples = "${installdir}/ti-syslink-samples/*"
-INSANE_SKIP_ti-syslink-samples = True
+PACKAGES += "ti-syslink-examples"
+RDEPENDS_ti-syslink-examples_append = " ti-syslink-module"
+FILES_ti-syslink-examples = "${installdir}/ti-syslink-examples/*"
+INSANE_SKIP_ti-syslink-examples = True
