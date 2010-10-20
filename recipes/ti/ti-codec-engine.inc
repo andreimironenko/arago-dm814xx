@@ -14,7 +14,7 @@ PROVIDES += "ti-codec-engine-examples"
 
 PR = "r8"
 
-S = "${WORKDIR}/codec_engine_${PV}"
+S = "${WORKDIR}/codec_engine_${PV}${PVExtra}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/ce/${PV}/exports/codec_engine_${PV},lite.tar.gz;name=cetarball "
 
@@ -36,7 +36,7 @@ CEEXAMPLESDEVICES_dm355      = "DM355"
 CEEXAMPLESDEVICES_dm365      = "DM365"
 CEEXAMPLESDEVICES_omapl137   = "OMAPL137"
 CEEXAMPLESDEVICES_omapl138   = "OMAPL138"
-CEEXAMPLESDEVICES_c6a816x-evm   = "DM8168"
+CEEXAMPLESDEVICES_c6a816x-evm   = "TI816X"
 CEEXAMPLESDEVICES           ?= "<UNDEFINED_CEEXAMPLESDEVICES>"
 
 # Define GPPOS variable
@@ -80,6 +80,8 @@ do_prepsources() {
                      XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
                      BIOS_INSTALL_DIR="${SYSBIOS_INSTALL_DIR}" \
                      BIOSUTILS_INSTALL_DIR="${BIOSUTILS_INSTALL_DIR}" \
+                     OSAL_INSTALL_DIR="${OSAL_INSTALL_DIR}" \
+                     IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
 		     SYSLINK_INSTALL_DIR="${SYSLINK_INSTALL_DIR}" \
                      XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
                      FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
@@ -112,6 +114,8 @@ do_compile () {
                      XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
                      BIOS_INSTALL_DIR="${SYSBIOS_INSTALL_DIR}" \
                      BIOSUTILS_INSTALL_DIR="${BIOSUTILS_INSTALL_DIR}" \
+                     OSAL_INSTALL_DIR="${OSAL_INSTALL_DIR}" \
+                     IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
 		     SYSLINK_INSTALL_DIR="${SYSLINK_INSTALL_DIR}" \
                      XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
                      FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
