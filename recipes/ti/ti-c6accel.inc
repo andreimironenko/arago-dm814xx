@@ -10,7 +10,7 @@ require ti-eula-unpack.inc
 
 PLATFORM_omapl138 = "omapl138"
 PLATFORM_omap3 = "omap3530"
-PLATFORM_c6a816x-evm = "DM8168"
+PLATFORM_c6a816x-evm = "TI816X"
 PLATFORM ?= "<UNDEFINED_PLATFORM>"
 
 COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm37x-evm|c6a816x-evm)"
@@ -65,7 +65,7 @@ do_install() {
     make \
       PLATFORM="${PLATFORM}" \
       CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
-      LINK_INSTALL_DIR="${SYSLINK_INSTALL_DIR}/packages" \
+      LINK_INSTALL_DIR="${SYSLINK_INSTALL_DIR}" \
       LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
       C6ACCEL_INSTALL_DIR="${S}" \
       EXEC_DIR_C6ACCEL="${D}/${installdir}/c6accel-apps" \
