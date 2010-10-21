@@ -1,7 +1,7 @@
 DESCRIPTION = "SYSLINK Inter-Processor Communications (IPC) for TI ARM/DSP processors"
 HOMEPAGE = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/syslink/index.html"
 SECTION = "devel"
-LICENSE = "TI"
+LICENSE = "BSD"
 
 # TODO :: multi-machine, add m3 build as well?
 # TODO :: proper staging?
