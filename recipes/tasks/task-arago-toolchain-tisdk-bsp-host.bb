@@ -27,14 +27,17 @@ BSP_COMPONENTS_dm365 = "\
 
 BSP_COMPONENTS_dm355 = "\
     ti-linux-driver-examples-src \
+    linux-davinci-src \
     "
 
 BSP_COMPONENTS_dm6446 = "\
     ti-linux-driver-examples-src \
+    linux-davinci-src \
     "
 
 BSP_COMPONENTS_dm6467 = "\
     ti-linux-driver-examples-src \
+    linux-davinci-src \
     "
 
 BSP_COMPONENTS_da850-omapl138-evm = "\
@@ -77,8 +80,7 @@ BSP_COMPONENTS_append_am37x-evm = "\
     flash-utility \
     "
 
-# Add components to omap3 components
-BSP_COMPONENTS_append_dm37x-evm = "\
+BSP_COMPONENTS_omapl138 = "\
     ti-tisdk-setup \
     ti-tisdk-relnotes \
     ti-docs-sdg \

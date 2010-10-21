@@ -33,6 +33,14 @@ GRAPHICS_APPS_ti816x = " \
     matrix-gui-e-src \
     "
 
+GRAPHICS_APPS_omapl138 = " \
+    matrix-gui-e-src \
+    "
+
+GRAPHICS_APPS_dm365 = " \
+    matrix-gui-e-src \
+    "
+
 RDEPENDS_${PN} = "\
     ${GRAPHICS_APPS} \
     "

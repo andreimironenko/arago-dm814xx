@@ -24,4 +24,5 @@ do_install() {
 }
 
 FILES_${PN} = "${libdir}"
-FILES_${PN}-dev = "${libdir}/libqwt.so* ${includedir}"
+FILES_${PN}-dev = "${libdir}/libqwt.so.5.2.1 ${includedir}"
+INSANE_SKIP_${PN}-dev = True

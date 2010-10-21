@@ -1,34 +1,35 @@
 DESCRIPTION = "Task to install dsp binaries on ${MACHINE}"
-PR = "r12"
+PR = "r13"
 LICENSE="MIT"
 
 inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-DSP_COMPONENTS_dm6446 = "\
+DSP_DVSDK_COMMON = " \
     ti-dsplink-examples \
+"
+
+DSP_COMPONENTS_dm6446 = "\
+    ${DSP_DVSDK_COMMON} \
     "
 
 DSP_COMPONENTS_dm6467 = "\
-    ti-dsplink-examples \
+    ${DSP_DVSDK_COMMON} \
     "
 
-DSP_COMPONENTS_da830-omapl137-evm = "\
-    ti-dsplink-examples \
+DSP_COMPONENTS_omapl137 = "\
+    ${DSP_DVSDK_COMMON} \
     "
 
-DSP_COMPONENTS_da850-omapl138-evm = "\
-    ti-dsplink-examples \
+DSP_COMPONENTS_omapl138 = "\
+    ${DSP_DVSDK_COMMON} \
     ti-c6accel-apps \
-    ti-c6run-apps \
-    qt-mandelbrot-accel \
     ti-dsp-benchmark-apps \
     "
 
 DSP_COMPONENTS_omap3 = "\
-    ti-dsplink-examples \
+    ${DSP_DVSDK_COMMON} \
     ti-c6accel-apps \
-    ti-c6run-apps \
     "
 
 DSP_COMPONENTS_c6a816x-evm = "\

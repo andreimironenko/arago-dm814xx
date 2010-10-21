@@ -189,20 +189,6 @@ sub build_image
         print "\n ERROR: failed to build sdk";
         exit 1;
     }
-
-    print "\nRunning uboot and uImage deploy for $machine\n";
-    $cmd = "MACHINE=$machine bitbake virtual/kernel -c deploy -f";
-    $result = system($cmd);
-    if ($result) {
-        print "\n ERROR: failed to deploy uImage";
-        exit 1;
-    }
-    $cmd = "MACHINE=$machine bitbake virtual/bootloader -c deploy -f";
-    $result = system($cmd);
-    if ($result) {
-        print "\n ERROR: failed to deploy uboot";
-        exit 1;
-    }
 }
 
 ################################################################################
@@ -382,16 +368,6 @@ sub copy_output
     
     if ($result) {
         print "\n ERROR: failed to execute $cmd";
-    }
-
-    # FIXME - Hack to ship prebuild uImage
-    print "\nReplacing uImage from HDVPSS Display Utils...";
-    $cmd = "cp $arago_tmp/work/$machine-none-linux-gnueabi/ti-hdvpss-display-utils*/hdvpss_display_utils_1_00_00_01/kernel/uImage $arago_images_output_dir/$machine/uImage-$machine.bin";
-    $result = system($cmd);
-    
-    if ($result) {
-        print "\n ERROR: failed to execute $cmd";
-        exit 1;
     }
 
     $cmd = "cp $arago_images_output_dir/$machine/uImage-$machine.bin $sdkpath/deploy/images/$machine";
@@ -667,7 +643,7 @@ sub get_input
         $input =~ s/\s+$//;
 
         if ($input) {
-            $sdkpath = "$input";
+            $sdkpath = "$arago_dir/$input";
         }
         else {
             $sdkpath = "$arago_dir/$sdkpath_default";

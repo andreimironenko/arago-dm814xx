@@ -81,12 +81,12 @@ do_install_prepend () {
     # copy gstreamer demo scripts
     cp -r ${WORKDIR}/gstreamer_ti/gstreamer_demo/shared ${D}/${installdir}/gst
 
-    # If we have loadmodule.sh in WORKDIR then give preference to this over
+    # If we have loadmodules.sh in WORKDIR then give preference to this over
     # the default gst-ti loadmdules.sh
     if [ -f ${WORKDIR}/loadmodules.sh ]; then
        cp ${WORKDIR}/loadmodules.sh ${D}/${installdir}/gst/${PLATFORM}
     else
-        cp -r ${WORKDIR}/gstreamer_ti/gstreamer_demo/${PLATFORM} ${D}/${installdir}/gst
+       cp -r ${WORKDIR}/gstreamer_ti/gstreamer_demo/${PLATFORM} ${D}/${installdir}/gst
     fi   
 
     # replace insmod with modprobe
