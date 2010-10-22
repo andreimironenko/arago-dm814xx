@@ -16,6 +16,7 @@ FFT_DEMO_c6a816x-evm = "\
 
 MATRIX_APPS = "\
     libxml2 \
+    matrix-gui-e \
     ${QTWIDGET_DEMO} \
     ${FFT_DEMO} \
     "
@@ -26,6 +27,7 @@ GRAPHICS_3D_omap3 = "libgles-omap3-rawdemos"
 
 RDEPENDS_${PN} = "\
     task-arago-qte \
+    qt4-embedded-plugin-phonon-backend-gstreamer \
     ${MATRIX_APPS} \
     ${GRAPHICS_3D} \
     "
