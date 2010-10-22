@@ -1,12 +1,15 @@
 DESCRIPTION = "Package contain Makefile and Rule.make used for building DVSDK components"
 LICENSE = "TI"
 
+COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|dm37x-evm|dm365-evm|da850-omapl138-evm)"
+
 require ti-paths.inc
 
 UBOOT_ENV_dm365 = "setup-uboot-env-dm365.sh"
 UBOOT_ENV_omapl138 = "setup-uboot-env-omapl138.sh"
 UBOOT_ENV_dm37x-evm = "setup-uboot-env-dm3730.sh"
 UBOOT_ENV_omap3evm = "setup-uboot-env-omap3530.sh"
+UBOOT_ENV_am37x-evm = "setup-uboot-env-am37x.sh"
 
 SRC_URI = "\
 	file://setup/setup.sh \
@@ -16,12 +19,9 @@ SRC_URI = "\
   	file://setup/setup-package-install.sh \
   	file://setup/setup-targetfs-nfs.sh \
   	file://setup/setup-tftp.sh \
-  	file://setup/setup-uboot-env-dm365.sh \
-  	file://setup/setup-uboot-env-omapl138.sh \
-  	file://setup/setup-uboot-env-dm3730.sh \
-  	file://setup/setup-uboot-env-omap3530.sh \
+        file://setup/${UBOOT_ENV} \
 "
-PR = "r21"
+PR = "r22"
 
 do_install () {
 	install -d ${D}/${installdir}

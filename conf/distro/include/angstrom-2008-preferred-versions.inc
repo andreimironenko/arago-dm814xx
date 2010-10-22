@@ -13,6 +13,9 @@ PREFERRED_VERSION_automake-native = "1.11.1"
 PREFERRED_VERSION_gettext = "0.17"
 PREFERRED_VERSION_gettext-native = "0.17"
 
+# pin older findutils, due to gettext 0.17
+PREFERRED_VERSION_findutils = "4.5.5"
+
 PREFERRED_VERSION_busybox 	= "1.13.2"
 PREFERRED_VERSION_cairo		= "1.8.10"
 PREFERRED_VERSION_dbus 		= "1.2.24"

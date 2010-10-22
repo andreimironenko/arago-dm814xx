@@ -19,7 +19,7 @@ DEMOSPLATFORM_omapl138   = "omapl138"
 DEMOSPLATFORM_omap3   = "omap3530"
 
 do_compile () {
-       cd ${S}
+	:
 }
 
 do_install () {

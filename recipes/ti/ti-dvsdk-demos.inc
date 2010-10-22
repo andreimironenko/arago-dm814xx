@@ -2,28 +2,22 @@ DESCRIPTION = "DVSDK Demo applications for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-INC_PR = "r17"
- 
+require ti-paths.inc
+require ti-staging.inc
+
 DEPENDS += "ti-dmai"
 DEPENDS += "alsa-lib libpng freetype jpeg"
 DEPENDS_append_omap3 = " ti-c6accel "
-
-require ti-paths.inc
-require ti-staging.inc
 
 DEMOSPLATFORM_dm355    = "dm355"
 DEMOSPLATFORM_dm365    = "dm365"
 DEMOSPLATFORM_dm6446   = "dm6446"
 DEMOSPLATFORM_dm6467   = "dm6467"
 DEMOSPLATFORM_omap3    = "omap3530"
-DEMOSPLATFORM_omapl137 = "ol137"
-DEMOSPLATFORM_omapl138 = "ol138"
 
-SRC_URI = "svn://winsvn.sanb.design.ti.com/SDOApps/apps/dvsdk_demos/;module=${DEMOSBRANCH};proto=http;user=anonymous;pswd='' \
-	file://doxygen_templates.tar.gz \
-	file://arago-tdox "
+PR = "${MACHINE_KERNEL_PR}"
+PR_append = "b"
 
-PR = "${INC_PR}.1"
 S  = "${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/dvsdk_demos_${PV}"
 
 do_preparesource () {
@@ -89,3 +83,4 @@ RDEPENDS_ti-dvsdk-demos_omap3 += "ti-cmem-module alsa-lib libpng freetype jpeg t
 FILES_${PN} = "${installdir}/dvsdk-demos/*"
 PACKAGE_STRIP = "no"
 INSANE_SKIP_${PN} = "True"
+
