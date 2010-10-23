@@ -8,6 +8,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 SECONDARY_BOOTLOADER = ""
 SECONDARY_BOOTLOADER_omap3 = "x-load"
+SECONDARY_BOOTLOADER_ti816x = "u-boot-min-sd"
 
 RDEPENDS_${PN} = "\
     dbus \
