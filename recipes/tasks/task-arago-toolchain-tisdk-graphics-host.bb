@@ -30,6 +30,7 @@ GRAPHICS_APPS_dm365-evm = " \
     "
 
 GRAPHICS_APPS_ti816x = " \
+    libgles-omap3-src \
     matrix-gui-e-src \
     "
 
