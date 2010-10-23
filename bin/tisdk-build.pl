@@ -12,6 +12,7 @@ my @packages;
 
 my $bsp_source = "task-arago-toolchain-tisdk-bsp-host";
 my $bsp_binary = "task-arago-tisdk-bsp";
+my $bsp_sdk_header = "task-arago-toolchain-tisdk-bsp-target";
 my $addons_source = "task-arago-toolchain-tisdk-addons-host";
 my $addons_binary = "task-arago-tisdk-addons";
 my $multimedia_source = "task-arago-toolchain-tisdk-multimedia-host";
@@ -32,6 +33,7 @@ my $machine_default = "dm6446-evm";
 
 my %machines = (
     "dm365-evm"     => {
+        SOC_FAMILY          => "dm365",
         bsp_default         => "yes",
         addons_default      => "yes",
         multimedia_default  => "yes",
@@ -40,6 +42,7 @@ my %machines = (
         graphics_default    => "yes",
     },
     "dm6446-evm"    => {
+        SOC_FAMILY          => "dm6446",
         bsp_default         => "yes",
         addons_default      => "yes",
         multimedia_default  => "yes",
@@ -48,6 +51,7 @@ my %machines = (
         graphics_default    => "yes",
     },
     "dm355-evm"     => {
+        SOC_FAMILY          => "dm355",
         bsp_default         => "yes",
         addons_default      => "yes",
         multimedia_default  => "yes",
@@ -56,6 +60,7 @@ my %machines = (
         graphics_default    => "yes",
     },
     "da830-omapl137-evm"     => {
+        SOC_FAMILY          => "omapl137",
         bsp_default         => "yes",
         addons_default      => "yes",
         multimedia_default  => "yes",
@@ -64,6 +69,7 @@ my %machines = (
         graphics_default    => "yes",
     },
     "dm6467-evm"     => {
+        SOC_FAMILY          => "dm6467",
         bsp_default         => "yes",
         addons_default      => "yes",
         multimedia_default  => "yes",
@@ -72,6 +78,7 @@ my %machines = (
         graphics_default    => "no",
     },
     "da850-omapl138-evm"     => {
+        SOC_FAMILY          => "omapl138",
         bsp_default         => "yes",
         addons_default      => "yes",
         multimedia_default  => "yes",
@@ -80,6 +87,7 @@ my %machines = (
         graphics_default    => "yes",
     },
     "omap3evm"     => {
+        SOC_FAMILY          => "omap3",
         bsp_default         => "yes",
         addons_default      => "yes",
         multimedia_default  => "yes",
@@ -88,6 +96,7 @@ my %machines = (
         graphics_default    => "yes",
     },
     "dm37x-evm"     => {
+        SOC_FAMILY          => "omap3",
         bsp_default         => "yes",
         addons_default      => "yes",
         multimedia_default  => "yes",
@@ -96,6 +105,25 @@ my %machines = (
         graphics_default    => "yes",
     },
     "am37x-evm"     => {
+        SOC_FAMILY          => "omap3",
+        bsp_default         => "yes",
+        addons_default      => "yes",
+        multimedia_default  => "yes",
+        dsp_default         => "no",
+        dvsdk_factory_default => "no",
+        graphics_default    => "yes",
+    },
+    "c6a816x-evm"     => {
+        SOC_FAMILY          => "ti816x",
+        bsp_default         => "yes",
+        addons_default      => "yes",
+        multimedia_default  => "yes",
+        dsp_default         => "yes",
+        dvsdk_factory_default => "no",
+        graphics_default    => "yes",
+    },
+    "am389x-evm"     => {
+        SOC_FAMILY          => "ti816x",
         bsp_default         => "yes",
         addons_default      => "yes",
         multimedia_default  => "yes",
@@ -194,7 +222,8 @@ sub copy_output
 
     if ($machine =~ m/beagleboard/ || $machine =~ m/omap3evm/ ||
         $machine =~ m/am3517-evm/ || $machine =~ m/dm37x/ ||
-        $machine =~ m/am37x/) {
+        $machine =~ m/am37x/ || $machine =~ m/c6a816x/ || 
+        $machine =~ m/am389x/) {
         $march = "armv7a";
     }
     else {
@@ -368,9 +397,20 @@ sub copy_output
     if ($result) {
         print "\n ERROR: failed to execute $cmd";
     }
+
+    # if MLO (x-load exists) copy it.
+    if (-e "$arago_images_output_dir/$machine/MLO-$machine") {
+        print "\nCopying MLO binary...";
+        $cmd = "cp $arago_images_output_dir/$machine/MLO-$machine $sdkpath/deploy/images/$machine";
+        $result = system($cmd);
+
+        if ($result) {
+            print "\n ERROR: failed to execute $cmd";
+        }
+    }
     
     # copy install script
-    print "\nCopying $arago_dir/arago/bin/install.sh ...";
+    print "\nCopying $arago_dir/arago/bin/tisdk-install.sh ...";
     $cmd = "cp $arago_dir/arago/bin/tisdk-install*.sh $sdkpath/install.sh";
     $result = system($cmd);
 
@@ -424,18 +464,25 @@ sub validate_input
 ################################################################################
 # compatible_machine
 ################################################################################
+# $machines{$machine}{'SOC_FAMILY'}
 sub compatible_machine
 {
     my @lines;
     my $found = 1;
+    my $machine = $_[1];
+    my $soc_family = $machines{$machine}{'SOC_FAMILY'};
 
     open IMAGEFILE, "<$_[0]" or die "Failed to open $_[0] for reading\n";
     @lines = <IMAGEFILE>;
     close IMAGEFILE;
 
+    # Check the image to see if it sets COMPATIBLE_MACHINE.  If so then
+    # check if the machine we are building for or its SOC_FAMILY is
+    # specified in the COMPATIBLE_MACHINE line.  If not then we do not
+    # want to build this image.
     for (my $cnt = 0; $cnt < scalar @lines; $cnt++) {
         if ($lines[$cnt] =~ m/.*COMPATIBLE_MACHINE(.*)/) {
-            if (not $lines[$cnt] =~ m/COMPATIBLE_MACHINE.*$_[1]/) {
+            if ((not $lines[$cnt] =~ m/COMPATIBLE_MACHINE.*$machine/) && (not $lines[$cnt] =~ m/COMPATIBLE_MACHINE.*$soc_family/)) {
                 $found = 0;
             }
         }
@@ -654,6 +701,7 @@ sub get_input
     if ($bsp =~ m/yes/i) {
         $packages[$index++] = $bsp_source;
         $packages[$index++] = $bsp_binary;
+        $packages[$index++] = $bsp_sdk_header;
     }
 
     if ($addons =~ m/yes/i) {
