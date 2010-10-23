@@ -60,6 +60,9 @@ DSP_SOURCETREE_c6a816x-evm = "\
     ti-syslink-src \
     ti-codec-engine-src \
     ti-c6accel-src \
+    ti-dsplib-c674x-src \
+    ti-imglib-c64plus-src \
+    ti-mathlib-c67x-src \
     "
 
 DSP_SOURCETREE = " "
