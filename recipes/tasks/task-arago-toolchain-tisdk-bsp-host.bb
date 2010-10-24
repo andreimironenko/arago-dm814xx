@@ -96,6 +96,7 @@ BSP_COMPONENTS_c6a816x-evm = "\
     ti-tisdk-setup \
     ti-tisdk-relnotes \
     ti-docs-sdg \
+    ti-tisdk-mksdboot \
     linux-omap3-src \
     "
 
