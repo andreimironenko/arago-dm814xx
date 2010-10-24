@@ -36,4 +36,5 @@ RDEPENDS_${PN} = "\
     libqt-embeddedwebkit4-dev \
     libqt-embeddedxml4-dev \
     ${GRAPHICS_3D} \
+    qwt-dev \
     "
