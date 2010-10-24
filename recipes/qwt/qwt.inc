@@ -12,8 +12,8 @@ inherit qt4e
 # EXTRA_QMAKEVARS_POST += "LIBS-=qpe"
 
 do_stage() {
-	oe_libinstall -so -C lib libqwt ${STAGING_LIBDIR}
-        install -m 0644 src/*.h ${STAGING_INCDIR}
+ 	oe_libinstall -so -C lib libqwt ${STAGING_LIBDIR}
+       install -m 0644 src/*.h ${STAGING_INCDIR}
 }
 
 do_install() {
@@ -23,6 +23,3 @@ do_install() {
         install -m 0644 src/*.h ${D}${includedir}
 }
 
-FILES_${PN} = "${libdir}"
-FILES_${PN}-dev = "${libdir}/libqwt.so.5.2.1 ${includedir}"
-INSANE_SKIP_${PN}-dev = True
