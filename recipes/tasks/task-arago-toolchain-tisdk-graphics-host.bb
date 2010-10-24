@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics application sources on host"
-PR = "r7"
+PR = "r8"
 LICENSE = "MIT"
 
 inherit task
@@ -9,6 +9,7 @@ GRAPHICS_APPS = ""
 
 GRAPHICS_APPS_omap3 = " \
     matrix-gui-src \
+    libgles-omap3-src \   
     "
    
 GRAPHICS_APPS_ti816x = " \
