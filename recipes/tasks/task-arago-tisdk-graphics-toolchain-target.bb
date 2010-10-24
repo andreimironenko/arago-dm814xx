@@ -7,6 +7,5 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 RDEPENDS_${PN} = "\
     qt4-embedded-dev \
-    qwt-dev \
     "
 
