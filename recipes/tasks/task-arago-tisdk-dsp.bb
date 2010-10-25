@@ -39,6 +39,7 @@ DSP_COMPONENTS_c6a816x-evm = "\
     ti-hdvpss-display-utils \
     ti-hdvpss-display-utils-loader \
     ti-hdvpss-display-utils-module \
+    ti-integra-demos \
     "
 
 DSP_COMPONENTS = ""

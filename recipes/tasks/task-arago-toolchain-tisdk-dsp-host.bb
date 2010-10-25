@@ -62,6 +62,7 @@ DSP_SOURCETREE_c6a816x-evm = "\
     ti-dsplib-c674x-src \
     ti-imglib-c64plus-src \
     ti-mathlib-c67x-src \
+    ti-signal-analyzer-demo-src \
     "
 
 DSP_SOURCETREE = " "
