@@ -2,11 +2,11 @@ include Rules.make
 
 DEFAULT_LINUXKERNEL_CONFIG=ti8168_evm_defconfig
 DEFAULT_UBOOT_CONFIG=ti8168_evm_config
-DMAI_PLATFORM=o3530_al
+MIN_UBOOT_CONFIG=ti8168_evm_min_sd
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	components components_clean all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_clean c6accel_install syslink syslink_clean syslink_install 
+.PHONY:	components components_clean all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_clean c6accel_install syslink syslink_clean syslink_install opengldemos opengldemos_clean opengldemos_install sademo sademo_clean sademo_install
 
 #==============================================================================
 # Build components to enable all other build targets. 
@@ -21,19 +21,17 @@ components_clean: linux_clean syslink_clean cmem_clean c6accel_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-all: components u-boot ceexamples
+all: components u-boot ceexamples opengldemos sademo
 
 #==============================================================================
 # Install everything
 #==============================================================================
-# install: linux_install cmem_install ceexamples_install syslink_install u-boot_install psp_examples_install c6accel_install opengldemos_install 
-install: linux_install cmem_install ceexamples_install syslink_install u-boot_install c6accel_install 
+install: linux_install cmem_install ceexamples_install syslink_install u-boot_install c6accel_install opengldemos_install sademo_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-# clobber: clean ceexamples_clean u-boot_clean psp_examples_clean opengldemos_clean 
-clean: components_clean ceexamples_clean u-boot_clean 
+clean: components_clean ceexamples_clean u-boot_clean opengldemos_clean sademo_clean
 
 #==============================================================================
 # A help message target.
@@ -78,10 +76,14 @@ help:
 	@echo "    c6accel_clean                : Remove generated c6accel files"
 	@echo "    c6accel_install              : Install c6accel examples"
 	@echo
-#	@echo "    opengldemos                  : Build the OPENGL graphics SDK demos for $(PLATFORM)"
-#	@echo "    opengldemos_clean            : Remove OPENGL graphics SDK demo files."
-#	@echo "    opengldemos_install          : install OPENGL graphics SDK demo executables."
-#	@echo
+	@echo "    opengldemos                  : Build the OPENGL graphics SDK demos for $(PLATFORM)"
+	@echo "    opengldemos_clean            : Remove OPENGL graphics SDK demo files."
+	@echo "    opengldemos_install          : install OPENGL graphics SDK demo executables."
+	@echo
+	@echo "    sademo                       : Build the Signal Analyzer demo for $(PLATFORM)"
+	@echo "    sademo_clean                 : Remove Signal Analyzer demo files."
+	@echo "    sademo_install               : install Signal Analyzer demo executables."
+	@echo
 	@echo "    all                          : Rebuild everything"
 	@echo "    clean                        : Remove all generated files"
 	@echo
@@ -110,15 +112,25 @@ linux_install:
 #==============================================================================
 # Build u-boot. Also, an explicit cleanup target is defined.
 #==============================================================================
-u-boot:
+u-boot-min:
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) $(MIN_UBOOT_CONFIG)
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX)
+	cd $(PSP_INSTALL_DIR)/u-boot-*; mv u-boot.bin MLO; cd -
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) distclean
+
+u-boot-min_clean:
+	rm -f $(PSP_INSTALL_DIR)/u-boot-*/MLO
+
+u-boot: u-boot-min
 	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_UBOOT_CONFIG)
 	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX)
 
-u-boot_clean: 
+u-boot_clean: u-boot-min_clean
 	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) distclean
 
 u-boot_install:
 	install -d $(EXEC_DIR)/boot
+	install $(PSP_INSTALL_DIR)/u-boot-*/MLO $(EXEC_DIR)/boot
 	install $(PSP_INSTALL_DIR)/u-boot-*/u-boot.bin $(EXEC_DIR)/boot
 	install $(PSP_INSTALL_DIR)/u-boot-*/u-boot.map $(EXEC_DIR)/boot
 
@@ -427,9 +439,6 @@ syslink_install:
 	install -d $(EXEC_DIR)/syslink
 	install ${SYSLINK_INSTALL_DIR}/ti/syslink/lib/modules/TI81XX/syslink.ko $(EXEC_DIR)/syslink
 	cp ${SYSLINK_INSTALL_DIR}/ti/syslink/lib/syslink.a $(EXEC_DIR)/syslink
-	@for file in $(shell find $(LINK_INSTALL_DIR)/dsplink/dsp/BUILD -name *.out); do \
-	cp $$file $(EXEC_DIR)/dsplink ; \
-	done
 
 ##############################################################################
 #  Build c6accel
@@ -479,7 +488,7 @@ c6accel_install:
 	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
 	PLATFORM="TI816X" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
 	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
 	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel" \
 	install
@@ -487,15 +496,55 @@ c6accel_install:
 ################################################################################
 # Build openGL demos
 ################################################################################
-# opengldemos:
-# 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x all
-# 
-# opengldemos_clean:
-# 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x clean
-# 
-# opengldemos_install:
-# 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x install EXEC_DIR=$(EXEC_DIR)/opengl-demos
-# 	for file in `find $(GRAPHICS_INSTALL_DIR)/gfx_rel_es3.x -name "*.ko"`; do \
-# 	    install $${file} $(EXEC_DIR)/opengl-demos; \
-# 	done
-# 
+opengldemos:
+	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
+		BUILD=release \
+		OMAPES=6.x \
+		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
+		CSTOOL_DIR=${CSTOOL_DIR} \
+		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
+		all
+
+opengldemos_clean:
+	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
+		BUILD=release \
+		OMAPES=6.x \
+		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
+		CSTOOL_DIR=${CSTOOL_DIR} \
+		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
+		clean
+
+opengldemos_install:
+	mkdir -p ${EXEC_DIR}/opengl-demos/etc/init.d
+	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
+		BUILD=release \
+		OMAPES=6.x \
+		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
+		CSTOOL_DIR=${CSTOOL_DIR} \
+		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
+		TARGETFS_INSTALL_DIR=$(EXEC_DIR)/opengl-demos \
+		install
+	for file in `find $(GRAPHICS_INSTALL_DIR)/gfx_rel_es3.x -name "*.ko"`; do \
+	    install $${file} $(EXEC_DIR)/opengl-demos; \
+	done
+
+
+################################################################################
+# Build Signal Analyzer demo
+################################################################################
+
+sademo:
+	. $(LINUX_DEVKIT_DIR)/environment-setup; cd $(SADEMO_INSTALL_DIR)/fft-gui-r; qmake; cd -
+	$(MAKE) -C $(SADEMO_INSTALL_DIR) \
+		ROOTDIR=$(DVSDK_INSTALL_DIR) \
+		PLATFORM_XDC=ti.platforms.evmDM8168 \
+		FFT_QT_GUI_INSTALL_DIR=$(SADEMO_INSTALL_DIR)/fft-gui-r
+	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR)/fft-gui-r
+
+sademo_clean:
+	$(MAKE) -C $(SADEMO_INSTALL_DIR) clean
+	if [ -e $(SADEMO_INSTALL_DIR)/fft-gui-r/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR)/fft-gui-r distclean; fi
+
+sademo_install:
+	install -d $(EXEC_DIR)/signal-analyzer
+	install $(SADEMO_INSTALL_DIR)/fft-gui-r/fft_demo_app $(EXEC_DIR)/signal-analyzer
