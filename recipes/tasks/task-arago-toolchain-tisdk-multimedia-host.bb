@@ -17,6 +17,8 @@ MULTIMEDIA_DVSDK_COMMON = " \
     gstreamer-ti-src \
  "
 
+MULTIMEDIA_SOURCETREE_am37x-evm = ""
+
 MULTIMEDIA_SOURCETREE_omap3 = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
     ti-codecs-omap3530-src \
