@@ -27,8 +27,8 @@ INITSCRIPT_PARAMS = "defaults 15"
 do_install() {
     # Install the kernel modules
     install -d ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/video
-    install -m 0755 ${S}/kernel/vpss.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/video/ 
-    install -m 0755 ${S}/kernel/ti81xxfb.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/video/ 
+    # install -m 0755 ${S}/kernel/vpss.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/video/ 
+    # install -m 0755 ${S}/kernel/ti81xxfb.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/video/ 
     install -m 0755 ${S}/kernel/TI81xx_hdmi.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/video/ 
 
     # Install the firmware loader on the filesystem 
