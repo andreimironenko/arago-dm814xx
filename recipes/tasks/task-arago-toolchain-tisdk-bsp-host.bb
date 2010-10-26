@@ -99,6 +99,7 @@ BSP_COMPONENTS_c6a816x-evm = "\
     ti-docs-psp \
     ti-tisdk-mksdboot \
     linux-omap3-src \
+    pinmux-utility \
     "
 
 RRECOMMENDS_${PN} = "\
