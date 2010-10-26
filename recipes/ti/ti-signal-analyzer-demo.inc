@@ -7,11 +7,11 @@ require ti-staging.inc
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-PR = "r1"
+PR = "r2"
 
-S  = "${WORKDIR}/signal-analyzer_${PV}"
+S  = "${WORKDIR}/signal-analyzer-demo_${PV}"
 
-SRC_URI = "http://install.source.dir.local/signal-analyzer_${PV}.tar.gz;name=sademo"
+SRC_URI = "http://install.source.dir.local/signal-analyzer-demo_${PV}.tar.gz;name=sademo"
 
 PROVIDES += "ti-integra-demos"
 
@@ -20,7 +20,7 @@ PROVIDES += "ti-integra-demos"
 
 do_install() {
     install -d ${D}/${installdir}/ti-integra-demos
-    cp -pPrf ${S}/fft-gui-r/fft_demo_app ${D}/${installdir}/ti-integra-demos
+    cp -pPrf ${S}/sigan-gui-r/sigan_demo_app ${D}/${installdir}/ti-integra-demos
     cp -pPrf ${S}/scripts/bin/runSADemo ${D}/${installdir}/ti-integra-demos
     cp -pPrf ${S}/scripts/bin/fft_demo_8khz.pcm ${D}/${installdir}/ti-integra-demos
 }
