@@ -8,6 +8,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 # Install 3D graphics for all omap3 SOC_FAMILY devices
 GRAPHICS_3D = ""
 GRAPHICS_3D_omap3 = "libgles-omap3-dev"
+GRAPHICS_3D_ti816x = "libgles-omap3-dev"
 
 # graphics SDK source package is already installed hence no need for duplicating the headers.
 GRAPHICS_3D_omap3evm = ""
@@ -35,4 +36,5 @@ RDEPENDS_${PN} = "\
     libqt-embeddedwebkit4-dev \
     libqt-embeddedxml4-dev \
     ${GRAPHICS_3D} \
+    qwt-dev \
     "

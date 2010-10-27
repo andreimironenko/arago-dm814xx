@@ -45,9 +45,6 @@ XDC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__xdctools__>
 # Where the Code Gen is installed.
 CODEGEN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__cgt6x__>
 
-# Where the Code Gen is installed.
-TMS470_CODEGEN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__cgt-tms470__>
-
 # Where the PSP is installed.
 PSP_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/psp
 
@@ -57,10 +54,16 @@ KERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR)
 
 # Where the development headers and libs are installed.
 LINUX_DEVKIT_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit
-export ENV_SETUP=$(LINUX_DEVKIT_PATH)/environment-setup
 
 # Where c6accel package is installed.
 C6ACCEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__c6accel__>
+
+
+# Where opengl graphics package is installed.
+GRAPHICS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__libgles-omap3__>
+
+# Where signal analyzer package is installed
+SADEMO_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/demos/<__signal-analyzer-demo__>
 
 # The prefix to be added before the GNU compiler tools (optionally including # path), i.e. "arm_v5t_le-" or "/opt/bin/arm_v5t_le-".
 CSTOOL_DIR=<__CROSS_COMPILER_PATH__>

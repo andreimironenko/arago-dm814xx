@@ -1,0 +1,42 @@
+
+           == README ==
+
+The purpose of this readme is to describe on how to create SD card for C6A816x/AM389x EVM.
+
+1. Download EVSDK from ....
+
+2. Install the EVSDK on supported Linux host machine.
+  host # ./ezsdk_c6a816x-evm_5_00_00_00_setuplinux.bin
+
+3. Power OFF the EVM.
+
+4. Plug a 4GB SD card on Linux host machine.
+
+5. Run dmesg command to check the device node. Triple check this to ensure you 
+   do not damage your HDD contents! E.g.
+
+  host # dmesg
+    [14365.272631] sd 6:0:0:1: [sdc] 3862528 512-byte logical blocks: (1.97 GB/1.84 GiB)
+    [14365.310602] sd 6:0:0:1: [sdc] Assuming drive cache: write through
+    [14365.325542] sd 6:0:0:1: [sdc] Assuming drive cache: write through
+    [14365.325571]  sdc: sdc1 sdc2
+
+  * In this example, SD card is detected on /dev/sdc.
+
+6. Run mksdboot script on host machine to create SD card.
+
+   host # sudo ./mksdboot.sh --device /dev/sdc --sdk <sdk_installation_location>
+     <installation bin file names>
+
+   e.g
+    sudo ./mksdboot --device /dev/sdc --sdk /home/user/ti-ezsdk_c6a816x-evm_5_00 
+    /downloads/ezsdk_c6a816x-evm_5_00_00_00_setuplinux.bin
+
+7. On completion, plug the SD card on EVM and Power cycle the board.
+
+8. Note! If your flash already has a u-boot environment stored, this will get
+   picked up even while booting from SD-card. If this is the case, halt the
+   u-boot auto boot process and enter the following command:
+
+   TI816x_EVM # nand erase 0x260000 0
+

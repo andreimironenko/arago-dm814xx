@@ -23,7 +23,7 @@ export DMAI_INSTALL_DIR_RECIPE       = "${installdir}/ti-dmai-tree"
 export DM365MM_INSTALL_DIR_RECIPE    = "${installdir}/ti-dm365mm-module-tree"
 export CODEC_INSTALL_DIR_RECIPE      = "${installdir}/ti-codecs-tree"
 export DSPLIB_C64P_INSTALL_DIR_RECIPE     = "${installdir}/ti-dsplib-c64p-tree"
-export DSPLIB_C674_INSTALL_DIR_RECIPE     = "${installdir}/ti-dsplib-c674-tree"
+export DSPLIB_C674_INSTALL_DIR_RECIPE     = "${installdir}/ti-dsplib-c674x-tree"
 export LINUXKERNEL_SOURCE_DIR        = "${installdir}/ti-psp-tree/linux-kernel-source"
 export UBOOT_SOURCE_DIR              = "${installdir}/ti-psp-tree/u-boot-source"
 export LINUXEXAMPLE_SOURCE_DIR       = "${installdir}/ti-psp-tree/linux-driver-examples"
@@ -39,7 +39,7 @@ export C6RUN_INSTALL_DIR_RECIPE      = "${installdir}/ti-c6run-tree"
 export AUDIO_SOC_INSTALL_DIR_RECIPE  = "${installdir}/ti-audio-soc-example-tree"
 export C6ACCEL_INSTALL_DIR_RECIPE    = "${installdir}/ti-c6accel-tree"
 export IMGLIB_C64P_INSTALL_DIR_RECIPE    = "${installdir}/ti-imglib-tree"
-export FASTMATHLIB_C674P_INSTALL_DIR_RECIPE    = "${installdir}/ti-fastmathlib-tree"
+export FASTMATHLIB_C674P_INSTALL_DIR_RECIPE    = "${installdir}/ti-fastmathlib-c67x-tree"
 export DSP_BENCHMARK_INSTALL_DIR_RECIPE = "${installdir}/ti-dsp-benchmark-tree"
 
 # This is where the tools will end up in staging provided PACKAGE_ARCH = ${MACHINE_ARCH} is set
@@ -74,6 +74,6 @@ export DSP_BENCHMARK_INSTALL_DIR = "${STAGING_DIR}/${MULTIMACH_TARGET_SYS}${DSP_
 
 DSPSUFFIX_omapl137 = "x674"
 DSPSUFFIX_omapl138 = "x674"
-DSPSUFFIX_c6a816x-evm = "x674"
+DSPSUFFIX_c6a816x-evm = "xe674"
 DSPSUFFIX ?= "x64P"
 

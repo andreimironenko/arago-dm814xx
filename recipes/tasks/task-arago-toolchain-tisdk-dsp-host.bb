@@ -48,7 +48,6 @@ DSP_SOURCETREE_omap3 = "\
 
 DSP_SOURCETREE_c6a816x-evm = "\
     ti-cgt6x-src \
-    ti-cgt-tms470-src \
     ti-sysbios-src \
     ti-xdctools-src \
     ti-edma3lld-src \
@@ -60,6 +59,10 @@ DSP_SOURCETREE_c6a816x-evm = "\
     ti-syslink-src \
     ti-codec-engine-src \
     ti-c6accel-src \
+    ti-dsplib-c674x-src \
+    ti-imglib-c64plus-src \
+    ti-mathlib-c67x-src \
+    ti-signal-analyzer-demo-src \
     "
 
 DSP_SOURCETREE = " "

@@ -15,7 +15,7 @@ my $protocol = "";
 my $protocol_default = "git";
 
 my $aragocommit_default        = "HEAD";
-my $aragogitrepository_default = "arago-project.org/git/people/brijesh/arago-dvsdk.git";
+my $aragogitrepository_default = "arago-project.org/git/people/siddharth/arago-c6a8.git";
 
 my $auto_install = 0;
 
