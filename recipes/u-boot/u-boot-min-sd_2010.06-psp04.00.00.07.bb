@@ -13,19 +13,26 @@ PSPREL = "04.00.00.07"
 PR = "r1"
 
 UBOOT_MACHINE = "ti8168_evm_min_sd"
-UBOOT_BINARY ?= "u-boot.bin"
+TI_UBOOT_BINARY ?= "u-boot.min.sd"
 UBOOT_MLO_SYMLINK ?= "MLO"
 UBOOT_MLO_IMAGE ?= "MLO-${MACHINE}-${PV}-${PR}"
 
+do_compile_append () {
+        unset LDFLAGS
+        unset CFLAGS
+        unset CPPFLAGS
+        oe_runmake u-boot.ti
+}
+
 do_install() {
-    cp ${S}/${UBOOT_BINARY} ${S}/${UBOOT_MLO_IMAGE}
+    cp ${S}/${TI_UBOOT_BINARY} ${S}/${UBOOT_MLO_IMAGE}
     install -d ${D}/boot
     install ${S}/${UBOOT_MLO_IMAGE} ${D}/boot/${UBOOT_MLO_IMAGE}
     ln -sf ${UBOOT_MLO_IMAGE} ${D}/boot/${UBOOT_MLO_SYMLINK}
 } 
 
 do_deploy() {
-    cp ${S}/${UBOOT_BINARY} ${S}/${UBOOT_MLO_IMAGE}
+    cp ${S}/${TI_UBOOT_BINARY} ${S}/${UBOOT_MLO_IMAGE}
     install -d ${DEPLOY_DIR_IMAGE}
     install ${S}/${UBOOT_MLO_IMAGE} ${DEPLOY_DIR_IMAGE}/${UBOOT_MLO_IMAGE}
     package_stagefile_shell ${DEPLOY_DIR_IMAGE}/${UBOOT_MLO_IMAGE}
