@@ -13,7 +13,7 @@ TOPIC_dm365 = "TMS320DM365_Software_Developers_Guide"
 TOPIC_omapl138 = "OMAPL138_Software_Developers_Guide"
 TOPIC_dm37x-evm = "TMS320DM3730_Software_Developers_Guide"
 TOPIC_omap3evm = "OMAP3530_Software_Developers_Guide"
-TOPIC_c6a816x-evm = "C6A816x_Software_Developers_Guide"
+TOPIC_c6a816x-evm = "C6A816x_AM389x_Software_Developers_Guide"
 
 TOPICFILE = "${@bb.data.getVar('TOPIC', d, 1).replace('/','_')}"
 TOPICURL = "http://ap-fpdsp-swapps.dal.design.ti.com/index.php/${TOPIC}"
