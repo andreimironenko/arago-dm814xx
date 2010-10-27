@@ -534,17 +534,17 @@ opengldemos_install:
 ################################################################################
 
 sademo:
-	. $(LINUX_DEVKIT_DIR)/environment-setup; cd $(SADEMO_INSTALL_DIR)/fft-gui-r; qmake; cd -
+	. $(LINUX_DEVKIT_DIR)/environment-setup; cd $(SADEMO_INSTALL_DIR)/sigan-gui-r; qmake; cd -
 	$(MAKE) -C $(SADEMO_INSTALL_DIR) \
 		ROOTDIR=$(DVSDK_INSTALL_DIR) \
 		PLATFORM_XDC=ti.platforms.evmDM8168 \
-		FFT_QT_GUI_INSTALL_DIR=$(SADEMO_INSTALL_DIR)/fft-gui-r
-	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR)/fft-gui-r
+		FFT_QT_GUI_INSTALL_DIR=$(SADEMO_INSTALL_DIR)/sigan-gui-r
+	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR)/sigan-gui-r
 
 sademo_clean:
 	$(MAKE) -C $(SADEMO_INSTALL_DIR) clean
-	if [ -e $(SADEMO_INSTALL_DIR)/fft-gui-r/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR)/fft-gui-r distclean; fi
+	if [ -e $(SADEMO_INSTALL_DIR)/sigan-gui-r/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR)/sigan-gui-r distclean; fi
 
 sademo_install:
 	install -d $(EXEC_DIR)/signal-analyzer
-	install $(SADEMO_INSTALL_DIR)/fft-gui-r/fft_demo_app $(EXEC_DIR)/signal-analyzer
+	install $(SADEMO_INSTALL_DIR)/sigan-gui-r/fft_demo_app $(EXEC_DIR)/signal-analyzer
