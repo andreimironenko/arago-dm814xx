@@ -139,10 +139,8 @@ fi
 # creating boot.scr
 execute "mkdir -p /tmp/sdk"
 cat <<EOF >/tmp/sdk/boot.cmd
-mmc init
-fatload mmc 1 0x80009000 uImage
 setenv bootargs 'console=ttyS2,115200n8 root=/dev/mmcblk0p2 rw mem=166M earlyprink vram=50M ti816xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd'
-printenv
+fatload mmc 1 0x80009000 uImage
 bootm 0x80009000
 EOF
 
@@ -161,6 +159,7 @@ execute "cp /tmp/sdk/boot.scr /tmp/sdk/$$/"
 execute "cp /tmp/sdk/boot.cmd /tmp/sdk/$$/"
 execute "cp $sdkdir/psp/prebuilt-images/uImage /tmp/sdk/$$/"
 execute "cp $sdkdir/psp/prebuilt-images/u-boot.bin /tmp/sdk/$$/"
+execute "cp $sdkdir/psp/prebuilt-images/u-boot.noxip.bin /tmp/sdk/$$/"
 execute "cp $sdkdir/psp/prebuilt-images/MLO /tmp/sdk/$$/"
 execute "cp $sdkdir/bin/top_ti816x_evm.png /tmp/sdk/$$/"
 execute "cp $sdkdir/bin/windows_users.htm /tmp/sdk/$$/"
@@ -172,7 +171,7 @@ execute "umount /tmp/sdk/$$"
 
 execute "mount ${device}2 /tmp/sdk/$$"
 echo "Extracting filesystem on ${device}2 ..."
-rootfs=`ls -1 $sdkdir/filesystem/dvsdk*rootfs.tar.gz`
+rootfs=`ls -1 $sdkdir/filesystem/??sdk*rootfs.tar.gz`
 execute "tar zxf $rootfs -C /tmp/sdk/$$"
 sync
 
