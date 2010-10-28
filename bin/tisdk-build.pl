@@ -5,7 +5,7 @@ use POSIX;
 ################################################################################
 # TISDK Arago build script
 ################################################################################
-my $script_version = "0.8";
+my $script_version = "0.9";
 
 my @no_machines = ("arago", "include");
 my @packages;
@@ -124,6 +124,15 @@ my %machines = (
     },
     "am389x-evm"     => {
         SOC_FAMILY          => "ti816x",
+        bsp_default         => "yes",
+        addons_default      => "yes",
+        multimedia_default  => "yes",
+        dsp_default         => "no",
+        dvsdk_factory_default => "no",
+        graphics_default    => "yes",
+    },
+    "dm368-evm"     => {
+        SOC_FAMILY          => "dm365",
         bsp_default         => "yes",
         addons_default      => "yes",
         multimedia_default  => "yes",

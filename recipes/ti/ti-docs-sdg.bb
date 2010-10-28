@@ -7,7 +7,7 @@ DEPENDS = "ti-post-process-wiki-native"
 
 PR = "r3"
 
-COMPATIBLE_MACHINE = "(dm365-evm|da850-omapl138-evm|dm37x-evm|omap3evm)"
+COMPATIBLE_MACHINE = "(dm365-evm|da850-omapl138-evm|dm37x-evm|omap3evm|dm368-evm)"
 
 TOPIC_dm365 = "TMS320DM365_Software_Developers_Guide"
 TOPIC_omapl138 = "OMAPL138_Software_Developers_Guide"
