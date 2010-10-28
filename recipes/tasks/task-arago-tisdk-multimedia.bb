@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r29"
+PR = "r30"
 LICENSE = "MIT"
 
 inherit task
@@ -36,6 +36,12 @@ MULTIMEDIA_omapl137 = " \
 
 MULTIMEDIA_omapl138 = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
+    "
+
+# Use gst-ffmpeg for AM devices
+MULTIMEDIA_am180x-evm = " \
+    task-arago-gst \
+    gst-ffmpeg \
     "
 
 MULTIMEDIA_dm6467 = " \

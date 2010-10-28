@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install multimedia source (or development header) packages on host"
-PR = "r19"
+PR = "r20"
 LICENSE = "MIT"
 
 inherit task
@@ -60,6 +60,9 @@ MULTIMEDIA_SOURCETREE_omapl138 = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
     ti-codecs-omapl138-src \
     "
+
+# Do not pull DSP sources into AMSDK builds
+MULTIMEDIA_SOURCETREE_am180x-evm = ""
 
 RRECOMMENDS_${PN} = "\
     ${MULTIMEDIA_SOURCETREE} \
