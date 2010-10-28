@@ -1,7 +1,7 @@
 DESCRIPTION = "Package containing scripts to setup the development host and target board"
 LICENSE = "TI"
 
-COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|dm37x-evm|dm365-evm|da850-omapl138-evm)"
+COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|dm37x-evm|dm365-evm|omapl138)"
 
 require ti-paths.inc
 
@@ -22,7 +22,7 @@ SRC_URI = "\
         file://setup/${UBOOT_ENV} \
 "
 
-PR = "r19"
+PR = "r20"
 
 do_install () {
 	install -d ${D}/${installdir}
