@@ -3,7 +3,7 @@ require recipes/linux/linux.inc
 DESCRIPTION = "Linux kernel for OMAPL1 processors"
 KERNEL_IMAGETYPE = "uImage"
 
-COMPATIBLE_MACHINE = "(da830-omapl137-evm|da850-omapl138-evm)"
+COMPATIBLE_MACHINE = "(omapl137|omapl138)"
 
 DEFAULT_PREFERENCE = "-1"
 

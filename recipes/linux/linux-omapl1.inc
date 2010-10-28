@@ -9,7 +9,7 @@ SRC_URI = "git://arago-project.org/git/projects/linux-omapl1.git;protocol=git \
 	file://defconfig"
 
 # Requires support for SOC_FAMILY matching in COMPATIBLE_MACHINE
-COMPATIBLE_MACHINE = "(da830-omapl137-evm|da850-omapl138-evm)"
+COMPATIBLE_MACHINE = "(omapl137|omapl138)"
 
 S = "${WORKDIR}/git"
 
