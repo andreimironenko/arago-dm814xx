@@ -1,0 +1,1 @@
+SOC_FAMILY = "dm368"
