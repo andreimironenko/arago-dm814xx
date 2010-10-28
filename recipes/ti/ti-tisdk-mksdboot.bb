@@ -2,12 +2,12 @@ DESCRIPTION = "Scripts to create bootable SD card for ${MACHINE}"
 HOMEPAGE_dm365 = "http://processors.wiki.ti.com/index.php/SD_card_boot_and_flashing_tool_for_DM355_and_DM365"
 LICENSE = GPLv2
 
-PR = "r22"
+PR = "r23"
 
 require ti-paths.inc
 require ti-staging.inc
 
-PLATFORM_da850-omapl138-evm = "omapl138"
+PLATFORM_omapl138 = "omapl138"
 PLATFORM_omap3 = "omap35x"
 
 SRC_URI = "file://mksdboot.sh \
@@ -53,7 +53,7 @@ do_install () {
 	cp ${WORKDIR}/README.boot.scr ${D}/${installdir}/bin
 }
 
-do_install_da850-omapl138-evm () {
+do_install_omapl138 () {
         mkdir -p ${D}/${installdir}/bin/
         cp ${WORKDIR}/mksdboot.sh ${D}/${installdir}/bin/
         chmod +x ${D}/${installdir}/bin/mksdboot.sh
