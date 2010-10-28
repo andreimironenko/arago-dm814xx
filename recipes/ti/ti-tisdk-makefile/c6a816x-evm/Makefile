@@ -547,4 +547,4 @@ sademo_clean:
 
 sademo_install:
 	install -d $(EXEC_DIR)/signal-analyzer
-	install $(SADEMO_INSTALL_DIR)/sigan-gui-r/fft_demo_app $(EXEC_DIR)/signal-analyzer
+	install $(SADEMO_INSTALL_DIR)/sigan-gui-r/sigan_demo_app $(EXEC_DIR)/signal-analyzer
