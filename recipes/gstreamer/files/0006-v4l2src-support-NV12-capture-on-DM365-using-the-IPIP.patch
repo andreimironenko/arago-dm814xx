@@ -1,18 +1,18 @@
-From ff069b7e224a565dd610da714cca8d9c7912c4ef Mon Sep 17 00:00:00 2001
-From: Don Darling <don.osc2@gmail.com>
-Date: Wed, 14 Apr 2010 20:01:45 -0500
-Subject: [PATCH 07/14] v4l2src: support NV12 capture on DM365 using the IPIPE in on-the-fly mode
+From ab6f158233d0056efd404cf69fc0168aca337237 Mon Sep 17 00:00:00 2001
+From: Don Darling <ddarling@ti.com>
+Date: Tue, 12 Oct 2010 15:36:01 -0500
+Subject: [PATCH 06/16] v4l2src: support NV12 capture on DM365 using the IPIPE in on-the-fly mode
 
 ---
  sys/v4l2/Makefile.am        |    2 +
  sys/v4l2/Makefile.in        |   10 +
- sys/v4l2/gstv4l2object.c    |   27 ++
+ sys/v4l2/gstv4l2object.c    |   20 ++
  sys/v4l2/gstv4l2object.h    |   13 +
  sys/v4l2/v4l2_calls.c       |   15 ++
  sys/v4l2/v4l2_dm365_ipipe.c |  548 +++++++++++++++++++++++++++++++++++++++++++
  sys/v4l2/v4l2_dm365_ipipe.h |   63 +++++
  sys/v4l2/v4l2src_mvl_lsp.h  |    6 +-
- 8 files changed, 681 insertions(+), 3 deletions(-)
+ 8 files changed, 674 insertions(+), 3 deletions(-)
  create mode 100644 sys/v4l2/v4l2_dm365_ipipe.c
  create mode 100644 sys/v4l2/v4l2_dm365_ipipe.h
 
@@ -36,10 +36,10 @@ index 0c0e086..92f289c 100644
  	v4l2src_calls.h \
  	v4l2src_mvl_lsp.h
 diff --git a/sys/v4l2/Makefile.in b/sys/v4l2/Makefile.in
-index dea048f..9f6a55b 100644
+index 7206cae..4ba24a7 100644
 --- a/sys/v4l2/Makefile.in
 +++ b/sys/v4l2/Makefile.in
-@@ -100,6 +100,7 @@ am_libgstvideo4linux2_la_OBJECTS = libgstvideo4linux2_la-gstv4l2.lo \
+@@ -117,6 +117,7 @@ am_libgstvideo4linux2_la_OBJECTS = libgstvideo4linux2_la-gstv4l2.lo \
  	libgstvideo4linux2_la-gstv4l2tuner.lo \
  	libgstvideo4linux2_la-gstv4l2vidorient.lo \
  	libgstvideo4linux2_la-v4l2_calls.lo \
@@ -47,7 +47,7 @@ index dea048f..9f6a55b 100644
  	libgstvideo4linux2_la-v4l2src_mvl_lsp.lo \
  	libgstvideo4linux2_la-v4l2src_calls.lo
  libgstvideo4linux2_la_OBJECTS = $(am_libgstvideo4linux2_la_OBJECTS)
-@@ -458,6 +459,7 @@ libgstvideo4linux2_la_SOURCES = gstv4l2.c \
+@@ -493,6 +494,7 @@ libgstvideo4linux2_la_SOURCES = gstv4l2.c \
  				gstv4l2tuner.c \
  				gstv4l2vidorient.c \
  				v4l2_calls.c \
@@ -55,7 +55,7 @@ index dea048f..9f6a55b 100644
  				v4l2src_mvl_lsp.c \
  				v4l2src_calls.c \
  				$(xv_source)
-@@ -490,6 +492,7 @@ noinst_HEADERS = \
+@@ -525,6 +527,7 @@ noinst_HEADERS = \
  	gstv4l2vidorient.h \
  	gstv4l2xoverlay.h \
  	v4l2_calls.h \
@@ -63,9 +63,9 @@ index dea048f..9f6a55b 100644
  	v4l2src_mvl_lsp.h \
  	v4l2src_calls.h
  
-@@ -657,6 +660,13 @@ libgstvideo4linux2_la-v4l2_calls.lo: v4l2_calls.c
+@@ -709,6 +712,13 @@ libgstvideo4linux2_la-v4l2_calls.lo: v4l2_calls.c
  @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
- @am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -c -o libgstvideo4linux2_la-v4l2_calls.lo `test -f 'v4l2_calls.c' || echo '$(srcdir)/'`v4l2_calls.c
+ @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -c -o libgstvideo4linux2_la-v4l2_calls.lo `test -f 'v4l2_calls.c' || echo '$(srcdir)/'`v4l2_calls.c
  
 +libgstvideo4linux2_la-v4l2_dm365_ipipe.lo: v4l2_dm365_ipipe.c
 +@am__fastdepCC_TRUE@	$(LIBTOOL) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -MT libgstvideo4linux2_la-v4l2_dm365_ipipe.lo -MD -MP -MF $(DEPDIR)/libgstvideo4linux2_la-v4l2_dm365_ipipe.Tpo -c -o libgstvideo4linux2_la-v4l2_dm365_ipipe.lo `test -f 'v4l2_dm365_ipipe.c' || echo '$(srcdir)/'`v4l2_dm365_ipipe.c
@@ -78,7 +78,7 @@ index dea048f..9f6a55b 100644
  @am__fastdepCC_TRUE@	$(LIBTOOL) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -MT libgstvideo4linux2_la-v4l2src_mvl_lsp.lo -MD -MP -MF $(DEPDIR)/libgstvideo4linux2_la-v4l2src_mvl_lsp.Tpo -c -o libgstvideo4linux2_la-v4l2src_mvl_lsp.lo `test -f 'v4l2src_mvl_lsp.c' || echo '$(srcdir)/'`v4l2src_mvl_lsp.c
  @am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libgstvideo4linux2_la-v4l2src_mvl_lsp.Tpo $(DEPDIR)/libgstvideo4linux2_la-v4l2src_mvl_lsp.Plo
 diff --git a/sys/v4l2/gstv4l2object.c b/sys/v4l2/gstv4l2object.c
-index da1ed41..9b4a5f8 100644
+index b00bfdf..4b50009 100644
 --- a/sys/v4l2/gstv4l2object.c
 +++ b/sys/v4l2/gstv4l2object.c
 @@ -45,6 +45,8 @@
@@ -90,7 +90,7 @@ index da1ed41..9b4a5f8 100644
  GST_DEBUG_CATEGORY_EXTERN (v4l2_debug);
  #define GST_CAT_DEFAULT v4l2_debug
  
-@@ -365,6 +367,14 @@ gst_v4l2_object_new (GstElement * element,
+@@ -367,6 +369,14 @@ gst_v4l2_object_new (GstElement * element,
  
    v4l2object->xwindow_id = 0;
  
@@ -105,7 +105,7 @@ index da1ed41..9b4a5f8 100644
    return v4l2object;
  }
  
-@@ -396,6 +406,16 @@ gst_v4l2_object_destroy (GstV4l2Object * v4l2object)
+@@ -398,6 +408,16 @@ gst_v4l2_object_destroy (GstV4l2Object * v4l2object)
      g_free (v4l2object->input_src);
    }
  
@@ -122,25 +122,11 @@ index da1ed41..9b4a5f8 100644
    g_free (v4l2object);
  }
  
-@@ -1838,6 +1858,13 @@ gst_v4l2_object_set_format (GstV4l2Object * v4l2object, guint32 pixelformat,
-   GST_V4L2_CHECK_OPEN (v4l2object);
-   GST_V4L2_CHECK_NOT_ACTIVE (v4l2object);
- 
-+  #if defined (USE_DM365_IPIPE)
-+    if (pixelformat != V4L2_PIX_FMT_NV12) {
-+      GST_INFO("closing ipipe module\n");
-+      gst_v4l2_dm365_ipipe_close(v4l2object);
-+  }
-+  #endif
-+
-   memset (&format, 0x00, sizeof (struct v4l2_format));
-   format.type = v4l2object->type;
- 
 diff --git a/sys/v4l2/gstv4l2object.h b/sys/v4l2/gstv4l2object.h
-index 9aabdfa..37314d1 100644
+index ddeaa7c..640f948 100644
 --- a/sys/v4l2/gstv4l2object.h
 +++ b/sys/v4l2/gstv4l2object.h
-@@ -51,6 +51,9 @@
+@@ -52,6 +52,9 @@
  
  #include <gst/interfaces/propertyprobe.h>
  
@@ -150,7 +136,7 @@ index 9aabdfa..37314d1 100644
  
  /* size of v4l2 buffer pool in streaming case */
  #define GST_V4L2_MAX_BUFFERS 16
-@@ -84,6 +87,16 @@ struct _GstV4l2Object {
+@@ -85,6 +88,16 @@ struct _GstV4l2Object {
    GstPoll * poll;
    gboolean can_poll_device;
  
@@ -168,7 +154,7 @@ index 9aabdfa..37314d1 100644
    guint8 **buffer;
  
 diff --git a/sys/v4l2/v4l2_calls.c b/sys/v4l2/v4l2_calls.c
-index f6084f5..ee52f21 100644
+index b932aba..30ebf9e 100644
 --- a/sys/v4l2/v4l2_calls.c
 +++ b/sys/v4l2/v4l2_calls.c
 @@ -54,6 +54,9 @@
@@ -181,7 +167,7 @@ index f6084f5..ee52f21 100644
  /* Those are ioctl calls */
  #ifndef V4L2_CID_HCENTER
  #define V4L2_CID_HCENTER V4L2_CID_HCENTER_DEPRECATED
-@@ -446,6 +449,13 @@ gst_v4l2_open (GstV4l2Object * v4l2object)
+@@ -452,6 +455,13 @@ gst_v4l2_open (GstV4l2Object * v4l2object)
    int libv4l2_fd;
    GstPollFD pollfd = GST_POLL_FD_INIT;
  
@@ -195,7 +181,7 @@ index f6084f5..ee52f21 100644
    GST_DEBUG_OBJECT (v4l2object->element, "Trying to open device %s",
        v4l2object->videodev);
  
-@@ -584,6 +594,11 @@ gst_v4l2_close (GstV4l2Object * v4l2object)
+@@ -590,6 +600,11 @@ gst_v4l2_close (GstV4l2Object * v4l2object)
    gst_poll_remove_fd (v4l2object->poll, &pollfd);
    v4l2object->video_fd = -1;
  
@@ -853,5 +839,5 @@ index 5f1ae7c..98c3281 100644
 +#endif /* __V4L2SRC_MVL_LSP_H__ */
  
 -- 
-1.6.3.3
+1.7.0.4
 

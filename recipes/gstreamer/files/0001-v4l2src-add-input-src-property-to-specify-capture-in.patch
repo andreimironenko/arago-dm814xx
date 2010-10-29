@@ -1,7 +1,7 @@
-From 2b523c13c8b0ad08cf3922f34d8cf72b055596dc Mon Sep 17 00:00:00 2001
-From: Don Darling <don.osc2@gmail.com>
-Date: Thu, 15 Apr 2010 16:07:29 -0500
-Subject: [PATCH 03/14] v4l2src: add input-src property to specify capture input
+From 15526c46a1f636a3f3907122f7ab66d2a0097eb5 Mon Sep 17 00:00:00 2001
+From: Don Darling <ddarling@ti.com>
+Date: Tue, 12 Oct 2010 15:23:11 -0500
+Subject: [PATCH 01/16] v4l2src: add input-src property to specify capture input
 
 This property specifies which capture input to use when multiple inputs
 are present on a capture device.
@@ -13,10 +13,10 @@ are present on a capture device.
  4 files changed, 44 insertions(+), 1 deletions(-)
 
 diff --git a/sys/v4l2/gstv4l2object.c b/sys/v4l2/gstv4l2object.c
-index f94236c..6e38fbc 100644
+index 84f2281..9ad0803 100644
 --- a/sys/v4l2/gstv4l2object.c
 +++ b/sys/v4l2/gstv4l2object.c
-@@ -389,6 +389,10 @@ gst_v4l2_object_destroy (GstV4l2Object * v4l2object)
+@@ -391,6 +391,10 @@ gst_v4l2_object_destroy (GstV4l2Object * v4l2object)
      gst_v4l2_object_clear_format_list (v4l2object);
    }
  
@@ -28,10 +28,10 @@ index f94236c..6e38fbc 100644
  }
  
 diff --git a/sys/v4l2/gstv4l2object.h b/sys/v4l2/gstv4l2object.h
-index 4aac3a5..81669b9 100644
+index 8660924..3a9c135 100644
 --- a/sys/v4l2/gstv4l2object.h
 +++ b/sys/v4l2/gstv4l2object.h
-@@ -109,6 +109,7 @@ struct _GstV4l2Object {
+@@ -110,6 +110,7 @@ struct _GstV4l2Object {
    gchar *norm;
    gchar *channel;
    gulong frequency;
@@ -40,10 +40,10 @@ index 4aac3a5..81669b9 100644
    /* X-overlay */
    GstV4l2Xv *xv;
 diff --git a/sys/v4l2/gstv4l2src.c b/sys/v4l2/gstv4l2src.c
-index 463bef3..0b0e62c 100644
+index 7f2139a..48cfb23 100644
 --- a/sys/v4l2/gstv4l2src.c
 +++ b/sys/v4l2/gstv4l2src.c
-@@ -79,7 +79,8 @@ enum
+@@ -71,7 +71,8 @@ enum
    PROP_0,
    V4L2_STD_OBJECT_PROPS,
    PROP_QUEUE_SIZE,
@@ -53,17 +53,17 @@ index 463bef3..0b0e62c 100644
  };
  
  GST_IMPLEMENT_V4L2_PROBE_METHODS (GstV4l2SrcClass, gst_v4l2src);
-@@ -252,6 +253,9 @@ gst_v4l2src_class_init (GstV4l2SrcClass * klass)
+@@ -264,6 +265,9 @@ gst_v4l2src_class_init (GstV4l2SrcClass * klass)
        g_param_spec_boolean ("always-copy", "Always Copy",
            "If the buffer will or not be used directly from mmap",
-           PROP_DEF_ALWAYS_COPY, G_PARAM_READWRITE));
+           PROP_DEF_ALWAYS_COPY, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 +  g_object_class_install_property (gobject_class, PROP_INPUT_SRC,
 +      g_param_spec_string ("input-src", "Select the input source",
 +          "Select the input source)", NULL, G_PARAM_READWRITE));
  
    basesrc_class->get_caps = GST_DEBUG_FUNCPTR (gst_v4l2src_get_caps);
    basesrc_class->set_caps = GST_DEBUG_FUNCPTR (gst_v4l2src_set_caps);
-@@ -280,6 +284,7 @@ gst_v4l2src_init (GstV4l2Src * v4l2src, GstV4l2SrcClass * klass)
+@@ -292,6 +296,7 @@ gst_v4l2src_init (GstV4l2Src * v4l2src, GstV4l2SrcClass * klass)
    v4l2src->always_copy = PROP_DEF_ALWAYS_COPY;
  
    v4l2src->is_capturing = FALSE;
@@ -71,7 +71,7 @@ index 463bef3..0b0e62c 100644
  
    gst_base_src_set_format (GST_BASE_SRC (v4l2src), GST_FORMAT_TIME);
    gst_base_src_set_live (GST_BASE_SRC (v4l2src), TRUE);
-@@ -326,6 +331,10 @@ gst_v4l2src_set_property (GObject * object,
+@@ -338,6 +343,10 @@ gst_v4l2src_set_property (GObject * object,
        case PROP_ALWAYS_COPY:
          v4l2src->always_copy = g_value_get_boolean (value);
          break;
@@ -82,7 +82,7 @@ index 463bef3..0b0e62c 100644
        default:
          G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
          break;
-@@ -349,6 +358,9 @@ gst_v4l2src_get_property (GObject * object,
+@@ -361,6 +370,9 @@ gst_v4l2src_get_property (GObject * object,
        case PROP_ALWAYS_COPY:
          g_value_set_boolean (value, v4l2src->always_copy);
          break;
@@ -93,7 +93,7 @@ index 463bef3..0b0e62c 100644
          G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
          break;
 diff --git a/sys/v4l2/v4l2_calls.c b/sys/v4l2/v4l2_calls.c
-index 5f6261e..b98bae7 100644
+index f2c2c08..b88b07b 100644
 --- a/sys/v4l2/v4l2_calls.c
 +++ b/sys/v4l2/v4l2_calls.c
 @@ -111,6 +111,8 @@ gst_v4l2_fill_lists (GstV4l2Object * v4l2object)
@@ -137,7 +137,7 @@ index 5f6261e..b98bae7 100644
      GST_LOG_OBJECT (e, "   index:     %d", input.index);
      GST_LOG_OBJECT (e, "   name:      '%s'", input.name);
      GST_LOG_OBJECT (e, "   type:      %08x", input.type);
-@@ -375,6 +395,12 @@ gst_v4l2_fill_lists (GstV4l2Object * v4l2object)
+@@ -381,6 +401,12 @@ gst_v4l2_fill_lists (GstV4l2Object * v4l2object)
    }
    v4l2object->colors = g_list_reverse (v4l2object->colors);
  
@@ -151,5 +151,5 @@ index 5f6261e..b98bae7 100644
    return TRUE;
  }
 -- 
-1.6.3.3
+1.7.0.4
 

@@ -1,0 +1,30 @@
+# Arago-specific amendments to the standard gst-plugins-base recipe to remove
+# dependencies
+DEPENDS := "${@oe_filter_out('libcdio', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('wavpack', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('libvisual', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('jack', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('virtual/libsdl', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('libvpx', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('x264', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('libmms', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('libmusicbrainz', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('schroedinger', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('tremor', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('cdparanoia', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('pango', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('pango', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('virtual/libx11', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('gnome-vfs', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('libxv', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('gtk+', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('libsm', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('libvorbis', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('libtheora', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('libogg', bb.data.getVar('DEPENDS', d, 1), d)}"
+DEPENDS := "${@oe_filter_out('gconf', bb.data.getVar('DEPENDS', d, 1), d)}"
+
+EXTRA_OECONF_append = " --disable-vorbis --disable-ogg "
+
+PR_append = "-arago3"
+
