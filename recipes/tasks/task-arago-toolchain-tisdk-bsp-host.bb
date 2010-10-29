@@ -21,7 +21,7 @@ BSP_COMPONENTS_dm365 = "\
     ti-docs-sdg \
     ti-docs-quickstart \
     ti-docs-psp \
-    ti-board-utilities \
+    ti-board-utilities-src \
     ti-linux-driver-examples-src \
     "
 

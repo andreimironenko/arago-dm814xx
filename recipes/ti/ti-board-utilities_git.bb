@@ -2,7 +2,9 @@
 COMPATIBLE_MACHINE = "(dm365|dm368)"
 
 PV = "git"
-PR = "r1"
+PR = "r3"
+
+PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 SRC_URI = "http://install.source.dir.local/ti-board-utilities_git.tar.gz;name=boardutilitiestarball"
 

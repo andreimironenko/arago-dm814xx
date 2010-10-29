@@ -809,19 +809,19 @@ dsp_benchmark_install:
 # Build Martix GUI Appication Launcher
 ################################################################################
 matrix:
-	. $(SDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd matrix-gui-1.0 ; qmake ; $(MAKE) PLATFORM=$(PLATFORM)
+	. $(SDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd matrix-gui-* ; qmake ; $(MAKE) PLATFORM=$(PLATFORM)
 
 matrix_clean:
-	. $(SDK_INSTALL_DIR)/linux-devkit/environment-setup;  cd matrix-gui-1.0 ; qmake ; $(MAKE)  distclean
+	. $(SDK_INSTALL_DIR)/linux-devkit/environment-setup;  cd matrix-gui-* ; qmake ; $(MAKE)  distclean
 
 matrix_install:
 	install -d $(EXEC_DIR)/matrix
-	install -m 0755 $(SDK_INSTALL_DIR)/matrix-gui-1.0/matrix_gui $(EXEC_DIR)/matrix
-	cp -ar $(SDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/bin \
+	install -m 0755 $(SDK_INSTALL_DIR)/matrix-gui-*/matrix_gui $(EXEC_DIR)/matrix
+	cp -ar $(SDK_INSTALL_DIR)/matrix-gui-*/$(PLATFORM)/bin \
 	$(EXEC_DIR)/matrix/
-	cp -ar $(SDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/html \
+	cp -ar $(SDK_INSTALL_DIR)/matrix-gui-*/$(PLATFORM)/html \
 	$(EXEC_DIR)/matrix/
-	cp -ar $(SDK_INSTALL_DIR)/matrix-gui-1.0/images/ \
+	cp -ar $(SDK_INSTALL_DIR)/matrix-gui-*/images/ \
 	$(EXEC_DIR)/matrix/
 
 ################################################################################

@@ -8,7 +8,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 GRAPHICS_APPS = ""
 
 GRAPHICS_APPS_omap3 = " \
-    matrix-gui-src \
+    matrix-gui-e-src \
     libgles-omap3-src \   
     "
    
@@ -17,11 +17,11 @@ GRAPHICS_APPS_ti816x = " \
     "
 
 GRAPHICS_APPS_omapl138 = " \
-    matrix-gui-src \
+    matrix-gui-e-src \
     "
 
 GRAPHICS_APPS_dm365 = " \
-    matrix-gui-src \
+    matrix-gui-e-src \
     "
 
 RDEPENDS_${PN} = "\

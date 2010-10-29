@@ -838,19 +838,19 @@ c6run_install:
 # Build Martix GUI Appication Launcher
 ################################################################################
 matrix:
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd matrix-gui-1.0 ; qmake ; $(MAKE) PLATFORM=$(PLATFORM)
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd matrix-gui-* ; qmake ; $(MAKE) PLATFORM=$(PLATFORM)
 
 matrix_clean:
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup;  cd matrix-gui-1.0 ; qmake ; $(MAKE) distclean
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup;  cd matrix-gui-* ; qmake ; $(MAKE) distclean
 
 matrix_install:
 	install -d $(EXEC_DIR)/matrix
-	install -m 0755 $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/matrix_gui $(EXEC_DIR)/matrix
-	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/bin \
+	install -m 0755 $(DVSDK_INSTALL_DIR)/matrix-gui-*/matrix_gui $(EXEC_DIR)/matrix
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-*/$(PLATFORM)/bin \
 	$(EXEC_DIR)/matrix/
-	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/$(PLATFORM)/html \
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-*/$(PLATFORM)/html \
 	$(EXEC_DIR)/matrix/
-	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-1.0/images/ \
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-*/images/ \
 	$(EXEC_DIR)/matrix/
 
 ################################################################################

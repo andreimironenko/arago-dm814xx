@@ -155,9 +155,9 @@ if (! exists $ENV{'OEBASE'}) {
 }
 
 my $arago_dir = "$ENV{'OEBASE'}";
-my $arago_images_output_dir = "$arago_dir/arago-tmp/deploy/images";
+my $arago_images_output_dir = "$arago_dir/arago-tmp/deploy/glibc/images";
 my $arago_image_dir = "$arago_dir/arago/recipes/images";
-my $arago_ipk_dir = "$arago_dir/arago-tmp/deploy/ipk";
+my $arago_ipk_dir = "$arago_dir/arago-tmp/deploy/glibc/ipk";
 my $arago_machine_dir = "$arago_dir/arago/conf/machine";
 my $arago_tmp = "$arago_dir/arago-tmp";
 my ($sysname, $nodename, $release, $version, $mtype) = POSIX::uname();
@@ -451,7 +451,7 @@ sub copy_output
     }
 
     print "\nCopying sdk tarball  ...";
-    $cmd = "cp $arago_dir/arago-tmp/deploy/sdk/arago*$march-*sdk.tar.gz $sdkpath/devel/ ";    
+    $cmd = "cp $arago_dir/arago-tmp/deploy/glibc/sdk/arago*$march-*sdk.tar.gz $sdkpath/devel/ ";    
     $result = system($cmd);
     if ($result) {
         print "\nERROR: Failed to execute command $cmd\n";

@@ -2,6 +2,7 @@ DESCRIPTION = "Package contains board utilies for TI platforms"
 LICENSE = "TI"
 
 require ti-paths.inc
+require ti-staging.inc
 
 SRC_URI = "http://install.source.dir.local/board_utilities_${PV}.tar.gz;name=boardutilitiestarball"
 
@@ -15,8 +16,6 @@ do_install () {
 	install -d ${D}/${installdir}/ti-psp-tree/board-utilities
         cp -pPrf ${S}/* ${D}/${installdir}/ti-psp-tree/board-utilities
 }
-
-PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 FILES_${PN} = "${installdir}/*"
 PACKAGE_STRIP = "no"

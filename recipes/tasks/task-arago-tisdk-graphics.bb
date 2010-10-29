@@ -11,7 +11,7 @@ QTWIDGET_DEMO_omapl138 = "qt-embedded-widgets-demo"
 
 MATRIX_APPS = "\
     libxml2 \
-    matrix-gui \
+    matrix-gui-e \
     ${QTWIDGET_DEMO} \
     "
 
