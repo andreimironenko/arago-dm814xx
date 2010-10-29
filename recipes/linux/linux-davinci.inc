@@ -3,7 +3,7 @@ DESCRIPTION = "Linux kernel for DaVinci EVM from PSP, based on linux-davinci ker
 LICENSE = "GPLv2"
 KERNEL_IMAGETYPE = "uImage"
 
-require multi-kernel.inc
+require recipes/linux/multi-kernel.inc
 
 SRC_URI = "git://arago-project.org/git/projects/linux-davinci.git;protocol=git \
 	file://defconfig"
