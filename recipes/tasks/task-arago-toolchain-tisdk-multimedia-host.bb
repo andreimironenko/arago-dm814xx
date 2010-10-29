@@ -21,7 +21,7 @@ MULTIMEDIA_SOURCETREE_omap3 = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
     ti-codecs-omap3530-src \
     ti-local-power-manager-src \
-    ti-dvtb-src \
+#    ti-dvtb-src \
     ti-dvsdk-demos-src\
     "
 

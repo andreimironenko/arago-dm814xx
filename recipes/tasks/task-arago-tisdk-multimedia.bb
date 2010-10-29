@@ -44,14 +44,14 @@ MULTIMEDIA_dm6467 = " \
 
 MULTIMEDIA_dm37x-evm = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
-    ti-dvtb \
+#    ti-dvtb \
     ti-dvsdk-demos \
     ti-dvsdk-demos-qtinterface \
     "
 
 MULTIMEDIA_omap3evm = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
-    ti-dvtb \
+#    ti-dvtb \
     ti-dvsdk-demos \
     ti-dvsdk-demos-qtinterface \
     "
