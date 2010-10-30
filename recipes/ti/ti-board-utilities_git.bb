@@ -1,8 +1,9 @@
 
-COMPATIBLE_MACHINE = "(dm365|dm368)"
+COMPATIBLE_MACHINE = "(dm365)"
+require ti-paths.inc
 
 PV = "git"
-PR = "r3"
+PR = "r5"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
@@ -18,6 +19,14 @@ do_compile () {
 }
 
 do_install () {
-	:
+	install -d ${D}/psp/board-utilities/ubl
+    cp -ar ${S}/* ${D}/psp/board-utilities/ubl/
+    find ${D}/psp/board-utilities/ubl -name .svn -type d | xargs rm -rf
 }
+
+PACKAGE_ARCH = "${MACHINE_ARCH}"
+
+FILES_${PN} = "psp/board-utilities/*"
+PACKAGE_STRIP = "no"
+INSANE_SKIP_${PN} = True
 
