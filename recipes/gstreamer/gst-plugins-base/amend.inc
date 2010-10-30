@@ -24,7 +24,7 @@ DEPENDS := "${@oe_filter_out('libtheora', bb.data.getVar('DEPENDS', d, 1), d)}"
 DEPENDS := "${@oe_filter_out('libogg', bb.data.getVar('DEPENDS', d, 1), d)}"
 DEPENDS := "${@oe_filter_out('gconf', bb.data.getVar('DEPENDS', d, 1), d)}"
 
-EXTRA_OECONF_append = " --disable-vorbis --disable-ogg "
+EXTRA_OECONF_append = " --disable-vorbis --disable-ogg --disable-orc "
 
-PR_append = "-arago3"
+PR_append = "-arago4"
 
