@@ -8,7 +8,7 @@ DEFAULT_UBOOT_CONFIG=davinci_dm365_evm_config
 #==============================================================================
 # The default build target builds components to enable all other build targets.
 #==============================================================================
-components: linux cmem dm365mm irq edma dmai 
+components: linux cmem dm365mm irq edma ceexamples dmai 
 default: components
 
 #==============================================================================
@@ -158,14 +158,12 @@ linux_install:
 # Build ubl. Also, an explicit cleanup target is defined.
 #==============================================================================
 ubl:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM36x/GNU/ubl CROSSCOMPILE=$(CSTOOL_PREFIX)
-
+	@echo
 ubl_clean:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/board-utilities/DM36x/GNU/ubl clean
+	@echo
 
 ubl_install:
-	install -d $(EXEC_DIR)/boot
-	install $(PSP_INSTALL_DIR)/board-utilities/DM36x/GNU/ubl/*.bin $(EXEC_DIR)/boot
+	@echo
 
 #==============================================================================
 # Build u-boot. Also, an explicit cleanup target is defined.
