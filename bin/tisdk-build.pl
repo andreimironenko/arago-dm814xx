@@ -38,7 +38,6 @@ my %machines = (
         addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "no",
-        dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
     "dm6446-evm"    => {
@@ -47,7 +46,6 @@ my %machines = (
         addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
-        dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
     "dm355-evm"     => {
@@ -56,7 +54,6 @@ my %machines = (
         addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "no",
-        dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
     "da830-omapl137-evm"     => {
@@ -65,7 +62,6 @@ my %machines = (
         addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
-        dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
     "dm6467-evm"     => {
@@ -74,7 +70,6 @@ my %machines = (
         addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
-        dvsdk_factory_default => "no",
         graphics_default    => "no",
     },
     "da850-omapl138-evm"     => {
@@ -83,7 +78,6 @@ my %machines = (
         addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
-        dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
     "omap3evm"     => {
@@ -92,7 +86,6 @@ my %machines = (
         addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
-        dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
     "dm37x-evm"     => {
@@ -101,7 +94,6 @@ my %machines = (
         addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
-        dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
     "am37x-evm"     => {
@@ -110,7 +102,6 @@ my %machines = (
         addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "no",
-        dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
     "c6a816x-evm"     => {
@@ -119,7 +110,6 @@ my %machines = (
         addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "yes",
-        dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
     "am389x-evm"     => {
@@ -128,7 +118,6 @@ my %machines = (
         addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "no",
-        dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
     "dm368-evm"     => {
@@ -137,7 +126,6 @@ my %machines = (
         addons_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "no",
-        dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
 );
@@ -738,34 +726,6 @@ sub get_input
     $packages[$index++] = "ti-tisdk-makefile";
     $packages[$index++] = $image;
 
-    if (!$dvsdk_factory_default) {
-        print "\nDo you want to generate dvsdk productization image? \n";
-        print "[ $machines{$machine}{'dvsdk_factory_default'} ] ";
-        $input = <STDIN>;
-        $input =~ s/\s+$//;
-
-        if ($input) {
-            if ($input =~ m/y/i) {
-                $dvsdk_factory_default = "yes";
-            }
-            else {
-                $dvsdk_factory_default = "no";
-            }
-        }
-        else {
-            $dvsdk_factory_default = 
-                $machines{$machine}{'dvsdk_factory_default'};
-        }
-    }
-
-    if ($dvsdk_factory_default =~ m/default/i) {
-        $dvsdk_factory_default = $machines{$machine}{'dvsdk_factory_default'};
-    }
-
-    if ($dvsdk_factory_default =~ m/yes/i) {
-        $packages[$index++] = "dvsdk-factory-image";
-    }
-
 }
 
 ################################################################################
@@ -822,12 +782,6 @@ sub parse_args
             next;
         }
 
-        if ($ARGV[0] eq '-f' || $ARGV[0] eq '--factory') {
-            shift(@ARGV);
-            $dvsdk_factory_default = shift(@ARGV);
-            next;
-        }
-
         if ($ARGV[0] eq '-p' || $ARGV[0] eq '--sdkpath') {
             shift(@ARGV);
             $sdkpath = shift(@ARGV);
@@ -852,7 +806,6 @@ sub display_help
     print "    -a | --addons       Add Addon demo/utility packages in SDK.\n";
     print "    -e | --multimedia   Add Multimedia packages in SDK.\n";
     print "    -d | --dsp          Add DSP packages in SDK.\n";
-    print "    -f | --factory      Build DVSDK factory image.\n";
     print "    -g | --graphics     Add Graphics packages in SDK.\n";
     print "    -p | --sdkpath      Where to generate the Arago SDK\n";
     print "\nIf an option is not given it will be queried interactively.\n";
