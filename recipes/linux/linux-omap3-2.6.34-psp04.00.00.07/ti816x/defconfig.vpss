@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.34
-# Thu Oct 28 07:08:50 2010
+# Thu Oct  7 19:56:25 2010
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -1757,6 +1757,11 @@ CONFIG_CRYPTO=y
 #
 # Crypto core or helper
 #
+# CONFIG_CRYPTO_FIPS is not set
+CONFIG_CRYPTO_ALGAPI=m
+CONFIG_CRYPTO_ALGAPI2=m
+CONFIG_CRYPTO_RNG=m
+CONFIG_CRYPTO_RNG2=m
 # CONFIG_CRYPTO_MANAGER is not set
 # CONFIG_CRYPTO_MANAGER2 is not set
 # CONFIG_CRYPTO_GF128MUL is not set
@@ -1811,7 +1816,7 @@ CONFIG_CRYPTO=y
 #
 # Ciphers
 #
-# CONFIG_CRYPTO_AES is not set
+CONFIG_CRYPTO_AES=m
 # CONFIG_CRYPTO_ANUBIS is not set
 # CONFIG_CRYPTO_ARC4 is not set
 # CONFIG_CRYPTO_BLOWFISH is not set
@@ -1837,8 +1842,9 @@ CONFIG_CRYPTO=y
 #
 # Random Number Generation
 #
-# CONFIG_CRYPTO_ANSI_CPRNG is not set
-# CONFIG_CRYPTO_HW is not set
+CONFIG_CRYPTO_ANSI_CPRNG=m
+CONFIG_CRYPTO_HW=y
+# CONFIG_CRYPTO_DEV_HIFN_795X is not set
 # CONFIG_BINARY_PRINTF is not set
 
 #
