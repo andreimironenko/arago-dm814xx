@@ -9,7 +9,7 @@ PR = "r10"
 # we need to add all their respective feeds manually, hence next line is out
 #PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-MACHS_ARMV5 = "dm6446-evm dm6467-evm dm6467t-evm dm355-evm dm365-evm dm357-evm da830-omapl137-evm da850-omapl138-evm am180x-evm"
+MACHS_ARMV5 = "dm6446-evm dm6467-evm dm6467t-evm dm355-evm dm365-evm dm357-evm da830-omapl137-evm da850-omapl138-evm am180x-evm am181x-evm"
 MACHS_ARMV7 = "omap3evm beagleboard"
 
 # This gets set in the distro/local configuration
@@ -21,7 +21,7 @@ do_compile() {
 # Populate the list of supported architectures
 	rm ${S}/${sysconfdir}/opkg/arch.conf || true
 #	ipkgarchs="${PACKAGE_ARCHS}"
-	ipkgarchs="all any noarch arm armv4 armv4t armv5te #armv6 #armv7 #armv7a arago #omap3evm #beagleboard #dm6446-evm #dm6467-evm #dm6467t-evm #dm355-evm #dm365-evm #dm357-evm #da830-omapl137-evm #da850-omapl138-evm #am180x-evm"
+	ipkgarchs="all any noarch arm armv4 armv4t armv5te #armv6 #armv7 #armv7a arago #omap3evm #beagleboard #dm6446-evm #dm6467-evm #dm6467t-evm #dm355-evm #dm365-evm #dm357-evm #da830-omapl137-evm #da850-omapl138-evm #am180x-evm #am181x-evm"
 	priority=1
 	for arch in $ipkgarchs; do
 		disable=`echo $arch|cut -c1`
