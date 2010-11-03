@@ -174,8 +174,11 @@ echo "
     esac
 
     case "$source" in
-      file://*) source="";;
-      http://install.source.dir.local*) source="";;
+      file://*) source="TI";;
+      http://install.source.dir.local*) source="TI";;
+      *india.ti.com*) source="TI";;
+      *sanb.design.ti.com*) source="TI";;
+      *dal.design.ti.com*) source="TI";;
       *) ;;
     esac
 
@@ -236,6 +239,33 @@ $machine EZ SDK ${SDK_VERSION} Installation Summary
 <tr><td>Modified </td><td>This field will either be &ldquo;Yes&rdquo; or &ldquo;No&rdquo;. A &ldquo;Yes&rdquo; means TI had made changes to the Package. A &ldquo;No&rdquo; means TI has not made any changes.</td></tr>
 <tr><td>Obtained from</td><td>This field specifies where TI obtained the Package from. It may be a URL to an Open Source site, a 3rd party company name or TI. If this field contains a link to an Open Source package, the date it was downloaded is also recorded.</td></tr>
 </table>
+
+<p>&nbsp;</p>
+<p><b>
+<span style="font-size: 12.0pt; text-decoration: underline">DISCLAIMERS</span></b></p>
+<p><b>Export Control Classification Number (ECCN)</b></p>
+<p style="margin-left: .5in">Any use of ECCNs listed in the 
+Manifest is at the user.s risk and without recourse to TI. &nbsp;&nbsp;Your company, as 
+the exporter of record, is responsible for determining the correct 
+classification of any item at the time of export. Any export classification by 
+TI of Software is for TI.s internal use only and shall not be construed as a 
+representation or warranty regarding the proper export classification for such 
+Software or whether an export license or other documentation is required for 
+exporting such Software<b><span style="font-size:12.0pt">.&nbsp; </span></b></p>
+<p><b>Links in the Manifest</b></p>
+<p style="margin-left:.5in">Any links appearing on this Manifest 
+(for example in the .Obtained from. field) were verified at the time the 
+Manifest was created. TI makes no guarantee that any listed links will remain 
+active in the future.</p>
+<p><b>Open Source License References</b></p>
+<p style="margin-left:.5in">Your company is responsible for 
+confirming the applicable license terms for any open source Software listed in 
+this Manifest that was not .Obtained from. TI.&nbsp; Any open source license 
+specified in this Manifest for Software that was not .Obtained from. TI is for 
+TI.s internal use only and shall not be construed as a representation or 
+warranty regarding the proper open source license terms for such Software.</p>
+<b><span style="font-size: 12.0pt; font-family: Arial">
+<br clear="all" style="page-break-before: always"></span></b><p>&nbsp;</p>
 "
 }
 
