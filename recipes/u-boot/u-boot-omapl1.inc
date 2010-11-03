@@ -7,7 +7,8 @@ DESCRIPTION = "u-boot bootloader for OMAPL1 devices"
 
 COMPATIBLE_MACHINE = "(omapl137|omapl138)"
 
-SRC_URI = "git://arago-project.org/git/projects/u-boot-omapl1.git;protocol=git"
+BRANCH ?= "master"
+SRC_URI = "git://arago-project.org/git/projects/u-boot-omapl1.git;protocol=git;branch=${BRANCH}"
 
 S = "${WORKDIR}/git"
 
