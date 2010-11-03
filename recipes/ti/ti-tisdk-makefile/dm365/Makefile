@@ -3,7 +3,7 @@ include Rules.make
 DEFAULT_LINUXKERNEL_CONFIG=davinci_dm365_defconfig
 DEFAULT_UBOOT_CONFIG=davinci_dm365_evm_config
 
-.PHONY:	all clean components help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm365mm dm365mm_clean dm365mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install irq irq_clean irq_install edma edma_clean edma_install install demos demos_clean demos_install u-boot u-boot_clean u-boot_install dvtb_install ubl ubl_clean ubl_install matrix matrix_clean matrix_install gstreamer_ti gstreamer_ti_install
+.PHONY:	all clean components help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm365mm dm365mm_clean dm365mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install irq irq_clean irq_install edma edma_clean edma_install install demos demos_clean demos_install u-boot u-boot_clean u-boot_install dvtb_install matrix matrix_clean matrix_install gstreamer_ti gstreamer_ti_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -14,17 +14,17 @@ default: components
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-clean:	linux_clean cmem_clean dm365mm_clean irq_clean edma_clean dmai_clean psp_examples_clean ceexamples_clean demos_clean u-boot_clean dvtb_clean ubl_clean matrix_clean
+clean:	linux_clean cmem_clean dm365mm_clean irq_clean edma_clean dmai_clean psp_examples_clean ceexamples_clean demos_clean u-boot_clean dvtb_clean matrix_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-all: components psp_examples ceexamples demos u-boot dvtb ubl matrix gstreamer_ti
+all: components psp_examples ceexamples demos u-boot dvtb matrix gstreamer_ti
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install dm365mm_install dmai_install psp_examples_install ceexamples_install irq_install edma_install dvtb_install demos_install u-boot_install ubl_install matrix_install gstreamer_ti_install
+install: linux_install cmem_install dm365mm_install dmai_install psp_examples_install ceexamples_install irq_install edma_install dvtb_install demos_install u-boot_install matrix_install gstreamer_ti_install
 
 #==============================================================================
 # A help message target.
@@ -75,10 +75,6 @@ help:
 	@echo "  linux                      : Build Linux kernel uImage and module"
 	@echo "  linux_clean                : Remove generated Linux kernel files"
 	@echo "  linux_install              : Install kernel binary and  modules"
-	@echo
-	@echo "  ubl                        : Build the ubl boot loader"
-	@echo "  ubl_clean                  : Remove generated ubl files"
-	@echo "  ubl_install                : Install the ubl image"
 	@echo
 	@echo "  u-boot                     : Build the u-boot boot loader"
 	@echo "  u-boot_clean               : Remove generated u-boot files"
@@ -153,17 +149,6 @@ linux_install:
 	install  $(LINUXKERNEL_INSTALL_DIR)/vmlinux $(EXEC_DIR)/boot
 	install  $(LINUXKERNEL_INSTALL_DIR)/System.map $(EXEC_DIR)/boot
 	$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR) ARCH=arm CROSS_COMPILE=$(CSTOOL_PREFIX) INSTALL_MOD_PATH=$(EXEC_DIR)/ modules_install
-
-#==============================================================================
-# Build ubl. Also, an explicit cleanup target is defined.
-#==============================================================================
-ubl:
-	@echo
-ubl_clean:
-	@echo
-
-ubl_install:
-	@echo
 
 #==============================================================================
 # Build u-boot. Also, an explicit cleanup target is defined.
