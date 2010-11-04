@@ -95,6 +95,7 @@ BSP_COMPONENTS_omapl138 = "\
 BSP_COMPONENTS_c6a816x-evm = "\
     ti-tisdk-setup \
     ti-tisdk-relnotes \
+    ti-docs-qsg-hardcopy \
     ti-docs-sdg \
     ti-docs-psp \
     ti-tisdk-mksdboot \
