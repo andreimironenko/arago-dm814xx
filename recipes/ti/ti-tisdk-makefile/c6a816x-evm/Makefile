@@ -21,17 +21,17 @@ components_clean: linux_clean syslink_clean cmem_clean c6accel_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-all: components u-boot ceexamples opengldemos sademo
+all: components u-boot opengldemos sademo
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install ceexamples_install syslink_install u-boot_install c6accel_install opengldemos_install sademo_install
+install: linux_install cmem_install syslink_install u-boot_install c6accel_install opengldemos_install sademo_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clean: components_clean ceexamples_clean u-boot_clean opengldemos_clean sademo_clean
+clean: components_clean u-boot_clean opengldemos_clean sademo_clean
 
 #==============================================================================
 # A help message target.
@@ -57,8 +57,6 @@ help:
 	@echo "    syslink_rtos                 : Configure and build SysLink for RTOS"
 	@echo "    syslink_rtos_clean           : Clean SysLink for RTOS"
 	@echo 
-	@echo "    ceexamples                   : Build CE codecs, extensions, servers and apps"
-	@echo "    ceexamples_clean             : Remove generated CE example files."
 	@echo
 	@echo "    linux                        : Build Linux kernel uImage and module"
 	@echo "    linux_clean                  : Remove generated Linux kernel files"
@@ -68,10 +66,6 @@ help:
 	@echo "    u-boot_clean                 : Remove generated u-boot files"
 	@echo "    u-boot_install               : Install the u-boot image"
 	@echo
-#	@echo "    psp_examples                 : Build Linux examples"
-#	@echo "    psp_examples_clean           : Remove all generated PSP examples"
-#	@echo "    psp_examples_install         : Install psp examples"
-#	@echo
 	@echo "    c6accel                      : Build c6accel package"
 	@echo "    c6accel_clean                : Remove generated c6accel files"
 	@echo "    c6accel_install              : Install c6accel examples"
@@ -135,23 +129,6 @@ u-boot_install:
 	install $(PSP_INSTALL_DIR)/u-boot-*/u-boot.map $(EXEC_DIR)/boot
 
 #==============================================================================
-# Build the PSP Linux examples. Also, an explicit cleanup target is defined.
-#==============================================================================
-# psp_examples:
-#	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib all
-#	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/video PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib all
-#
-#psp_examples_clean:
-#	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib clean
-#	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/video PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib clean
-#
-#psp_examples_install:
-#	mkdir -p $(EXEC_DIR)/psp-examples/audio
-#	cp  $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio/bin/* $(EXEC_DIR)/psp-examples/audio
-#	mkdir -p $(EXEC_DIR)/psp-examples/video
-#	cp  $(PSP_INSTALL_DIR)/linux-driver-examples-*/video/bin/* $(EXEC_DIR)/psp-examples/video
-#	
-#==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the
 # kernel_binaries directory is kept in sync. Also, an explicit cleanup target
 # is defined.
@@ -168,204 +145,9 @@ cmem_install:
 	install -d $(EXEC_DIR)/cmem
 	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/cmem
 
-###############################################################################
-# Build codec engine examples
-###############################################################################
-ceexamples_apps:
-	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/apps \
-	DEVICES="TI816X" \
-	GPPOS=LINUX_GCC \
-	PROGRAMS="APP_CLIENT DSP_SERVER" \
-	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
-	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
-	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
-	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
-	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
-	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
-	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
-	CGTOOLS_V5T=$(CSTOOL_DIR) \
-	all 
-
-ceexamples_apps_clean:
-	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/apps \
-	DEVICES="TI816X" \
-	GPPOS=LINUX_GCC \
-	PROGRAMS="APP_CLIENT DSP_SERVER" \
-	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
-	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
-	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
-	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
-	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
-	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
-	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
-	CGTOOLS_V5T=$(CSTOOL_DIR) \
-	clean 
-
-ceexamples_apps_install:
-	@echo 
-	@echo "**** Don't have working install target ****"
-	@echo "Copy the required application binaries and data files from $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/apps to target filesystem. "
-	@echo 
-
-ceexamples_extensions:
-	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/extensions \
-	DEVICES="TI816X" \
-	GPPOS=LINUX_GCC \
-	PROGRAMS="APP_CLIENT DSP_SERVER" \
-	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
-	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
-	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
-	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
-	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
-	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
-	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
-	CGTOOLS_V5T=$(CSTOOL_DIR) \
-	all 
-
-ceexamples_extensions_clean:
-	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/apps \
-	DEVICES="TI816X" \
-	GPPOS=LINUX_GCC \
-	PROGRAMS="APP_CLIENT DSP_SERVER" \
-	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
-	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
-	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
-	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
-	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
-	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
-	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
-	CGTOOLS_V5T=$(CSTOOL_DIR) \
-	clean 
-
-ceexamples_extensions_install:
-	@echo 
-	@echo "**** Don't have working install target ****"
-	@echo "Copy the required application binaries and data files from $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/extensions to target filesystem. "
-	@echo 
-
-
-ceexamples_servers:
-	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/servers  \
-	DEVICES="TI816X" \
-	GPPOS="LINUX_GCC" \
-	PROGRAMS="APP_CLIENT DSP_SERVER" \
-	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
-	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
-	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
-	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
-	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
-	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
-	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
-	CGTOOLS_V5T=$(CSTOOL_DIR) \
-	all 
-
-ceexamples_servers_clean:
-	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/servers \
-	DEVICES="TI816X" \
-	GPPOS=LINUX_GCC \
-	PROGRAMS="APP_CLIENT DSP_SERVER" \
-	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
-	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
-	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
-	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
-	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
-	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
-	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
-	CGTOOLS_V5T=$(CSTOOL_DIR) \
-	clean 
-
-ceexamples_servers_install:
-	@echo 
-	@echo "**** Don't have working install target ****"
-	@echo "Copy the required application binaries and data files from $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/servers to target filesystem. "
-	@echo 
-
-
-ceexamples_codecs:
-	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/codecs \
-	DEVICES="TI816X" \
-	GPPOS=LINUX_GCC \
-	PROGRAMS="APP_CLIENT DSP_SERVER" \
-	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
-	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	DSPLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
-	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
-	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
-	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
-	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
-	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
-	CGTOOLS_V5T=$(CSTOOL_DIR) \
-	all 
-
-ceexamples_codecs_clean:
-	make -C $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/codecs \
-	DEVICES="TI816X" \
-	GPPOS=LINUX_GCC \
-	PROGRAMS="APP_CLIENT DSP_SERVER" \
-	CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
-	FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-	SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
-	CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
-	XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
-	XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-	BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
-	EDMA3_LLD_INSTALL_DIR=$(EDMA3_LLD_INSTALL_DIR) \
-	CGTOOLS_C64P=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_C674ELF=$(CODEGEN_INSTALL_DIR) \
-	CGTOOLS_M3ELF=$(TMS470_CODEGEN_INSTALL_DIR) \
-	CGTOOLS_V5T=$(CSTOOL_DIR) \
-	clean 
-
-ceexamples_codecs_install:
-	@echo 
-	@echo "**** Don't have working install target ****"
-	@echo "Copy the required application binaries and data files from $(CE_INSTALL_DIR)/examples/ti/sdo/ce/examples/codecs to target filesystem. "
-	@echo 
-
-ceexamples: ceexamples_codecs ceexamples_extensions ceexamples_servers ceexamples_apps
- 
-ceexamples_clean: ceexamples_codecs_clean ceexamples_extensions_clean ceexamples_servers_clean ceexamples_apps_clean
-
-ceexamples_install: ceexamples_codecs_install ceexamples_extensions_install ceexamples_servers_install ceexamples_apps_install
-
 
 ###############################################################################
-# Build codec engine examples
+# Build SYSLINK
 ###############################################################################
 SYSLINK_ROOT=${SYSLINK_INSTALL_DIR}
 SYSLINK_XDCPATH="${IPC_INSTALL_DIR}/packages;${SYSBIOS_INSTALL_DIR}/packages"
