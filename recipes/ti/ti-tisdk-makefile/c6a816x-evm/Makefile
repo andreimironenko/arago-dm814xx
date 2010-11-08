@@ -6,7 +6,7 @@ MIN_UBOOT_CONFIG=ti8168_evm_min_sd
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	components components_clean all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_clean c6accel_install syslink syslink_clean syslink_install opengldemos opengldemos_clean opengldemos_install sademo sademo_clean sademo_install
+.PHONY:	components components_clean all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_clean c6accel_install syslink syslink_clean syslink_install opengldemos opengldemos_clean opengldemos_install sademo sademo_clean sademo_install matrix matrix_clean matrix_install
 
 #==============================================================================
 # Build components to enable all other build targets. 
@@ -21,17 +21,17 @@ components_clean: linux_clean syslink_clean cmem_clean c6accel_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-all: components u-boot opengldemos sademo
+all: components u-boot opengldemos sademo matrix
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install syslink_install u-boot_install c6accel_install opengldemos_install sademo_install
+install: linux_install cmem_install syslink_install u-boot_install c6accel_install opengldemos_install sademo_install matrix_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clean: components_clean u-boot_clean opengldemos_clean sademo_clean
+clean: components_clean u-boot_clean opengldemos_clean sademo_clean matrix_clean
 
 #==============================================================================
 # A help message target.
@@ -77,6 +77,10 @@ help:
 	@echo "    sademo                       : Build the Signal Analyzer demo for $(PLATFORM)"
 	@echo "    sademo_clean                 : Remove Signal Analyzer demo files."
 	@echo "    sademo_install               : install Signal Analyzer demo executables."
+	@echo "    matrix                       : Build matrix application launcher"
+	@echo "    matrix_clean                 : Remove all matrix files"
+	@echo "    matrix_install               : Install matrix"
+	@echo
 	@echo
 	@echo "    all                          : Rebuild everything"
 	@echo "    clean                        : Remove all generated files"
@@ -229,6 +233,8 @@ c6accel:
 	XDCPATH=${C6ACCEL_XDCPATH} \
 	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
 	PLATFORM="TI816X" \
+	ARM_ISA=armv7-a \
+	DSP_ISA=674 \
 	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
 	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
 	LINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
@@ -243,7 +249,6 @@ c6accel:
 	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
 	CSTOOL_DIR="$(CSTOOL_DIR)" \
 	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
-	BUILD_TYPE=debug \
 	all
 
 c6accel_clean:
@@ -327,6 +332,29 @@ sademo_clean:
 	$(MAKE) -C $(SADEMO_INSTALL_DIR) clean
 	if [ -e $(SADEMO_INSTALL_DIR)/sigan-gui-r/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR)/sigan-gui-r distclean; fi
 
-sademo_install:
+sademo_install: c6accel_install
 	install -d $(EXEC_DIR)/signal-analyzer
 	install $(SADEMO_INSTALL_DIR)/sigan-gui-r/sigan_demo_app $(EXEC_DIR)/signal-analyzer
+	install $(SADEMO_INSTALL_DIR)/scripts/bin/fft_demo_8khz.pcm $(EXEC_DIR)/signal-analyzer
+	cd $(EXEC_DIR)/signal-analyzer; ln -s ../c6accel/test_files; cd -
+	cd $(EXEC_DIR)/signal-analyzer; ln -s ../c6accel/ti816x.xe674; cd -
+
+################################################################################
+# Build Martix GUI Appication Launcher
+################################################################################
+matrix:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd demos/matrix-gui-e* ; qmake ; $(MAKE) PLATFORM=ti816x
+
+matrix_clean:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup;  cd demos/matrix-gui-e* ; qmake ; $(MAKE) distclean
+
+matrix_install:
+	install -d $(EXEC_DIR)/matrix
+	install -m 0755 $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/matrix_gui $(EXEC_DIR)/matrix
+	cp -ar $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/ti816x/bin \
+        $(EXEC_DIR)/matrix/
+	cp -ar $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/ti816x/html \
+        $(EXEC_DIR)/matrix/
+	cp -ar $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/images/ \
+        $(EXEC_DIR)/matrix/
+
