@@ -2,12 +2,12 @@ DESCRIPTION = "Scripts to create bootable SD card for ${MACHINE}"
 HOMEPAGE_dm365 = "http://processors.wiki.ti.com/index.php/SD_card_boot_and_flashing_tool_for_DM355_and_DM365"
 LICENSE = GPLv2
 
-PR = "r22"
+PR = "r23"
 
 require ti-paths.inc
 require ti-staging.inc
 
-PLATFORM_da850-omapl138-evm = "omapl138"
+PLATFORM_omapl138 = "omapl138"
 PLATFORM_omap3 = "omap35x"
 
 SRC_URI = "file://mksdboot.sh \
@@ -18,7 +18,7 @@ SRC_URI = "file://mksdboot.sh \
            file://windows_users.htm \
 "
 
-SRCREV_dm365 = "9713"
+SRCREV_dm365 = "9843"
 SRC_URI_dm365 = "svn://winsvn.sanb.design.ti.com/SDOApps/apps/sdk_productization/trunk/sdk_productization/boot;module=dm365;proto=http;user=anonymous;pswd='' "
 S_dm365 = "${WORKDIR}/dm365"
 

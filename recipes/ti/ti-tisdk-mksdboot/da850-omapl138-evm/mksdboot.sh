@@ -175,13 +175,13 @@ execute "tar zxf $sdkdir/filesystem/dvsdk-da850-omapl138-evm-rootfs.tar.gz -C /t
 sync
 
 # check if we need to create symbolic link for matrix 
-echo -n "Creating matrix-gui symbolic link..."
-if [ -f /tmp/sdk/$$/etc/init.d/matrix-gui ]; then
+echo -n "Creating matrix-gui-e symbolic link..."
+if [ -f /tmp/sdk/$$/etc/init.d/matrix-gui-e ]; then
   if [ -h /tmp/sdk/$$/etc/rc3.d/*matrix* ]; then
     echo " (skipped) "
   else
-    ln -s  ../init.d/matrix-gui /tmp/sdk/$$/etc/rc3.d/S99matrix-gui
-    ln -s  ../init.d/matrix-gui /tmp/sdk/$$/etc/rc5.d/S99matrix-gui
+    ln -s  ../init.d/matrix-gui-e /tmp/sdk/$$/etc/rc3.d/S99matrix-gui-e
+    ln -s  ../init.d/matrix-gui-e /tmp/sdk/$$/etc/rc5.d/S99matrix-gui-e
     echo "done"
   fi
 fi
