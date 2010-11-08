@@ -213,9 +213,7 @@ syslink_rtos: syslink_cfg
 		`${XDC_INSTALL_DIR}/bin/xdcpkg ${SYSLINK_INSTALL_DIR}/ti/syslink | grep -v samples`
 
 syslink_rtos_clean: syslink_cfg
-	XDCPATH=${SYSLINK_XDCPATH} ${XDC_INSTALL_DIR}/xdc .make -PR ${SYSLINK_INSTALL_DIR}/ti/syslink/.
 	XDCPATH=${SYSLINK_XDCPATH} ${XDC_INSTALL_DIR}/xdc clean -PR ${SYSLINK_INSTALL_DIR}/ti/syslink/.
-	XDCPATH=${SYSLINK_XDCPATH} ${XDC_INSTALL_DIR}/xdc .interfaces -PR ${SYSLINK_INSTALL_DIR}/ti/syslink/.
 
 syslink_clean: syslink_hlos_clean syslink_rtos_clean
 
