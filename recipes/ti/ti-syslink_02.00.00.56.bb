@@ -4,8 +4,8 @@ PV = "02_00_00_56"
 PVwithdots = "02.00.00.56"
 PVextra = "_alpha2"
 
-SRC_URI[syslinktarball.md5sum] = "2b2f097a63dabc066a42323bdf3cdb9e"
-SRC_URI[syslinktarball.sha256sum] = "3a3ff92e3f2a181df1ff8392d3c1543ce802fb6467a375d0d9fd74cf04b69cda"
+SRC_URI[syslinktarball.md5sum] = "76102d30ff7ebea9c142ac784e0bdda3"
+SRC_URI[syslinktarball.sha256sum] = "ff60e2f88699bf13355c03265767905f135a1f44f1ec76fd38803db3f6e7dc9a"
 
 # Engineering build - SRC_URI is not public yet - override link
 HTTP_PROXY_IGNORE="bangsdowebsvr01.india.ti.com:8060"
