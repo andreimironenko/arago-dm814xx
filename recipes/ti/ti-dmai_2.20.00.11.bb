@@ -5,6 +5,6 @@ PR = "r1"
  
 COMPATIBLE_MACHINE = "(dm365|omapl138|omap3)"
 
-SRCREV         = "572"
+SRCREV         = "575"
 DMAIBRANCH     = "trunk"
 
