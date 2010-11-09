@@ -1,0 +1,10 @@
+require linux-omapl1.inc
+
+COMPATIBLE_MACHINE = "am181x-evm"
+
+KVER = "2.6.33-rt29"
+PSPREL = "03.30.00.01"
+
+BRANCH = "v2.6.33-rt"
+
+SRCREV = "13882889c8511558e67134705b68b64a6b82f448"
