@@ -46,7 +46,7 @@ fi
 uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyS0,115200n8 rw mem=99M@0x80000000 mpurate=720"
+baseargs="console=ttyS0,115200n8 rw mem=55M@0x80000000 mpurate=720"
 extendbaseargs=" "
 videoargs1="omap_vout.vid1_static_vrfb_alloc=y"
 videoargs2="omapfb.vram=0:3M"

@@ -12,7 +12,7 @@
 rmmod cmemk 2>/dev/null
 
 # use heap based allocation
-modprobe cmemk phys_start=0x86300000 phys_end=0x87200000  allowOverlap=1 useHeapIfPoolUnavailable=1
+modprobe cmemk phys_start=0x84A00000 phys_end=0x85900000  allowOverlap=1 useHeapIfPoolUnavailable=1
 
 # min pool
 # pools=1x3000000,1x1429440,6x1048576,4x829440,1x327680,1x256000,7x131072,20x4096 allowOverlap=1
