@@ -1,0 +1,12 @@
+require u-boot-omapl1.inc
+
+BRANCH = "am1810"
+
+COMPATIBLE_MACHINE = "am181x-evm"
+
+SRCREV = "15869ea9564ab73a4954327353852c19f866c339"
+
+UVER = "2009.11"
+PSPREL = "03.30.00.01"
+
+PR = "r0"
