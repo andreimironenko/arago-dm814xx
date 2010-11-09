@@ -1,4 +1,4 @@
 # bump svn rev
-SRCREV = "165"
+SRCREV = "169"
 
-PR_append = "-arago2"
+PR_append = "-arago3"
