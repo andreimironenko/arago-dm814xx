@@ -4,7 +4,7 @@ LICENSE = "BSD"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-INC_PR = "r5"
+INC_PR = "r6"
 
 COMPATIBLE_MACHINE = "(dm365|omapl138|omap3|ti816x)"
 
@@ -15,6 +15,8 @@ PLATFORM_dm37x-evm = "dm3730"
 PLATFORM_am37x-evm = "am3715"
 PLATFORM_beagleboard = "am3715"
 PLATFORM_ti816x = "ti816x"
+PLATFORM_am180x-evm = "am180x"
+PLATFORM_am181x-evm = "am181x"
 
 #Checkout the project repository to get access to the scripts and data
 #files.
