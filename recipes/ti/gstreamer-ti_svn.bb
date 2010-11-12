@@ -8,6 +8,7 @@ SRCREV = "858"
 
 SRC_URI = "svn://gforge.ti.com/svn/gstreamer_ti/trunk;module=gstreamer_ti;proto=https;user=anonymous;pswd='' \
 file://gstreamer-ti-rc.sh \
+file://0001-Enable-pad-allocated-buffers-for-OMAP35x-DM37x.patch;striplevel=4 \
 "
 
 # use local loadmodules.sh for these platform
