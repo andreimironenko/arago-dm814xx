@@ -141,6 +141,7 @@ do_compile() {
     cd ${DSPLINK}/dsp/src/samples && make \
       BASE_CGTOOLS="${CODEGEN_INSTALL_DIR}" \
       BASE_SABIOS="${BIOS_INSTALL_DIR}" \
+      XDCTOOLS_DIR="${XDC_INSTALL_DIR}" \
       all
 }
 
