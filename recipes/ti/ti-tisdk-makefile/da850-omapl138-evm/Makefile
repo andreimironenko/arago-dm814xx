@@ -4,6 +4,7 @@ DEFAULT_LINUXKERNEL_CONFIG=da850_omapl138_defconfig
 DEFAULT_UBOOT_CONFIG=da850_omapl138_evm_config
 
 DMAI_PLATFORM=ol138
+KERNEL_VERSION= $(shell cat $(LINUXKERNEL_INSTALL_DIR)/include/config/kernel.release)
 
 FIND_DSPLINKCONFIG = $(shell find $(LINK_INSTALL_DIR)/dsplink/config -name 'CURRENTCFG.MK')
 
@@ -179,8 +180,8 @@ cmem_clean:
 	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/interface clean
 
 cmem_install:
-	install -d $(EXEC_DIR)/cmem
-	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/cmem
+	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
+	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 
 #==============================================================================
 # Build codec package for the configured platform. Also, an explicit cleanup
@@ -510,10 +511,10 @@ ifeq ($(FIND_DSPLINKCONFIG), $(LINK_INSTALL_DIR)/dsplink/config/BUILD/CURRENTCFG
 	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
 	$(MAKE)	-C $(LINK_INSTALL_DIR)/dsplink/gpp/src/samples \
 	BASE_TOOLCHAIN=$(CSTOOL_DIR) \
-	BASE_CGTOOLS=${CSTOOL_DIR}/bin \
-	OSINC_PLATFORM="$(CSTOOL_PREFIX)/lib/gcc/arm-none-linux-gnueabi/$($(CSTOOL_PREFIX) --dumversion)/include" \
-	OSINC_TARGET="${CSTOOL_DIR}/target/usr/include" \
-	CROSS_COMPILE="$(CSTOOL_PREFIX)" \
+	BASE_CGTOOLS=$(CSTOOL_DIR)/bin \
+	OSINC_PLATFORM=$(CSTOOL_PREFIX)/lib/gcc/arm-none-linux-gnueabi/$($(CSTOOL_PREFIX) --dumversion)/include \
+	OSINC_TARGET=$(CSTOOL_DIR)/target/usr/include \
+	CROSS_COMPILE=$(CSTOOL_PREFIX) \
 	CC=$(CSTOOL_PREFIX)gcc \
 	COMPILER=$(CSTOOL_PREFIX)gcc \
 	ARCHIVER=$(CSTOOL_PREFIX)ar \
@@ -521,22 +522,36 @@ ifeq ($(FIND_DSPLINKCONFIG), $(LINK_INSTALL_DIR)/dsplink/config/BUILD/CURRENTCFG
 	LD=$(CSTOOL_PREFIX)ld \
 	KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
 	clean
+
+	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
+	$(MAKE)	-C $(LINK_INSTALL_DIR)/dsplink/dsp/src/samples \
+	BASE_CGTOOLS=$(CODEGEN_INSTALL_DIR) \
+	BASE_SABIOS=$(BIOS_INSTALL_DIR) \
+	XDCTOOLS_DIR=$(XDC_INSTALL_DIR) \
+	clean
 endif
 	
 dsplink_samples:
 	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
 	$(MAKE)	-C $(LINK_INSTALL_DIR)/dsplink/gpp/src/samples \
 	BASE_TOOLCHAIN=$(CSTOOL_DIR) \
-	BASE_CGTOOLS=${CSTOOL_DIR}/bin \
-	OSINC_PLATFORM="$(CSTOOL_PREFIX)/lib/gcc/arm-none-linux-gnueabi/$($(CSTOOL_PREFIX) --dumversion)/include" \
-	OSINC_TARGET="${CSTOOL_DIR}/target/usr/include" \
-	CROSS_COMPILE="$(CSTOOL_PREFIX)" \
+	BASE_CGTOOLS=$(CSTOOL_DIR)/bin \
+	OSINC_PLATFORM=$(CSTOOL_PREFIX)/lib/gcc/arm-none-linux-gnueabi/$($(CSTOOL_PREFIX) --dumversion)/include \
+	OSINC_TARGET=$(CSTOOL_DIR)/target/usr/include \
+	CROSS_COMPILE=$(CSTOOL_PREFIX) \
 	CC=$(CSTOOL_PREFIX)gcc \
 	COMPILER=$(CSTOOL_PREFIX)gcc \
 	ARCHIVER=$(CSTOOL_PREFIX)ar \
 	AR=$(CSTOOL_PREFIX)ar \
 	LD=$(CSTOOL_PREFIX)ld \
 	KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
+	all
+
+	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
+	$(MAKE) -C $(LINK_INSTALL_DIR)/dsplink/dsp/src/samples \
+	BASE_CGTOOLS=$(CODEGEN_INSTALL_DIR) \
+	BASE_SABIOS=$(BIOS_INSTALL_DIR) \
+	XDCTOOLS_DIR=$(XDC_INSTALL_DIR) \
 	all
 
 dsplink_dsp_genpackage:
@@ -555,10 +570,12 @@ dsplink_clean: dsplink_arm_clean dsplink_dsp_clean dsplink_samples_clean
     XDCPATH=${DSPLINK} ${XDC_INSTALL_DIR}/xdc .interfaces -PR .
 
 dsplink_install:
+	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
+	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAPL138/RELEASE/dsplinkk.ko $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
+
 	install -d $(EXEC_DIR)/dsplink
-	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAPL138/RELEASE/dsplinkk.ko $(EXEC_DIR)/dsplink
-	cp ${LINK_INSTALL_DIR}/dsplink/gpp/export/BIN/Linux/OMAPL138/RELEASE/*gpp $(EXEC_DIR)/dsplink
-	@for file in $(shell find $(LINK_INSTALL_DIR)/dsplink/dsp/BUILD -name *.out); do \
+	cp $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAPL138/RELEASE/*gpp $(EXEC_DIR)/dsplink
+	@for file in $(shell find $(LINK_INSTALL_DIR)/dsplink/dsp/export -name *.out); do \
 	cp $$file $(EXEC_DIR)/dsplink ; \
 	done
 

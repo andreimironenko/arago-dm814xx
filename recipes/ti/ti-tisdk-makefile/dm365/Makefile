@@ -3,6 +3,9 @@ include Rules.make
 DEFAULT_LINUXKERNEL_CONFIG=davinci_dm365_defconfig
 DEFAULT_UBOOT_CONFIG=davinci_dm365_evm_config
 
+DMAI_PLATFORM=$(PLATFORM)_al
+KERNEL_VERSION= $(shell cat $(LINUXKERNEL_INSTALL_DIR)/include/config/kernel.release)
+
 .PHONY:	all clean components help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm365mm dm365mm_clean dm365mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install irq irq_clean irq_install edma edma_clean edma_install install demos demos_clean demos_install u-boot u-boot_clean u-boot_install dvtb_install matrix matrix_clean matrix_install gstreamer_ti gstreamer_ti_install
 
 #==============================================================================
@@ -191,8 +194,8 @@ cmem_clean:
 	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/interface clean
 
 cmem_install:
-	install -d $(EXEC_DIR)/cmem
-	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/cmem
+	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
+	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 
 #==============================================================================
 # Build the irq kernel module for the configured platform, and make sure the
@@ -206,8 +209,8 @@ irq_clean:
 	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module clean
 
 irq_install:
-	install -d $(EXEC_DIR)/irq
-	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/irq/src/module/irqk.ko $(EXEC_DIR)/irq
+	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
+	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/irq/src/module/irqk.ko $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 
 #==============================================================================
 # Build the edma kernel module for the configured platform, and make sure the
@@ -223,8 +226,8 @@ edma_clean:
 	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/interface clean
 
 edma_install:
-	install -d $(EXEC_DIR)/edma
-	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/module/edmak.ko $(EXEC_DIR)/edma
+	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
+	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/edma/src/module/edmak.ko $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 
 #==============================================================================
 # Build the dm355mm kernel module (if the configured platform is dm355). Also,
@@ -239,35 +242,35 @@ dm365mm_clean:
 	$(MAKE) -C $(DM365MM_MODULE_INSTALL_DIR)/interface LINUXKERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR)  MVTOOL_PREFIX=$(CSTOOL_PREFIX) clean
 
 dm365mm_install:
-	install -d $(EXEC_DIR)/dm365mm
-	install $(DM365MM_MODULE_INSTALL_DIR)/module/dm365mmap.ko  $(EXEC_DIR)/dm365mm
+	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
+	install $(DM365MM_MODULE_INSTALL_DIR)/module/dm365mmap.ko  $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 
 #==============================================================================
 # Build the Davinci Multimedia Application Interface for the configured
 # platform. Also, an explicit cleanup target is defined.
 #==============================================================================
 dmai:
-	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(PLATFORM)_al \
-	CE_INSTALL_DIR_$(PLATFORM)_al=$(CE_INSTALL_DIR) \
-	CODEC_INSTALL_DIR_$(PLATFORM)_al=$(CODEC_INSTALL_DIR) \
-	CMEM_INSTALL_DIR_$(PLATFORM)_al=$(CMEM_INSTALL_DIR) \
-	FC_INSTALL_DIR_$(PLATFORM)_al=$(FC_INSTALL_DIR) \
-	XDAIS_INSTALL_DIR_$(PLATFORM)_al=$(XDAIS_INSTALL_DIR) \
-	LINUXLIBS_INSTALL_DIR_$(PLATFORM)_al=$(LINUXLIBS_INSTALL_DIR) \
-	LINUXKERNEL_INSTALL_DIR_$(PLATFORM)_al=$(LINUXKERNEL_INSTALL_DIR) \
-	CROSS_COMPILE_$(PLATFORM)_al=$(CSTOOL_PREFIX) \
-	XDC_INSTALL_DIR_$(PLATFORM)_al=$(XDC_INSTALL_DIR) \
+	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM) \
+	CE_INSTALL_DIR_$(DMAI_PLATFORM)=$(CE_INSTALL_DIR) \
+	CODEC_INSTALL_DIR_$(DMAI_PLATFORM)=$(CODEC_INSTALL_DIR) \
+	CMEM_INSTALL_DIR_$(DMAI_PLATFORM)=$(CMEM_INSTALL_DIR) \
+	FC_INSTALL_DIR_$(DMAI_PLATFORM)=$(FC_INSTALL_DIR) \
+	XDAIS_INSTALL_DIR_$(DMAI_PLATFORM)=$(XDAIS_INSTALL_DIR) \
+	LINUXLIBS_INSTALL_DIR_$(DMAI_PLATFORM)=$(LINUXLIBS_INSTALL_DIR) \
+	LINUXKERNEL_INSTALL_DIR_$(DMAI_PLATFORM)=$(LINUXKERNEL_INSTALL_DIR) \
+	CROSS_COMPILE_$(DMAI_PLATFORM)=$(CSTOOL_PREFIX) \
+	XDC_INSTALL_DIR_$(DMAI_PLATFORM)=$(XDC_INSTALL_DIR) \
 	VERBOSE=false \
 	all
 	
 dmai_clean:
-	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(PLATFORM)_al \
-	XDC_INSTALL_DIR_$(PLATFORM)_al=$(XDC_INSTALL_DIR) \
+	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM) \
+	XDC_INSTALL_DIR_$(DMAI_PLATFORM)=$(XDC_INSTALL_DIR) \
 	clean
 
 dmai_install:
-	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(PLATFORM)_al \
-	EXEC_DIR_$(PLATFORM)_al=$(EXEC_DIR)/dmai \
+	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM) \
+	EXEC_DIR_$(DMAI_PLATFORM)_al=$(EXEC_DIR)/dmai \
 	install
 
 ###############################################################################

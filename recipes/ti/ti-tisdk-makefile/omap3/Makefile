@@ -2,7 +2,10 @@ include Rules.make
 
 DEFAULT_LINUXKERNEL_CONFIG=omap3_evm_defconfig
 DEFAULT_UBOOT_CONFIG=omap3_evm_config
+
 DMAI_PLATFORM=o3530_al
+KERNEL_VERSION= $(shell cat $(LINUXKERNEL_INSTALL_DIR)/include/config/kernel.release)
+
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
@@ -230,8 +233,8 @@ cmem_clean:
 	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/interface clean
 
 cmem_install:
-	install -d $(EXEC_DIR)/cmem
-	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/cmem
+	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
+	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 
 #==============================================================================
 # Build SDMA for the configured platform. Also, an explicit cleanup
@@ -260,8 +263,8 @@ lpm_clean:
 	DSPLINK_REPO=$(LINK_INSTALL_DIR) clean
 
 lpm_install:
-	install -d $(EXEC_DIR)/lpm
-	install $(LPM_INSTALL_DIR)/packages/ti/bios/power/modules/omap3530/lpm/lpm_omap3530.ko $(EXEC_DIR)/lpm
+	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
+	install $(LPM_INSTALL_DIR)/packages/ti/bios/power/modules/omap3530/lpm/lpm_omap3530.ko $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 
 #==============================================================================
 # Build the Digital Video Test Bench for the configured platform. Also, an
@@ -270,26 +273,26 @@ lpm_install:
 dvtb:
 	$(MAKE) -C $(DVTB_INSTALL_DIR) PLATFORM=$(PLATFORM) \
 		VERBOSE="true" \
-		DMAI_INSTALL_DIR="${DMAI_INSTALL_DIR}" \
-		XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
-		CE_INSTALL_DIR="${CE_INSTALL_DIR}" \
-		FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
-		CODEC_INSTALL_DIR="${CODEC_INSTALL_DIR}" \
-		CODEGEN_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
-		BIOS_INSTALL_DIR="${BIOS_INSTALL_DIR}"\
-		CROSS_COMPILE="${CSTOOL_PREFIX}" \
-		XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
-		LINK_INSTALL_DIR="${LINK_INSTALL_DIR}" \
-		CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
-		LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
-		LINUXKERNEL_INSTALL_DIR="${LINUXKERNEL_INSTALL_DIR}" \
-		LINUXLIBS_INSTALL_DIR="${LINUXLIBS_INSTALL_DIR}" \
-		MVTOOL_DIR="${CSTOOL_DIR}" \
-		CSTOOL_DIR="${CSTOOL_DIR}" \
-		MVTOOL_PREFIX="${CSTOOL_PREFIX}" \
-		CSTOOL_PREFIX="${CSTOOL_PREFIX}" \
+		DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) \
+		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
+		CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
+		FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
+		CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) \
+		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
+		BIOS_INSTALL_DIR=$(BIOS_INSTALL_DIR) \
+		CROSS_COMPILE=$(CSTOOL_PREFIX) \
+		XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) \
+		LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) \
+		CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) \
+		LPM_INSTALL_DIR=$(LPM_INSTALL_DIR) \
+		LINUXKERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
+		LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) \
+		MVTOOL_DIR=$(CSTOOL_DIR) \
+		CSTOOL_DIR=$(CSTOOL_DIR) \
+		MVTOOL_PREFIX=$(CSTOOL_PREFIX) \
+		CSTOOL_PREFIX=$(CSTOOL_PREFIX) \
 		C6ACCEL_INSTALL_DIR=$(C6ACCEL_INSTALL_DIR) \
-		${PLATFORM}
+		$(PLATFORM)
 	@echo
 	@echo "dvtb can be found under $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/$(PLATFORM)/linux/bin"
 
@@ -622,10 +625,10 @@ ifeq ($(FIND_DSPLINKCONFIG), $(LINK_INSTALL_DIR)/dsplink/config/BUILD/CURRENTCFG
 	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
 	$(MAKE)	-C $(LINK_INSTALL_DIR)/dsplink/gpp/src/samples \
 	BASE_TOOLCHAIN=$(CSTOOL_DIR) \
-	BASE_CGTOOLS=${CSTOOL_DIR}/bin \
-	OSINC_PLATFORM="$(CSTOOL_PREFIX)/lib/gcc/arm-none-linux-gnueabi/$($(CSTOOL_PREFIX) --dumversion)/include" \
-	OSINC_TARGET="${CSTOOL_DIR}/target/usr/include" \
-	CROSS_COMPILE="$(CSTOOL_PREFIX)" \
+	BASE_CGTOOLS=$(CSTOOL_DIR)/bin \
+	OSINC_PLATFORM=$(CSTOOL_PREFIX)/lib/gcc/arm-none-linux-gnueabi/$($(CSTOOL_PREFIX) --dumversion)/include \
+	OSINC_TARGET=$(CSTOOL_DIR)/target/usr/include \
+	CROSS_COMPILE=$(CSTOOL_PREFIX) \
 	CC=$(CSTOOL_PREFIX)gcc \
 	COMPILER=$(CSTOOL_PREFIX)gcc \
 	ARCHIVER=$(CSTOOL_PREFIX)ar \
@@ -633,15 +636,22 @@ ifeq ($(FIND_DSPLINKCONFIG), $(LINK_INSTALL_DIR)/dsplink/config/BUILD/CURRENTCFG
 	LD=$(CSTOOL_PREFIX)ld \
 	KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
 	clean
+
+	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
+	$(MAKE) -C $(LINK_INSTALL_DIR)/dsplink/dsp/src/samples \
+	BASE_CGTOOLS=$(CODEGEN_INSTALL_DIR) \
+	BASE_SABIOS=$(BIOS_INSTALL_DIR) \
+	XDCTOOLS_DIR=$(XDC_INSTALL_DIR) \
+	clean
 endif
 	
 dsplink_samples:
 	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
 	$(MAKE)	-C $(LINK_INSTALL_DIR)/dsplink/gpp/src/samples \
 	BASE_TOOLCHAIN=$(CSTOOL_DIR) \
-	BASE_CGTOOLS=${CSTOOL_DIR}/bin \
-	OSINC_PLATFORM="$(CSTOOL_PREFIX)/lib/gcc/arm-none-linux-gnueabi/$($(CSTOOL_PREFIX) --dumversion)/include" \
-	OSINC_TARGET="${CSTOOL_DIR}/target/usr/include" \
+	BASE_CGTOOLS=$(CSTOOL_DIR)/bin \
+	OSINC_PLATFORM=$(CSTOOL_PREFIX)/lib/gcc/arm-none-linux-gnueabi/$($(CSTOOL_PREFIX) --dumversion)/include \
+	OSINC_TARGET=$(CSTOOL_DIR)/target/usr/include \
 	CROSS_COMPILE="$(CSTOOL_PREFIX)" \
 	CC=$(CSTOOL_PREFIX)gcc \
 	COMPILER=$(CSTOOL_PREFIX)gcc \
@@ -649,6 +659,13 @@ dsplink_samples:
 	AR=$(CSTOOL_PREFIX)ar \
 	LD=$(CSTOOL_PREFIX)ld \
 	KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
+	all
+
+	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
+	$(MAKE) -C $(LINK_INSTALL_DIR)/dsplink/dsp/src/samples \
+	BASE_CGTOOLS=$(CODEGEN_INSTALL_DIR) \
+	BASE_SABIOS=$(BIOS_INSTALL_DIR) \
+	XDCTOOLS_DIR=$(XDC_INSTALL_DIR) \
 	all
 
 dsplink_dsp_genpackage:
@@ -667,9 +684,11 @@ dsplink_clean: dsplink_arm_clean dsplink_dsp_clean dsplink_samples_clean
     XDCPATH=${DSPLINK} ${XDC_INSTALL_DIR}/xdc .interfaces -PR .
 
 dsplink_install:
-	install -d $(EXEC_DIR)/dsplink
+	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAP3530/RELEASE/dsplinkk.ko $(EXEC_DIR)/dsplink
-	cp ${LINK_INSTALL_DIR}/dsplink/gpp/export/BIN/Linux/OMAP3530/RELEASE/*gpp $(EXEC_DIR)/dsplink
+
+	install -d $(EXEC_DIR)/dsplink
+	cp $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAP3530/RELEASE/*gpp $(EXEC_DIR)/dsplink
 	@for file in $(shell find $(LINK_INSTALL_DIR)/dsplink/dsp/BUILD -name *.out); do \
 	cp $$file $(EXEC_DIR)/dsplink ; \
 	done
