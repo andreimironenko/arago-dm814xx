@@ -33,7 +33,6 @@ DSP_COMPONENTS_omap3 = "\
     "
 
 DSP_COMPONENTS_c6a816x-evm = "\
-    ti-codec-engine-examples \
     ti-syslink-examples \
     ti-c6accel-apps \
     ti-hdvpss-display-utils \

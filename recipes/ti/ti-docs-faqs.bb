@@ -1,19 +1,15 @@
-DESCRIPTION = "Software Developers Guide"
+DESCRIPTION = "EZ SDK Frequently Asked Questions"
 LICENSE = "CC-BY-SA"
 
 require ti-paths.inc
 
 DEPENDS = "ti-post-process-wiki-native"
 
-PR = "r3"
+PR = "r1"
 
-COMPATIBLE_MACHINE = "(dm365-evm|da850-omapl138-evm|dm37x-evm|omap3evm|c6a816x-evm)"
+COMPATIBLE_MACHINE = "c6a816x-evm"
 
-TOPIC_dm365 = "TMS320DM365_Software_Developers_Guide"
-TOPIC_omapl138 = "OMAPL138_Software_Developers_Guide"
-TOPIC_dm37x-evm = "TMS320DM3730_Software_Developers_Guide"
-TOPIC_omap3evm = "OMAP3530_Software_Developers_Guide"
-TOPIC_c6a816x-evm = "C6A816x_AM389x_EZ_Software_Developers_Guide"
+TOPIC_c6a816x-evm = "EZ_SDK_FAQ"
 
 TOPICFILE = "${@bb.data.getVar('TOPIC', d, 1).replace('/','_')}"
 TOPICURL = "http://ap-fpdsp-swapps.dal.design.ti.com/index.php/${TOPIC}"

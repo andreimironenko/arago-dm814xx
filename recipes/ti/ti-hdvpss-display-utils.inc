@@ -7,11 +7,12 @@ require ti-staging.inc
 
 inherit update-rc.d
 
-PR = "r2"
+PR = "r3"
 
 SRC_URI = "\
            http://install.source.dir.local/hdvpss_display_utils_${PV}.tar.gz;name=hdvpss \
            file://load-firmware.sh \
+           file://change_resolution.sh \
 "
 
 PROVIDES = "ti-hdvpss-display-utils-module"
@@ -35,6 +36,7 @@ do_install() {
     install -d ${D}/${installdir}/ti-hdvpss-display-utils
     install -m 0755 ${S}/firmware/m3_firmware_load.m3 ${D}/${installdir}/ti-hdvpss-display-utils/
     install -m 0755 ${S}/firmware/ti816x_hdvpss.xem3 ${D}/${installdir}/ti-hdvpss-display-utils/
+    install -m 0755 ${WORKDIR}/change_resolution.sh ${D}/${installdir}/ti-hdvpss-display-utils/
   
     # Install the init script
     install -d ${D}${sysconfdir}/init.d

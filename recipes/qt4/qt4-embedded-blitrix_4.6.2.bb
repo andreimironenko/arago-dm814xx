@@ -64,14 +64,15 @@ do_install_append () {
 # package.bbclass.
 PACKAGES += "${PN}-libs "
 FILES_${PN}-libs = "${libdir}/libTI*"
-LICENSE_${PN}-libs = "TI"
+LICENSE_${PN}-libs = "Draw Elements"
+LICENSE_${PN} = "Draw Elements"
 
 ALLOW_EMPTY = "1"
 
 FILES_${QT_BASE_NAME}-demos += "${datadir}/ti/blitrix/*"
 
 # Add TI to the demos license because of the blitrix demo
-LICENSE_${QT_BASE_NAME}-demos = "LGPLv2.1 TI"
+LICENSE_${QT_BASE_NAME}-demos = "LGPLv2.1"
 
 INSANE_SKIP_${PN}-libs = True
 INSANE_SKIP_${QT_BASE_NAME}-demos = True

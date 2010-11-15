@@ -18,6 +18,10 @@ PROVIDES += "ti-integra-demos"
 # Currently unable to build out of Arago. Till a solution is found will use
 # prebuilt binary package.
 
+do_compile() {
+    :
+}
+
 do_install() {
     install -d ${D}/${installdir}/ti-integra-demos
     cp -pPrf ${S}/sigan-gui-r/sigan_demo_app ${D}/${installdir}/ti-integra-demos
