@@ -22,7 +22,7 @@ index 3d40986..5d9452d 100644
  
      /* Pad-buffer allocation is currently only supported for DM365 */
 -    #if !defined(Platform_dm365)
-+    #if !defined(Platform_dm365) && !defined(Platform_omap3530_dv400)
++    #if !defined(Platform_dm365) && !defined(Platform_omap3530)
      gstbase_sink_class->buffer_alloc = NULL;
      #endif
  }
@@ -45,7 +45,7 @@ index 3d40986..5d9452d 100644
           */
          if (sink->hDispBufTab) {
 -            #if defined(Platform_dm365)
-+            #if defined(Platform_dm365) || defined(Platform_omap3530_dv400)
++            #if defined(Platform_dm365) || defined(Platform_omap3530)
              sink->dAttrs.delayStreamon = TRUE;
              #else
              GST_ERROR("delayed V4L2 streamon not supported\n");
