@@ -161,10 +161,10 @@ psp_examples_clean:
 	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/vpif KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR) CROSS_COMPILE=$(CSTOOL_PREFIX) clean
 
 psp_examples_install:
-	install -d  $(EXEC_DIR)/psp-examples 
-	cp $(PSP_INSTALL_DIR)/linux-driver-examples-*/vpif/vpif_test_display $(EXEC_DIR)/psp-examples
-	cp $(PSP_INSTALL_DIR)/linux-driver-examples-*/vpif/vpif_test_mmap_loopback $(EXEC_DIR)/psp-examples
-	cp $(PSP_INSTALL_DIR)/linux-driver-examples-*/vpif/vpif_test_userptr_loopback $(EXEC_DIR)/psp-examples
+	install -d  $(EXEC_DIR)/usr/share/ti/psp-examples 
+	cp $(PSP_INSTALL_DIR)/linux-driver-examples-*/vpif/vpif_test_display $(EXEC_DIR)/usr/share/ti/psp-examples
+	cp $(PSP_INSTALL_DIR)/linux-driver-examples-*/vpif/vpif_test_mmap_loopback $(EXEC_DIR)/usr/share/ti/psp-examples
+	cp $(PSP_INSTALL_DIR)/linux-driver-examples-*/vpif/vpif_test_userptr_loopback $(EXEC_DIR)/usr/share/ti/psp-examples
 	
 #==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the
@@ -220,9 +220,9 @@ codecs_clean:
 	clean
 
 codecs_install:
-	install -d $(EXEC_DIR)/codecs-server
+	install -d $(EXEC_DIR)/usr/share/ti/ti-codecs-server
 	for file in $(shell find $(CODEC_INSTALL_DIR) -name *.x64P); do \
-	cp $$file $(EXEC_DIR)/codecs-server ; \
+	cp $$file $(EXEC_DIR)/usr/share/ti/ti-codecs-server ; \
 	done
 		
 #==============================================================================
@@ -253,7 +253,7 @@ dmai_clean:
 
 dmai_install:
 	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM)_al \
-	EXEC_DIR_$(DMAI_PLATFORM)_al=$(EXEC_DIR)/dmai \
+	EXEC_DIR_$(DMAI_PLATFORM)_al=$(EXEC_DIR)/usr/share/ti/ti-dmai-apps \
 	install
 
 ###############################################################################
@@ -490,7 +490,7 @@ dsplink_arm: dsplink_cfg
 	BASE_BUILDOS=$(LINUXKERNEL_INSTALL_DIR) \
 	all
 
-dsplink_dsp_clean:
+d-appssplink_dsp_clean:
 ifeq ($(FIND_DSPLINKCONFIG), $(LINK_INSTALL_DIR)/dsplink/config/BUILD/CURRENTCFG.MK)
 	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
 	$(MAKE) -C $(LINK_INSTALL_DIR)/dsplink/dsp/src \
@@ -573,10 +573,10 @@ dsplink_install:
 	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAPL138/RELEASE/dsplinkk.ko $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 
-	install -d $(EXEC_DIR)/dsplink
-	cp $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAPL138/RELEASE/*gpp $(EXEC_DIR)/dsplink
+	install -d $(EXEC_DIR)/usr/share/ti/ti-dsplink-examples
+	cp $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAPL138/RELEASE/*gpp $(EXEC_DIR)/usr/share/ti/ti-dsplink-examples
 	@for file in $(shell find $(LINK_INSTALL_DIR)/dsplink/dsp/export -name *.out); do \
-	cp $$file $(EXEC_DIR)/dsplink ; \
+	cp $$file $(EXEC_DIR)/usr/share/ti/ti-dsplink-examples ; \
 	done
 
 ##############################################################################
@@ -625,15 +625,15 @@ audio_soc_example_kernel:
 
 
 audio_soc_example_install:
-	install -d $(EXEC_DIR)/audio_soc_example/Release
-	install -d $(EXEC_DIR)/audio_soc_example/Debug
-	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAPL138/RELEASE/dsplinkk.ko $(EXEC_DIR)/audio_soc_example/Release
-	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAPL138/DEBUG/dsplinkk.ko $(EXEC_DIR)/audio_soc_example/Debug
-	cp audio-soc-example_*/gpp/evmOMAPL138/Release/* $(EXEC_DIR)/audio_soc_example/Release/.
-	cp audio-soc-example_*/gpp/evmOMAPL138/Debug/* $(EXEC_DIR)/audio_soc_example/Debug/.
-	cp audio-soc-example_*/dsp/evmOMAPL138/Debug/*.out $(EXEC_DIR)/audio_soc_example/Release/.
-	cp audio-soc-example_*/dsp/evmOMAPL138/Debug/*.out $(EXEC_DIR)/audio_soc_example/Debug/.
-	cp audio-soc-example_*/data/davincieffect_clip.pcm $(EXEC_DIR)/audio_soc_example/.
+	install -d $(EXEC_DIR)/usr/share/ti/audio_soc_example/Release
+	install -d $(EXEC_DIR)/usr/share/ti/audio_soc_example/Debug
+	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAPL138/RELEASE/dsplinkk.ko $(EXEC_DIR)/usr/share/ti/audio_soc_example/Release
+	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAPL138/DEBUG/dsplinkk.ko $(EXEC_DIR)/usr/share/ti/audio_soc_example/Debug
+	cp audio-soc-example_*/gpp/evmOMAPL138/Release/* $(EXEC_DIR)/usr/share/ti/audio_soc_example/Release/.
+	cp audio-soc-example_*/gpp/evmOMAPL138/Debug/* $(EXEC_DIR)/usr/share/ti/audio_soc_example/Debug/.
+	cp audio-soc-example_*/dsp/evmOMAPL138/Debug/*.out $(EXEC_DIR)/usr/share/ti/audio_soc_example/Release/.
+	cp audio-soc-example_*/dsp/evmOMAPL138/Debug/*.out $(EXEC_DIR)/usr/share/ti/audio_soc_example/Debug/.
+	cp audio-soc-example_*/data/davincieffect_clip.pcm $(EXEC_DIR)/usr/share/ti/audio_soc_example/.
 
 ##############################################################################
 #  Build c6accel
@@ -682,7 +682,7 @@ c6accel_install:
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
-	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel-apps" \
+	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/usr/share/ti/c6accel-apps" \
 	install
 
 ################################################################################
@@ -756,10 +756,10 @@ c6run_examples:
 	tests
 
 c6run_install:
-	install -d $(EXEC_DIR)/c6run-apps
+	install -d $(EXEC_DIR)/usr/share/ti/c6run-apps
 
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	INSTALL_DIR="$(EXEC_DIR)/c6run-apps" \
+	INSTALL_DIR="$(EXEC_DIR)/usr/share/ti/c6run-apps" \
 	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
 	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
 	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
@@ -815,7 +815,7 @@ dsp_benchmark_clean:
 dsp_benchmark_install:
 	$(MAKE) -C $(DSP_BENCHMARK_INSTALL_DIR) \
 	PLATFORM="$(PLATFORM)" \
-	EXEC_DIR_DEMO="$(EXEC_DIR)/dsp-benchmark-apps" \
+	EXEC_DIR_DEMO="$(EXEC_DIR)/usr/share/ti/dsp-benchmark-apps" \
 	DEMO_INSTALL_DIR="$(DSP_BENCHMARK_INSTALL_DIR)" \
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
@@ -832,14 +832,20 @@ matrix_clean:
 	. $(SDK_INSTALL_DIR)/linux-devkit/environment-setup;  cd matrix-gui-* ; qmake ; $(MAKE)  distclean
 
 matrix_install:
-	install -d $(EXEC_DIR)/matrix
-	install -m 0755 $(SDK_INSTALL_DIR)/matrix-gui-*/matrix_gui $(EXEC_DIR)/matrix
-	cp -ar $(SDK_INSTALL_DIR)/matrix-gui-*/$(PLATFORM)/bin \
-	$(EXEC_DIR)/matrix/
+	install -d $(EXEC_DIR)/etc/init.d
+	install -m 0755 $(SDK_INSTALL_DIR)/matrix-gui-*/matrix_gui $(EXEC_DIR)/etc/init.d/matrix-gui-e
+
+	install -d $(EXEC_DIR)/usr/bin
+	cp -ar $(SDK_INSTALL_DIR)/matrix-gui-*/$(PLATFORM)/bin/* \
+	$(EXEC_DIR)/usr/bin/
+
+	install -d $(EXEC_DIR)/usr/share/matrix
 	cp -ar $(SDK_INSTALL_DIR)/matrix-gui-*/$(PLATFORM)/html \
-	$(EXEC_DIR)/matrix/
+	$(EXEC_DIR)/usr/share/matrix/
+
+	install -d $(EXEC_DIR)/usr/share/matrix
 	cp -ar $(SDK_INSTALL_DIR)/matrix-gui-*/images/ \
-	$(EXEC_DIR)/matrix/
+	$(EXEC_DIR)/usr/share/matrix/
 
 ################################################################################
 # Build Gstreamer plugins
@@ -848,6 +854,6 @@ gstreamer_ti:
 	. $(SDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(SDK_INSTALL_DIR)/gstreamer-ti_svn* ;$(MAKE) -f Makefile.external DVSDK_PATH=$(SDK_INSTALL_DIR) omapl138
 
 gstreamer_ti_install:
-	install -d $(EXEC_DIR)/gstreamer-ti
-	cp $(SDK_INSTALL_DIR)/gstreamer-ti_svn*/src/.libs/*.so $(EXEC_DIR)/gstreamer-ti
+	install -d $(EXEC_DIR)/usr/lib/gstreamer-0.10
+	cp $(SDK_INSTALL_DIR)/gstreamer-ti_svn*/src/.libs/*.so $(EXEC_DIR)/usr/lib/gstreamer-0.10
 

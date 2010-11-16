@@ -11,7 +11,7 @@ PATH := ${PATH}:${CSTOOL_PATH}
 
 FIND_DSPLINKCONFIG = $(shell find $(LINK_INSTALL_DIR)/dsplink/config -name 'CURRENTCFG.MK')
 
-.PHONY:	all clean components help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install xload xload_clean xload_install c6accel c6accel_clean c6accel_install opengldemos opengldemos_clean opengldemos_install demos demos_clean demos_install dvtb dvtb_clean dvtb_install dsplink dsplink_clean dsplink_install c6run c6run_clean c6run_examples c6run_install  matrix matrix_clean matrix_install gstreamer_ti gstreamer_ti_install
+.PHONY:	all clean components help cmem cmem_clean cmem_install dmai dmai_clean dmai_install linux linux_clean linux_install psp_examples psp_examples_clean psp_examples_install install lpm lpm_clean lpm_install codecs codecs_clean codecs_install u-boot u-boot_clean u-boot_install xload xload_clean xload_install c6accel c6accel_clean c6accel_install opengldemos opengldemos_clean opengldemos_install demos demos_clean demos_install dvtb dvtb_clean dvtb_install dsplink dsplink_clean dsplink_install c6run c6run_clean c6run_examples c6run_install  matrix matrix_clean matrix_install gstreamer_ti gstreamer_ti_install sdma sdma_clean sdma_install
 
 #==============================================================================
 # The default build target builds components to enable all other build targets.
@@ -32,7 +32,7 @@ all: components u-boot ceexamples dvtb demos psp_examples opengldemos xload c6ru
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install c6accel_install opengldemos_install xload_install c6run_install matrix_install gstreamer_ti_install
+install: linux_install cmem_install sdma_install ceexamples_install codecs_install lpm_install dsplink_install u-boot_install dvtb_install dmai_install demos_install  psp_examples_install c6accel_install opengldemos_install xload_install c6run_install matrix_install gstreamer_ti_install
 
 #==============================================================================
 # A help message target.
@@ -59,6 +59,7 @@ help:
 	@echo
 	@echo "  sdma                       : Build SDMA for $(PLATFORM)"
 	@echo "  sdma_clean                 : Remove generated SDMA files."
+	@echo "  sdma_install               : Install sdmak module"
 	@echo
 	@echo "  demos                      : Build the DVSDK demos for $(PLATFORM)"
 	@echo "  demos_clean                : Remove generated DVSDK demo files."
@@ -148,9 +149,9 @@ demos_clean:
 	$(MAKE) -C $(DEMO_INSTALL_DIR) clean DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) C6ACCEL_INSTALL_DIR=$(C6ACCEL_INSTALL_DIR) PLATFORM=$(PLATFORM)
 
 demos_install:
-	install -d $(EXEC_DIR)/dvsdk-demos
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(DEMO_INSTALL_DIR)/qtInterface ; qmake ; $(MAKE) PLATFORM=$(PLATFORM) EXEC_DIR=$(EXEC_DIR)/dvsdk-demos install
-	$(MAKE) -C $(DEMO_INSTALL_DIR)/$(PLATFORM) install DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) C6ACCEL_INSTALL_DIR=$(C6ACCEL_INSTALL_DIR) EXEC_DIR=$(EXEC_DIR)/dvsdk-demos PLATFORM=$(PLATFORM)
+	install -d $(EXEC_DIR)/usr/share/ti/dvsdk-demos
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(DEMO_INSTALL_DIR)/qtInterface ; qmake ; $(MAKE) PLATFORM=$(PLATFORM) EXEC_DIR=$(EXEC_DIR)/usr/share/ti/dvsdk-demos install
+	$(MAKE) -C $(DEMO_INSTALL_DIR)/$(PLATFORM) install DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) C6ACCEL_INSTALL_DIR=$(C6ACCEL_INSTALL_DIR) EXEC_DIR=$(EXEC_DIR)/usr/share/ti/dvsdk-demos PLATFORM=$(PLATFORM)
 
 #==============================================================================
 # Build the Linux kernel. Also, an explicit cleanup target is defined.
@@ -214,10 +215,10 @@ psp_examples_clean:
 	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/video PLAT=omap3530 KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)/include LIB_INC=$(LINUXLIBS_INSTALL_DIR)/include LIB_DIR=$(LINUXLIBS_INSTALL_DIR)/lib clean
 
 psp_examples_install:
-	mkdir -p $(EXEC_DIR)/psp-examples/audio
-	cp  $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio/bin/* $(EXEC_DIR)/psp-examples/audio
-	mkdir -p $(EXEC_DIR)/psp-examples/video
-	cp  $(PSP_INSTALL_DIR)/linux-driver-examples-*/video/bin/* $(EXEC_DIR)/psp-examples/video
+	mkdir -p $(EXEC_DIR)/usr/share/ti/psp-examples/audio
+	cp  $(PSP_INSTALL_DIR)/linux-driver-examples-*/audio/bin/* $(EXEC_DIR)/usr/share/ti/psp-examples/audio
+	mkdir -p $(EXEC_DIR)/usr/share/ti/psp-examples/video
+	cp  $(PSP_INSTALL_DIR)/linux-driver-examples-*/video/bin/* $(EXEC_DIR)/usr/share/ti/psp-examples/video
 	
 #==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the
@@ -245,6 +246,10 @@ sdma:
 
 sdma_clean:
 	$(MAKE) -C $(LINUXUTILS_INSTALL_DIR)/packages/ti/sdo/linuxutils/sdma/src/module clean RULES_MAKE=$(DVSDK_INSTALL_DIR)/Rules.make
+
+sdma_install:
+	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
+	install $(LINUXUTILS_INSTALL_DIR)/packages/ti/sdo/linuxutils/sdma/src/module/sdmak.ko $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 
 #==============================================================================
 # Build LPM for the configured platform. Also, an explicit cleanup
@@ -300,9 +305,9 @@ dvtb_clean:
 	$(MAKE) -C $(DVTB_INSTALL_DIR) clean
 
 dvtb_install:
-	install -d $(EXEC_DIR)/dvtb/scripts
-	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/$(PLATFORM)/linux/bin/* $(EXEC_DIR)/dvtb
-	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/scripts/$(PLATFORM)/* $(EXEC_DIR)/dvtb/scripts
+	install -d $(EXEC_DIR)/usr/share/ti/dvtb/scripts
+	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/$(PLATFORM)/linux/bin/* $(EXEC_DIR)/usr/share/ti/dvtb
+	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/scripts/$(PLATFORM)/* $(EXEC_DIR)/usr/share/ti/dvtb/scripts
 
 #==============================================================================
 # Build codec package for the configured platform. Also, an explicit cleanup
@@ -341,9 +346,9 @@ codecs_clean:
 	clean
 
 codecs_install:
-	install -d $(EXEC_DIR)/codecs-server
+	install -d $(EXEC_DIR)/usr/share/ti/codecs-server
 	for file in $(shell find $(CODEC_INSTALL_DIR) -name *.x64P); do \
-	cp $$file $(EXEC_DIR)/codecs-server ; \
+	cp $$file $(EXEC_DIR)/usr/share/ti/codecs-server ; \
 	done
 		
 #==============================================================================
@@ -364,7 +369,7 @@ dmai:
 	LINK_INSTALL_DIR_$(DMAI_PLATFORM)=$(LINK_INSTALL_DIR) \
 	C6ACCEL_INSTALL_DIR_$(DMAI_PLATFORM)=$(C6ACCEL_INSTALL_DIR) \
 	LPM_INSTALL_DIR_$(DMAI_PLATFORM)=$(LPM_INSTALL_DIR) \
-	C6ACCEL_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(C6ACCEL_INSTALL_DIR) \
+	C6ACCEL_INSTALL_DIR_$(DMAI_PLATFORM)=$(C6ACCEL_INSTALL_DIR) \
 	VERBOSE=false \
 	all
 	
@@ -375,7 +380,7 @@ dmai_clean:
 
 dmai_install:
 	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM) \
-	EXEC_DIR_$(DMAI_PLATFORM)=$(EXEC_DIR)/dmai \
+	EXEC_DIR_$(DMAI_PLATFORM)=$(EXEC_DIR)/usr/share/ti/ti-dmai-apps \
 	install
 
 ###############################################################################
@@ -685,13 +690,14 @@ dsplink_clean: dsplink_arm_clean dsplink_dsp_clean dsplink_samples_clean
 
 dsplink_install:
 	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
-	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAP3530/RELEASE/dsplinkk.ko $(EXEC_DIR)/dsplink
+	install $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAP3530/RELEASE/dsplinkk.ko $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 
-	install -d $(EXEC_DIR)/dsplink
-	cp $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAP3530/RELEASE/*gpp $(EXEC_DIR)/dsplink
-	@for file in $(shell find $(LINK_INSTALL_DIR)/dsplink/dsp/BUILD -name *.out); do \
-	cp $$file $(EXEC_DIR)/dsplink ; \
+	install -d $(EXEC_DIR)/usr/share/ti/ti-dsplink-examples
+	cp $(LINK_INSTALL_DIR)/dsplink/gpp/export/BIN/Linux/OMAP3530/RELEASE/*gpp $(EXEC_DIR)/usr/share/ti/ti-dsplink-examples
+	@for file in $(shell find $(LINK_INSTALL_DIR)/dsplink/dsp/export -name *.out); do \
+	cp $$file $(EXEC_DIR)/usr/share/ti/ti-dsplink-examples ; \
 	done
+
 
 ##############################################################################
 #  Build c6accel
@@ -743,7 +749,7 @@ c6accel_install:
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
 	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
 	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
-	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel-apps" \
+	EXEC_DIR_C6ACCEL="$(EXEC_DIR)//usr/share/ti/c6accel-apps" \
 	install
 
 ################################################################################
@@ -756,9 +762,10 @@ opengldemos_clean:
 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x clean
 
 opengldemos_install:
-	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x install EXEC_DIR=$(EXEC_DIR)/opengl-demos
+	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=3.x install EXEC_DIR=$(EXEC_DIR)/usr/share/ti/opengl-demos
+	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/gpu/pvr
 	for file in `find $(GRAPHICS_INSTALL_DIR)/gfx_rel_es3.x -name "*.ko"`; do \
-	    install $${file} $(EXEC_DIR)/opengl-demos; \
+	    install $${file} $(EXEC_DIR)/lib/modules/$(KERNEL_VERSON)/kernel/drivers/gpu/pvr; \
 	done
 
 
@@ -839,10 +846,10 @@ c6run_examples:
 	tests
 
 c6run_install:
-	install -d $(EXEC_DIR)/c6run-apps
+	install -d $(EXEC_DIR)/usr/share/ti/c6run-apps
 
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	INSTALL_DIR="$(EXEC_DIR)/c6run-apps" \
+	INSTALL_DIR="$(EXEC_DIR)/usr/share/ti/c6run-apps" \
 	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
 	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
 	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
@@ -863,14 +870,20 @@ matrix_clean:
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup;  cd matrix-gui-* ; qmake ; $(MAKE) distclean
 
 matrix_install:
-	install -d $(EXEC_DIR)/matrix
-	install -m 0755 $(DVSDK_INSTALL_DIR)/matrix-gui-*/matrix_gui $(EXEC_DIR)/matrix
-	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-*/$(PLATFORM)/bin \
-	$(EXEC_DIR)/matrix/
+	install -d $(EXEC_DIR)/etc/init.d
+	install -m 0755 $(DVSDK_INSTALL_DIR)/matrix-gui-*/matrix_gui $(EXEC_DIR)/etc/init.d/matrix-gui-e
+
+	install -d $(EXEC_DIR)/usr/bin
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-*/$(PLATFORM)/bin/* \
+	$(EXEC_DIR)/usr/bin/
+
+	install -d $(EXEC_DIR)/usr/share/matrix
 	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-*/$(PLATFORM)/html \
-	$(EXEC_DIR)/matrix/
+	$(EXEC_DIR)/usr/share/matrix/
+
+	install -d $(EXEC_DIR)/usr/share/matrix
 	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-*/images/ \
-	$(EXEC_DIR)/matrix/
+	$(EXEC_DIR)/usr/share/matrix/
 
 ################################################################################
 # Build Gstreamer plugins
@@ -879,6 +892,6 @@ gstreamer_ti:
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn* ;$(MAKE) -f Makefile.external DVSDK_PATH=$(DVSDK_INSTALL_DIR) omap3530
 
 gstreamer_ti_install:
-	install -d $(EXEC_DIR)/gstreamer-ti
-	cp $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn*/src/.libs/*.so $(EXEC_DIR)/gstreamer-ti
+	install -d $(EXEC_DIR)/usr/lib/gstreamer-0.10
+	cp $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn*/src/.libs/*.so $(EXEC_DIR)/usr/lib/gstreamer-0.10
 

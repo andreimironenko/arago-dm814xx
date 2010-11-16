@@ -3,7 +3,6 @@ include Rules.make
 DEFAULT_LINUXKERNEL_CONFIG=davinci_dm365_defconfig
 DEFAULT_UBOOT_CONFIG=davinci_dm365_evm_config
 
-DMAI_PLATFORM=$(PLATFORM)_al
 KERNEL_VERSION= $(shell cat $(LINUXKERNEL_INSTALL_DIR)/include/config/kernel.release)
 
 .PHONY:	all clean components help cmem cmem_clean cmem_install dmai dmai_clean dmai_install dm365mm dm365mm_clean dm365mm_install linux linux_clean linux_install psp_examples psp_example_clean psp_example_install irq irq_clean irq_install edma edma_clean edma_install install demos demos_clean demos_install u-boot u-boot_clean u-boot_install dvtb_install matrix matrix_clean matrix_install gstreamer_ti gstreamer_ti_install
@@ -113,9 +112,9 @@ demos_clean:
 	$(MAKE) -C $(DEMO_INSTALL_DIR) clean DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) PLATFORM=$(PLATFORM)
 
 demos_install:
-	install -d $(EXEC_DIR)/dvsdk-demos
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(DEMO_INSTALL_DIR)/qtInterface ; qmake ; $(MAKE) PLATFORM=$(PLATFORM) EXEC_DIR=$(EXEC_DIR)/dvsdk-demos install
-	$(MAKE) -C $(DEMO_INSTALL_DIR) install DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) EXEC_DIR=$(EXEC_DIR)/dvsdk-demos PLATFORM=$(PLATFORM)
+	install -d $(EXEC_DIR)//usr/share/ti/dvsdk-demos
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(DEMO_INSTALL_DIR)/qtInterface ; qmake ; $(MAKE) PLATFORM=$(PLATFORM) EXEC_DIR=$(EXEC_DIR)/usr/share/ti/dvsdk-demos install
+	$(MAKE) -C $(DEMO_INSTALL_DIR) install DVSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) CE_INSTALL_DIR=$(CE_INSTALL_DIR) FC_INSTALL_DIR=$(FC_INSTALL_DIR) CMEM_INSTALL_DIR=$(CMEM_INSTALL_DIR) CODEC_INSTALL_DIR=$(CODEC_INSTALL_DIR) XDAIS_INSTALL_DIR=$(XDAIS_INSTALL_DIR) LINK_INSTALL_DIR=$(LINK_INSTALL_DIR) DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) MVTOOL_DIR=$(MVTOOL_DIR) CC=$(CSTOOL_PREFIX)gcc CROSS_COMPILE=$(MVTOOL_PREFIX) LINUXLIBS_INSTALL_DIR=$(LINUXLIBS_INSTALL_DIR) EXEC_DIR=$(EXEC_DIR)/usr/share/ti/dvsdk-demos PLATFORM=$(PLATFORM)
 
 #==============================================================================
 # Build the Digital Video Test Bench for the configured platform. Also, an
@@ -130,10 +129,10 @@ dvtb_clean:
 	$(MAKE) -C $(DVTB_INSTALL_DIR) clean
 
 dvtb_install:
-	install -d $(EXEC_DIR)/dvtb/scripts
-	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/$(PLATFORM)/bin/* $(EXEC_DIR)/dvtb
-	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/scripts/$(PLATFORM)/* $(EXEC_DIR)/dvtb/scripts
-	install $(DEMO_INSTALL_DIR)/$(PLATFORM)/loadmodules.sh $(EXEC_DIR)/dvtb/loadmodules.sh
+	install -d $(EXEC_DIR)/usr/share/ti/dvtb/scripts
+	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/$(PLATFORM)/bin/* $(EXEC_DIR)/usr/share/ti/dvtb
+	install $(DVTB_INSTALL_DIR)/packages/ti/sdo/dvtb/scripts/$(PLATFORM)/* $(EXEC_DIR)/usr/share/ti/dvtb/scripts
+	install $(DEMO_INSTALL_DIR)/$(PLATFORM)/loadmodules.sh $(EXEC_DIR)/usr/share/ti/dvtb/loadmodules.sh
 
 #==============================================================================
 # Build the Linux kernel. Also, an explicit cleanup target is defined.
@@ -178,7 +177,7 @@ psp_examples_clean:
 	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) clean
 
 psp_examples_install:
-	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) EXEC_DIR=$(EXEC_DIR)/psp-examples install
+	$(MAKE) -C $(PSP_INSTALL_DIR)/linux-driver-examples-*/media_ti KERNEL_PATH=$(LINUXKERNEL_INSTALL_DIR)/include CROSS_COMPILE=$(CSTOOL_PREFIX) EXEC_DIR=$(EXEC_DIR)/usr/share/ti/psp-examples install
 	
 #==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the
@@ -250,27 +249,28 @@ dm365mm_install:
 # platform. Also, an explicit cleanup target is defined.
 #==============================================================================
 dmai:
-	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM) \
-	CE_INSTALL_DIR_$(DMAI_PLATFORM)=$(CE_INSTALL_DIR) \
-	CODEC_INSTALL_DIR_$(DMAI_PLATFORM)=$(CODEC_INSTALL_DIR) \
-	CMEM_INSTALL_DIR_$(DMAI_PLATFORM)=$(CMEM_INSTALL_DIR) \
-	FC_INSTALL_DIR_$(DMAI_PLATFORM)=$(FC_INSTALL_DIR) \
-	XDAIS_INSTALL_DIR_$(DMAI_PLATFORM)=$(XDAIS_INSTALL_DIR) \
-	LINUXLIBS_INSTALL_DIR_$(DMAI_PLATFORM)=$(LINUXLIBS_INSTALL_DIR) \
-	LINUXKERNEL_INSTALL_DIR_$(DMAI_PLATFORM)=$(LINUXKERNEL_INSTALL_DIR) \
-	CROSS_COMPILE_$(DMAI_PLATFORM)=$(CSTOOL_PREFIX) \
-	XDC_INSTALL_DIR_$(DMAI_PLATFORM)=$(XDC_INSTALL_DIR) \
+	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(PLATFORM)_al \
+	CE_INSTALL_DIR_$(PLATFORM)_al=$(CE_INSTALL_DIR) \
+	CODEC_INSTALL_DIR_$(PLATFORM)_al=$(CODEC_INSTALL_DIR) \
+	CMEM_INSTALL_DIR_$(PLATFORM)_al=$(CMEM_INSTALL_DIR) \
+	FC_INSTALL_DIR_$(PLATFORM)_al=$(FC_INSTALL_DIR) \
+	XDAIS_INSTALL_DIR_$(PLATFORM)_al=$(XDAIS_INSTALL_DIR) \
+	LINUXLIBS_INSTALL_DIR_$(PLATFORM)_al=$(LINUXLIBS_INSTALL_DIR) \
+	LINUXKERNEL_INSTALL_DIR_$(PLATFORM)_al=$(LINUXKERNEL_INSTALL_DIR) \
+	CROSS_COMPILE_$(PLATFORM)_al=$(CSTOOL_PREFIX) \
+	XDC_INSTALL_DIR_$(PLATFORM)_al=$(XDC_INSTALL_DIR) \
 	VERBOSE=false \
 	all
+
 	
 dmai_clean:
-	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM) \
-	XDC_INSTALL_DIR_$(DMAI_PLATFORM)=$(XDC_INSTALL_DIR) \
+	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(PLATFORM)_al \
+	XDC_INSTALL_DIR_$(PLATFORM)_al=$(XDC_INSTALL_DIR) \
 	clean
 
 dmai_install:
-	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM) \
-	EXEC_DIR_$(DMAI_PLATFORM)_al=$(EXEC_DIR)/dmai \
+	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(PLATFORM)_al \
+	EXEC_DIR_$(PLATFORM)_al=$(EXEC_DIR)/usr/share/ti/ti-dmai-apps \
 	install
 
 ###############################################################################
@@ -422,14 +422,20 @@ matrix_clean:
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; cd matrix-gui-* ; qmake ; $(MAKE) distclean
 
 matrix_install:
-	install -d $(EXEC_DIR)/matrix
-	install -m 0755 $(DVSDK_INSTALL_DIR)/matrix-gui-*/matrix_gui $(EXEC_DIR)/matrix
-	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-*/$(PLATFORM)/bin \
-	$(EXEC_DIR)/matrix/
+	install -d $(EXEC_DIR)/etc/init.d
+	install -m 0755 $(DVSDK_INSTALL_DIR)/matrix-gui-*/matrix_gui $(EXEC_DIR)/etc/init.d/matrix-gui-e
+
+	install -d $(EXEC_DIR)/usr/bin
+	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-*/$(PLATFORM)/bin/* \
+	$(EXEC_DIR)/usr/bin/
+
+	install -d $(EXEC_DIR)/usr/share/matrix
 	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-*/$(PLATFORM)/html \
-	$(EXEC_DIR)/matrix/
+	$(EXEC_DIR)/usr/share/matrix/
+
+	install -d $(EXEC_DIR)/usr/share/matrix
 	cp -ar $(DVSDK_INSTALL_DIR)/matrix-gui-*/images/ \
-	$(EXEC_DIR)/matrix/
+	$(EXEC_DIR)/usr/share/matrix/
 
 ################################################################################
 # Build Martix GUI Appication Launcher
@@ -438,6 +444,6 @@ gstreamer_ti:
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn* ;$(MAKE) -f Makefile.external DVSDK_PATH=$(DVSDK_INSTALL_DIR) dm365
 
 gstreamer_ti_install:
-	install -d $(EXEC_DIR)/gstreamer-ti
-	cp $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn*/src/.libs/*.so $(EXEC_DIR)/gstreamer-ti
+	install -d $(EXEC_DIR)/usr/lib/gstreamer-0.10
+	cp $(DVSDK_INSTALL_DIR)/gstreamer-ti_svn*/src/.libs/*.so $(EXEC_DIR)/usr/lib/gstreamer-0.10
 
