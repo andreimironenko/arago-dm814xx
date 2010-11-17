@@ -22,7 +22,7 @@ echo "on your host."
 read -p "Press return to continue"
 
 extract_fs() {
-    fstar=`ls -1 $cwd/../filesystem/dvsdk*rootfs.tar.gz`
+    fstar=`ls -1 $cwd/../filesystem/??sdk*rootfs.tar.gz`
     sudo mkdir -p $1
     check_status
     sudo tar xzf $fstar -C $1
@@ -65,7 +65,8 @@ echo "--------------------------------------------------------------------------
 platform=`grep PLATFORM= $cwd/../Rules.make | cut -d= -f2`
 echo
 echo "--------------------------------------------------------------------------------"
-echo "This step will set up the DVSDK to install binaries in to:"
+echo "This step will update the EXEC_DIR variables in the Rules.make file"
+echo "This will facilitate the SDK to install (with make install) rebuilt binaries in"
 echo "    $dst/home/root/$platform"
 echo
 echo "The files will be available from /home/root/$platform on the target."
