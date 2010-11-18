@@ -47,14 +47,14 @@ uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
 baseargs="console=ttyS0,115200n8 rw mem=48M"
-videoargs1="video=davincifb:vid0=OFF:vid1=OFF:osd0=720x576x16,4050K"
-videoargs2="dm365_imp.oper_mode=0 davinci_capture.device_type=4"
-videoargs3="davinci_display.cont2_bufsize=6291456"
-videoargs4="vpfe_capture.cont_bufoffset=6291456"
-videoargs5="vpfe_capture.cont_bufsize=6291456"
-videoargs6="davinci_enc_mngr.ch0_output=COMPONENT"
-videoargs7="davinci_enc_mngr.ch0_mode=480P-60"
-videoargs="$videoargs1 $videoargs2 $videoargs3 $videoargs4 $videoargs5 $videoargs6 $videoargs7"
+videoargs1="dm365_imp.oper_mode=0 davinci_capture.device_type=4"
+videoargs2="davinci_display.cont2_bufsize=6291456"
+videoargs3="vpfe_capture.cont_bufoffset=6291456"
+videoargs4="vpfe_capture.cont_bufsize=6291456"
+videoargs5="davinci_enc_mngr.ch0_output=LCD"
+videoargs6="davinci_enc_mngr.ch0_mode=480x272"
+extendedvideoargs="setenv extendedvideoargs $videoargs1 $videoargs2 $videoargs3 $videoargs4 $videoargs5 $videoargs6"
+videoargs="\${extendedvideoargs}"
 fssdargs="root=/dev/mmcblk0p2 rootwait"
 fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath"
 fsflashargs="root=/dev/mtdblock4 rootfstype=jffs2"
@@ -114,7 +114,7 @@ if [ "$kernel" -eq "1" ]; then
     bootcmd="setenv bootcmd 'dhcp;setenv serverip $ip;tftpboot;bootm'"
     serverip="setenv serverip $ip"
     bootfile="setenv bootfile $uimage"
-
+    
     if [ "$fs" -eq "1" ]; then
         bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
         cfg="uimage-tftp_fs-nfs"
@@ -161,6 +161,7 @@ echo "Resulting u-boot variable settings:"
 echo
 echo "setenv bootdelay 4"
 echo "setenv baudrate 115200"
+echo $extendedvideoargs
 echo $bootargs
 echo $bootcmd
 
@@ -218,14 +219,15 @@ if [ "$minicom" == "y" ]; then
     do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv oldbootargs \$\{bootargs\}\"" $minicomfilepath
-    do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs \c\"" $minicomfilepath
+    do_expect "\"$prompt\"" "send \"setenv extendedvideoargs  \c\"" $minicomfilepath
     echo "send \"$videoargs1 \c\"" >> $minicomfilepath
     echo "send \"$videoargs2 \c\"" >> $minicomfilepath
     echo "send \"$videoargs3 \c\"" >> $minicomfilepath
     echo "send \"$videoargs4 \c\"" >> $minicomfilepath
     echo "send \"$videoargs5 \c\"" >> $minicomfilepath
-    echo "send \"$videoargs6 \c\"" >> $minicomfilepath
-    echo "send \"$videoargs7 \c\"" >> $minicomfilepath
+    echo "send \"$videoargs6 \"" >> $minicomfilepath
+
+    do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs $videoargs \c\"" $minicomfilepath
     if [ "$fs" -eq "1" ]; then
         echo "send \"$fsnfsargs \c\"" >> $minicomfilepath
         echo "send \"ip=dhcp\"" >> $minicomfilepath

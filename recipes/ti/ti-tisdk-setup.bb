@@ -22,7 +22,7 @@ SRC_URI = "\
   	file://setup/setup-tftp.sh \
         file://setup/${UBOOT_ENV} \
 "
-PR = "r22"
+PR = "r23"
 
 do_install () {
 	install -d ${D}/${installdir}
