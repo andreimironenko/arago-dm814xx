@@ -1,7 +1,7 @@
 DESCRIPTION = "DVSDK 4.00 Release Notes"
 LICENSE = "CC-BY-SA"
 
-PR="r4"
+PR="r5"
 
 DEPENDS = "ti-post-process-wiki-native"
 
@@ -42,6 +42,7 @@ do_install () {
     for file in $htmlfiles; do
         sed -i "s/__SDK_VERSION__/${SDK_VERSION}/g" $file
         sed -i "s/__DATE__/${TODAYS_DATE}/g" $file
+        sed -i "s/4.00/${SDK_VERSION}/g" $file
     done
 
     htmldoc --webpage -f ${D}/${installdir}/dvsdk_${SDK_VERSION}_${SDK_SHORT_PLATFORM}_Release_Notes.pdf $htmlfiles
