@@ -19,6 +19,7 @@ file://0013-v4l2src-disable-video-device-polling-by-default-on-D.patch \
 file://0014-v4l2src-Skip-detection-of-private-controls.patch \
 file://0015-v4l2src-Remove-short-circuit-of-VIDIOC_S_FMT-call.patch \
 file://0016-v4l2src-add-feature-to-artifically-lower-framerate-b.patch \
+file://0017-v4l2src-always-set-the-desired-framerate-on-DM365.patch \
 "
 
 # pass machine specific flag needed by v4l2src elements.
@@ -62,6 +63,6 @@ DEPENDS := "${@oe_filter_out('esound', bb.data.getVar('DEPENDS', d, 1), d)}"
 DEPENDS := "${@oe_filter_out('gconf', bb.data.getVar('DEPENDS', d, 1), d)}"
 
 # bump PR
-PR_append = "-arago2"
+PR_append = "-arago3"
 
 
