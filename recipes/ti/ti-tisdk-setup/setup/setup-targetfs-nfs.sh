@@ -65,7 +65,8 @@ echo "--------------------------------------------------------------------------
 platform=`grep PLATFORM= $cwd/../Rules.make | cut -d= -f2`
 echo
 echo "--------------------------------------------------------------------------------"
-echo "This step will set up the SDK to install binaries in to:"
+echo "This step will update the EXEC_DIR variables in the Rules.make file"
+echo "This will facilitate the SDK to install (with make install) rebuilt binaries in"
 echo "    $dst/home/root/$platform"
 echo
 echo "The files will be available from /home/root/$platform on the target."
