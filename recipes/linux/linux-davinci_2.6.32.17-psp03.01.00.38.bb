@@ -1,6 +1,6 @@
 require linux-davinci.inc
 
-SRCREV = "4f9428cfefd8b9a56df9ecb1012cd6aeacba670f"
+SRCREV = "0e6c031f61120e651471ad2c6d3fb82884f9aae6"
 
 KVER = "2.6.32.17"
 PSPREL = "03.01.00.38"
