@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+# Default OMAPL138 EVM memory map
+#
+
+load () {
+    modprobe cmemk phys_start=0xC2200000 phys_end=0xC3200000 useHeapIfPoolUnavailable=1 allowOverlap=1
+    modprobe dsplinkk
+    mknod /dev/dsplink c `awk "\\$2==\"dsplink\" {print \\$1}" /proc/devices` 0
+
+}
+
+unload () {
+    rm -f /dev/dsplink
+    rmmod cmemk
+    rmmod dsplinkk
+}
+
+case "$1" in
+      start) 
+            load
+             ;;
+       stop) 
+            unload           
+             ;;
+       restart) 
+            unload           
+            load
+             ;;
+        *)
+             echo "$0 <start/stop/restart>"
+             ;;
+esac
+

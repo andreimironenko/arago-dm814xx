@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r30"
+PR = "r31"
 LICENSE = "MIT"
 
 inherit task
@@ -13,6 +13,7 @@ MULTIMEDIA_DVSDK_COMMON = " \
     ti-data \
     task-arago-gst \
     gstreamer-ti \
+    ti-tisdk-loadmodule \
 "
 
 MULTIMEDIA_dm365 = " \
