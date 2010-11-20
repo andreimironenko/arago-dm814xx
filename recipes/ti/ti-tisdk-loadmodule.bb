@@ -4,7 +4,7 @@ LICENSE = "TI"
 inherit update-rc.d
 
 SRC_URI = "\
- loadmodule-rc \
+file://loadmodule-rc \
 "
 PR = "r1"
 
@@ -13,7 +13,6 @@ do_compile () {
 }
 
 do_install () {
-    cp ${WORKDIR}/loadmodule-rc
     install -d ${D}${sysconfdir}/init.d/
     install -m 0755  ${WORKDIR}/loadmodule-rc ${D}${sysconfdir}/init.d/loadmodule-rc
 }
