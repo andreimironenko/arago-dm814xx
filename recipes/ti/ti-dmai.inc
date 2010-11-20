@@ -122,7 +122,7 @@ do_install () {
     install -d ${D}/${installdir}/ti-dmai-apps
     cd ${S}
     make PLATFORM="${DMAIPLATFORM}" EXEC_DIR=${D}/${installdir}/ti-dmai-apps install 
-    install -m 0755 ${WORKDIR}/loadmodules-ti-dmai-${DMAIPLATFORM}.sh ${D}/${installdir}/ti-dmai-apps/loadmodules.sh 
+#    install -m 0755 ${WORKDIR}/loadmodules-ti-dmai-${DMAIPLATFORM}.sh ${D}/${installdir}/ti-dmai-apps/loadmodules.sh 
 
     install -d ${D}${DMAI_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${DMAI_INSTALL_DIR_RECIPE}

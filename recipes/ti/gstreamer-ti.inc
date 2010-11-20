@@ -15,7 +15,7 @@ require ti-paths.inc
 require ti-staging.inc
 
 # Rebuild on kernel change since it links statically to ti-dmai, ti-codec-engine, etc
-PR = "r81+${MACHINE_KERNEL_PR}"
+PR = "r82+${MACHINE_KERNEL_PR}"
 
 DEPENDS = "ti-dmai gstreamer gst-plugins-base"
 
@@ -94,9 +94,10 @@ do_install_prepend () {
     find ${D}/${installdir}/gst -name .svn -type d | xargs rm -rf
     chmod 0755 ${D}/${installdir}/gst -R
 
-    install -d ${D}${sysconfdir}/init.d/
-    install -m 0755  ${WORKDIR}/gstreamer-ti-rc.sh ${D}${sysconfdir}/init.d/gstti-init
-    sed -i -e 's|<platform>|${PLATFORM}|g' ${D}${sysconfdir}/init.d/gstti-init
+#  do not install init script
+#    install -d ${D}${sysconfdir}/init.d/
+#    install -m 0755  ${WORKDIR}/gstreamer-ti-rc.sh ${D}${sysconfdir}/init.d/gstti-init
+#    sed -i -e 's|<platform>|${PLATFORM}|g' ${D}${sysconfdir}/init.d/gstti-init
 }
 
 RRECOMMENDS_${PN}_append_dm6446    += "ti-codecs-dm6446-server   ti-cmem-module ti-dsplink-module"
@@ -117,6 +118,6 @@ pkg_postinst_${PN} () {
 	fi
 }
 
-INITSCRIPT_NAME = "gstti-init"
-INITSCRIPT_PARAMS = "defaults 99"
+#INITSCRIPT_NAME = "gstti-init"
+#INITSCRIPT_PARAMS = "defaults 99"
 
