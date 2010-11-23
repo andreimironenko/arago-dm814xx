@@ -130,7 +130,7 @@ execute "mke2fs -j -L "ROOTFS" ${device}2"
 execute "mkdir -p /tmp/sdk"
 cat <<EOF >/tmp/sdk/boot.cmd
 mmc rescan 0
-setenv bootargs 'console=ttyS2,115200n8 root=/dev/mmcblk0p2 rw ip=off mem=32M rootwait'
+setenv bootargs 'console=ttyS2,115200n8 root=/dev/mmcblk0p2 rw ip=off mem=32M@0xc0000000 mem=64M@0xc4000000 rootwait'
 fatload mmc 0 c0700000 uImage
 bootm c0700000
 EOF
@@ -150,6 +150,7 @@ execute "cp /tmp/sdk/boot.scr /tmp/sdk/$$/"
 execute "cp /tmp/sdk/boot.cmd /tmp/sdk/$$/"
 execute "cp $sdkdir/psp/prebuilt-images/uImage*.bin /tmp/sdk/$$/uImage"
 execute "cp $sdkdir/bin/setup.htm /tmp/sdk/$$"
+execute "cp $sdkdir/bin/c6748.htm /tmp/sdk/$$"
 execute "cp $sdkdir/bin/top_omapl138_evm.png /tmp/sdk/$$/"
 execute "cp $sdkdir/docs/OMAPL138_EVM_Quick_Start_Guide.pdf /tmp/sdk/$$/quickstartguide.pdf"
 execute "cp $sdkdir/bin/README.boot.scr /tmp/sdk/$$/"

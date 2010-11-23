@@ -18,6 +18,8 @@ SRC_URI = "file://mksdboot.sh \
            file://windows_users.htm \
 "
 
+SRC_URI_append_omapl138 = "file://c6748.htm "
+
 SRCREV_dm365 = "9843"
 SRC_URI_dm365 = "svn://winsvn.sanb.design.ti.com/SDOApps/apps/sdk_productization/trunk/sdk_productization/boot;module=dm365;proto=http;user=anonymous;pswd='' "
 S_dm365 = "${WORKDIR}/dm365"
@@ -52,6 +54,7 @@ do_install_da850-omapl138-evm () {
         cp ${WORKDIR}/mksdboot.sh ${D}/${installdir}/bin/
         chmod +x ${D}/${installdir}/bin/mksdboot.sh
         cp ${WORKDIR}/setup.htm ${D}/${installdir}/bin/
+        cp ${WORKDIR}/c6748.htm ${D}/${installdir}/bin/
         cp ${WORKDIR}/top_${PLATFORM}_evm.png ${D}/${installdir}/bin/
         cp ${WORKDIR}/README.boot.scr ${D}/${installdir}/bin
 }
