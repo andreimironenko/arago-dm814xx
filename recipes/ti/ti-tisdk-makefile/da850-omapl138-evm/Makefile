@@ -229,8 +229,10 @@ codecs_install:
 # Build the Davinci Multimedia Application Interface for the configured
 # platform. Also, an explicit cleanup target is defined.
 #==============================================================================
-dmai: codecs
-	$(MAKE) -C $(DMAI_INSTALL_DIR) PLATFORM=$(DMAI_PLATFORM)_al \
+dmai:
+	$(MAKE) -C $(DMAI_INSTALL_DIR)  \
+	DMAI_INSTALL_DIR=$(DMAI_INSTALL_DIR) \
+	PLATFORM=$(DMAI_PLATFORM)_al \
 	CE_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(CE_INSTALL_DIR) \
 	CODEC_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(CODEC_INSTALL_DIR) \
 	CMEM_INSTALL_DIR_$(DMAI_PLATFORM)_al=$(CMEM_INSTALL_DIR) \
