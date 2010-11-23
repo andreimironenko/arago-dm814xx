@@ -490,7 +490,7 @@ dsplink_arm: dsplink_cfg
 	BASE_BUILDOS=$(LINUXKERNEL_INSTALL_DIR) \
 	all
 
-d-appssplink_dsp_clean:
+dsplink_dsp_clean:
 ifeq ($(FIND_DSPLINKCONFIG), $(LINK_INSTALL_DIR)/dsplink/config/BUILD/CURRENTCFG.MK)
 	DSPLINK=$(LINK_INSTALL_DIR)/dsplink \
 	$(MAKE) -C $(LINK_INSTALL_DIR)/dsplink/dsp/src \
