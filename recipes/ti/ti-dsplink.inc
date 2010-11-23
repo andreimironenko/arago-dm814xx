@@ -159,8 +159,8 @@ do_install () {
     cp ${DSPLINK}/dsp/export/BIN/DspBios/${DSPLINKPLATFORM}/${DSPLINKDSP}/RELEASE/*.out ${D}/${installdir}/ti-dsplink-examples    
 
     # Install the example apps module un/load scripts
-    install ${WORKDIR}/ti-dsplink-examples-loadmodules.sh ${D}/${installdir}/ti-dsplink-examples
-    install ${WORKDIR}/ti-dsplink-examples-unloadmodules.sh ${D}/${installdir}/ti-dsplink-examples
+    # install ${WORKDIR}/ti-dsplink-examples-loadmodules.sh ${D}/${installdir}/ti-dsplink-examples
+    # install ${WORKDIR}/ti-dsplink-examples-unloadmodules.sh ${D}/${installdir}/ti-dsplink-examples
     install ${WORKDIR}/ti-dsplink-examples-run.sh ${D}/${installdir}/ti-dsplink-examples   
  
     # Install/Stage the Source Tree
