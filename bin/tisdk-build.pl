@@ -111,6 +111,14 @@ my %machines = (
         dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
+    "dm816x-evm"     => {
+        bsp_default         => "yes",
+        addons_default      => "yes",
+        multimedia_default  => "yes",
+        dsp_default         => "yes",
+        dvsdk_factory_default => "no",
+        graphics_default    => "yes",
+    },
 );
 
 ################################################################################
