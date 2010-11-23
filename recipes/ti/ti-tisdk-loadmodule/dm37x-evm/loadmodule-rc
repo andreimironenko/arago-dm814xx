@@ -17,10 +17,10 @@ load () {
 }
 
 unload () {
-    rmmod cmemk
-    rmmod lpm_omap3530
-    rmmod dsplinkk
-    rmmod sdmak
+    rmmod cmemk 2>/dev/null
+    rmmod lpm_omap3530 2>/dev/null
+    rmmod dsplinkk 2>/dev/null
+    rmmod sdmak 2>/dev/null
     rm -f /dev/dsplink
 }
 

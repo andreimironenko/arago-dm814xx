@@ -17,9 +17,9 @@ load () {
 }
 
 unload () {
+    rmmod cmemk 2>/dev/null
+    rmmod dsplinkk 2>/dev/null
     rm -f /dev/dsplink
-    rmmod cmemk
-    rmmod dsplinkk
 }
 
 case "$1" in

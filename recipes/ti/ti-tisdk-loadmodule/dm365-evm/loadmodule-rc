@@ -19,10 +19,10 @@ load () {
 }
 
 unload () {
-    rmmod cmemk
-    rmmod irqk 
-    rmmod edmak
-    rmmod dm365mmap
+    rmmod cmemk 2>/dev/null
+    rmmod irqk  2>/dev/null
+    rmmod edmak 2>/dev/null
+    rmmod dm365mmap 2>/dev/null
     rm -f /dev/dm365mmap
 }
 
