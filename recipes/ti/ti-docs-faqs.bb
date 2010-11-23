@@ -7,9 +7,9 @@ DEPENDS = "ti-post-process-wiki-native"
 
 PR = "r1"
 
-COMPATIBLE_MACHINE = "c6a816x-evm"
+COMPATIBLE_MACHINE = "c6a816x-evm|dm816x-evm"
 
-TOPIC_c6a816x-evm = "EZ_SDK_FAQ"
+TOPIC_ti816x = "EZ_SDK_FAQ"
 
 TOPICFILE = "${@bb.data.getVar('TOPIC', d, 1).replace('/','_')}"
 TOPICURL = "http://processors.wiki.ti.com/index.php/${TOPIC}"

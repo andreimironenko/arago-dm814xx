@@ -7,7 +7,7 @@ UBOOT_ENV_dm365 = "setup-uboot-env-dm365.sh"
 UBOOT_ENV_omapl138 = "setup-uboot-env-omapl138.sh"
 UBOOT_ENV_dm37x-evm = "setup-uboot-env-dm3730.sh"
 UBOOT_ENV_omap3evm = "setup-uboot-env-omap3530.sh"
-UBOOT_ENV_c6a816x-evm = "setup-uboot-env-c6a816x.sh"
+UBOOT_ENV_ti816x = "setup-uboot-env-c6a816x.sh"
 UBOOT_ENV_am37x-evm = "setup-uboot-env-am37x.sh"
 
 SRC_URI = "\
