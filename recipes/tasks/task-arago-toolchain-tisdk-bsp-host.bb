@@ -92,7 +92,7 @@ BSP_COMPONENTS_omapl138 = "\
     flash-utility \
     "
 
-BSP_COMPONENTS_c6a816x-evm = "\
+BSP_COMPONENTS_ti816x = "\
     ti-tisdk-setup \
     ti-tisdk-relnotes \
     ti-docs-qsg-hardcopy \

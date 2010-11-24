@@ -31,5 +31,5 @@ check_status
 
 echo
 echo "SDK setup completed!"
-echo "Please continue reading the Software Developer's Guide for more information on"
-echo "how to develop software on the EVM"
+echo "Please read the Software Developer's Guide present in the docs folder for more"
+echo "information on how to develop software on the EVM"

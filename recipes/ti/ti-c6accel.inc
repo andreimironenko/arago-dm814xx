@@ -10,10 +10,10 @@ require ti-eula-unpack.inc
 
 PLATFORM_omapl138 = "omapl138"
 PLATFORM_omap3 = "omap3530"
-PLATFORM_c6a816x-evm = "TI816X"
+PLATFORM_ti816x = "TI816X"
 PLATFORM ?= "<UNDEFINED_PLATFORM>"
 
-COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm37x-evm|c6a816x-evm)"
+COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm37x-evm|c6a816x-evm|dm816x-evm)"
 
 PROVIDES += "ti-c6accel-apps"
 

@@ -197,7 +197,7 @@ if [ "$pc2" != "" ]; then
   execute "cp -ar $copy /tmp/sdk/$$"
   execute "cp $sdkdir/bin/setup.htm /tmp/sdk/$$"
   execute "cp $sdkdir/bin/top_ti816x_evm.png /tmp/sdk/$$/"
-  # execute "cp $sdkdir/docs/TMS320DM3730_EVM_Quick_Start_Guide.pdf /tmp/sdk/$$/quickstartguide.pdf"
+  execute "cp $sdkdir/docs/C6A816x_AM389x_EVM_Quick_start_guide.pdf /tmp/sdk/$$/quickstartguide.pdf"
   sync
   echo "unmounting ${device}3"
   execute "umount /tmp/sdk/$$"

@@ -10,7 +10,7 @@ QTWIDGET_DEMO = ""
 QTWIDGET_DEMO_omapl138 = "qt-embedded-widgets-demo"
 
 FFT_DEMO = ""
-FFT_DEMO_c6a816x-evm = "\
+FFT_DEMO_ti816x = "\
     qwt \
     "
 

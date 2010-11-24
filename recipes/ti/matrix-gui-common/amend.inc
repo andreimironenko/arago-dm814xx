@@ -8,7 +8,7 @@ SRC_URI += "\
 "
 
 
-do_install_append_c6a816x-evm () {
+do_install_append_ti816x () {
     install -m 0644 ${WORKDIR}/*.html ${D}/${datadir}/matrix/html
     install -m 0644 ${WORKDIR}/*.css ${D}/${datadir}/matrix/html
     install -m 0644 ${WORKDIR}/*.png ${D}/${datadir}/matrix/images/
