@@ -74,7 +74,7 @@ diff -uNr c6accel_1_00_00_04_orig/soc/app/omapl138/loadmodules_omapl138_c6accel.
 -# insert DSP/BIOS Link driver
 -#
 -insmod dsplinkk.ko
-+modprobe cmemk phys_start=0xC2000000 phys_end=0xC4000000 pools=20x4096 allowOverlap=1
++modprobe cmemk phys_start=0xC2000000 phys_end=0xC3200000 pools=20x4096 allowOverlap=1
 +modprobe dsplinkk
  
  # make /dev/dsplink

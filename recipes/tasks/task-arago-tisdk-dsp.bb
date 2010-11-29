@@ -25,11 +25,14 @@ DSP_COMPONENTS_omapl138 = "\
     ${DSP_DVSDK_COMMON} \
     ti-c6accel-apps \
     ti-dsp-benchmark-apps \
+    ti-c6run-apps \
+    qt-mandelbrot-accel \
     "
 
 DSP_COMPONENTS_omap3 = "\
     ${DSP_DVSDK_COMMON} \
     ti-c6accel-apps \
+    ti-c6run-apps \
     "
 
 DSP_COMPONENTS_ti816x = "\
@@ -46,3 +49,4 @@ DSP_COMPONENTS = ""
 RDEPENDS = "\
     ${DSP_COMPONENTS} \
 	"
+

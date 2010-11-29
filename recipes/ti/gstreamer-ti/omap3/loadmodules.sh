@@ -1,9 +1,4 @@
 #!/bin/sh
-
-rmmod cmemk
-rmmod lpm_omap3530
-rmmod dsplinkk
-rmmod sdmak
 #
 # CMEM Allocation
 #    1x5250000            Circular buffer
@@ -13,14 +8,17 @@ rmmod sdmak
 
 rmmod cmemk 2>/dev/null
 
-modprobe cmemk allowOverlap=1 phys_start=0x86300000 phys_end=0x87300000 \
-        pools=1x5250000,6x829440,1x345600,1x691200,1x1 allowOverlap=1
+# use heap based allocation
+modprobe cmemk allowOverlap=1 phys_start=0x84A00000 phys_end=0x85900000 useHeapIfPoolUnavailable=1
 
-# insert DSP/BIOS Link driver
-modprobe dsplinkk
+# minimum pool
+# pools=1x5250000,6x829440,1x345600,1x691200,1x1 allowOverlap=1
 
 # insert Local Power Manager driver
 modprobe lpm_omap3530
+
+# insert DSP/BIOS Link driver
+modprobe dsplinkk
 
 # insert SDMA driver
 modprobe sdmak 

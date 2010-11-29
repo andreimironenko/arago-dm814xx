@@ -2,7 +2,7 @@ DESCRIPTION = "DVTB for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-PR = "r15"
+PR = "r16"
  
 DEPENDS = "virtual/kernel alsa-lib ti-framework-components ti-codec-engine ti-xdctools ti-linuxutils alsa-lib jpeg ncurses ti-xdais "
 
@@ -65,9 +65,9 @@ do_install () {
 		fi
 
         # Copy demos' loadmodules.sh into dvtb directory
-		if [ -f ${WORKDIR}/loadmodules-ti-dvtb-${DVTBPLATFORM}.sh ]; then
-        install -m 0755 ${WORKDIR}/loadmodules-ti-dvtb-${DVTBPLATFORM}.sh ${D}/${installdir}/dvtb/loadmodules.sh
-		fi
+		# if [ -f ${WORKDIR}/loadmodules-ti-dvtb-${DVTBPLATFORM}.sh ]; then
+        # install -m 0755 ${WORKDIR}/loadmodules-ti-dvtb-${DVTBPLATFORM}.sh ${D}/${installdir}/dvtb/loadmodules.sh
+		# fi
 
         # Copy dvtb example scripts into dvtb directory
         install -d ${D}/${installdir}/dvtb/scripts

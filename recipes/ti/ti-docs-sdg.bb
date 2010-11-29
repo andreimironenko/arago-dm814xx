@@ -5,11 +5,12 @@ require ti-paths.inc
 
 DEPENDS = "ti-post-process-wiki-native"
 
-PR = "r3"
+PR = "r4"
 
 COMPATIBLE_MACHINE = "(dm365-evm|da850-omapl138-evm|dm37x-evm|omap3evm|c6a816x-evm|dm816x-evm)"
 
 TOPIC_dm365 = "TMS320DM365_Software_Developers_Guide"
+TOPIC_dm368-evm = "TMS320DM368_Software_Developers_Guide"
 TOPIC_omapl138 = "OMAPL138_Software_Developers_Guide"
 TOPIC_dm37x-evm = "TMS320DM3730_Software_Developers_Guide"
 TOPIC_omap3evm = "OMAP3530_Software_Developers_Guide"

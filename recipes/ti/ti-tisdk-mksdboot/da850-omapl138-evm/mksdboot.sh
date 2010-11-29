@@ -130,7 +130,7 @@ execute "mke2fs -j -L "ROOTFS" ${device}2"
 execute "mkdir -p /tmp/sdk"
 cat <<EOF >/tmp/sdk/boot.cmd
 mmc rescan 0
-setenv bootargs 'console=ttyS2,115200n8 root=/dev/mmcblk0p2 rw ip=off mem=32M rootwait'
+setenv bootargs 'console=ttyS2,115200n8 root=/dev/mmcblk0p2 rw ip=off mem=32M@0xc0000000 mem=64M@0xc4000000 rootwait'
 fatload mmc 0 c0700000 uImage
 bootm c0700000
 EOF
@@ -148,8 +148,9 @@ execute "mkdir -p /tmp/sdk/$$"
 execute "mount ${device}1 /tmp/sdk/$$"
 execute "cp /tmp/sdk/boot.scr /tmp/sdk/$$/"
 execute "cp /tmp/sdk/boot.cmd /tmp/sdk/$$/"
-execute "cp $sdkdir/psp/prebuilt-images/uImage /tmp/sdk/$$"
+execute "cp $sdkdir/psp/prebuilt-images/uImage*.bin /tmp/sdk/$$/uImage"
 execute "cp $sdkdir/bin/setup.htm /tmp/sdk/$$"
+execute "cp $sdkdir/bin/c6748.htm /tmp/sdk/$$"
 execute "cp $sdkdir/bin/top_omapl138_evm.png /tmp/sdk/$$/"
 execute "cp $sdkdir/docs/OMAPL138_EVM_Quick_Start_Guide.pdf /tmp/sdk/$$/quickstartguide.pdf"
 execute "cp $sdkdir/bin/README.boot.scr /tmp/sdk/$$/"
@@ -175,13 +176,13 @@ execute "tar zxf $sdkdir/filesystem/dvsdk-da850-omapl138-evm-rootfs.tar.gz -C /t
 sync
 
 # check if we need to create symbolic link for matrix 
-echo -n "Creating matrix-gui symbolic link..."
-if [ -f /tmp/sdk/$$/etc/init.d/matrix-gui ]; then
+echo -n "Creating matrix-gui-e symbolic link..."
+if [ -f /tmp/sdk/$$/etc/init.d/matrix-gui-e ]; then
   if [ -h /tmp/sdk/$$/etc/rc3.d/*matrix* ]; then
     echo " (skipped) "
   else
-    ln -s  ../init.d/matrix-gui /tmp/sdk/$$/etc/rc3.d/S99matrix-gui
-    ln -s  ../init.d/matrix-gui /tmp/sdk/$$/etc/rc5.d/S99matrix-gui
+    ln -s  ../init.d/matrix-gui-e /tmp/sdk/$$/etc/rc3.d/S99matrix-gui-e
+    ln -s  ../init.d/matrix-gui-e /tmp/sdk/$$/etc/rc5.d/S99matrix-gui-e
     echo "done"
   fi
 fi

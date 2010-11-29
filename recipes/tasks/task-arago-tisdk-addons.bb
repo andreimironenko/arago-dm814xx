@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install additional utilities/demos for SDKs"
-PR = "r5"
+PR = "r6"
 LICENSE = "MIT"
 
 inherit task
@@ -13,27 +13,17 @@ UTILS_ti816x = " \
     am-benchmarks \
     "
 
-UTILS_am37x-evm = " \
+UTILS_omap3 = " \
     am-sysinfo \
     am-benchmarks \
     "
 
-UTILS_omap3evm = " \
+UTILS_dm365 = " \
     am-sysinfo \
     am-benchmarks \
     "
 
-UTILS_dm37x-evm = " \
-    am-sysinfo \
-    am-benchmarks \
-    "
-
-UTILS_dm365-evm = " \
-    am-sysinfo \
-    am-benchmarks \
-    "
-
-UTILS_da850-omapl138-evm = " \
+UTILS_omapl138 = " \
     am-sysinfo \
     am-benchmarks \
     "

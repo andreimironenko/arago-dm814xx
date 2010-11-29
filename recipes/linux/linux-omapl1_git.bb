@@ -1,4 +1,4 @@
-require linux.inc
+require recipes/linux/linux.inc
 
 DESCRIPTION = "Linux kernel for OMAPL1 processors"
 KERNEL_IMAGETYPE = "uImage"

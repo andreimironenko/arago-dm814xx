@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install source (or development) packages on host"
-PR = "r13"
+PR = "r14"
 LICENSE="MIT"
 
 inherit task
@@ -36,6 +36,8 @@ DSP_SOURCETREE_omapl138 = "\
     ti-framework-components-src \
     ti-codec-engine-src \
     ti-xdais-src \
+    ti-c6run-src \
+    ti-dsp-benchmark-src \
     "
 
 DSP_SOURCETREE_omap3 = "\
@@ -44,6 +46,7 @@ DSP_SOURCETREE_omap3 = "\
     ti-framework-components-src \
     ti-codec-engine-src \
     ti-xdais-src \
+    ti-c6run-src \
     "
 
 DSP_SOURCETREE_ti816x = "\

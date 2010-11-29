@@ -1,0 +1,54 @@
+From 22153663f03ce844ec7c116af50d9374a8e663d1 Mon Sep 17 00:00:00 2001
+From: Don Darling <ddarling@ti.com>
+Date: Tue, 21 Sep 2010 17:15:35 -0500
+Subject: [PATCH] Enable pad-allocated buffers for OMAP35x/DM37x.
+
+Requires preliminary support for DVSDK 4.00 (omap3530_dv400 build target).
+
+Rotation is not allowed when pad allocation is in use.  When rotation is used,
+we can only allocate a maximum of four V4L2 buffer handles.  This isn't
+practical when sharing buffers with codecs that could require more buffers than
+this.
+---
+ .../ticodecplugin/src/gsttidmaivideosink.c         |   11 +++++++++--
+ 1 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/gstreamer_ti/ti_build/ticodecplugin/src/gsttidmaivideosink.c b/gstreamer_ti/ti_build/ticodecplugin/src/gsttidmaivideosink.c
+index 3d40986..5d9452d 100644
+--- a/gstreamer_ti/ti_build/ticodecplugin/src/gsttidmaivideosink.c
++++ b/gstreamer_ti/ti_build/ticodecplugin/src/gsttidmaivideosink.c
+@@ -360,7 +360,7 @@ static void gst_tidmaivideosink_class_init(GstTIDmaiVideoSinkClass * klass)
+         GST_DEBUG_FUNCPTR(gst_tidmaivideosink_buffer_alloc);
+ 
+     /* Pad-buffer allocation is currently only supported for DM365 */
+-    #if !defined(Platform_dm365)
++    #if !defined(Platform_dm365) && !defined(Platform_omap3530)
+     gstbase_sink_class->buffer_alloc = NULL;
+     #endif
+ }
+@@ -734,6 +734,13 @@ static GstFlowReturn gst_tidmaivideosink_buffer_alloc(GstBaseSink * bsink,
+                 "disabling\n");
+             dmaisink->resizer = FALSE;
+         }
++
++        /* This element cannot perform rotation when doing pad allocation */
++        if (dmaisink->rotation) {
++            GST_WARNING("rotation not supported for pad allocation; "
++                "disabling\n");
++            dmaisink->rotation = FALSE;
++        }
+     }
+ 
+     /* Get a buffer from the BufTab or display driver */
+@@ -1387,7 +1394,7 @@ static gboolean gst_tidmaivideosink_init_display(GstTIDmaiVideoSink * sink)
+          * display until we call Display_put for the first time.
+          */
+         if (sink->hDispBufTab) {
+-            #if defined(Platform_dm365)
++            #if defined(Platform_dm365) || defined(Platform_omap3530)
+             sink->dAttrs.delayStreamon = TRUE;
+             #else
+             GST_ERROR("delayed V4L2 streamon not supported\n");
+-- 
+1.7.1
+

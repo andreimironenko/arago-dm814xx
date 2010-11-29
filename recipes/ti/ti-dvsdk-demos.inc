@@ -2,12 +2,6 @@ DESCRIPTION = "DVSDK Demo applications for TI ARM/DSP processors"
 SECTION = "multimedia"
 LICENSE = "TI"
 
-INC_PR = "r17"
- 
-DEPENDS += "ti-dmai"
-DEPENDS += "alsa-lib libpng freetype jpeg"
-DEPENDS_append_omap3 = " ti-c6accel "
-
 require ti-paths.inc
 require ti-staging.inc
 
@@ -22,31 +16,8 @@ DEMOSPLATFORM_dm6467   = "dm6467"
 DEMOSPLATFORM_omap3    = "omap3530"
 
 PR = "${MACHINE_KERNEL_PR}"
-PR_append = "a"
+PR_append = "b"
 
-S  = "${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/dvsdk_demos_${PV}"
-
-do_preparesource () {
-    DEMOS=${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos
-    find ${DEMOS} -name .svn -type d | xargs rm -rf
-    cp -pPrf ${WORKDIR}/doxygen_templates ${DEMOS}
-    cp -pPrf ${WORKDIR}/arago-tdox ${DEMOS}/tdox
-    chmod a+x ${DEMOS}/release.sh
-    chmod a+x ${DEMOS}/tdox
-    cd ${DEMOS}
-    ./release.sh ${PV} ${DEMOSPLATFORM}
-    rm -rf ${DEMOS}/doxygen_templates
-    rm -rf ${DEMOS}/tdox
-}
-
-# run prepare sources before do_patch to ensure that sourceipk picks the right sources.
-addtask preparesource after do_unpack before do_patch
-
-SRC_URI = "svn://winsvn.sanb.design.ti.com/SDOApps/apps/dvsdk_demos/;module=${DEMOSBRANCH};proto=http;user=anonymous;pswd='' \
-	file://doxygen_templates.tar.gz \
-	file://arago-tdox "
-
-PR = "${INC_PR}.1"
 S  = "${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/dvsdk_demos_${PV}"
 
 do_preparesource () {

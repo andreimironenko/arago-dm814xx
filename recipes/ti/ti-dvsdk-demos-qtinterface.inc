@@ -17,7 +17,6 @@ DEMOSPLATFORM_omapl138 = "ol138"
 
 installdir="/usr/share/ti"
 
-
 S  = "${WORKDIR}/${DEMOSBRANCH}/dvsdk_demos/demos/${DEMOSPLATFORM}/qtInterface"
 
 CXXFLAGS_dm365_append = " -DPlatform_dm365 "

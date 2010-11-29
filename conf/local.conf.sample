@@ -13,92 +13,8 @@ SCRATCH ?= "${OEBASE}"
 # Use this to specify where BitBake should place the downloaded sources into
 DL_DIR = "${SCRATCH}/downloads"
 
-# Put resulting images and packages in deploy directory outside of temp
-#DEPLOY_DIR = "${OEBASE}/arago-deploy"
-
 # Default TMPDIR is safe for multi-user environment
 TMPDIR = "${SCRATCH}/arago-tmp"
-
-# Set the collections
-require conf/collections.inc
-COLLECTIONS = "${OEBASE}/arago/ ${OEBASE}/arago-oe-dev/"
-
-# Optionally add BOM and Custom collections
-COLLECTIONS =. "${@['', bb.data.getVar('OEBASE', d, 1)+'/arago-custom/ '][os.path.exists(bb.data.getVar('OEBASE', d, 1)+'/arago-custom/')]}"
-COLLECTIONS =. "${@['', bb.data.getVar('OEBASE', d, 1)+'/arago-bom/ '][os.path.exists(bb.data.getVar('OEBASE', d, 1)+'/arago-bom/')]}"
-
-# Use the BBMASK below to instruct BitBake to _NOT_ consider some .bb files
-# This is a regular expression, so be sure to get your parenthesis balanced.
-BBMASK = "(nonworking|obsolete)"
-
-# Enable following line to use CodeSourcery Lite, which should be in PATH
-require conf/toolchain-csl.conf
-
-# Enable following line to use MontaVista Pro 5, which should be in PATH
-#require conf/toolchain-mvl5.conf
-
-# Enable capturing license files from sources
-INHERIT += "distribute_license"
-
-# Enable generation of source packages for SDKs
-require conf/arago-source-ipk.conf
-
-# Black magic to automatically set SDK_PATH out of PATH - don't touch this!
-# Works with pretty much any external toolchain, like CS Lite or MV Pro 5
-# Handles cross-toolchain vs. native toolchain
-# SDK_PATH can be overwritten externally by META_SDK_PATH, e.g. for SDK
-TOOLCHAIN_SYSPATH = "${@bb.data.getVar('TARGET_ARCH', d, 1) != bb.data.getVar('BUILD_ARCH', d, 1) and os.path.abspath(os.path.dirname(bb.which(bb.data.getVar('PATH', d, 1), bb.data.getVar('TARGET_PREFIX', d, 1)+'cpp'))+'/../'+bb.data.getVar('TARGET_SYS', d, 1)) or ''}"
-TOOLCHAIN_PATH = "${@bool(bb.data.getVar('TOOLCHAIN_SYSPATH', d, 1)) and (os.path.exists(bb.data.getVar('TOOLCHAIN_SYSPATH', d, 1)) and os.path.dirname(bb.data.getVar('TOOLCHAIN_SYSPATH', d, 1)) or bb.fatal('No valid toolchain in PATH')) or ''}"
-SDK_PATH = "${@[bb.data.getVar('TOOLCHAIN_PATH', d, 1), bb.data.getVar('META_SDK_PATH', d, 1)][bool(bb.data.getVar('META_SDK_PATH', d, 1))]}"
-
-INHERIT += "amend"
-FILESPATHBASE = "${@':'.join(sorted(list(set((bb.data.getVar('FILE_DIRNAME', d, 1).replace(bb.data.getVar('OEBASE', d, 1)+'/arago-oe-dev/', bb.data.getVar('OEBASE', d, 1)+'/arago/')+':'+bb.data.getVar('FILE_DIRNAME', d, 1)).split(':'))),None,None,True))}"
-
-# Libraries provided by the toolchain/SDK
-ASSUME_SHLIBS += "libc.so.6:libc6 libm.so.6:libc6 libutil.so.1:libc6 libcrypt.so.1:libc6"
-ASSUME_SHLIBS += "libdl.so.2:libc6 libpthread.so.0:libc6 librt.so.1:libc6 libgcc_s.so.1:libgcc1"
-ASSUME_SHLIBS += "libstdc++.so.6:libstdc++6 libthread_db.so.1:libthread-db1"
-
-# Set some preferences
-PREFERRED_PROVIDER_initscripts = "initscripts"
-PREFERRED_PROVIDER_ncurses-tools = "ncurses"
-PREFERRED_PROVIDER_gdbserver = "gdbserver"
-PREFERRED_VERSION_gdbserver = "6.6"
-PREFERRED_VERSION_gdb = "6.6"
-PREFERRED_VERSION_gdb-cross-sdk = "6.6"
-PREFERRED_PROVIDER_libopkg-dev = "opkg"
-PREFERRED_PROVIDER_ti-lpm-module = "ti-local-power-manager"
-PREFERRED_PROVIDER_ti-dsplink-module = "ti-dsplink"
-PREFERRED_PROVIDER_qt4-embedded = "qt4-embedded"
-PREFERRED_VERSION_iperf = "1.7.0"
-PREFERRED_PROVIDER_qt4-embedded_omap3 = "qt4-embedded-blitrix"
-PREFERRED_PROVIDER_qt4-embedded_ti816x = "qt4-embedded-blitrix"
-
-
-include conf/arago-bom.conf
-
-# Disable DropBear for now due to export restrictions
-DISTRO_SSH_DAEMON = ""
-
-# Disable all crypt support in curl due to export restrictions
-CURL_FEATURES = "zlib,cookies,dict,file,ftp,http,telnet,tftp"
-
-# Don't install kernel image into the filesystem
-RDEPENDS_kernel-base = ""
-
-# Specify the feed configuration
-ANGSTROM_FEED_CONFIGS = "arago-feed-configs"
-
-# Feed configuration
-ARAGO_URI = "http://feeds.arago-project.org"
-ARAGO_FEED_BASEPATH = "feeds/live/${ANGSTROM_PKG_FORMAT}"
-DISTRO_FEED_URI = "${ARAGO_URI}/${ARAGO_FEED_BASEPATH}"
-
-# Enabling these 2 lines will cut the initial build time by utilizing
-# pre-built native staging packages. Warning: this feature is not safe
-# for multi-user environment, as it sets a global temp/work directory
-# TMPDIR = "/tmp/arago"
-# DEPLOY_DIR_PSTAGE = "${TMPDIR}/pstage"
 
 # Select the machine platform to build for
 # The default value is "arago", which is a unified armv5te MACHINE
@@ -110,16 +26,7 @@ MACHINE ?= "arago"
 
 # For now Arago is not big enough to warrant a separate distribution,
 # reuse Angstrom, but set the name to Arago
-DISTRO = "angstrom-2008.1"
-
-# Set the distro name and version, since we now produce own SDK
-DISTRO_NAME = "Arago"
-DISTRO_VERSION = "2010.09"
-BUILDNAME = "${DISTRO_NAME} ${DISTRO_VERSION}"
-
-# Add own mirrors
-INHERIT += "arago-mirrors"
-#CVS_TARBALL_STASH += "http://arago-project.org/files/sources/"
+DISTRO = "arago"
 
 # So far, angstrom.conf sets ENABLE_BINARY_LOCALE_GENERATION
 # to generate binary locale packages at build time using qemu-native and
@@ -139,7 +46,7 @@ ENABLE_BINARY_LOCALE_GENERATION = "0"
 # GLIBC_GENERATE_LOCALES = "en_GB.UTF-8 de_DE.UTF-8"
 
 #INHERIT += "oestats-client"
-#OESTATS_SERVER = "tinderbox.openembedded.net"
+#OESTATS_SERVER = "tinderbox.openembedded.org"
 #OESTATS_BUILDER = "username"
 
 # Add the required image file system types below. Valid are 

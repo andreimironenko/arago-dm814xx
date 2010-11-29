@@ -140,7 +140,7 @@ fi
 # creating boot.scr
 execute "mkdir -p /tmp/sdk"
 cat <<EOF >/tmp/sdk/boot.cmd
-setenv bootargs 'console=ttyS0,115200n8 root=/dev/mmcblk0p2 rw ip=off mem=99M mpurate=1000  omap_vout.vid1_static_vrfb_alloc=y omapfb.vram=0:3M mem=128M@0x88000000 rootwait'
+setenv bootargs 'console=ttyS0,115200n8 root=/dev/mmcblk0p2 rw ip=off mem=55M@0x80000000 mpurate=1000  omap_vout.vid1_static_vrfb_alloc=y omapfb.vram=0:3M mem=128M@0x88000000 rootwait'
 fatload mmc 0 80200000 uImage
 bootm 80200000
 EOF
@@ -176,13 +176,13 @@ execute "tar zxf $rootfs -C /tmp/sdk/$$"
 sync
 
 # check if we need to create symbolic link for matrix to auto start
-echo -n "Creating matrix-gui symbolic link..."
-if [ -f /tmp/sdk/$$/etc/init.d/matrix-gui ]; then
+echo -n "Creating matrix-gui-e symbolic link..."
+if [ -f /tmp/sdk/$$/etc/init.d/matrix-gui-e ]; then
   if [ -h /tmp/sdk/$$/etc/rc3.d/*matrix* ]; then
     echo " (skipped) "
   else
-    ln -s  ../init.d/matrix-gui /tmp/sdk/$$/etc/rc3.d/S99matrix-gui
-    ln -s  ../init.d/matrix-gui /tmp/sdk/$$/etc/rc5.d/S99matrix-gui
+    ln -s  ../init.d/matrix-gui-e /tmp/sdk/$$/etc/rc3.d/S99matrix-gui-e
+    ln -s  ../init.d/matrix-gui-e /tmp/sdk/$$/etc/rc5.d/S99matrix-gui-e
     echo "done"
   fi
 fi

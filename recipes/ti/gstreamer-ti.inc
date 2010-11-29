@@ -10,20 +10,20 @@ LICENSE = "LGPL"
 # TODO :: Remove ENCODE/DECODE combo exports - these are not used anymore (check?)
 
 inherit autotools
-inherit update-rc.d
 require ti-paths.inc
 require ti-staging.inc
 
 # Rebuild on kernel change since it links statically to ti-dmai, ti-codec-engine, etc
-PR = "r79+${MACHINE_KERNEL_PR}"
+PR = "r82+${MACHINE_KERNEL_PR}"
 
 DEPENDS = "ti-dmai gstreamer gst-plugins-base"
 
-# enable c6accel elements on omapl138
-DEPENDS_append_da850-omapl138-evm = " ti-c6accel "
-DEPENDS_append_omap3 = " ti-c6accel "
+# enable c6accel elements on omapl138 and omap3
+DEPENDS_append_omapl138 = " ti-c6accel "
 EXTRA_OECONF_omapl138 = "--enable-c6accel"
+DEPENDS_append_omap3 = " ti-c6accel "
 EXTRA_OECONF_omap3 = "--enable-c6accel"
+
 export C6ACCEL_INSTALL_DIR
 
 # gstreamer_ti picks up some config variables from the environment
@@ -81,28 +81,10 @@ do_install_prepend () {
     # copy gstreamer demo scripts
     cp -r ${WORKDIR}/gstreamer_ti/gstreamer_demo/shared ${D}/${installdir}/gst
 
-    # If we have loadmodules.sh in WORKDIR then give preference to this over
-    # the default gst-ti loadmdules.sh
-    if [ -f ${WORKDIR}/loadmodules.sh ]; then
-       cp ${WORKDIR}/loadmodules.sh ${D}/${installdir}/gst/${PLATFORM}
-    else
-       cp -r ${WORKDIR}/gstreamer_ti/gstreamer_demo/${PLATFORM} ${D}/${installdir}/gst
-    fi   
-
-    # replace insmod with modprobe
-    sed -i 's/insmod/modprobe/g' ${D}/${installdir}/gst/${PLATFORM}/loadmodules.sh
-    sed -i 's/.ko//g' ${D}/${installdir}/gst/${PLATFORM}/loadmodules.sh
-
-    if [ "${PLATFORM}" = "omap3530" ]; then
-     echo "modprobe sdmak" >> ${D}/${installdir}/gst/${PLATFORM}/loadmodules.sh
-    fi
-        
     # delete .svn files
     find ${D}/${installdir}/gst -name .svn -type d | xargs rm -rf
     chmod 0755 ${D}/${installdir}/gst -R
 
-    install -d ${D}${sysconfdir}/init.d/
-    install -m 0755  ${WORKDIR}/gstreamer-ti-rc.sh ${D}${sysconfdir}/init.d/gstti-init
 }
 
 RRECOMMENDS_${PN}_append_dm6446    += "ti-codecs-dm6446-server   ti-cmem-module ti-dsplink-module"
@@ -123,6 +105,4 @@ pkg_postinst_${PN} () {
 	fi
 }
 
-INITSCRIPT_NAME = "gstti-init"
-INITSCRIPT_PARAMS = "defaults 99"
 

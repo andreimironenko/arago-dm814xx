@@ -1,4 +1,4 @@
-require multi-kernel.inc
+require recipes/linux/multi-kernel.inc
 
 DESCRIPTION = "Linux kernel for Davinci processors"
 KERNEL_IMAGETYPE = "uImage"

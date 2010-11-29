@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r29"
+PR = "r32"
 LICENSE = "MIT"
 
 inherit task
@@ -10,11 +10,10 @@ MULTIMEDIA = ""
 MULTIMEDIA_DVSDK_COMMON = " \
     ti-dmai-apps \
     ti-codec-engine-examples \
-    ti-dvsdk-demos \
-    ti-dvsdk-demos-qtinterface \
     ti-data \
     task-arago-gst \
     gstreamer-ti \
+    ti-tisdk-loadmodule \
 "
 
 MULTIMEDIA_dm365 = " \
@@ -46,31 +45,16 @@ MULTIMEDIA_dm6467 = " \
 
 MULTIMEDIA_dm37x-evm = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
-    ti-dvtb \
+#    ti-dvtb \
     ti-dvsdk-demos \
     ti-dvsdk-demos-qtinterface \
-    "
-
-MULTIMEDIA_dm37x-evm = " \
-    ti-dmai-apps \
-    ti-codec-engine-examples \
-    task-arago-gst \
-    gstreamer-ti \
-    ti-dvsdk-demos \
-    ti-dvsdk-demos-qtinterface \
-    ti-dvtb \
-    ti-data \
     "
 
 MULTIMEDIA_omap3evm = " \
-    ti-dmai-apps \
-    ti-codec-engine-examples \
-    task-arago-gst \
-    gstreamer-ti \
+    ${MULTIMEDIA_DVSDK_COMMON} \
+    ti-dvtb \
     ti-dvsdk-demos \
     ti-dvsdk-demos-qtinterface \
-    ti-dvtb \
-    ti-data \
     "
 
 MULTIMEDIA_am37x-evm = " \
