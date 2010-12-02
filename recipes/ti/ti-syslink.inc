@@ -24,7 +24,7 @@ S = "${WORKDIR}/syslink_${PV}${PVextra}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/syslink/${PV}/exports/syslink_${PV}.tar.gz;name=syslinktarball"
 
-DEPENDS = "ti-sysbios ti-xdctools ti-cgt6x ti-ipc"  
+DEPENDS = "ti-sysbios ti-xdctools ti-cgt6x ti-ipc ti-cgt470"  
 # Need to add M3 support in subsequent update
 #DEPENDS_append_ti816x = " ti-cgt470"
 DEPENDS += "virtual/kernel" 
@@ -60,7 +60,7 @@ XDCTARGETS_omap3          = "ti.targets.C64P"
 XDCTARGETS_omapl137       = "ti.targets.C674"
 XDCTARGETS_omapl138       = "ti.targets.C674"
 # for ti816x, we should later also build for ti.targets.arm.elf.M3
-XDCTARGETS_ti816x         = "ti.targets.elf.C674"
+XDCTARGETS_ti816x         = "ti.targets.elf.C674 ti.targets.arm.elf.M3"
 XDCTARGETS               ?= "<UNDEFINED_XDCTARGETS>"
 export XDCTARGETS
 
@@ -82,7 +82,8 @@ do_configure() {
         -e s:^C64P_ELF.rootDir.*:C64P_ELF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
         -e s:^C674_COFF.rootDir.*:C674_COFF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
         -e s:^C674_ELF.rootDir.*:C674_ELF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
-        -e s:^M3_ELF.rootDir.*:M3_ELF.rootDir\ =\ \"${CODEGEN_ARM_INSTALL_DIR}\":g \
+        -e s:^M3_ELF.rootDir.*:M3_ELF.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
+        -e s:^A8_ELF.rootDir.*:A8_ELF.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
         ${S}/config.bld
 }
 
