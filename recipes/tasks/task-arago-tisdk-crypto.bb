@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install crypto packages into target FS"
-PR = "r0"
+PR = "r1"
 LICENSE = "MIT"
 
 inherit task
@@ -7,6 +7,7 @@ inherit task
 WLAN_SUPPORT = "\
     openssl \
     wpa-supplicant \
+    wpa-gui-e \
     "
 
 # Packages required for Eclipse RSE plugin
