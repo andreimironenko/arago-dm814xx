@@ -62,11 +62,6 @@ MULTIMEDIA_am37x-evm = " \
     gst-ffmpeg \
     "
 
-MULTIMEDIA_ti816x = " \
-    task-arago-gst \
-    gst-ffmpeg \
-    "
-
 RDEPENDS_${PN} = "\
     ${MULTIMEDIA} \
     "
