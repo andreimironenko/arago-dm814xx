@@ -1,23 +1,18 @@
 DESCRIPTION = "Task to install additional utilities/demos for SDKs"
-PR = "r3"
+PR = "r4"
 LICENSE = "MIT"
 
 inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-UTILS = ""
-
-UTILS_ti816x = " \
+UTILS = " \
     matrix-tui \
     am-sysinfo \
     am-benchmarks \
     "
 
-UTILS_am37x-evm = " \
-    matrix-tui \
-    am-sysinfo \
-    am-benchmarks \
-    "
+# Add PRU examples for am180x-evm devices
+UTILS_am180x-evm += "ti-pru-sw-examples"
 
 RDEPENDS_${PN} = "\
     ${UTILS} \
