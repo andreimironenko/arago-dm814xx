@@ -8,7 +8,7 @@ DESCRIPTION = "Qt for embedded using the blitrix NEON 2D library for TI devices"
 #        not prepended then the wrong version of files
 #        such as linux.conf are obtained from the
 #        qt4/files directory instead of
-#        qt4/qt4-embedded-4.6.2 directory.
+#        qt4/qt4-embedded-4.6.3 directory.
 FILESPATHPKG =. "qt4-embedded-${PV}:qt4-embedded:"
 
 # Add the arago-oe-dev directory to the base directories
