@@ -39,14 +39,26 @@ CMEM_INSTALL_DIR=$(LINUXUTILS_INSTALL_DIR)
 # Where the XDAIS package is installed.
 XDAIS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__xdais__>
 
+# Where the codec packages are installed
+CODEC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__codecs-dm816x__>
+
+# Where the IVAHD VICP20 API package is installed
+IVAHD_VICP20_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__ivahd_hdvicp20__>
+
 # Where the RTSC tools package is installed.
 XDC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__xdctools__>
 
 # Where the Code Gen is installed.
 CODEGEN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__cgt6x__>
 
+# Where the TMS470 Code gen is installed
+TMS470_CODEGEN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__cgt-tms470__>
+
 # Where the PSP is installed.
 PSP_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/psp
+
+# Where the HDVPSS package is installed.
+HDVPSS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__hdvpss__>
 
 # The directory that points to your kernel source directory.
 LINUXKERNEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/psp/<__kernel__>
@@ -64,6 +76,9 @@ GRAPHICS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__libgles-omap3__>
 
 # Where signal analyzer package is installed
 SADEMO_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/demos/<__signal-analyzer-demo__>
+
+# Where OMX package is installed
+OMX_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__omx__>
 
 # The prefix to be added before the GNU compiler tools (optionally including # path), i.e. "arm_v5t_le-" or "/opt/bin/arm_v5t_le-".
 CSTOOL_DIR=<__CROSS_COMPILER_PATH__>

@@ -6,7 +6,7 @@ MIN_UBOOT_CONFIG=ti8168_evm_min_sd
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	components components_clean all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_clean c6accel_install syslink syslink_clean syslink_install opengldemos opengldemos_clean opengldemos_install sademo sademo_clean sademo_install matrix matrix_clean matrix_install
+.PHONY:	components components_clean all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_clean c6accel_install syslink syslink_clean syslink_install opengldemos opengldemos_clean opengldemos_install sademo sademo_clean sademo_install matrix matrix_clean matrix_install omx omx_clean omx_install
 
 #==============================================================================
 # Build components to enable all other build targets. 
@@ -21,17 +21,17 @@ components_clean: linux_clean syslink_clean cmem_clean c6accel_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-all: components u-boot opengldemos sademo matrix
+all: components u-boot opengldemos sademo matrix omx
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install syslink_install u-boot_install c6accel_install opengldemos_install sademo_install matrix_install
+install: linux_install cmem_install syslink_install u-boot_install c6accel_install opengldemos_install sademo_install matrix_install omx_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clean: components_clean u-boot_clean opengldemos_clean sademo_clean matrix_clean
+clean: components_clean u-boot_clean opengldemos_clean sademo_clean matrix_clean omx_clean
 
 #==============================================================================
 # A help message target.
@@ -77,10 +77,14 @@ help:
 	@echo "    sademo                       : Build the Signal Analyzer demo for $(PLATFORM)"
 	@echo "    sademo_clean                 : Remove Signal Analyzer demo files."
 	@echo "    sademo_install               : install Signal Analyzer demo executables."
+	@echo
 	@echo "    matrix                       : Build matrix application launcher"
 	@echo "    matrix_clean                 : Remove all matrix files"
 	@echo "    matrix_install               : Install matrix"
 	@echo
+	@echo "    omx                          : Build OMX and OMX IL Clients"
+	@echo "    omx_clean                    : Remove OMX generated files"
+	@echo "    omx_install                  : Install OMX IL Clients"
 	@echo
 	@echo "    all                          : Rebuild everything"
 	@echo "    clean                        : Remove all generated files"
@@ -166,6 +170,7 @@ syslink_cfg:
         -e s:^C674_COFF.rootDir.*:C674_COFF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
         -e s:^Arm9.rootDir.*:Arm9.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
         -e s:^M3_ELF.rootDir.*:M3_ELF.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
+	-e s:^A8_ELF.rootDir.*:A8_ELF.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
         -e s:C64P_COFF,://C64P_COFF:g \
         -e s:C64P_ELF,://C64P_ELF:g \
         ${SYSLINK_INSTALL_DIR}/config.bld
@@ -338,7 +343,7 @@ sademo_install: c6accel_install
 	cd $(EXEC_DIR)/signal-analyzer; ln -s ../c6accel/ti816x.xe674; cd -
 
 ################################################################################
-# Build Martix GUI Appication Launcher
+# Build Martix GUI Application Launcher
 ################################################################################
 matrix:
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd demos/matrix-gui-e* ; qmake ; $(MAKE) PLATFORM=ti816x
@@ -356,3 +361,80 @@ matrix_install:
 	cp -ar $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/images/ \
         $(EXEC_DIR)/matrix/
 
+
+################################################################################
+# Build OMX and IL Client Applications 
+################################################################################
+
+omx_vc:
+	make -C $(OMX_INSTALL_DIR)/packages vc3 \
+		ROOTDIR=$(OMX_INSTALL_DIR)/packages \
+		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR) \
+		INTERNAL_SW_ROOT=$(OMX_INSTALL_DIR)/packages \
+		bios_PATH=$(SYSBIOS_INSTALL_DIR) \
+		fc_PATH=$(FC_INSTALL_DIR) \
+		osal_PATH=$(OSAL_INSTALL_DIR) \
+		xdais_PATH=$(XDAIS_INSTALL_DIR) \
+		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
+		ce_PATH=$(CE_INSTALL_DIR) \
+		h264enc_PATH=$(CODEC_INSTALL_DIR) \
+		h264dec_PATH=$(CODEC_INSTALL_DIR) \
+		hdvicp20api_PATH=$(IVAHD_VICP20_INSTALL_DIR) \
+		ipc_PATH=$(IPC_INSTALL_DIR) \
+		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
+		xdc_PATH=$(XDC_INSTALL_DIR) \
+		hdvpss_PATH=$(HDVPSS_INSTALL_DIR) \
+		CODEGEN_PATH_M3=$(TMS470_CODEGEN_INSTALL_DIR) \
+		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
+		DEST_ROOT=$(OMX_INSTALL_DIR)/rebuilt-binaries
+
+omx_vs:
+	make -C $(OMX_INSTALL_DIR)/packages vs2 \
+		ROOTDIR=$(OMX_INSTALL_DIR)/packages \
+		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR) \
+		INTERNAL_SW_ROOT=$(OMX_INSTALL_DIR)/packages \
+		bios_PATH=$(SYSBIOS_INSTALL_DIR) \
+		fc_PATH=$(FC_INSTALL_DIR) \
+		osal_PATH=$(OSAL_INSTALL_DIR) \
+		xdais_PATH=$(XDAIS_INSTALL_DIR) \
+		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
+		ce_PATH=$(CE_INSTALL_DIR) \
+		h264enc_PATH=$(CODEC_INSTALL_DIR) \
+		h264dec_PATH=$(CODEC_INSTALL_DIR) \
+		hdvicp20api_PATH=$(IVAHD_VICP20_INSTALL_DIR) \
+		ipc_PATH=$(IPC_INSTALL_DIR) \
+		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
+		xdc_PATH=$(XDC_INSTALL_DIR) \
+		hdvpss_PATH=$(HDVPSS_INSTALL_DIR) \
+		CODEGEN_PATH_M3=$(TMS470_CODEGEN_INSTALL_DIR) \
+		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
+		DEST_ROOT=$(OMX_INSTALL_DIR)/rebuilt-binaries
+
+omx: omx_vc omx_vs
+
+omx_clean:
+	make -C $(OMX_INSTALL_DIR)/packages cleanall \
+		ROOTDIR=$(OMX_INSTALL_DIR)/packages \
+		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR) \
+		INTERNAL_SW_ROOT=$(OMX_INSTALL_DIR)/packages \
+		bios_PATH=$(SYSBIOS_INSTALL_DIR) \
+		fc_PATH=$(FC_INSTALL_DIR) \
+		osal_PATH=$(OSAL_INSTALL_DIR) \
+		xdais_PATH=$(XDAIS_INSTALL_DIR) \
+		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
+		ce_PATH=$(CE_INSTALL_DIR) \
+		h264enc_PATH=$(CODEC_INSTALL_DIR) \
+		h264dec_PATH=$(CODEC_INSTALL_DIR) \
+		hdvicp20api_PATH=$(IVAHD_VICP20_INSTALL_DIR) \
+		ipc_PATH=$(IPC_INSTALL_DIR) \
+		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
+		xdc_PATH=$(XDC_INSTALL_DIR) \
+		hdvpss_PATH=$(HDVPSS_INSTALL_DIR) \
+		CODEGEN_PATH_M3=$(TMS470_CODEGEN_INSTALL_DIR) \
+		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
+		DEST_ROOT=$(OMX_INSTALL_DIR)/rebuilt-binaries
+	rm -rf $(OMX_INSTALL_DIR)/rebuild-binaries/
+
+omx_install:
+	install -d $(EXEC_DIR)/omx
+	install -m 9755 $(OMX_INSTALL_DIR)/rebuilt-binaries/* $(EXEC_DIR)/omx
