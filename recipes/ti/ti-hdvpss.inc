@@ -11,6 +11,10 @@ S = "${WORKDIR}/HDVPSS_${PV}"
 
 SRC_URI = "http://install.source.dir.local/HDVPSS_${PV}.zip;name=hdvpss"
 
+do_compile() {
+    :
+}
+
 do_install() {
     install -d ${D}${HDVPSS_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${HDVPSS_INSTALL_DIR_RECIPE}
