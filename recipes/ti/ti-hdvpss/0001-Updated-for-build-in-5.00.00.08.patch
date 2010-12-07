@@ -1,0 +1,76 @@
+From 7fc534f9462e9fc403df99ede1b5c334c85f35fa Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Tue, 7 Dec 2010 16:02:06 +0530
+Subject: [PATCH] Updated for build in 5.00.00.08
+
+---
+ .../vps/drivers/capture/src/vpsdrv_captureApi.c    |    8 ++++++++
+ .../drivers/display/src/vps_dctrlDefaultsPriv.h    |    4 ++--
+ .../ti/psp/vps/drivers/m2m/src/vpsdrv_m2mScWrbk.c  |    8 ++++----
+ 3 files changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/packages/ti/psp/vps/drivers/capture/src/vpsdrv_captureApi.c b/packages/ti/psp/vps/drivers/capture/src/vpsdrv_captureApi.c
+index a8cdeb1..86d44a6 100755
+--- a/packages/ti/psp/vps/drivers/capture/src/vpsdrv_captureApi.c
++++ b/packages/ti/psp/vps/drivers/capture/src/vpsdrv_captureApi.c
+@@ -628,6 +628,14 @@ Int32 Vps_captControl ( Fdrv_Handle handle, UInt32 cmd,
+         case IOCTL_VPS_CAPT_GET_CH_STATUS:
+             status = Vps_captGetChStatus ( handle, cmdArgs, cmdStatusArgs );
+             break;
++
++        case IOCTL_VPS_CAPT_RESET_VIP0:
++            status  = Vps_captVipInstReset(VPSHAL_VIP_INST_1);
++            break;
++        case IOCTL_VPS_CAPT_RESET_VIP1:
++            status  = Vps_captVipInstReset(VPSHAL_VIP_INST_2);
++            break;
++
+         default:
+             /*
+              * illegal IOCTL
+diff --git a/packages/ti/psp/vps/drivers/display/src/vps_dctrlDefaultsPriv.h b/packages/ti/psp/vps/drivers/display/src/vps_dctrlDefaultsPriv.h
+index 7de1e17..d7ccf15 100755
+--- a/packages/ti/psp/vps/drivers/display/src/vps_dctrlDefaultsPriv.h
++++ b/packages/ti/psp/vps/drivers/display/src/vps_dctrlDefaultsPriv.h
+@@ -22,11 +22,11 @@
+ /* ========================================================================== */
+ 
+ #ifdef TI_814X_BUILD
+-#include <ti/psp/vps/drivers/display/src/vps_dctrlDefaultsTi814x.h>
++#include <ti/psp/vps/drivers/display/src/vps_dctrlDefaultsTI814X.h>
+ #endif
+ 
+ #ifdef TI_816X_BUILD
+-#include <ti/psp/vps/drivers/display/src/vps_dctrlDefaultsTi816x.h>
++#include <ti/psp/vps/drivers/display/src/vps_dctrlDefaultsTI816x.h>
+ #endif
+ 
+ #ifdef __cplusplus
+diff --git a/packages/ti/psp/vps/drivers/m2m/src/vpsdrv_m2mScWrbk.c b/packages/ti/psp/vps/drivers/m2m/src/vpsdrv_m2mScWrbk.c
+index 720f01c..686d7b6 100755
+--- a/packages/ti/psp/vps/drivers/m2m/src/vpsdrv_m2mScWrbk.c
++++ b/packages/ti/psp/vps/drivers/m2m/src/vpsdrv_m2mScWrbk.c
+@@ -753,16 +753,16 @@ Int32 VpsMdrv_scGetProcessedFrms(FVID2_Handle handle,
+             if (0 != handleObj->reqCnt)
+             {
+                 retVal =  (FVID2_EAGAIN);
+-                GT_0trace(VpsMdrvScwbTrace, GT_INFO, "AGAIN: Request under process\n");
++//                GT_0trace(VpsMdrvScwbTrace, GT_INFO, "AGAIN: Request under process\n");
+             }
+             /* If not buffer queueud return with FVID2_ENO_MORE_BUFFERS
+              * error */
+             else
+             {
+                 retVal = (FVID2_ENO_MORE_BUFFERS);
+-                GT_0trace(VpsMdrvScwbTrace,
+-                    GT_ERR,
+-                    "AGAIN: No More buffers to process\n");
++//                GT_0trace(VpsMdrvScwbTrace,
++//                    GT_ERR,
++//                    "AGAIN: No More buffers to process\n");
+             }
+ 
+         }
+-- 
+1.7.0.4
+

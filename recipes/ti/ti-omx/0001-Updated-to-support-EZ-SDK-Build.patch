@@ -1,0 +1,143 @@
+From 006e1c6d0dd8775099a5fc1399e58d54a4e1243e Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Tue, 7 Dec 2010 15:54:20 +0530
+Subject: [PATCH] Updated to support EZ SDK Build
+
+---
+ packages/makerules/env.mk               |   15 ++++++++++++++-
+ packages/ti/omx/comp/scheduler/makefile |    2 +-
+ packages/ti/omx/comp/server/makefile    |    2 +-
+ packages/ti/omx/comp/vdec/makefile      |    2 +-
+ packages/ti/omx/comp/venc/makefile      |    2 +-
+ packages/ti/omx/demos/vc3/makefile      |    2 +-
+ packages/ti/omx/demos/vs2/makefile      |    2 +-
+ packages/ti/omx/domx/makefile           |    2 +-
+ 8 files changed, 21 insertions(+), 8 deletions(-)
+
+diff --git a/packages/makerules/env.mk b/packages/makerules/env.mk
+index 3ed9473..6fdd913 100755
+--- a/packages/makerules/env.mk
++++ b/packages/makerules/env.mk
+@@ -65,6 +65,18 @@ hdvicp20api_INCLUDE = $(hdvicp20api_PATH)/packages
+ ipc_PATH = $(EXTERNAL_SW_ROOT)/ipc_1_22_00_13_eng
+ ipc_INCLUDE = $(ipc_PATH)/packages
+ 
++# OSAL
++osal_PATH = $(EXTERNAL_SW_ROOT)/osal_1_21_00_02
++osal_INCLUDE = $(osal_PATH)/packages
++
++# XDAIS
++xdais_PATH = $(EXTERNAL_SW_ROOT)/xdais_7_20_00_06
++xdais_INCLUDE = $(xdais_PATH)/packages
++
++# XDAIS
++linuxutils_PATH = $(EXTERNAL_SW_ROOT)/linuxutils_3_21_00_01
++linuxutils_INCLUDE = $(linuxutils_PATH)/packages
++
+ # SYSLINK 
+ syslink_PATH = $(EXTERNAL_SW_ROOT)/syslink_02_00_00_65_alpha2
+ syslink_INCLUDE = $(syslink_PATH)
+@@ -122,7 +134,8 @@ CHMOD = $(UTILSPATH)chmod
+ CONFIG_BLD_XDC_m3 = $(omx_PATH)/ti/omx/build/config.bld
+ CONFIG_BLD_XDC_a8 = $(omx_PATH)/ti/omx/build/config_ca8.bld
+ 
+-XDCPATH = $(bios_PATH)/packages;$(fc_PATH)/packages;$(hdvpss_PATH)/packages;$(ipc_PATH)/packages;$(syslink_PATH);$(fctools_PATH)/packages;$(xdc_PATH)/packages;$(ce_PATH)/packages;$(omx_PATH);$(omx_PATH)/ti/omx/interfaces/openMaxv11;.;$(h264enc_PATH)/packages;$(h264dec_PATH)/packages;$(omx_PATH)/ti/omx/comp/omxbase;$(omx_PATH)/ti/omx/omxcore;$(hdvicp20api_PATH)/packages
++# XDCPATH = $(bios_PATH)/packages;$(fc_PATH)/packages;$(hdvpss_PATH)/packages;$(ipc_PATH)/packages;$(syslink_PATH);$(fctools_PATH)/packages;$(xdc_PATH)/packages;$(ce_PATH)/packages;$(omx_PATH);$(omx_PATH)/ti/omx/interfaces/openMaxv11;.;$(h264enc_PATH)/packages;$(h264dec_PATH)/packages;$(omx_PATH)/ti/omx/comp/omxbase;$(omx_PATH)/ti/omx/omxcore;$(hdvicp20api_PATH)/packages;$(osal_PATH)/packages;$(xdais_PATH)/packages;
++XDCPATH = $(bios_PATH)/packages;$(fc_PATH)/packages;$(hdvpss_PATH)/packages;$(ipc_PATH)/packages;$(syslink_PATH);$(xdc_PATH)/packages;$(ce_PATH)/packages;$(omx_PATH);$(omx_PATH)/ti/omx/interfaces/openMaxv11;.;$(h264enc_PATH)/packages;$(h264dec_PATH)/packages;$(omx_PATH)/ti/omx/comp/omxbase;$(omx_PATH)/ti/omx/omxcore;$(hdvicp20api_PATH)/packages;$(osal_PATH)/packages;$(xdais_PATH)/packages;$(linuxutils_PATH)/packages;
+ export XDCPATH
+ 
+ XDCROOT = $(xdc_PATH)
+diff --git a/packages/ti/omx/comp/scheduler/makefile b/packages/ti/omx/comp/scheduler/makefile
+index 396f8c0..878e22b 100755
+--- a/packages/ti/omx/comp/scheduler/makefile
++++ b/packages/ti/omx/comp/scheduler/makefile
+@@ -7,7 +7,7 @@ INCDIR = . src
+ 
+ # List all the external components/interfaces, whose interface header files 
+ #  need to be included for this component
+-INCLUDE_EXERNAL_INTERFACES = bios xdc omx fc fctools ce timmosal
++INCLUDE_EXERNAL_INTERFACES = bios xdc omx fc xdais ce timmosal
+ 
+ # Common source files and CFLAGS across all platforms and cores
+ SRCS_COMMON = ivascheduler.c
+diff --git a/packages/ti/omx/comp/server/makefile b/packages/ti/omx/comp/server/makefile
+index e66382d..690b982 100755
+--- a/packages/ti/omx/comp/server/makefile
++++ b/packages/ti/omx/comp/server/makefile
+@@ -7,7 +7,7 @@ INCDIR = . src
+ 
+ # List all the external components/interfaces, whose interface header files 
+ #  need to be included for this component
+-INCLUDE_EXERNAL_INTERFACES = bios xdc omx fc fctools ce timmosal syslink
++INCLUDE_EXERNAL_INTERFACES = bios xdc omx fc xdais ce timmosal syslink
+ 
+ # Common source files and CFLAGS across all platforms and cores
+ SRCS_COMMON = ivaserver.c ivahd_frwkconfig.c iresman_apis.c
+diff --git a/packages/ti/omx/comp/vdec/makefile b/packages/ti/omx/comp/vdec/makefile
+index 5c0e610..757c0fe 100755
+--- a/packages/ti/omx/comp/vdec/makefile
++++ b/packages/ti/omx/comp/vdec/makefile
+@@ -7,7 +7,7 @@ INCDIR = . src
+ 
+ # List all the external components/interfaces, whose interface header files 
+ #  need to be included for this component
+-INCLUDE_EXERNAL_INTERFACES = bios xdc omx omxcore omxbase timmosal fc fctools \
++INCLUDE_EXERNAL_INTERFACES = bios xdc omx omxcore omxbase timmosal fc xdais \
+                              ce h264dec scheduler
+ 
+ # Common source files and CFLAGS across all platforms and cores
+diff --git a/packages/ti/omx/comp/venc/makefile b/packages/ti/omx/comp/venc/makefile
+index d1eec6f..f38714c 100755
+--- a/packages/ti/omx/comp/venc/makefile
++++ b/packages/ti/omx/comp/venc/makefile
+@@ -7,7 +7,7 @@ INCDIR = . src
+ 
+ # List all the external components/interfaces, whose interface header files 
+ #  need to be included for this component
+-INCLUDE_EXERNAL_INTERFACES = bios xdc omx omxcore omxbase timmosal fc fctools \
++INCLUDE_EXERNAL_INTERFACES = bios xdc omx omxcore omxbase timmosal fc xdais \
+                              ce h264enc ipc scheduler
+ 
+ # Common source files and CFLAGS across all platforms and cores
+diff --git a/packages/ti/omx/demos/vc3/makefile b/packages/ti/omx/demos/vc3/makefile
+index 1f0687e..7da5625 100755
+--- a/packages/ti/omx/demos/vc3/makefile
++++ b/packages/ti/omx/demos/vc3/makefile
+@@ -7,7 +7,7 @@ INCDIR = . src
+ 
+ # List all the external components/interfaces, whose interface header files 
+ #  need to be included for this component
+-INCLUDE_EXERNAL_INTERFACES = bios xdc omx timmosal hdvpss ipc fc fctools syslink \
++INCLUDE_EXERNAL_INTERFACES = bios xdc omx timmosal hdvpss ipc fc xdais osal syslink \
+                              ce h264enc h264dec
+ 
+ # List all the components required by the application
+diff --git a/packages/ti/omx/demos/vs2/makefile b/packages/ti/omx/demos/vs2/makefile
+index 9a93b3c..f4e05b5 100755
+--- a/packages/ti/omx/demos/vs2/makefile
++++ b/packages/ti/omx/demos/vs2/makefile
+@@ -7,7 +7,7 @@ INCDIR = . src
+ 
+ # List all the external components/interfaces, whose interface header files 
+ #  need to be included for this component
+-INCLUDE_EXERNAL_INTERFACES = bios xdc omx timmosal hdvpss ipc fc fctools syslink \
++INCLUDE_EXERNAL_INTERFACES = bios xdc omx timmosal hdvpss ipc fc xdais osal syslink \
+                              ce h264enc h264dec
+ 
+ # List all the components required by the application
+diff --git a/packages/ti/omx/domx/makefile b/packages/ti/omx/domx/makefile
+index ca0e33a..213854b 100755
+--- a/packages/ti/omx/domx/makefile
++++ b/packages/ti/omx/domx/makefile
+@@ -8,7 +8,7 @@ INCDIR = .
+ # List all the external components/interfaces, whose interface header files 
+ #  need to be included for this component
+ INCLUDE_EXERNAL_INTERFACES = bios xdc omx omxcore omxbase timmosal fc ipc \
+-                             syslink ce fctools h264enc h264dec
++                             syslink ce xdais h264enc h264dec
+ 
+ # Common source files and CFLAGS across all platforms and cores
+ SRCS_COMMON = OmxRpcStubCommon.c OmxRpcSkelCommon.c \
+-- 
+1.7.0.4
+
