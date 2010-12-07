@@ -1,4 +1,4 @@
-require ti-ivahd-vicp20.inc
+require ti-ivahd-hdvicp20api.inc
 
 PV = "01_00_00_18"
 
