@@ -17,6 +17,7 @@ PLATFORM_beagleboard = "am3715"
 PLATFORM_ti816x = "ti816x"
 PLATFORM_am180x-evm = "am180x"
 PLATFORM_am181x-evm = "am181x"
+PLATFORM_am3517-evm = "am3517"
 
 SRC_URI = "svn://gforge.ti.com/svn/matrix_gui/;module=trunk;proto=https;user=anonymous;pswd='' "
 
