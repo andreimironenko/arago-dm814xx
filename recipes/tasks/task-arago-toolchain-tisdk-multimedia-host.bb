@@ -65,7 +65,7 @@ MULTIMEDIA_SOURCETREE_omapl138 = " \
 MULTIMEDIA_SOURCETREE_ti816x = " \
     ti-cgt-tms470-src \
     ti-codecs-dm816x-src \
-    ti-ivahd-vicp20 \
+    ti-ivahd-hdvicp20api-src \
     ti-hdvpss-src \
     ti-omx-src \
     "
