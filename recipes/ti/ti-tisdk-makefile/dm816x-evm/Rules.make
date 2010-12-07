@@ -43,7 +43,7 @@ XDAIS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__xdais__>
 CODEC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__codecs-dm816x__>
 
 # Where the IVAHD VICP20 API package is installed
-IVAHD_VICP20_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__ivahd_hdvicp20__>
+IVAHD_HDVICP20API_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__ivahd_hdvicp20__>
 
 # Where the RTSC tools package is installed.
 XDC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__xdctools__>
