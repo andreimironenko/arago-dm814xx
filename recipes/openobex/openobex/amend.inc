@@ -9,4 +9,17 @@ do_configure_prepend() {
 	autoreconf
 }
 
-PR_append = "-arago1"
+PR_append = "-arago2"
+
+# tell the openobex configure script NOT to enable syslog and dump.
+# enabling log and dump prints lots of debug messages and hex dump value during BT
+# file transfer using openobex, due to which BT transfer get slow.
+
+EXTRA_OECONF := "${@oe_filter_out('--enable-syslog', bb.data.getVar('EXTRA_OECONF', d, 1), d)}"
+EXTRA_OECONF := "${@oe_filter_out('--enable-dump', bb.data.getVar('EXTRA_OECONF', d, 1), d)}"
+
+# WiLink Bluetooth application build depends on libmisc.a.
+
+do_install_append() {
+	install -m 644 ${S}/apps/libmisc.a ${D}/${libdir}
+}
