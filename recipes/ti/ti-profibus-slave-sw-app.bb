@@ -2,9 +2,10 @@ DESCRIPTION = "Loads Profibus Slave Evaluation Application"
 HOMEPAGE = "https://gforge01.dal.design.ti.com/gf/project/pru_sw"
 LICENSE = "BSD"
 PRIORITY = "optional"
-PR = "r0"
+PR = "r1"
 
-RDEPENDS += "ti-profibus-slave-utils-library ti-pru-sw-edma-library"
+DEPENDS += "ti-profibus-slave-utils-library ti-pru-sw-edma-library"
+RDEPENDS += "ti-pru-sw-edma-driver ti-profibus-slave-utils-driver"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 COMPATIBLE_MACHINE = "am181x-evm"
 
