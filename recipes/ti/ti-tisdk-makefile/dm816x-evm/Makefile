@@ -323,7 +323,7 @@ opengldemos_install:
 # Build Signal Analyzer demo
 ################################################################################
 
-sademo:
+sademo: components
 	. $(LINUX_DEVKIT_DIR)/environment-setup; cd $(SADEMO_INSTALL_DIR)/sigan-gui-r; qmake; cd -
 	$(MAKE) -C $(SADEMO_INSTALL_DIR) \
 		ROOTDIR=$(DVSDK_INSTALL_DIR) \
@@ -410,7 +410,7 @@ omx_vs:
 		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
 		DEST_ROOT=$(OMX_INSTALL_DIR)/rebuilt-binaries
 
-omx: omx_vc omx_vs
+omx: linux syslink omx_vc omx_vs
 
 omx_clean:
 	make -C $(OMX_INSTALL_DIR)/packages cleanall \
@@ -437,4 +437,4 @@ omx_clean:
 
 omx_install:
 	install -d $(EXEC_DIR)/omx
-	install -m 9755 $(OMX_INSTALL_DIR)/rebuilt-binaries/* $(EXEC_DIR)/omx
+	install -m 0755 $(OMX_INSTALL_DIR)/rebuilt-binaries/* $(EXEC_DIR)/omx
