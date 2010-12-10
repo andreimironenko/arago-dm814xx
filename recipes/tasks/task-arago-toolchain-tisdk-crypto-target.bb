@@ -1,14 +1,23 @@
 DESCRIPTION = "Task to install crypto dev packages in SDK"
-PR = "r0"
+PR = "r1"
 LICENSE = "MIT"
 
 inherit task
 
-WLAN_SUPPORT = "\
+PACKAGE_ARCH = ${MACHINE_ARCH}
+
+################################################################################
+######################### TSU EXEMPTION REQUIRED ###############################
+################################################################################
+CRYPTO_SUPPORT_TSU = "\
     openssl-dev \
     wpa-supplicant-dev \
     "
+################################################################################
+
+# Default CRYPTO_SUPPORT value to build in all TSU elements
+CRYPTO_SUPPORT = "${CRYPTO_SUPPORT_TSU}"
 
 RDEPENDS_${PN} = "\
-    ${WLAN_SUPPORT} \
+    ${CRYPTO_SUPPORT} \
     "
