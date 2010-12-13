@@ -1,42 +1,40 @@
 DESCRIPTION = "Package containing scripts to setup the development host and target board"
 LICENSE = "TI"
 
-COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|dm37x-evm|dm365-evm|omapl138)"
-
-require ti-paths.inc
+COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|dm37x-evm|dm365-evm|omapl138|am3517-evm)"
 
 UBOOT_ENV_dm365 = "setup-uboot-env-dm365.sh"
 UBOOT_ENV_omapl138 = "setup-uboot-env-omapl138.sh"
 UBOOT_ENV_dm37x-evm = "setup-uboot-env-dm3730.sh"
 UBOOT_ENV_omap3evm = "setup-uboot-env-omap3530.sh"
 UBOOT_ENV_am37x-evm = "setup-uboot-env-am37x.sh"
+UBOOT_ENV_am3517-evm = "setup-uboot-env-am37x.sh"
 
 SRC_URI = "\
-	file://setup/setup.sh \
-  	file://setup/common.sh \
-  	file://setup/setup-host-check.sh \
-  	file://setup/setup-minicom.sh \
-  	file://setup/setup-package-install.sh \
-  	file://setup/setup-targetfs-nfs.sh \
-  	file://setup/setup-tftp.sh \
-        file://setup/${UBOOT_ENV} \
+	file://setup.sh \
+  	file://common.sh \
+  	file://setup-host-check.sh \
+  	file://setup-minicom.sh \
+  	file://setup-package-install.sh \
+  	file://setup-targetfs-nfs.sh \
+  	file://setup-tftp.sh \
+    file://${UBOOT_ENV} \
 "
 
-PR = "r20"
+PR = "r22"
 
 do_install () {
-	install -d ${D}/${installdir}
-        cp -pPf ${WORKDIR}/setup/setup.sh ${D}/${installdir} 
-	install -d ${D}/${installdir}/bin
-        cp -pPf ${WORKDIR}/setup/common.sh ${D}/${installdir}/bin
-        cp -pPf ${WORKDIR}/setup/setup-host-check.sh ${D}/${installdir}/bin
-        cp -pPf ${WORKDIR}/setup/setup-minicom.sh ${D}/${installdir}/bin
-        cp -pPf ${WORKDIR}/setup/setup-package-install.sh ${D}/${installdir}/bin
-        cp -pPf ${WORKDIR}/setup/setup-targetfs-nfs.sh ${D}/${installdir}/bin
-        cp -pPf ${WORKDIR}/setup/setup-tftp.sh ${D}/${installdir}/bin
-        cp -pPf ${WORKDIR}/setup/${UBOOT_ENV} ${D}/${installdir}/bin/setup-uboot-env.sh
+    cp -pPf ${WORKDIR}/setup.sh ${D}/
+	install -d ${D}/bin
+    cp -pPf ${WORKDIR}/common.sh ${D}/bin
+    cp -pPf ${WORKDIR}/setup-host-check.sh ${D}/bin
+    cp -pPf ${WORKDIR}/setup-minicom.sh ${D}/bin
+    cp -pPf ${WORKDIR}/setup-package-install.sh ${D}/bin
+    cp -pPf ${WORKDIR}/setup-targetfs-nfs.sh ${D}/bin
+    cp -pPf ${WORKDIR}/setup-tftp.sh ${D}/bin
+    cp -pPf ${WORKDIR}/${UBOOT_ENV} ${D}/bin/setup-uboot-env.sh
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-FILES_${PN} = "${installdir}/*"
+FILES_${PN} += "setup.sh"
