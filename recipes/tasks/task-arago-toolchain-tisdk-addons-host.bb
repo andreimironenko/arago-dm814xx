@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install sources for additional utilities/demos for SDKs"
-PR = "r4"
+PR = "r5"
 LICENSE = "MIT"
 
 inherit task
@@ -18,6 +18,10 @@ UTILS_omap3 = " \
  "
 
 UTILS_ti816x = " \ 
+  ${UTILS_COMMON} \
+  "
+
+UTILS_omapl138 = " \
   ${UTILS_COMMON} \
   "
 
