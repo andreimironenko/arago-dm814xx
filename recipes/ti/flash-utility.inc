@@ -1,11 +1,11 @@
 DESCRIPTION = "Texas Instruments Flash Utility"
 LICENSE = "BSD"
 
-PR = "r1"
+INC_PR = "r2"
 
 S = "${WORKDIR}"
 
-installdir = "psp/board-utilities/flash_utils/windows"
+installdir = "host-tools/flash_utils/windows"
 
 do_install() {
     install -d ${D}/${installdir}
