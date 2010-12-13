@@ -1,11 +1,12 @@
 #! /bin/sh
-# Script to create SD card for OMAPL138 plaform.
+# Script to create SD card for SDK.
 #
 # Author: Brijesh Singh, Texas Instruments Inc.
+# Modified: Greg Turner, Texas Instruments Inc.
 #
 # Licensed under terms of GPLv2
 
-VERSION="0.4"
+VERSION="0.5"
 
 execute ()
 {
@@ -22,7 +23,7 @@ version ()
 {
   echo
   echo "`basename $1` version $VERSION"
-  echo "Script to create bootable SD card for OMAPL138 EVM"
+  echo "Script to create bootable SD card"
   echo
 
   exit 0
@@ -33,11 +34,11 @@ usage ()
   echo "
 Usage: `basename $1` [options] <sdk_install_dir> <device>
 
-Mandatory options:
-  --device              SD block device node (e.g /dev/sdd)
+Mandatory arguments:
   --sdk                 Where is sdk installed ?
+  --device              SD block device node (e.g /dev/sdd)
 
-Optional options:
+Options:
   --version             Print version.
   --help                Print this help message.
 "
@@ -65,8 +66,8 @@ if [ ! -d $sdkdir ]; then
    exit 1;
 fi
 
-if [ ! -f $sdkdir/filesystem/dvsdk-am181x-evm-rootfs.tar.gz ]; then
-  echo "ERROR: failed to find rootfs $sdkdir/filesystem/dvsdk-am181x-evm-rootfs.tar.gz"
+if [ ! -f $sdkdir/filesystem/*rootfs.tar.gz ]; then
+  echo "ERROR: failed to find rootfs $sdkdir/filesystem/*-rootfs.tar.gz"
   exit 1;
 fi
  
@@ -95,84 +96,61 @@ done
 execute "dd if=/dev/zero of=$device bs=1024 count=1024"
 
 # get the partition information.
-total_size=`fdisk -l $device | grep Disk | awk '{print $5}'`
-total_cyln=`echo $total_size/255/63/512 | bc`
 
-# start from cylinder 20, this should give enough space for flashing utility
-# to write u-boot binary. 
-pc1_start=20
-pc1_end=10
+SIZE=`fdisk -l $device | grep Disk | awk '{print $5}'`
 
-# recalculate number of cylinder for the first parition
-if [ "$copy" != "" ]; then
- pc1_end=$(((($total_cyln - $pc1_end) / 4) * 3))
-fi
+echo DISK SIZE - $SIZE bytes
 
-# start of rootfs partition
-pc2_start=$(($pc1_start + $pc1_end))
+CYLINDERS=`echo $SIZE/255/63/512 | bc`
 
-{
-echo $pc1_start,$pc1_end,0x0B,-
-echo $pc2_start,,-
-} | sfdisk -D -H 255 -S 63 -C $total_cyln $device
+sfdisk -D -H 255 -S 63 -C $CYLINDERS $device << EOF
+,9,0x0C,*
+10,115,,-
+126,,,-
+EOF
+
+execute "mkfs.vfat -F 32 -n "boot" ${device}1"
+execute "mkfs.ext3 -L "rootfs" ${device}2"
+execute "mkfs.ext3 -L "START_HERE" ${device}3"
+
+
 
 if [ $? -ne 0 ]; then
     echo ERROR
     exit 1;
 fi
 
-echo "Formating ${device}1 ..."
-execute "mkfs.vfat -F 32 -n "START_HERE" ${device}1"
-echo "Formating ${device}2 ..."
-execute "mke2fs -j -L "ROOTFS" ${device}2"
 
-# creating boot.scr
 execute "mkdir -p /tmp/sdk"
-cat <<EOF >/tmp/sdk/boot.cmd
-mmc rescan 0
-setenv bootargs 'console=ttyS2,115200n8 root=/dev/mmcblk0p2 rw ip=off mem=32M rootwait'
-fatload mmc 0 c0700000 uImage
-bootm c0700000
-EOF
 
-mkimage -A arm -O linux -T script -C none -a 0 -e 0 -n 'Execute uImage' -d /tmp/sdk/boot.cmd /tmp/sdk/boot.scr
-
-if [ $? -ne 0 ]; then
-  echo "Failed to execute mkimage to create boot.scr"
-  echo "Execute 'sudo apt-get install uboot-mkimage' to install the package"
-  exit 1
-fi
-
-echo "Copying uImage/boot.scr on ${device}1"
+echo "Copying uImage on ${device}1"
 execute "mkdir -p /tmp/sdk/$$"
 execute "mount ${device}1 /tmp/sdk/$$"
-execute "cp /tmp/sdk/boot.scr /tmp/sdk/$$/"
-execute "cp /tmp/sdk/boot.cmd /tmp/sdk/$$/"
 execute "cp $sdkdir/psp/prebuilt-images/uImage /tmp/sdk/$$"
+execute "cp $sdkdir/psp/prebuilt-images/u-boot.bin /tmp/sdk/$$"
 execute "cp $sdkdir/bin/setup.htm /tmp/sdk/$$"
-execute "cp $sdkdir/bin/top_omapl138_evm.png /tmp/sdk/$$/"
-execute "cp $sdkdir/docs/OMAPL138_EVM_Quick_Start_Guide.pdf /tmp/sdk/$$/quickstartguide.pdf"
-execute "cp $sdkdir/bin/README.boot.scr /tmp/sdk/$$/"
-if [ "$copy" != "" ]; then
-  echo "Copying additional file(s) on ${device}1"
-  execute "cp -r $copy /tmp/sdk/$$"
+execute "cp $sdkdir/bin/*_evm.png /tmp/sdk/$$/"
+
+if [ ! -r $sdkdir/docs/*Quick_Start_Guide.pdf ]
+then
+	echo "Quick Start Doesn't exist"
+else
+	execute "cp $sdkdir/docs/*Quick_Start_Guide.pdf /tmp/sdk/$$/quickstartguide.pdf"
 fi
+
+execute "cp $sdkdir/bin/README.boot.scr /tmp/sdk/$$/"
+
+sync
 sync
 execute "umount /tmp/sdk/$$"
 
-echo "Executing uflash tool to write u-boot.bin"
-$sdkdir/psp/board-utilities/images/utils/uflash -d ${device} -b ${sdkdir}/psp/prebuilt-images/u-boot.bin -p omapl138 -vv
-
-if [ $? -ne 0 ]; then
-  echo "Failed to execute uflash"
-  exit 1
-fi
 
 echo "Extracting filesystem on ${device}2 ..."
 execute "mkdir -p /tmp/sdk/$$"
 execute "mount ${device}2 /tmp/sdk/$$"
-execute "tar zxf $sdkdir/filesystem/dvsdk-am181x-evm-rootfs.tar.gz -C /tmp/sdk/$$"
-sync
+execute "tar zxf $sdkdir/filesystem/*rootfs.tar.gz -C /tmp/sdk/$$"
+execute "cp $sdkdir/psp/prebuilt-images/uImage /tmp/sdk/$$"
+execute "sync"
 
 # check if we need to create symbolic link for matrix 
 echo -n "Creating matrix-gui symbolic link..."
@@ -186,7 +164,7 @@ if [ -f /tmp/sdk/$$/etc/init.d/matrix-gui ]; then
   fi
 fi
 
-sync
+execute "sync"
 echo "unmounting ${device}2"
 execute "umount /tmp/sdk/$$"
 

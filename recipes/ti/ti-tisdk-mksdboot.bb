@@ -2,16 +2,17 @@ DESCRIPTION = "Scripts to create bootable SD card for ${MACHINE}"
 HOMEPAGE_dm365 = "http://processors.wiki.ti.com/index.php/SD_card_boot_and_flashing_tool_for_DM355_and_DM365"
 LICENSE = GPLv2
 
-PR = "r25"
+PR = "r26"
 
 require ti-paths.inc
 require ti-staging.inc
 
 PLATFORM_omapl138 = "omapl138"
 PLATFORM_omap3 = "omap35x"
+PLATFORM_am180x-evm = "am180x"
+PLATFORM_am181x-evm = "am1810"
 
 SRC_URI = "file://mksdboot.sh \
-	   file://README \
            file://setup.htm \
            file://top_${PLATFORM}_evm.png \
            file://README.boot.scr \
@@ -44,24 +45,13 @@ do_configure_prepend_omap3evm () {
 }
 
 do_install () {
-	mkdir -p ${D}/${installdir}/bin/
-	cp ${WORKDIR}/mksdboot.sh ${D}/${installdir}/bin/
-    	chmod +x ${D}/${installdir}/bin/mksdboot.sh
-	cp ${WORKDIR}/setup.htm ${D}/${installdir}/bin/
-	cp ${WORKDIR}/top_${PLATFORM}_evm.png ${D}/${installdir}/bin/
-	cp ${WORKDIR}/windows_users.htm ${D}/${installdir}/bin
-	cp ${WORKDIR}/README.boot.scr ${D}/${installdir}/bin
+    install -d ${D}/${installdir}/bin/
+    install -m 0755 ${WORKDIR}/mksdboot.sh ${D}/${installdir}/bin/
+    install -m 0644 ${WORKDIR}/setup.htm ${D}/${installdir}/bin/
+    install -m 0644 ${WORKDIR}/top_${PLATFORM}_evm.png ${D}/${installdir}/bin/
+    install -m 0644 ${WORKDIR}/README.boot.scr ${D}/${installdir}/bin
+	install -m 0644 ${WORKDIR}/windows_users.htm ${D}/${installdir}/bin
 }
-
-do_install_omapl138 () {
-        mkdir -p ${D}/${installdir}/bin/
-        cp ${WORKDIR}/mksdboot.sh ${D}/${installdir}/bin/
-        chmod +x ${D}/${installdir}/bin/mksdboot.sh
-        cp ${WORKDIR}/setup.htm ${D}/${installdir}/bin/
-        cp ${WORKDIR}/top_${PLATFORM}_evm.png ${D}/${installdir}/bin/
-        cp ${WORKDIR}/README.boot.scr ${D}/${installdir}/bin
-}
-
 
 do_install_dm365 () {
 	mkdir -p ${D}/${installdir}/bin/
