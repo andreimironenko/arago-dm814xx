@@ -11,7 +11,7 @@ require ti-eula-unpack.inc
 PLATFORM_omapl138 = "omapl138"
 PLATFORM ?= "<UNDEFINED_PLATFORM>"
 
-COMPATIBLE_MACHINE = "(da850-omapl138-evm)"
+COMPATIBLE_MACHINE = "(omapl138)"
 
 PROVIDES += "ti-dsp-benchmark-apps"
 
