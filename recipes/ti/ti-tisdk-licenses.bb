@@ -1,7 +1,7 @@
 DESCRIPTION = "Package containing license text for Licenses found in SDK manifests"
 LICENSE = "TI"
 
-PR = "r0"
+PR = "r1"
 
 inherit sourceipk
 
@@ -19,6 +19,10 @@ SRC_URI = "\
     file://ti-tisdk-licenses/LGPLv3.txt \
     file://ti-tisdk-licenses/MPLv1.1.txt \
     file://ti-tisdk-licenses/TI_TSPA.txt \
+    file://ti-tisdk-licenses/BSD.txt \
+    file://ti-tisdk-licenses/MIT.txt \
+    file://ti-tisdk-licenses/creativecommons.txt \
+    file://ti-tisdk-licenses/openssl.txt \
 "
 
 # Make an empty do_patch function so that the "patches" directory is not
