@@ -23,18 +23,18 @@ SRC_URI = "\
     file://${UBOOT_ENV} \
 "
 
-PR = "r23"
+PR = "r24"
 
 do_install () {
-    cp -pPf ${WORKDIR}/setup.sh ${D}/
+    install -m 0755 ${WORKDIR}/setup.sh ${D}/
 	install -d ${D}/bin
-    cp -pPf ${WORKDIR}/common.sh ${D}/bin
-    cp -pPf ${WORKDIR}/setup-host-check.sh ${D}/bin
-    cp -pPf ${WORKDIR}/setup-minicom.sh ${D}/bin
-    cp -pPf ${WORKDIR}/setup-package-install.sh ${D}/bin
-    cp -pPf ${WORKDIR}/setup-targetfs-nfs.sh ${D}/bin
-    cp -pPf ${WORKDIR}/setup-tftp.sh ${D}/bin
-    cp -pPf ${WORKDIR}/${UBOOT_ENV} ${D}/bin/setup-uboot-env.sh
+    install -m 0755 ${WORKDIR}/common.sh ${D}/bin
+    install -m 0755 ${WORKDIR}/setup-host-check.sh ${D}/bin
+    install -m 0755 ${WORKDIR}/setup-minicom.sh ${D}/bin
+    install -m 0755 ${WORKDIR}/setup-package-install.sh ${D}/bin
+    install -m 0755 ${WORKDIR}/setup-targetfs-nfs.sh ${D}/bin
+    install -m 0755 ${WORKDIR}/setup-tftp.sh ${D}/bin
+    install -m 0755 ${WORKDIR}/${UBOOT_ENV} ${D}/bin/setup-uboot-env.sh
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
