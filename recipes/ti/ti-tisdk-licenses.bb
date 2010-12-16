@@ -3,11 +3,6 @@ LICENSE = "TI"
 
 PR = "r1"
 
-inherit sourceipk
-
-CREATE_SRCIPK = "1"
-SRCIPK_INSTALL_DIR = "docs/licenses"
-
 # Generic license files.  Will be packaged in source ipk.
 # Licenses specific to a package are handled by the license.bbclass
 SRC_URI = "\
