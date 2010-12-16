@@ -55,7 +55,7 @@ else
     check_status
 fi
 
-uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
+uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*`
 uimage=`basename $uimagesrc`
 if [ -f $tftproot/$uimage ]; then
     echo

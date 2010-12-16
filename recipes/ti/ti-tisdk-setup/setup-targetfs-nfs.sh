@@ -3,7 +3,11 @@
 cwd=`dirname $0`
 . $cwd/common.sh
 
-dstdefault="${HOME}/targetfs"
+SDKinstall=`grep TI_SDK_PATH= $cwd/../Rules.make | cut -d= -f2`
+
+dstdefault=$SDKinstall/targetNFS
+
+
 echo "--------------------------------------------------------------------------------"
 echo "In which directory do you want to install the target filesystem?(if this directory does not exist it will be created)"
 read -p "[ $dstdefault ] " dst
@@ -22,10 +26,15 @@ echo "on your host."
 read -p "Press return to continue"
 
 extract_fs() {
-    fstar=`ls -1 $cwd/../filesystem/dvsdk*rootfs.tar.gz`
+    fstar=`ls -1 $cwd/../filesystem/*rootfs.tar.gz`
+    me=`whoami`
     sudo mkdir -p $1
     check_status
     sudo tar xzf $fstar -C $1
+    check_status
+    sudo chown $me:$me $1 
+    check_status
+    sudo chown -R $me:$me $1/home $1/usr $1/etc $1/lib $1/opt 
     check_status
     echo
     echo "Successfully extracted `basename $fstar` to $1"
