@@ -2,7 +2,7 @@
 #       that require filing for a TSU exemption or applications
 #       that depend on TSU exempt code.
 DESCRIPTION = "Task to install crypto packages into target FS"
-PR = "r2"
+PR = "r3"
 LICENSE = "MIT"
 
 inherit task
@@ -29,7 +29,13 @@ CRYPTO_SUPPORT_TSU = "\
 
 
 # Default CRYPTO_SUPPORT value to build in all TSU elements
-CRYPTO_SUPPORT = "${CRYPTO_SUPPORT_TSU}"
+# Add openssl-misc to get the openssl.cnf file which is
+# needed for "openssl req" and to avoid warnings.
+# NOTE: This may change to openssl-conf in the future
+CRYPTO_SUPPORT = "\
+    ${CRYPTO_SUPPORT_TSU}" \
+    openssl-misc \
+    "
 
 # Add support for graphical configuration of wpa-supplicant
 # used by WLAN drivers.
