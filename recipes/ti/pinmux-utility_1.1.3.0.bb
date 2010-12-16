@@ -1,6 +1,6 @@
 require pinmux-utility.inc
 
-PR = "${INC_PR}.0"
+PR = "${INC_PR}.1"
 
 SRC_URI = "\
     https://gforge.ti.com/gf/download/frsrelease/462/4219/PinMuxUtility_v1_01_03_00.zip;name=base \
@@ -20,7 +20,6 @@ do_install_omapl138() {
     install -d ${D}/${installdir}
     cp -rf ${S}/bin ${D}/${installdir}/
     cp -rf ${S}/configurations ${D}/${installdir}/
-    cp -rf ${S}/src ${D}/${installdir}/
 }
 
 SRC_URI[omapl138.md5sum] = "5a4eb834bde44c662aaf669882adbfe6"
