@@ -41,6 +41,19 @@ CRYPTO_SUPPORT = "\
 # used by WLAN drivers.
 CRYPTO_SUPPORT_append_am180x-evm = " wpa-gui-e"
 
+# WLAN support packages.  These are added here because they depend on
+# crypto packages and are grouped with the crypto task to avoid confusion.
+
+# Base WLAN value is blank set
+WLAN = ""
+
+# Add WLAN packages for am180x-evm machine type
+WLAN_am180x-evm = "\
+    wl1271-bt-cli \
+    wl1271-wlan-cli \
+    "
+
 RDEPENDS_${PN} = "\
     ${CRYPTO_SUPPORT} \
+    ${WLAN} \
     "
