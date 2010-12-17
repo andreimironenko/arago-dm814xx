@@ -1,3 +1,6 @@
+#platform
+PLATFORM=am180x
+
 #Points to the root of the TI SDK
 export TI_SDK_PATH=__SDK__INSTALL_DIR__
 

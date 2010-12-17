@@ -1,3 +1,6 @@
+#platform used Builds and Setup
+PLATFORM=am181x
+
 #Points to the root of the TI SDK
 export TI_SDK_PATH=__SDK__INSTALL_DIR__
 
