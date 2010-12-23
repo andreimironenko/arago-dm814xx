@@ -1,13 +1,13 @@
 DESCRIPTION = "PRU sw application loader"
 HOMEPAGE = "https://gforge.ti.com/gf/project/pru_sw/"
 LICENSE = "BSD"
-PR = "r1+svnr${SRCPV}"
+PR = "r2+svnr${SRCPV}"
 
 COMPATIBLE_MACHINE = "omapl138"
 
 SRC_URI = "svn://gforge.ti.com/svn/pru_sw/;module=trunk;proto=https;user=anonymous;pswd=''"
 
-SRCREV = "20"
+SRCREV = "21"
 S = "${WORKDIR}/trunk/app_loader"
 
 do_compile () {
