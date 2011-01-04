@@ -46,7 +46,7 @@ if [ -d $dst ]; then
     read -p "[r] " exists
     case "$exists" in
       s) echo "Skipping filesystem extraction"
-         echo "WARNING! Keeping the previous filesystem may cause compatibility problems if you are upgrading the DVSDK"
+         echo "WARNING! Keeping the previous filesystem may cause compatibility problems if you are upgrading the SDK"
          ;; 
       o) sudo rm -rf $dst
          echo "Old $dst removed"
@@ -74,7 +74,7 @@ echo "--------------------------------------------------------------------------
 platform=`grep PLATFORM= $cwd/../Rules.make | cut -d= -f2`
 echo
 echo "--------------------------------------------------------------------------------"
-echo "This step will set up the DVSDK to install binaries in to:"
+echo "This step will set up the SDK to install binaries in to:"
 echo "    $dst/home/root/$platform"
 echo
 echo "The files will be available from /home/root/$platform on the target."
@@ -85,6 +85,9 @@ echo
 read -p "Press return to continue"
 
 sed -i "s=EXEC_DIR\=.*$=EXEC_DIR\=$dst/home/root/$platform=g" $cwd/../Rules.make
+check_status
+
+sed -i "s=DESTDIR\=.*$=DESTDIR\=$dst=g" $cwd/../Rules.make
 check_status
 
 echo "Rules.make edited successfully.."
