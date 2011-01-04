@@ -39,7 +39,7 @@ videoargs1="vram=50M"
 videoargs2="ti816xfb.vram=0:16M,1:16M,2:6M"
 videoargs="$videoargs1 $videoargs2"
 fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3"
-fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath"
+fsnfsargs="root=/dev/nfs nfsroot=$ip"
 
 echo "Select Linux kernel location:"
 echo " 1: TFTP"
@@ -82,7 +82,7 @@ if [ "$kernel" -eq "1" ]; then
     bootfile="setenv bootfile $uimage"
 
     if [ "$fs" -eq "1" ]; then
-        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
+        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs:$rootpath ip=dhcp"
         cfg="uimage-tftp_fs-nfs"
     else
         bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
@@ -90,7 +90,7 @@ if [ "$kernel" -eq "1" ]; then
     fi
 else
     if [ "$fs" -eq "1" ]; then
-        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
+        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs:$rootpath ip=dhcp"
         bootcmd="setenv bootcmd 'mmc init;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
         cfg="uimage-sd_fs-nfs"
     else
@@ -166,7 +166,7 @@ if [ "$minicom" == "y" ]; then
     echo "send \"$videoargs1 \c\"" >> $minicomfilepath
     echo "send \"$videoargs2 \c\"" >> $minicomfilepath
     if [ "$fs" -eq "1" ]; then
-        echo "send \"$fsnfsargs \c\"" >> $minicomfilepath
+        echo "send \"$fsnfsargs:\$(ROOTPATH) \c\"" >> $minicomfilepath
         echo "send \"ip=dhcp\"" >> $minicomfilepath
     else
         echo "send \"$fssdargs \c\"" >> $minicomfilepath
@@ -206,7 +206,7 @@ if [ "$minicom" == "y" ]; then
     if [ "$minicomsetup" == "y" ]; then
         pushd $cwd/..
         check_status
-        minicom -S $minicomfile
+        ROOTPATH=$rootpath minicom -S $minicomfile
         popd >> /dev/null
         check_status
 
