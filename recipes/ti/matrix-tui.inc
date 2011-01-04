@@ -5,7 +5,7 @@ SECTION = "multimedia"
 PRIORITY = "optional"
 DEPENDS = "libxml2 zlib ncurses"
 
-INC_PR = "r6"
+INC_PR = "r7"
 
 COMPATIBLE_MACHINE = "(omapl138|omap3)"
 
@@ -14,6 +14,7 @@ PLATFORM_beagleboard = "am3715"
 PLATFORM_am3517-evm = "am3517"
 PLATFORM_am180x-evm = "am180x"
 PLATFORM_am181x-evm = "am181x"
+PLATFORM_da850-omapl138-evm = "am180x"
 
 SRC_URI = "svn://gforge.ti.com/svn/matrix_tui/;module=trunk;proto=https;user=anonymous;pswd='' \
 	file://init \
