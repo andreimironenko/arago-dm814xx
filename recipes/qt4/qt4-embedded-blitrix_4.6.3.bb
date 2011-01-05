@@ -81,8 +81,8 @@ pkg_postinst_${QT_BASE_NAME}-demos () {
  ln -s /usr/lib/libQtCoreE.so.4  /usr/lib/libQtCore.so.4
 }
 
-SRC_URI[md5sum] = "eb651ee4b157c01696aa56777fc6e0e5"
-SRC_URI[sha256sum] = "176f51ddb06dce67ab4b2efc6b327dc21ed8f764c5d97acc15ff1f907c2affae"
+SRC_URI[md5sum] = "5c69f16d452b0bb3d44bc3c10556c072"
+SRC_URI[sha256sum] = "f4e0ada8d4d516bbb8600a3ee7d9046c9c79e38cd781df9ffc46d8f16acd1768"
 
 SRC_URI[neonpatch.md5sum] = "1084baa67d203dcd4342deb19b402331"
 SRC_URI[neonpatch.sha256sum] = "aedc2fc0d3e446b2ad3aa81bfe0a4d81f6533086d3c44d521c392a34edaef711"
