@@ -24,7 +24,7 @@ S = "${WORKDIR}/syslink_${PV}${PVextra}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/syslink/${PV}/exports/syslink_${PV}.tar.gz;name=syslinktarball"
 
-DEPENDS = "ti-sysbios ti-xdctools ti-cgt6x ti-ipc ti-cgt-tms470"  
+DEPENDS = "ti-sysbios ti-xdctools ti-cgt6x ti-ipc ti-cgt470"
 # Need to add M3 support in subsequent update
 #DEPENDS_append_ti816x = " ti-cgt470"
 DEPENDS += "virtual/kernel" 
@@ -82,8 +82,8 @@ do_configure() {
         -e s:^C64P_ELF.rootDir.*:C64P_ELF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
         -e s:^C674_COFF.rootDir.*:C674_COFF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
         -e s:^C674_ELF.rootDir.*:C674_ELF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
-        -e s:^M3_ELF.rootDir.*:M3_ELF.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
-        -e s:^A8_ELF.rootDir.*:A8_ELF.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
+        -e s:^M3_ELF.rootDir.*:M3_ELF.rootDir\ =\ \"${CODEGEN_ARM_INSTALL_DIR}\":g \
+        -e s:^A8_ELF.rootDir.*:A8_ELF.rootDir\ =\ \"${CODEGEN_ARM_INSTALL_DIR}\":g \
         ${S}/config.bld
 }
 
