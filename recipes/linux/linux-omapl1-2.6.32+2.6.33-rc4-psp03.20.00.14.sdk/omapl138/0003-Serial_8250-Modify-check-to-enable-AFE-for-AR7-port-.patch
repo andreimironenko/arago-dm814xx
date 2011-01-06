@@ -1,0 +1,30 @@
+From 5feeece6716505bc596c78545dcbb761057b4264 Mon Sep 17 00:00:00 2001
+From: Prakash PM <prakash.pm@ti.com>
+Date: Wed, 24 Nov 2010 18:27:56 +0530
+Subject: [PATCH 3/7] Serial_8250: Modify check to enable AFE for AR7 port type
+
+The AFE was being enabled if hardware fifo size is >= bytes.
+Modify it to check for 16 bytes to support AR7 ports whichi
+has 16 byte hardware fifo.
+
+Signed-off-by: Prakash PM <prakash.pm@ti.com>
+---
+ drivers/serial/8250.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/serial/8250.c b/drivers/serial/8250.c
+index a64d1de..5f14a7a 100644
+--- a/drivers/serial/8250.c
++++ b/drivers/serial/8250.c
+@@ -2304,7 +2304,7 @@ serial8250_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	 * have sufficient FIFO entries for the latency of the remote
+ 	 * UART to respond.  IOW, at least 32 bytes of FIFO.
+ 	 */
+-	if (up->capabilities & UART_CAP_AFE && up->port.fifosize >= 32) {
++	if (up->capabilities & UART_CAP_AFE && up->port.fifosize >= 16) {
+ 		up->mcr &= ~UART_MCR_AFE;
+ 		if (termios->c_cflag & CRTSCTS)
+ 			up->mcr |= UART_MCR_AFE;
+-- 
+1.7.3.2
+

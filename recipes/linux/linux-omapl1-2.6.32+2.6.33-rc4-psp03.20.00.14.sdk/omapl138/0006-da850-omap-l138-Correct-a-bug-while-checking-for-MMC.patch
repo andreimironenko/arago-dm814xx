@@ -1,0 +1,26 @@
+From ee9e77652ea7ed4e34f0f056ca5909cc7593e0ba Mon Sep 17 00:00:00 2001
+From: Rajashekhara, Sudhakar <sudhakar.raj@ti.com>
+Date: Wed, 5 Jan 2011 22:46:14 +0530
+Subject: [PATCH 6/7] da850/omap-l138: Correct a bug while checking for MMC and UI card
+
+Signed-off-by: Rajashekhara, Sudhakar <sudhakar.raj@ti.com>
+---
+ arch/arm/mach-davinci/board-da850-evm.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
+index a2706de..5a6cffd 100755
+--- a/arch/arm/mach-davinci/board-da850-evm.c
++++ b/arch/arm/mach-davinci/board-da850-evm.c
+@@ -281,7 +281,7 @@ static __init void da850_evm_setup_nor_nand(void)
+ {
+ 	int ret = 0;
+ 
+-	if (ui_card_detected & !HAS_MMC) {
++	if (ui_card_detected && !HAS_MMC) {
+ 		ret = da8xx_pinmux_setup(da850_nand_pins);
+ 		if (ret)
+ 			pr_warning("da850_evm_init: nand mux setup failed: "
+-- 
+1.7.3.2
+

@@ -1,0 +1,40 @@
+From 200932f2a51d97017b9de206fde504c514d9739f Mon Sep 17 00:00:00 2001
+From: Prakash PM <prakash.pm@ti.com>
+Date: Wed, 24 Nov 2010 12:43:03 +0530
+Subject: [PATCH 4/7] DA850/OMAP-L138:Disable modem status interrupts
+
+This patch disables modem status interrupts (flow control interrupts) on
+the davinci da850 based SoM. Because change in CTS line status does not
+assert interrupt to ARM.
+
+Signed-off-by: Prakash PM <prakash.pm@ti.com>
+---
+ drivers/serial/8250.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/serial/8250.c b/drivers/serial/8250.c
+index 5f14a7a..29867b4 100644
+--- a/drivers/serial/8250.c
++++ b/drivers/serial/8250.c
+@@ -41,6 +41,8 @@
+ #include <linux/cpufreq.h>
+ #include <linux/clk.h>
+ 
++#include <mach/cputype.h>
++
+ #include <asm/io.h>
+ #include <asm/irq.h>
+ 
+@@ -2573,6 +2575,9 @@ static void serial8250_config_port(struct uart_port *port, int flags)
+ 	int probeflags = PROBE_ANY;
+ 	int ret;
+ 
++	if (cpu_is_davinci_da850())
++		up->bugs |= UART_BUG_NOMSR;
++
+ 	/*
+ 	 * Find the region that we can probe for.  This in turn
+ 	 * tells us whether we can probe for the type of port.
+-- 
+1.7.3.2
+
