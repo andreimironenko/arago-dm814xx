@@ -1,4 +1,4 @@
-From cc3ae6d21ff2e270bc2cb5d824a3233b42d17d17 Mon Sep 17 00:00:00 2001
+From f41ff41542e2681157006bdfdbdfe712c3f3f615 Mon Sep 17 00:00:00 2001
 From: Sanjay Kumar Champati <csanjay@mistralsolutions.com>
 Date: Fri, 10 Dec 2010 10:21:47 -0800
 Subject: [PATCH 4/5] Supported AFE for UART1 on AM1808 platform
@@ -26,29 +26,9 @@ workaround until we find better solution.
 
 Signed-off-by: Sanjay Kumar Champati <csanjay@mistralsolutions.com>
 ---
- arch/arm/mach-davinci/Kconfig |    8 ++++++++
  arch/arm/mach-davinci/da850.c |    3 +++
- 2 files changed, 11 insertions(+), 0 deletions(-)
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
-index 816b551..9482de4 100644
---- a/arch/arm/mach-davinci/Kconfig
-+++ b/arch/arm/mach-davinci/Kconfig
-@@ -66,6 +66,14 @@ config DAVINCI_UART1_AFE
- 	  is necessary to detect pinmux clash between UART1 RTS/CTS lines with
- 	  MCASP.
- 
-+config DAVINCI_UART1_AFE
-+	bool "Enable UART1 flow control"
-+	depends on SERIAL_8250=y && ARCH_DAVINCI_DA850=y
-+	help
-+	Say Y here if you want to enable flow control on UART1. This flag
-+	is necessary to detect pinmux clash between UART1 RTS/CTS lines with
-+	MCASP.
-+
- config ARCH_DAVINCI_DA8XX
- 	bool
- 
 diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
 index 1b8ae0a..4f4b43f 100755
 --- a/arch/arm/mach-davinci/da850.c
