@@ -70,6 +70,13 @@ DSP_SOURCETREE_ti816x = "\
     ti-docs-faqs \
     "
 
+DSP_SOURCETREE_ti814x = "\
+    ti-cgt6x-src \
+    ti-sysbios-src \
+    ti-xdctools-src \
+    ti-ipc-src \
+    "
+
 DSP_SOURCETREE = " "
 
 RRECOMMENDS_${PN} = "\

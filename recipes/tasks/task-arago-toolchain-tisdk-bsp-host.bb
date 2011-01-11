@@ -103,6 +103,10 @@ BSP_COMPONENTS_ti816x = "\
     pinmux-utility \
     "
 
+BSP_COMPONENTS_ti814x = "\
+    linux-omap3-src \
+    "
+
 RRECOMMENDS_${PN} = "\
     ${BSP_COMPONENTS_COMMON} \
     ${BSP_COMPONENTS} \

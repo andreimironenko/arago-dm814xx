@@ -18,6 +18,11 @@ BLUETOOTH_SUPPORT_ti816x = "\
     openobex-dev \
     "
 
+BLUETOOTH_SUPPORT_ti814x = "\
+    bluez4-dev \
+    openobex-dev \
+    "
+
 RRECOMMENDS_${PN} = "\
     ${BLUETOOTH_SUPPORT} \
     "

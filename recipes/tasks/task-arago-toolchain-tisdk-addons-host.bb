@@ -21,6 +21,9 @@ UTILS_ti816x = " \
   ${UTILS_COMMON} \
   "
 
+UTILS_ti814x = " \ 
+  "
+
 RDEPENDS_${PN} = "\
     ${UTILS} \
     "
