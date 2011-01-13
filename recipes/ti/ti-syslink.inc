@@ -281,6 +281,10 @@ do_install () {
     # Install/Stage the Source Tree
     install -d ${D}${SYSLINK_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${SYSLINK_INSTALL_DIR_RECIPE}
+    # Force install the .ko in the older location
+    # TODO: Remove/Revert this on c6accel and friends update.
+    mkdir -p ${D}${SYSLINK_INSTALL_DIR_RECIPE}/ti/syslink/lib/modules/${SYSLINKPLATFORM}
+    cp -f ${S}/ti/syslink/bin/${SYSLINKVARIANT}/syslink.ko ${D}${SYSLINK_INSTALL_DIR_RECIPE}/ti/syslink/lib/modules/${SYSLINKPLATFORM}/syslink.ko
 }
 
 PACKAGES += "ti-syslink-module"
