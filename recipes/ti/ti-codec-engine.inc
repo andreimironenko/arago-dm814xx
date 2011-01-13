@@ -26,6 +26,7 @@ DEPENDS_append_omap3	= " ti-dspbios ti-dsplink ti-local-power-manager ti-cgt6x t
 DEPENDS_append_omapl137 = " ti-dspbios ti-dsplink ti-cgt6x ti-biosutils ti-edma3lld"
 DEPENDS_append_omapl138 = " ti-dspbios ti-dsplink ti-cgt6x ti-biosutils ti-edma3lld"
 DEPENDS_append_ti816x = " ti-sysbios ti-cgt6x ti-osal ti-ipc ti-syslink"
+DEPENDS_append_ti814x = " ti-sysbios ti-cgt6x ti-osal ti-ipc ti-syslink"
 
 # SOC_FAMILY configuration
 
@@ -38,6 +39,7 @@ CEEXAMPLESDEVICES_dm365      = "DM365"
 CEEXAMPLESDEVICES_omapl137   = "OMAPL137"
 CEEXAMPLESDEVICES_omapl138   = "OMAPL138"
 CEEXAMPLESDEVICES_ti816x   = "TI816X"
+CEEXAMPLESDEVICES_ti814x   = "TI816X"
 CEEXAMPLESDEVICES           ?= "<UNDEFINED_CEEXAMPLESDEVICES>"
 
 # Define GPPOS variable
@@ -49,6 +51,7 @@ CEEXAMPLESGPPOS_dm365        = "LINUX_GCC"
 CEEXAMPLESGPPOS_omapl137     = "LINUX_GCC"
 CEEXAMPLESGPPOS_omapl138     = "LINUX_GCC"
 CEEXAMPLESGPPOS_ti816x  = "LINUX_GCC"
+CEEXAMPLESGPPOS_ti814x  = "LINUX_GCC"
 CEEXAMPLESGPPOS             ?= "<UNDEFINED_CEEXAMPLESGPPOS>"
 
 # Define PROGRAM variable
@@ -60,6 +63,7 @@ CEEXAMPLESPROGRAMS_dm365     = "APP_LOCAL"
 CEEXAMPLESPROGRAMS_omapl137  = "APP_CLIENT DSP_SERVER"
 CEEXAMPLESPROGRAMS_omapl138  = "APP_CLIENT DSP_SERVER"
 CEEXAMPLESPROGRAMS_ti816x  = "APP_CLIENT DSP_SERVER"
+CEEXAMPLESPROGRAMS_ti814x  = "APP_CLIENT DSP_SERVER"
 CEEXAMPLESPROGRAMS          ?= "<UNDEFINED_CEEXAMPLESPROGRAMS>"
 
 do_configure() {
@@ -193,6 +197,7 @@ RDEPENDS_ti-codec-engine-examples_append_omap3    = " ti-dsplink-module ti-lpm-m
 RDEPENDS_ti-codec-engine-examples_append_omapl137 = " ti-dsplink-module"
 RDEPENDS_ti-codec-engine-examples_append_omapl138 = " ti-dsplink-module"
 RDEPENDS_ti-codec-engine-examples_append_ti816x = " ti-syslink-module"
+RDEPENDS_ti-codec-engine-examples_append_ti814x = " ti-syslink-module"
 FILES_ti-codec-engine-examples = "${installdir}/ti-codec-engine-examples/*"
 INSANE_SKIP_ti-codec-engine-examples = True
 
