@@ -19,7 +19,7 @@ am_benchmarks:
 	@echo =============================
 	@echo    Building AM Benchmarks
 	@echo =============================
-	@cd example-applications; cd `find . -name "*am_benchmarks*"`; make
+	@cd example-applications; cd `find . -name "*am-benchmarks*"`; make
 
 matrix_gui_clean:
 	@echo =============================
@@ -39,7 +39,7 @@ am_benchmarks_clean:
 	@echo =============================
 	@echo    Cleaning AM Benchmarks
 	@echo =============================
-	@cd example-applications; cd `find . -name "*am_benchmarks*"`; make clean
+	@cd example-applications; cd `find . -name "*am-benchmarks*"`; make clean
 
 clean: matrix_gui_clean matrix_tui_clean am_benchmarks_clean
 
@@ -59,6 +59,6 @@ am_benchmarks_install:
 	@echo =============================
 	@echo   Installing AM Benchmarks
 	@echo =============================
-	@cd example-applications; cd `find . -name "*am_benchmarks*"`; make install
+	@cd example-applications; cd `find . -name "*am-benchmarks*"`; make install
 
 install: matrix_gui_install matrix_tui_install am_benchmarks_install 
