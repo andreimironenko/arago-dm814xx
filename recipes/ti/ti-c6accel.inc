@@ -11,8 +11,12 @@ require ti-eula-unpack.inc
 PLATFORM_omapl138 = "omapl138"
 PLATFORM_omap3 = "omap3530"
 PLATFORM_ti816x = "TI816X"
-PLATFORM_ti814x = "ti814x"
+PLATFORM_ti814x = "TI814X"
 PLATFORM ?= "<UNDEFINED_PLATFORM>"
+
+PLATFORM_XDC_ti816x = ti.platforms.evmTI816X
+PLATFORM_XDC_ti814x = ti.platforms.evmTI816X
+PLATFORM_XDC ?= "<UNDEFINED_PLATFORM_XDC>"
 
 COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm37x-evm|c6a816x-evm|dm816x-evm|ti814x)"
 
@@ -27,7 +31,7 @@ SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/c6000/web/c6accel/lates
 BINFILE="c6accel_${PV}_Linux-x86_Setup.bin"
 TI_BIN_UNPK_CMDS="Y:workdir"
 
-DEPENDS = "ti-codec-engine ti-xdais ti-syslink ti-sysbios" 
+DEPENDS = "ti-codec-engine ti-xdais ti-syslink ti-sysbios ti-ipc ti-osal" 
 DEPENDS += "ti-edma3lld ti-cgt6x ti-xdctools ti-framework-components" 
 
 do_compile() {
@@ -36,9 +40,12 @@ do_compile() {
     cd ${S}
     make \
     PLATFORM="${PLATFORM}" \
+    PLATFORM_XDC="${PLATFORM_XDC}" \
     CE_INSTALL_DIR="${CE_INSTALL_DIR}" \
     XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
     LINK_INSTALL_DIR="${SYSLINK_INSTALL_DIR}" \
+    IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
+    OSAL_INSTALL_DIR="${OSAL_INSTALL_DIR}" \
     CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
     EDMA3_LLD_INSTALL_DIR="${EDMA3_LLD_INSTALL_DIR}" \
     CODEGEN_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
