@@ -4,7 +4,7 @@ LICENSE = "BSD"
 SECTION = "system"
 PRIORITY = "optional"
 
-SRCREV = "5"
+SRCREV = "6"
 PV = "1.0"
 PR = "r2+svnr${SRCPV}"
 
