@@ -8,9 +8,8 @@ LICENSE = "BSD"
 SECTION = "system"
 PRIORITY = "optional"
 
-SRCREV = "58"
-PV = "1.2"
-PR = "r3+svnr${SRCPV}"
+SRCREV = "59"
+PR = "r2+svnr${SRCPV}"
 
 COMPATIBLE_MACHINE = "(dm365|omapl138|omap3|ti816x)"
 
@@ -18,8 +17,6 @@ ARCHITECTURE_dm365 = "arm9"
 ARCHITECTURE_omapl138 = "arm9"
 ARCHITECTURE_omap3 = "cortex-a8"
 ARCHITECTURE_ti816x = "cortex-a8"
-ARCHITECTURE_am180x-evm = "arm9"
-ARCHITECTURE_am181x-evm = "arm9"
 
 INSANE_SKIP_${PN} = "True"
 
