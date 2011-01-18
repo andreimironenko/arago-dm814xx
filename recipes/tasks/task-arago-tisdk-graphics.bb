@@ -14,9 +14,19 @@ FFT_DEMO_ti816x = "\
     qwt \
     "
 
+FFT_DEMO_ti814x = "\
+    qwt \
+    "
+
 MATRIX_APPS = "\
     libxml2 \
     matrix-gui-e \
+    ${QTWIDGET_DEMO} \
+    ${FFT_DEMO} \
+    "
+
+MATRIX_APPS_ti814x = "\
+    libxml2 \
     ${QTWIDGET_DEMO} \
     ${FFT_DEMO} \
     "
