@@ -150,7 +150,7 @@ my %machines = (
         multimedia_default  => "no",
         dsp_default         => "yes",
         dvsdk_factory_default => "no",
-        graphics_default    => "no",
+        graphics_default    => "yes",
     },
 );
 
