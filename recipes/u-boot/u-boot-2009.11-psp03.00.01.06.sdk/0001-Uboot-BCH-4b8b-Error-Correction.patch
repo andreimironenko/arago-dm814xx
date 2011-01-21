@@ -1,0 +1,1196 @@
+From 89e27485524271e167503034cb702a68e349eeb0 Mon Sep 17 00:00:00 2001
+From: Greg Guyotte <gguyotte@ti.com>
+Date: Tue, 19 Oct 2010 14:27:50 -0500
+Subject: [PATCH] Uboot BCH 4b8b Error Correction
+
+* Error correction mode controlled by U-boot 'nandecc' command.
+* 'nandecc' options are hw/sw/bch4_sw/bch8_sw.
+* Default mode is 4BIT error correction (set in board_nand_init()).
+
+Signed-off-by: Greg Guyotte <gguyotte@ti.com>
+---
+ cpu/arm_cortexa8/omap3/board.c             |   13 +-
+ drivers/mtd/nand/Makefile                  |    2 +-
+ drivers/mtd/nand/nand_base.c               |   46 +++-
+ drivers/mtd/nand/omap_bch_decoder.c        |  399 ++++++++++++++++++++++++++++
+ drivers/mtd/nand/omap_bch_soft.c           |  326 +++++++++++++++++++++++
+ drivers/mtd/nand/omap_gpmc.c               |  213 +++++++++-------
+ include/asm-arm/arch-omap3/omap_bch_soft.h |   36 +++
+ include/linux/mtd/nand.h                   |    2 +
+ 8 files changed, 941 insertions(+), 96 deletions(-)
+ create mode 100644 drivers/mtd/nand/omap_bch_decoder.c
+ create mode 100644 drivers/mtd/nand/omap_bch_soft.c
+ create mode 100644 include/asm-arm/arch-omap3/omap_bch_soft.h
+
+diff --git a/cpu/arm_cortexa8/omap3/board.c b/cpu/arm_cortexa8/omap3/board.c
+index de2b3a2..be91e8c 100644
+--- a/cpu/arm_cortexa8/omap3/board.c
++++ b/cpu/arm_cortexa8/omap3/board.c
+@@ -38,6 +38,7 @@
+ #include <asm/arch/sys_proto.h>
+ #include <asm/arch/mem.h>
+ #include <asm/cache.h>
++#include <linux/mtd/nand.h>
+ 
+ /* Make default to 166MHz, applicable for OMAP35x and AM/Dm37x with Micron */
+ unsigned int is_ddr_166M = 1;
+@@ -309,9 +310,13 @@ static int do_switch_ecc(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+ 	if (argc != 2)
+ 		goto usage;
+ 	if (strncmp(argv[1], "hw", 2) == 0)
+-		omap_nand_switch_ecc(1);
++		omap_nand_switch_ecc(NAND_ECC_HW);
+ 	else if (strncmp(argv[1], "sw", 2) == 0)
+-		omap_nand_switch_ecc(0);
++		omap_nand_switch_ecc(NAND_ECC_SOFT);
++	else if (strncmp(argv[1], "bch4_sw", 7) == 0)
++		omap_nand_switch_ecc(NAND_ECC_4BIT_SOFT);
++	else if (strncmp(argv[1], "bch8_sw", 7) == 0)
++		omap_nand_switch_ecc(NAND_ECC_8BIT_SOFT);
+ 	else
+ 		goto usage;
+ 
+@@ -325,7 +330,9 @@ usage:
+ U_BOOT_CMD(
+ 	nandecc, 2, 1,	do_switch_ecc,
+ 	"switch OMAP3 NAND ECC calculation algorithm",
+-	"[hw/sw] - Switch between NAND hardware (hw) or software (sw) ecc algorithm"
++	"[hw/sw/bch4_sw/bch8_sw] - Switch between NAND hardware (hw), \
++1-bit software (sw), 4-bit software (bch4_sw), or 8-bit software \
++(bch8_sw) ecc algorithm"
+ );
+ 
+ #endif /* CONFIG_NAND_OMAP_GPMC */
+diff --git a/drivers/mtd/nand/Makefile b/drivers/mtd/nand/Makefile
+index 02449ee..f50fd10 100644
+--- a/drivers/mtd/nand/Makefile
++++ b/drivers/mtd/nand/Makefile
+@@ -47,7 +47,7 @@ COBJS-$(CONFIG_NAND_NDFC) += ndfc.o
+ COBJS-$(CONFIG_NAND_NOMADIK) += nomadik.o
+ COBJS-$(CONFIG_NAND_S3C2410) += s3c2410_nand.o
+ COBJS-$(CONFIG_NAND_S3C64XX) += s3c64xx.o
+-COBJS-$(CONFIG_NAND_OMAP_GPMC) += omap_gpmc.o
++COBJS-$(CONFIG_NAND_OMAP_GPMC) += omap_bch_decoder.o omap_gpmc.o omap_bch_soft.o
+ COBJS-$(CONFIG_NAND_PLAT) += nand_plat.o
+ endif
+ 
+diff --git a/drivers/mtd/nand/nand_base.c b/drivers/mtd/nand/nand_base.c
+index e051934..0ab247a 100644
+--- a/drivers/mtd/nand/nand_base.c
++++ b/drivers/mtd/nand/nand_base.c
+@@ -68,6 +68,8 @@
+ #include <linux/mtd/nand.h>
+ #include <linux/mtd/nand_ecc.h>
+ 
++#include <asm/arch/omap_bch_soft.h>
++
+ #ifdef CONFIG_MTD_PARTITIONS
+ #include <linux/mtd/partitions.h>
+ #endif
+@@ -2732,6 +2734,7 @@ int nand_scan_ident(struct mtd_info *mtd, int maxchips)
+  */
+ int nand_scan_tail(struct mtd_info *mtd)
+ {
++        uint32_t dev_width;
+ 	int i;
+ 	struct nand_chip *chip = mtd->priv;
+ 
+@@ -2743,6 +2746,8 @@ int nand_scan_tail(struct mtd_info *mtd)
+ 	/* Set the internal oob buffer location, just after the page data */
+ 	chip->oob_poi = chip->buffers->databuf + mtd->writesize;
+ 
++	dev_width = (chip->options & NAND_BUSWIDTH_16) >> 1;
++
+ 	/*
+ 	 * If no default placement scheme is given, select an appropriate one
+ 	 */
+@@ -2841,7 +2846,46 @@ int nand_scan_tail(struct mtd_info *mtd)
+ 		chip->ecc.size = 256;
+ 		chip->ecc.bytes = 3;
+ 		break;
+-
++ 
++        case NAND_ECC_4BIT_SOFT:
++	        /* Use standard hwecc read page function */
++		if (!chip->ecc.read_page)
++			chip->ecc.read_page = nand_read_page_hwecc;
++		if (!chip->ecc.write_page)
++			chip->ecc.write_page = nand_write_page_hwecc;
++		if (!chip->ecc.read_oob)
++			chip->ecc.read_oob = nand_read_oob_std;
++		if (!chip->ecc.write_oob)
++			chip->ecc.write_oob = nand_write_oob_std;
++		chip->ecc.size = 2048;
++		chip->ecc.bytes = 28;
++		chip->ecc.hwctl = omap_enable_hwecc_bch4;
++                chip->ecc.calculate = omap_calculate_ecc_bch4;
++                chip->ecc.correct = omap_correct_data_bch4;
++                chip->ecc.layout = omap_get_ecc_layout_bch(dev_width, 4);
++		omap_hwecc_init_bch(chip);
++                break;
++
++        case NAND_ECC_8BIT_SOFT:
++	        /* Use standard hwecc read page function */
++		if (!chip->ecc.read_page)
++			chip->ecc.read_page = nand_read_page_hwecc;
++		if (!chip->ecc.write_page)
++			chip->ecc.write_page = nand_write_page_hwecc;
++		if (!chip->ecc.read_oob)
++			chip->ecc.read_oob = nand_read_oob_std;
++		if (!chip->ecc.write_oob)
++			chip->ecc.write_oob = nand_write_oob_std;
++		chip->ecc.size = 2048;
++		chip->ecc.bytes = 52;
++		chip->ecc.hwctl = omap_enable_hwecc_bch8;
++                chip->ecc.calculate = omap_calculate_ecc_bch8;
++                chip->ecc.correct = omap_correct_data_bch8;
++                chip->ecc.layout = omap_get_ecc_layout_bch(dev_width, 8);
++		omap_hwecc_init_bch(chip);
++	        
++	        break;
++	  
+ 	case NAND_ECC_NONE:
+ 		printk(KERN_WARNING "NAND_ECC_NONE selected by board driver. "
+ 		       "This is not recommended !!\n");
+diff --git a/drivers/mtd/nand/omap_bch_decoder.c b/drivers/mtd/nand/omap_bch_decoder.c
+new file mode 100644
+index 0000000..8a16aa8
+--- /dev/null
++++ b/drivers/mtd/nand/omap_bch_decoder.c
+@@ -0,0 +1,399 @@
++/*
++ * lib/omap_bch_decoder.c
++ *
++ * Whole BCH ECC Decoder (Post hardware generated syndrome decoding)
++ *
++ * Copyright (c) 2007 Texas Instruments
++ *
++ * Author: Sukumar Ghorai <s-ghorai@ti.com
++ *		   Michael Fillinger <m-fillinger@ti.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ */
++
++#define printk //printf
++
++#define mm		13
++#define kk_shorten	4096
++#define nn		8191	/* Length of codeword, n = 2**mm - 1 */
++
++#define PPP	0x201B	/* Primary Polynomial : x^13 + x^4 + x^3 + x + 1 */
++#define P	0x001B	/* With omitted x^13 */
++#define POLY	12	/* degree of the primary Polynomial less one */
++
++/**
++ * mpy_mod_gf - GALOIS field multiplier
++ * Input  : A(x), B(x)
++ * Output : A(x)*B(x) mod P(x)
++ */
++static unsigned int mpy_mod_gf(unsigned int a, unsigned int b)
++{
++	unsigned int R = 0;
++	unsigned int R1 = 0;
++	unsigned int k = 0;
++
++	for (k = 0; k < mm; k++) {
++
++		R = (R << 1) & 0x1FFE;
++		if (R1 == 1)
++			R ^= P;
++
++		if (((a >> (POLY - k)) & 1) == 1)
++			R ^= b;
++
++		if (k < POLY)
++			R1 = (R >> POLY) & 1;
++	}
++	return R;
++}
++
++/**
++ * chien - CHIEN search
++ *
++ * @location - Error location vector pointer
++ *
++ * Inputs  : ELP(z)
++ *	     No. of found errors
++ *	     Size of input codeword
++ * Outputs : Up to 8 locations
++ *	     No. of errors
++ */
++static int chien(unsigned int select_4_8, int err_nums,
++				unsigned int err[], unsigned int *location)
++{
++	int i, count; /* Number of dectected errors */
++	/* Contains accumulation of evaluation at x^i (i:1->8) */
++	unsigned int gammas[8] = {0};
++	unsigned int alpha;
++	unsigned int bit, ecc_bits;
++	unsigned int elp_sum;
++
++	ecc_bits = (select_4_8 == 0) ? 52 : 104;
++	
++	/* Start evaluation at Alpha**8192 and decreasing */
++	for (i = 0; i < 8; i++)
++		gammas[i] = err[i];
++
++	count = 0;
++	for (i = 1; (i <= nn) && (count < err_nums); i++) {
++
++		/* Result of evaluation at root */
++		elp_sum = 1 ^ gammas[0] ^ gammas[1] ^
++				gammas[2] ^ gammas[3] ^
++				gammas[4] ^ gammas[5] ^
++				gammas[6] ^ gammas[7];
++
++		alpha = PPP >> 1;
++		gammas[0] = mpy_mod_gf(gammas[0], alpha);
++		alpha = mpy_mod_gf(alpha, (PPP >> 1));	/* x alphha^-2 */
++		gammas[1] = mpy_mod_gf(gammas[1], alpha);
++		alpha = mpy_mod_gf(alpha, (PPP >> 1));	/* x alphha^-2 */
++		gammas[2] = mpy_mod_gf(gammas[2], alpha);
++		alpha = mpy_mod_gf(alpha, (PPP >> 1));	/* x alphha^-3 */
++		gammas[3] = mpy_mod_gf(gammas[3], alpha);
++		alpha = mpy_mod_gf(alpha, (PPP >> 1));	/* x alphha^-4 */
++		gammas[4] = mpy_mod_gf(gammas[4], alpha);
++		alpha = mpy_mod_gf(alpha, (PPP >> 1));	/* x alphha^-5 */
++		gammas[5] = mpy_mod_gf(gammas[5], alpha);
++		alpha = mpy_mod_gf(alpha, (PPP >> 1));	/* x alphha^-6 */
++		gammas[6] = mpy_mod_gf(gammas[6], alpha);
++		alpha = mpy_mod_gf(alpha, (PPP >> 1));	/* x alphha^-7 */
++		gammas[7] = mpy_mod_gf(gammas[7], alpha);
++
++		if (elp_sum == 0) {
++			/* calculate location */
++			bit = ((i-1) & ~7)|(7-((i-1) & 7));
++			if ((select_4_8 == 0) && (i >= 2 * ecc_bits)) {
++				location[count++] = kk_shorten - (bit - 2 * ecc_bits) - 1;
++			} else if ((select_4_8 == 1) && (i >= 2 * ecc_bits)) {
++				location[count++] = kk_shorten - (bit - 2 * ecc_bits) - 1;
++			}
++		}
++	}
++
++	/* Failure: No. of detected errors != No. or corrected errors */
++	if (count != err_nums) {
++		count = -1;
++		/*	printk(KERN_INFO "BCH decoding failed\n");*/
++	}
++	/*
++	for (i = 0; i < count; i++)
++		printk(KERN_INFO "%d ", location[i]);
++	*/
++	return count;
++}
++
++/* synd : 16 Syndromes
++ * return: gamaas - Coefficients to the error polynomial
++ * return: : Number of detected errors
++*/
++static unsigned int berlekamp(unsigned int select_4_8,
++			unsigned int synd[], unsigned int err[])
++{
++	int loop, iteration;
++	unsigned int LL = 0;		/* Detected errors */
++	unsigned int d = 0;	/* Distance between Syndromes and ELP[n](z) */
++	unsigned int invd = 0;		/* Inverse of d */
++	/* Intermediate ELP[n](z).
++	 * Final ELP[n](z) is Error Location Polynomial
++	 */
++	unsigned int gammas[16] = {0};
++	/* Intermediate normalized ELP[n](z) : D[n](z) */
++	unsigned int D[16] = {0};
++	/* Temporary value that holds an ELP[n](z) coefficient */
++	unsigned int next_gamma = 0;
++
++	int e = 0;
++	unsigned int sign = 0;
++	unsigned int u = 0;
++	unsigned int v = 0;
++	unsigned int C1 = 0, C2 = 0;
++	unsigned int ss = 0;
++	unsigned int tmp_v = 0, tmp_s = 0;
++	unsigned int tmp_poly;
++
++	/*-------------- Step 0 ------------------*/
++	for (loop = 0; loop < 16; loop++)
++		gammas[loop] = 0;
++	gammas[0] = 1;
++	D[1] = 1;
++
++	iteration = 0;
++	LL = 0;
++	while ((iteration < ((select_4_8+1)*2*4)) &&
++			(LL <= ((select_4_8+1)*4))) {
++
++	  /*printk(KERN_INFO "\nIteration.............%d\n", iteration);*/
++		d = 0;
++		/* Step: 0 */
++		for (loop = 0; loop <= LL; loop++) {
++			tmp_poly = mpy_mod_gf(
++					gammas[loop], synd[iteration - loop]);
++			d ^= tmp_poly;
++			/*printk(KERN_INFO "%02d. s=0 LL=%x poly %x\n",
++			  loop, LL, tmp_poly);*/
++		}
++
++		/* Step 1: 1 cycle only to perform inversion */
++		v = d << 1;
++		e = -1;
++		sign = 1;
++		ss = 0x2000;
++		invd = 0;
++		u = PPP;
++		for (loop = 0; (d != 0) && (loop <= (2 * POLY)); loop++) {
++		  /*printk(KERN_INFO "%02d. s=1 LL=%x poly NULL\n",
++		    loop, LL);*/
++			C1 = (v >> 13) & 1;
++			C2 = C1 & sign;
++
++			sign ^= C2 ^ (e == 0);
++
++			tmp_v = v;
++			tmp_s = ss;
++
++			if (C1 == 1) {
++				v ^= u;
++				ss ^= invd;
++			}
++			v = (v << 1) & 0x3FFF;
++			if (C2 == 1) {
++				u = tmp_v;
++				invd = tmp_s;
++				e = -e;
++			}
++			invd >>= 1;
++			e--;
++		}
++
++		for (loop = 0; (d != 0) && (loop <= (iteration + 1)); loop++) {
++			/* Step 2
++			 * Interleaved with Step 3, if L<(n-k)
++			 * invd: Update of ELP[n](z) = ELP[n-1](z) - d.D[n-1](z)
++			 */
++
++			/* Holds value of ELP coefficient until precedent
++			 * value does not have to be used anymore
++			 */
++			tmp_poly = mpy_mod_gf(d, D[loop]);
++			/*printk(KERN_INFO "%02d. s=2 LL=%x poly %x\n",
++			  loop, LL, tmp_poly);*/
++
++			next_gamma = gammas[loop] ^ tmp_poly;
++			if ((2 * LL) < (iteration + 1)) {
++				/* Interleaving with Step 3
++				 * for parallelized update of ELP(z) and D(z)
++				 */
++			} else {
++				/* Update of ELP(z) only -> stay in Step 2 */
++				gammas[loop] = next_gamma;
++				if (loop == (iteration + 1)) {
++					/* to step 4 */
++					break;
++				}
++			}
++
++			/* Step 3
++			 * Always interleaved with Step 2 (case when L<(n-k))
++			 * Update of D[n-1](z) = ELP[n-1](z)/d
++			 */
++			D[loop] = mpy_mod_gf(gammas[loop], invd);
++			/*printk(KERN_INFO "%02d. s=3 LL=%x poly %x\n",
++			  loop, LL, D[loop]);*/
++
++			/* Can safely update ELP[n](z) */
++			gammas[loop] = next_gamma;
++
++			if (loop == (iteration + 1)) {
++				/* If update finished */
++				LL = iteration - LL + 1;
++				/* to step 4 */
++				break;
++			}
++			/* Else, interleaving to step 2*/
++		}
++
++		/* Step 4: Update D(z): i:0->L */
++		/* Final update of D[n](z) = D[n](z).z*/
++		for (loop = 0; loop < 15; loop++) /* Left Shift */
++			D[15 - loop] = D[14 - loop];
++
++		D[0] = 0;
++
++		iteration++;
++	} /* while */
++
++	/* Processing finished, copy ELP to final registers : 0->2t-1*/
++	for (loop = 0; loop < 8; loop++)
++		err[loop] = gammas[loop+1];
++
++	/*printk(KERN_INFO "\n Err poly:");
++	for (loop = 0; loop < 8; loop++)
++		printk(KERN_INFO "0x%x ", err[loop]);
++	*/
++	return LL;
++}
++
++/*
++ * syndrome - Generate syndrome components from hw generate syndrome
++ * r(x) = c(x) + e(x)
++ * s(x) = c(x) mod g(x) + e(x) mod g(x) =  e(x) mod g(x)
++ * so receiver checks if the syndrome s(x) = r(x) mod g(x) is equal to zero.
++ * unsigned int s[16]; - Syndromes
++ */
++static void syndrome(unsigned int select_4_8,
++					unsigned char *ecc, unsigned int syn[])
++{
++	unsigned int k, l, t;
++	unsigned int alpha_bit, R_bit;
++	int ecc_pos, ecc_min;
++
++	/* 2t-1 = 15 (for t=8) minimal polynomials of the first 15 powers of a
++	 * primitive elemmants of GF(m); Even powers minimal polynomials are
++	 * duplicate of odd powers' minimal polynomials.
++	 * Odd powers of alpha (1 to 15)
++	 */
++	unsigned int pow_alpha[8] = {0x0002, 0x0008, 0x0020, 0x0080,
++				 0x0200, 0x0800, 0x001B, 0x006C};
++
++	/*printk(KERN_INFO "\n ECC[0..n]: ");
++	for (k = 0; k < 13; k++)
++		printk(KERN_INFO "0x%x ", ecc[k]);
++	*/
++
++	if (select_4_8 == 0) {
++		t = 4;
++		ecc_pos = 55; /* bits(52-bits): 55->4 */
++		ecc_min = 4;
++	} else {
++		t = 8;
++		ecc_pos = 103; /* bits: 103->0 */
++		ecc_min = 0;
++	}
++
++	/* total numbber of syndrom to be used is 2t */
++	/* Step1: calculate the odd syndrome(s) */
++	R_bit = ((ecc[ecc_pos/8] >> (7 - ecc_pos%8)) & 1);
++	ecc_pos--;
++	for (k = 0; k < t; k++)
++		syn[2 * k] = R_bit;
++
++	while (ecc_pos >= ecc_min) {
++		R_bit = ((ecc[ecc_pos/8] >> (7 - ecc_pos%8)) & 1);
++		ecc_pos--;
++
++		for (k = 0; k < t; k++) {
++			/* Accumulate value of x^i at alpha^(2k+1) */
++			if (R_bit == 1)
++				syn[2*k] ^= pow_alpha[k];
++
++			/* Compute a**(2k+1), using LSFR */
++			for (l = 0; l < (2 * k + 1); l++) {
++				alpha_bit = (pow_alpha[k] >> POLY) & 1;
++				pow_alpha[k] = (pow_alpha[k] << 1) & 0x1FFF;
++				if (alpha_bit == 1)
++					pow_alpha[k] ^= P;
++			}
++		}
++	}
++
++	/* Step2: calculate the even syndrome(s)
++	 * Compute S(a), where a is an even power of alpha
++	 * Evenry even power of primitive element has the same minimal
++	 * polynomial as some odd power of elemets.
++	 * And based on S(a^2) = S^2(a)
++	 */
++	for (k = 0; k < t; k++)
++		syn[2*k+1] = mpy_mod_gf(syn[k], syn[k]);
++
++	/*printk(KERN_INFO "\n Syndromes: ");
++	for (k = 0; k < 16; k++)
++	printk(KERN_INFO "0x%x ", syn[k]);*/
++}
++
++/**
++ * decode_bch - BCH decoder for 4- and 8-bit error correction
++ *
++ * @ecc - ECC syndrome generated by hw BCH engine
++ * @err_loc - pointer to error location array
++ *
++ * This function does post sydrome generation (hw generated) decoding
++ * for:-
++ * Dimension of Galoise Field: m = 13
++ * Length of codeword: n = 2**m - 1
++ * Number of errors that can be corrected: 4- or 8-bits
++ * Length of information bit: kk = nn - rr
++ */
++int decode_bch(int select_4_8, unsigned char *ecc, unsigned int *err_loc)
++{
++	int no_of_err;
++	unsigned int syn[16] = {0,};	/* 16 Syndromes */
++	unsigned int err_poly[8] = {0,};
++	/* Coefficients to the error polynomial
++	 * ELP(x) = 1 + err0.x + err1.x^2 + ... + err7.x^8
++	 */
++
++	/* Decoting involes three steps
++	 * 1. Compute the syndrom from teh received codeword,
++	 * 2. Find the error location polynomial from a set of equations
++	 *     derived from the syndrome,
++	 * 3. Use the error location polynomial to identify errants bits,
++	 *
++	 * And correcttion done by bit flips using error locaiton and expected
++	 * to be outseide of this implementation.
++	 */
++	syndrome(select_4_8, ecc, syn);
++	no_of_err = berlekamp(select_4_8, syn, err_poly);
++	if (no_of_err <= (4 << select_4_8))
++		no_of_err = chien(select_4_8, no_of_err, err_poly, err_loc);
++
++	return no_of_err;
++}
++EXPORT_SYMBOL(decode_bch);
+diff --git a/drivers/mtd/nand/omap_bch_soft.c b/drivers/mtd/nand/omap_bch_soft.c
+new file mode 100644
+index 0000000..ac4848a
+--- /dev/null
++++ b/drivers/mtd/nand/omap_bch_soft.c
+@@ -0,0 +1,326 @@
++/*
++ * omap_bch_soft.c
++ *
++ * Support modules for BCH 4-bit/8-bit error correction.
++ *
++ * Copyright (C) {2011} Texas Instruments Incorporated - http://www.ti.com/
++ * 
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as 
++ * published by the Free Software Foundation version 2.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ */
++
++#include <common.h>
++#include <asm/arch/omap_bch_soft.h>
++#include <asm/io.h>
++#include <asm/errno.h>
++#include <asm/arch/mem.h>
++#include <asm/arch/omap_gpmc.h>
++#include <linux/mtd/nand_ecc.h>
++
++#define GPMC_ECC_BCH_RESULT_0   0x240
++extern uint8_t cs;
++
++int decode_bch(int select_4_8, unsigned char *ecc, unsigned int *err_loc);
++
++/* bus_width : 0 for x8, 1 for x16 */
++static struct nand_ecclayout nand_bch_oob;
++struct nand_ecclayout *omap_get_ecc_layout_bch(int bus_width, int correct_bits)
++{
++  int offset, ecc_romcode = 0;
++  int i;
++
++  offset = (bus_width == 0) ? 1 : 2;
++
++  switch(correct_bits)
++    {
++    case 1: nand_bch_oob.eccbytes = 12; break;
++    case 4: nand_bch_oob.eccbytes = 28; break;
++    case 8: nand_bch_oob.eccbytes = 52; break;
++    default: return 0;
++    }
++
++  if (!ecc_romcode)
++    offset = (64 - nand_bch_oob.eccbytes);
++  else
++    offset = (bus_width == 0) ? 1 : 2;
++
++  for (i = 0; i < nand_bch_oob.eccbytes; i++)
++    nand_bch_oob.eccpos[i] = i + offset;
++
++  offset = (bus_width == 0) ? 1 : 2;
++  nand_bch_oob.oobfree->offset =
++    (ecc_romcode ? (nand_bch_oob.eccbytes + offset) : offset);
++  nand_bch_oob.oobfree->length = 64 - (nand_bch_oob.eccbytes + offset);
++
++  return &nand_bch_oob;
++};
++
++/*
++ * omap_hwecc_init - Initialize the Hardware ECC for NAND flash in
++ *                   GPMC controller
++ * @mtd:        MTD device structure
++ *
++ */
++void omap_hwecc_init_bch(struct nand_chip *chip)
++{
++	/*
++	 * Init ECC Control Register
++	 * Clear all ECC | Enable Reg1
++	 */
++	writel(ECCCLEAR | ECCRESULTREG1, &gpmc_cfg->ecc_control);
++}
++
++/* Implementation for 4b/8b BCH correction.  Pass either 4 or 8 into the 
++   correct_bits parameter. */
++static int omap_correct_data_bch(int correct_bits, struct mtd_info *mtd, 
++                                 uint8_t *dat, uint8_t *read_ecc, 
++                                 uint8_t *calc_ecc)
++{
++  int i=0, blockCnt=4, j, eccflag, count, corrected=0;
++  int eccsize = (correct_bits == 8) ? 13 : 7;
++  int mode = (correct_bits == 8) ? 1 : 0;
++  unsigned int err_loc[8];
++
++  if (correct_bits == 4)
++    omap_calculate_ecc_bch4(mtd, dat, calc_ecc);
++  else if (correct_bits == 8)
++    omap_calculate_ecc_bch8(mtd, dat, calc_ecc);
++  else
++    return -1;  /* unsupported number of correction bits */
++
++  for (i = 0; i < blockCnt; i++) {
++    /* check if any ecc error */
++    eccflag = 0;
++    for (j = 0; (j < eccsize) && (eccflag == 0); j++)
++      if (calc_ecc[j] != 0)
++	eccflag = 1;
++
++    if (eccflag == 1) {
++      eccflag = 0;
++      for (j = 0; (j < eccsize) && (eccflag == 0); j++)
++	if (read_ecc[j] != 0xFF)
++	  eccflag = 1;
++    }
++
++    if (eccflag == 1) {
++      /*printk(KERN_INFO "...bch correct(%d 512 byte)\n", i+1);*/
++      count = decode_bch(mode, calc_ecc, err_loc);
++      
++      corrected += count;
++			
++      for (j = 0; j < count; j++) {
++	/*printk(KERN_INFO "err_loc=%d\n", err_loc[j]);*/
++        printf("err_loc=%d\n", err_loc[j]);
++	if (err_loc[j] < 4096)
++	  dat[err_loc[j] >> 3] ^= 1 << (err_loc[j] & 7);
++	/* else, not interested to correct ecc */
++      }
++
++    }
++
++    calc_ecc = calc_ecc + eccsize;
++    read_ecc = read_ecc + eccsize;
++    dat += 512;
++  }
++
++  return corrected;
++}
++
++/* Wrapper function for 4 bit BCH correction */
++int omap_correct_data_bch4(struct mtd_info *mtd, uint8_t *dat,
++				  uint8_t *read_ecc, uint8_t *calc_ecc)
++{
++  return omap_correct_data_bch(4, mtd, dat, read_ecc, calc_ecc);
++}
++
++/* Wrapper function for 8 bit BCH correction */
++int omap_correct_data_bch8(struct mtd_info *mtd, uint8_t *dat,
++				  uint8_t *read_ecc, uint8_t *calc_ecc)
++{
++  return omap_correct_data_bch(8, mtd, dat, read_ecc, calc_ecc);
++}
++
++/*
++ *  omap_calculate_ecc_bch8 - Version for 8BIT BCH correction.
++ *
++ *  @mtd:	MTD structure
++ *  @dat:	unused
++ *  @ecc_code:	ecc_code buffer
++ */
++int omap_calculate_ecc_bch8(struct mtd_info *mtd, const uint8_t *dat,
++				   uint8_t *ecc_code)
++{
++  struct nand_chip *nand = mtd->priv;
++  unsigned long reg, val1 = 0x0, val2 = 0x0;
++  unsigned long val3 = 0x0, val4 = 0x0;
++  int i;
++
++  for (i = 0; i < nand->ecc.size/512; i++) {
++    /* Reading HW ECC_BCH_Results
++     * 0x240-0x24C, 0x250-0x25C, 0x260-0x26C, 0x270-0x27C
++     */
++    reg = (unsigned long)(GPMC_BASE +
++			  GPMC_ECC_BCH_RESULT_0 + (0x10 * i));
++    val1 = __raw_readl(reg);
++    val2 = __raw_readl(reg + 4);
++    val3 = __raw_readl(reg + 8);
++    val4 = __raw_readl(reg + 12);
++
++    *ecc_code++ = (val4 & 0xFF);
++    *ecc_code++ = ((val3 >> 24) & 0xFF);
++    *ecc_code++ = ((val3 >> 16) & 0xFF);
++    *ecc_code++ = ((val3 >> 8) & 0xFF);
++    *ecc_code++ = (val3 & 0xFF);
++    *ecc_code++ = ((val2 >> 24) & 0xFF);
++
++    *ecc_code++ = ((val2 >> 16) & 0xFF);
++    *ecc_code++ = ((val2 >> 8) & 0xFF);
++    *ecc_code++ = (val2 & 0xFF);
++    *ecc_code++ = ((val1 >> 24) & 0xFF);
++    *ecc_code++ = ((val1 >> 16) & 0xFF);
++    *ecc_code++ = ((val1 >> 8) & 0xFF);
++    *ecc_code++ = (val1 & 0xFF);
++  }
++  return 0;
++}
++
++/*
++ *  omap_calculate_ecc_bch4 - Version for 4BIT BCH correction.
++ *
++ *  @mtd:	MTD structure
++ *  @dat:	unused
++ *  @ecc_code:	ecc_code buffer
++ */
++int omap_calculate_ecc_bch4(struct mtd_info *mtd, const uint8_t *dat,
++				   uint8_t *ecc_code)
++{
++  struct nand_chip *nand = mtd->priv;
++  unsigned long reg, val1 = 0x0, val2 = 0x0;	
++  int i;
++
++  for (i = 0; i < nand->ecc.size/512; i++) {
++    /* Reading HW ECC_BCH_Results
++     * 0x240-0x24C, 0x250-0x25C, 0x260-0x26C, 0x270-0x27C
++     */
++    reg = (unsigned long)(GPMC_BASE +
++			  GPMC_ECC_BCH_RESULT_0 + (0x10 * i));
++    val1 = __raw_readl(reg);
++    val2 = __raw_readl(reg + 4);
++
++    *ecc_code++ = ((val2 >> 16) & 0xFF);
++    *ecc_code++ = ((val2 >> 8) & 0xFF);
++    *ecc_code++ = (val2 & 0xFF);
++    *ecc_code++ = ((val1 >> 24) & 0xFF);
++    *ecc_code++ = ((val1 >> 16) & 0xFF);
++    *ecc_code++ = ((val1 >> 8) & 0xFF);
++    *ecc_code++ = (val1 & 0xFF);
++  }
++  return 0;
++}
++
++/*
++ * omap_enable_ecc - This function enables the hardware ecc functionality
++ * @mtd:        MTD device structure
++ * @mode:       Read/Write mode
++ */
++void omap_enable_hwecc_bch4(struct mtd_info *mtd, int32_t mode)
++{
++  struct nand_chip *chip = mtd->priv;
++  uint32_t bch_mod=0;
++  uint32_t dev_width = (chip->options & NAND_BUSWIDTH_16) >> 1;
++  unsigned int eccsize1, eccsize0;
++  unsigned int ecc_conf_val = 0, ecc_size_conf_val = 0;
++
++  switch (mode) {
++  case NAND_ECC_READ    :
++    eccsize1 = 0xD; eccsize0 = 0x48;
++    /* ECCSIZE1=26 | ECCSIZE0=12 */
++    ecc_size_conf_val = (eccsize1 << 22) | (eccsize0 << 12);
++
++    /* ECCALGORITHM | ECCBCHT8 | ECCWRAPMODE | ECC16B |
++     * ECCTOPSECTOR | ECCCS | ECC Enable
++     */
++    ecc_conf_val = ((0x01 << 16) | (bch_mod << 12) | (0x09 << 8) |
++		    (dev_width << 7) | (0x03 << 4) |
++		    (cs << 1) | (0x1));
++    break;
++  case NAND_ECC_WRITE   :
++    eccsize1 = 0x20; eccsize0 = 0x00;
++
++    /* ECCSIZE1=32 | ECCSIZE0=00 */
++    ecc_size_conf_val = (eccsize1 << 22) | (eccsize0 << 12);
++
++    /* ECCALGORITHM | ECCBCHT8 | ECCWRAPMODE | ECC16B |
++     * ECCTOPSECTOR | ECCCS | ECC Enable
++     */
++    ecc_conf_val = ((0x01 << 16) | (bch_mod << 12) | (0x06 << 8) |
++		    (dev_width << 7) | (0x03 << 4) |
++		    (cs << 1) | (0x1));
++    break;
++  default:
++    printf("Error: Unrecognized Mode[%d]!\n", mode);
++    break;
++  }
++
++  writel(0x1, &gpmc_cfg->ecc_control);
++  writel(ecc_size_conf_val, &gpmc_cfg->ecc_size_config);
++  writel(ecc_conf_val, &gpmc_cfg->ecc_config);
++  writel(0x101, &gpmc_cfg->ecc_control);
++}
++
++/*
++ * omap_enable_ecc - This function enables the hardware ecc functionality
++ * @mtd:        MTD device structure
++ * @mode:       Read/Write mode
++ */
++void omap_enable_hwecc_bch8(struct mtd_info *mtd, int32_t mode)
++{
++  struct nand_chip *chip = mtd->priv;
++  uint32_t bch_mod=1;
++  uint32_t dev_width = (chip->options & NAND_BUSWIDTH_16) >> 1;
++  unsigned int eccsize1, eccsize0;
++  unsigned int ecc_conf_val = 0, ecc_size_conf_val = 0;
++
++  switch (mode) {
++  case NAND_ECC_READ    :
++    eccsize1 = 0x1A; eccsize0 = 0x18;
++    /* ECCSIZE1=26 | ECCSIZE0=12 */
++    ecc_size_conf_val = (eccsize1 << 22) | (eccsize0 << 12);
++
++    /* ECCALGORITHM | ECCBCHT8 | ECCWRAPMODE | ECC16B |
++     * ECCTOPSECTOR | ECCCS | ECC Enable
++     */
++    ecc_conf_val = ((0x01 << 16) | (bch_mod << 12) | (0x04 << 8) |
++		    (dev_width << 7) | (0x03 << 4) |
++		    (cs << 1) | (0x1));
++    break;
++  case NAND_ECC_WRITE   :
++    eccsize1 = 0x20; eccsize0 = 0x00;
++
++    /* ECCSIZE1=32 | ECCSIZE0=00 */
++    ecc_size_conf_val = (eccsize1 << 22) | (eccsize0 << 12);
++
++    /* ECCALGORITHM | ECCBCHT8 | ECCWRAPMODE | ECC16B |
++     * ECCTOPSECTOR | ECCCS | ECC Enable
++     */
++    ecc_conf_val = ((0x01 << 16) | (bch_mod << 12) | (0x06 << 8) |
++		    (dev_width << 7) | (0x03 << 4) |
++		    (cs << 1) | (0x1));
++    break;
++  default:
++    printf("Error: Unrecognized Mode[%d]!\n", mode);
++    break;
++  }
++
++  writel(0x1, &gpmc_cfg->ecc_control);
++  writel(ecc_size_conf_val, &gpmc_cfg->ecc_size_config);
++  writel(ecc_conf_val, &gpmc_cfg->ecc_config);
++  writel(0x101, &gpmc_cfg->ecc_control);
++}
++
+diff --git a/drivers/mtd/nand/omap_gpmc.c b/drivers/mtd/nand/omap_gpmc.c
+index 99b9cef..26f2eef 100644
+--- a/drivers/mtd/nand/omap_gpmc.c
++++ b/drivers/mtd/nand/omap_gpmc.c
+@@ -26,10 +26,11 @@
+ #include <asm/errno.h>
+ #include <asm/arch/mem.h>
+ #include <asm/arch/omap_gpmc.h>
++#include <asm/arch/omap_bch_soft.h>
+ #include <linux/mtd/nand_ecc.h>
+ #include <nand.h>
+ 
+-static uint8_t cs;
++uint8_t cs;
+ static struct nand_ecclayout hw_nand_oob = GPMC_NAND_HW_ECC_LAYOUT;
+ 
+ /*
+@@ -91,6 +92,8 @@ static uint32_t gen_true_ecc(uint8_t *ecc_buf)
+ 		((ecc_buf[2] & 0x0F) << 8);
+ }
+ 
++
++
+ /*
+  * omap_correct_data - Compares the ecc read from nand spare area with ECC
+  * registers values and corrects one bit error if it has occured
+@@ -231,54 +234,82 @@ static void omap_enable_hwecc(struct mtd_info *mtd, int32_t mode)
+  * @hardware - 1 -switch to h/w ecc, 0 - s/w ecc
+  *
+  */
+-void omap_nand_switch_ecc(int32_t hardware)
++void omap_nand_switch_ecc(nand_ecc_modes_t mode)
+ {
+-	struct nand_chip *nand;
+-	struct mtd_info *mtd;
+-
+-	if (nand_curr_device < 0 ||
+-	    nand_curr_device >= CONFIG_SYS_MAX_NAND_DEVICE ||
+-	    !nand_info[nand_curr_device].name) {
+-		printf("Error: Can't switch ecc, no devices available\n");
+-		return;
+-	}
+-
+-	mtd = &nand_info[nand_curr_device];
+-	nand = mtd->priv;
+-
+-	nand->options |= NAND_OWN_BUFFERS;
+-
+-	/* Reset ecc interface */
+-	nand->ecc.read_page = NULL;
+-	nand->ecc.write_page = NULL;
+-	nand->ecc.read_oob = NULL;
+-	nand->ecc.write_oob = NULL;
+-	nand->ecc.hwctl = NULL;
+-	nand->ecc.correct = NULL;
+-	nand->ecc.calculate = NULL;
+-
+-	/* Setup the ecc configurations again */
+-	if (hardware) {
+-		nand->ecc.mode = NAND_ECC_HW;
+-		nand->ecc.layout = &hw_nand_oob;
+-		nand->ecc.size = 512;
+-		nand->ecc.bytes = 3;
+-		nand->ecc.hwctl = omap_enable_hwecc;
+-		nand->ecc.correct = omap_correct_data;
+-		nand->ecc.calculate = omap_calculate_ecc;
+-		omap_hwecc_init(nand);
+-		printf("HW ECC selected\n");
+-	} else {
+-		nand->ecc.mode = NAND_ECC_SOFT;
+-		/* Use mtd default settings */
+-		nand->ecc.layout = NULL;
+-		printf("SW ECC selected\n");
+-	}
+-
+-	/* Update NAND handling after ECC mode switch */
+-	nand_scan_tail(mtd);
+-
+-	nand->options &= ~NAND_OWN_BUFFERS;
++  struct nand_chip *nand;
++  struct mtd_info *mtd;
++  uint32_t dev_width;
++
++  if (nand_curr_device < 0 ||
++      nand_curr_device >= CONFIG_SYS_MAX_NAND_DEVICE ||
++      !nand_info[nand_curr_device].name) {
++    printf("Error: Can't switch ecc, no devices available\n");
++    return;
++  }
++
++  mtd = &nand_info[nand_curr_device];
++  nand = mtd->priv;
++
++  nand->options |= NAND_OWN_BUFFERS;
++
++  /* Reset ecc interface */
++  nand->ecc.read_page = NULL;
++  nand->ecc.write_page = NULL;
++  nand->ecc.read_oob = NULL;
++  nand->ecc.write_oob = NULL;
++  nand->ecc.hwctl = NULL;
++  nand->ecc.correct = NULL;
++  nand->ecc.calculate = NULL;
++
++  dev_width = (nand->options & NAND_BUSWIDTH_16) >> 1;
++
++  switch(mode)
++    {
++    case NAND_ECC_HW:
++      nand->ecc.mode = NAND_ECC_HW;
++      nand->ecc.layout = &hw_nand_oob;	
++      nand->ecc.hwctl = omap_enable_hwecc;
++      nand->ecc.size = 512;
++      nand->ecc.bytes = 3;
++      nand->ecc.correct = omap_correct_data;
++      nand->ecc.calculate = omap_calculate_ecc;
++      omap_hwecc_init(nand);
++      printf("HW ECC selected\n");
++      break;
++    case NAND_ECC_SOFT:
++      nand->ecc.mode = NAND_ECC_SOFT;
++      /* Use mtd default settings */
++      nand->ecc.layout = NULL;
++      printf("SW ECC selected\n");
++      break;
++    case NAND_ECC_4BIT_SOFT:
++      nand->ecc.mode = mode;
++      nand->ecc.layout = omap_get_ecc_layout_bch(dev_width, 4);
++      nand->ecc.hwctl = omap_enable_hwecc_bch4;
++      nand->ecc.size = 2048;
++      nand->ecc.bytes = 28;
++      nand->ecc.calculate = omap_calculate_ecc_bch4;
++      nand->ecc.correct = omap_correct_data_bch4;
++      omap_hwecc_init_bch(nand);
++      printf("4 BIT SW ECC selected\n");
++      break;
++    case NAND_ECC_8BIT_SOFT:
++      nand->ecc.mode = mode;
++      nand->ecc.layout = omap_get_ecc_layout_bch(dev_width, 8);
++      nand->ecc.hwctl = omap_enable_hwecc_bch8;
++      nand->ecc.size = 2048;
++      nand->ecc.bytes = 52;
++      nand->ecc.calculate = omap_calculate_ecc_bch8;
++      nand->ecc.correct = omap_correct_data_bch8;
++      omap_hwecc_init_bch(nand);
++      printf("8 BIT SW ECC selected\n");
++      break;
++    }
++
++  /* Update NAND handling after ECC mode switch */
++  nand_scan_tail(mtd);
++
++  nand->options &= ~NAND_OWN_BUFFERS;
+ }
+ 
+ /*
+@@ -298,47 +329,47 @@ void omap_nand_switch_ecc(int32_t hardware)
+  */
+ int board_nand_init(struct nand_chip *nand)
+ {
+-	int32_t gpmc_config = 0;
+-	cs = 0;
+-
+-	/*
+-	 * xloader/Uboot's gpmc configuration would have configured GPMC for
+-	 * nand type of memory. The following logic scans and latches on to the
+-	 * first CS with NAND type memory.
+-	 * TBD: need to make this logic generic to handle multiple CS NAND
+-	 * devices.
+-	 */
+-	while (cs < GPMC_MAX_CS) {
+-		/* Check if NAND type is set */
+-		if ((readl(&gpmc_cfg->cs[cs].config1) & 0xC00) == 0x800) {
+-			/* Found it!! */
+-			break;
+-		}
+-		cs++;
+-	}
+-	if (cs >= GPMC_MAX_CS) {
+-		printf("NAND: Unable to find NAND settings in "
+-			"GPMC Configuration - quitting\n");
+-		return -ENODEV;
+-	}
+-
+-	gpmc_config = readl(&gpmc_cfg->config);
+-	/* Disable Write protect */
+-	gpmc_config |= 0x10;
+-	writel(gpmc_config, &gpmc_cfg->config);
+-
+-	nand->IO_ADDR_R = (void __iomem *)&gpmc_cfg->cs[cs].nand_dat;
+-	nand->IO_ADDR_W = (void __iomem *)&gpmc_cfg->cs[cs].nand_cmd;
+-
+-	nand->cmd_ctrl = omap_nand_hwcontrol;
+-	nand->options = NAND_NO_PADDING | NAND_CACHEPRG | NAND_NO_AUTOINCR;
+-	/* If we are 16 bit dev, our gpmc config tells us that */
+-	if ((readl(&gpmc_cfg->cs[cs].config1) & 0x3000) == 0x1000)
+-		nand->options |= NAND_BUSWIDTH_16;
+-
+-	nand->chip_delay = 100;
+-	/* Default ECC mode */
+-	nand->ecc.mode = NAND_ECC_SOFT;
+-
+-	return 0;
++  int32_t gpmc_config = 0;
++  cs = 0;
++
++  /*
++   * xloader/Uboot's gpmc configuration would have configured GPMC for
++   * nand type of memory. The following logic scans and latches on to the
++   * first CS with NAND type memory.
++   * TBD: need to make this logic generic to handle multiple CS NAND
++   * devices.
++   */
++  while (cs < GPMC_MAX_CS) {
++    /* Check if NAND type is set */
++    if ((readl(&gpmc_cfg->cs[cs].config1) & 0xC00) == 0x800) {
++      /* Found it!! */
++      break;
++    }
++    cs++;
++  }
++  if (cs >= GPMC_MAX_CS) {
++    printf("NAND: Unable to find NAND settings in "
++	   "GPMC Configuration - quitting\n");
++    return -ENODEV;
++  }
++
++  gpmc_config = readl(&gpmc_cfg->config);
++  /* Disable Write protect */
++  gpmc_config |= 0x10;
++  writel(gpmc_config, &gpmc_cfg->config);
++
++  nand->IO_ADDR_R = (void __iomem *)&gpmc_cfg->cs[cs].nand_dat;
++  nand->IO_ADDR_W = (void __iomem *)&gpmc_cfg->cs[cs].nand_cmd;
++
++  nand->cmd_ctrl = omap_nand_hwcontrol;
++  nand->options = NAND_NO_PADDING | NAND_CACHEPRG | NAND_NO_AUTOINCR;
++  /* If we are 16 bit dev, our gpmc config tells us that */
++  if ((readl(&gpmc_cfg->cs[cs].config1) & 0x3000) == 0x1000)
++    nand->options |= NAND_BUSWIDTH_16;
++
++  nand->chip_delay = 100;
++
++  nand->ecc.mode = NAND_ECC_4BIT_SOFT;
++
++  return 0;
+ }
+diff --git a/include/asm-arm/arch-omap3/omap_bch_soft.h b/include/asm-arm/arch-omap3/omap_bch_soft.h
+new file mode 100644
+index 0000000..7fd8197
+--- /dev/null
++++ b/include/asm-arm/arch-omap3/omap_bch_soft.h
+@@ -0,0 +1,36 @@
++/*
++ * omap_bch_soft.h
++ *
++ * Header for support modules for BCH 4-bit/8-bit error correction.
++ *
++ * Copyright (C) {2011} Texas Instruments Incorporated - http://www.ti.com/
++ * 
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as 
++ * published by the Free Software Foundation version 2.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether express or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU General Public License for more details.
++ */
++#ifndef __ASM_ARCH_OMAP_BCH_SOFT_H
++#define __ASM_ARCH_OMAP_BCH_SOFT_H
++
++#include <linux/mtd/nand.h>
++
++struct nand_ecclayout *omap_get_ecc_layout_bch(int bus_width, 
++                                               int correct_bits);
++void omap_hwecc_init_bch(struct nand_chip *chip);
++int omap_correct_data_bch4(struct mtd_info *mtd, uint8_t *dat,
++				  uint8_t *read_ecc, uint8_t *calc_ecc);
++int omap_correct_data_bch8(struct mtd_info *mtd, uint8_t *dat,
++				  uint8_t *read_ecc, uint8_t *calc_ecc);
++int omap_calculate_ecc_bch4(struct mtd_info *mtd, const uint8_t *dat,
++				   uint8_t *ecc_code);
++int omap_calculate_ecc_bch8(struct mtd_info *mtd, const uint8_t *dat,
++				   uint8_t *ecc_code);
++void omap_enable_hwecc_bch4(struct mtd_info *mtd, int32_t mode);
++void omap_enable_hwecc_bch8(struct mtd_info *mtd, int32_t mode);
++
++#endif
+diff --git a/include/linux/mtd/nand.h b/include/linux/mtd/nand.h
+index 438bc2a..c1c3240 100644
+--- a/include/linux/mtd/nand.h
++++ b/include/linux/mtd/nand.h
+@@ -129,6 +129,8 @@ typedef enum {
+ 	NAND_ECC_HW,
+ 	NAND_ECC_HW_SYNDROME,
+ 	NAND_ECC_HW_OOB_FIRST,
++	NAND_ECC_4BIT_SOFT,
++	NAND_ECC_8BIT_SOFT
+ } nand_ecc_modes_t;
+ 
+ /*
+-- 
+1.7.0.4
+
