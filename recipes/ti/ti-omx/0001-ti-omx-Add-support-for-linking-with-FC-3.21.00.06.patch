@@ -1,0 +1,25 @@
+From 6f97a382e93f61d020f7f2536a4def392d565bd5 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Mon, 24 Jan 2011 09:47:58 +0530
+Subject: [PATCH] ti-omx: Add support for linking with FC 3.21.00.06
+
+---
+ packages/makerules/rules_a8.mk |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/packages/makerules/rules_a8.mk b/packages/makerules/rules_a8.mk
+index 900dfc5..b7c865a 100755
+--- a/packages/makerules/rules_a8.mk
++++ b/packages/makerules/rules_a8.mk
+@@ -91,7 +91,7 @@ $(BINDIR)/$(APP_NAME)_$(CORE)_$(PROFILE_$(CORE)).$(EXEEXT) : $(OBJ_PATHS) $(LIB_
+ 	$(ECHO) \# Linking into $@
+ 	$(ECHO) \#
+ #	$(LNK) $(OBJ_PATHS) $(OBJDIR)/$(CFG_COBJ_XDC) $(LNKCMD_FILE) $(_LNKFLAGS) -o $@ -Map $@.map $(LNK_LIBS)
+-	$(CC) $(OBJ_PATHS) $(OBJDIR)/$(CFG_COBJ_XDC) $(LIB_PATHS) $(LNKCMD_FILE) $(_LNKFLAGS) -o $@
++	$(CC) $(OBJ_PATHS) $(OBJDIR)/$(CFG_COBJ_XDC) $(LIB_PATHS) -Wl,-T,$(LNKCMD_FILE) $(_LNKFLAGS) -o $@
+ 	$(ECHO) \#
+ 	$(ECHO) \# $@ created.
+ 	$(ECHO) \#
+-- 
+1.7.0.4
+
