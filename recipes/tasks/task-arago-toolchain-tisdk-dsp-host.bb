@@ -75,6 +75,14 @@ DSP_SOURCETREE_ti814x = "\
     ti-sysbios-src \
     ti-xdctools-src \
     ti-ipc-src \
+    ti-edma3lld-src \
+    ti-framework-components-src \
+    ti-linuxutils-src \
+    ti-xdais-src \
+    ti-osal-src \
+    ti-syslink-src \
+    ti-codec-engine-src \
+    ti-c6accel-src \
     "
 
 DSP_SOURCETREE = " "
