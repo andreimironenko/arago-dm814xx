@@ -50,6 +50,14 @@ DSP_COMPONENTS_dm816x-evm = "\
     ti-integra-demos \
     "
 
+DSP_COMPONENTS_c6a814x-evm = "\
+    ti-syslink-examples \
+    ti-c6accel-apps \
+    ti-hdvpss-display-utils \
+    ti-hdvpss-display-utils-loader \
+    ti-hdvpss-display-utils-module \
+    "
+
 DSP_COMPONENTS = ""
 
 RDEPENDS = "\
