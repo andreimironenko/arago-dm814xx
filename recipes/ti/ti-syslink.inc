@@ -249,8 +249,16 @@ do_compile() {
     done
 
     # Build the dsp/arm (rtos) code (system and samples)
+    # cd ${SYSLINK_ROOT}/ti/syslink && \
+    #     ${XDC_INSTALL_DIR}/xdc --jobs=${BB_NUMBER_THREADS} -PR .
+    export XDCOPTIONS=v
     cd ${SYSLINK_ROOT}/ti/syslink && \
-        ${XDC_INSTALL_DIR}/xdc --jobs=${BB_NUMBER_THREADS} -PR .
+        ${XDC_INSTALL_DIR}/xdc -P \
+	 `${XDC_INSTALL_DIR}/bin/xdcpkg ${SYSLINK_ROOT}/ti/syslink | grep -v samples`
+    export XDCARGS="profile=debug"
+    cd ${SYSLINK_ROOT}/ti/syslink && \
+        ${XDC_INSTALL_DIR}/xdc --jobs=${BB_NUMBER_THREADS} -P \
+	 `${XDC_INSTALL_DIR}/bin/xdcpkg ${SYSLINK_ROOT}/ti/syslink | grep samples`
 }
 
 KERNEL_VERSION = "${@base_read_file('${STAGING_KERNEL_DIR}/kernel-abiversion')}"
