@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support Package sources (or development header) packages on host"
-PR = "r33"
+PR = "r34"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -60,6 +60,18 @@ BSP_COMPONENTS_append_dm37x-evm = "\
 
 # Add components to omap3 components
 BSP_COMPONENTS_append_am37x-evm = "\
+    ti-tisdk-setup \
+    flash-utility \
+    pinmux-utility \
+    "
+
+BSP_COMPONENTS_append_am3517-evm = "\
+    ti-tisdk-setup \
+    flash-utility \
+    pinmux-utility \
+    "
+
+BSP_COMPONENTS_append_am389x-evm = "\
     ti-tisdk-setup \
     flash-utility \
     pinmux-utility \
