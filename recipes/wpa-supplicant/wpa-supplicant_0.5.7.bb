@@ -2,18 +2,28 @@ DESCRIPTION = "A Client for Wi-Fi Protected Access (WPA)."
 SECTION = "network"
 LICENSE = "GPLv2 BSD"
 HOMEPAGE = "http://hostap.epitest.fi/wpa_supplicant/"
-DEPENDS = "openssl"
+DEPENDS = "virtual/kernel openssl"
 
-PR = "r2-arago1"
+PR = "r3-arago1"
+
+PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 SRC_URI = "http://hostap.epitest.fi/releases/wpa_supplicant-${PV}.tar.gz \
-	file://wpa_suppl.diff \
 	file://defconfig-openssl \
 	file://ifupdown.sh \
 	file://functions.sh \
 "
 
-CFLAGS += "-DCONFIG_EAP_WSC -DTI_WLAN_DRIVER -D__BYTE_ORDER_LITTLE_ENDIAN -DEAP_TLS_FUNCS -DEAP_TLV -DINTERNAL_SHA256 -DCONFIG_WIRELESS_EXTENSION -DCONFIG_CTRL_IFACE_UNIX -DEAP_SIM"
+# This patch requires that the corresponding kernel be patched with Wilink
+# driver code.  This currently is only done for the am180x-evm machine
+# type.  Applying this patch for other machine types will cause a compile
+# failure.
+SRC_URI_append_am180x-evm = " file://wpa_suppl.diff"
+
+CFLAGS += "-DCONFIG_BACKEND_FILE -DCONFIG_DRIVER_WEXT -DCONFIG_EAP_WSC  -DTI_WLAN_DRIVER -D__BYTE_ORDER_LITTLE_ENDIAN  -DEAP_TLS -DEAP_PEAP -DEAP_TTLS \
+	-DEAP_MD5 -DEAP_MSCHAPv2 -DEAP_SIM -DEAP_TLV -DIEEE8021X_EAPOL -DEAP_TLS_FUNCS -DEAP_TLS_OPENSSL -DINTERNAL_SHA256 -DCONFIG_WIRELESS_EXTENSION \
+	-DCONFIG_CTRL_IFACE -DCONFIG_CTRL_IFACE_UNIX "
+
 
 S = "${WORKDIR}/wpa_supplicant-${PV}"
 
@@ -29,7 +39,7 @@ do_configure () {
 }
 
 do_compile () {
-	make CROSS_COMPILE=${TARGET_PREFIX}
+	make CROSS_COMPILE=${TARGET_PREFIX} OPENSSL_PATH="${STAGING_INCDIR}/openssl" KERNEL_DIR="${STAGING_KERNEL_DIR}"
 }
 
 do_install () {
