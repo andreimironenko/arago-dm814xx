@@ -7,6 +7,10 @@ BRANCH = "ti816x-master"
 # Use literal tags in SRCREV, when available, instead of commit IDs
 SRCREV = "v2010.06_TI816XPSP_04.00.00.07"
 
+SRC_URI =+ "file://0001-ti816x-Support-for-DDR3-at-different-frequencies.patch \
+            file://0002-ti816x-Default-build-for-DDR2-400MHz-I-O-clock.patch \
+            file://0003-ti816x-Make-default-build-for-DDR3-400MHz.patch"
+
 UVER = "2010.06"
 PSPREL = "04.00.00.07"
 
