@@ -68,15 +68,6 @@ new mode 100755
 diff --git a/build/win32native/ortp.def b/build/win32native/ortp.def
 old mode 100755
 new mode 100644
-index a8b87ec..c6fb1ea
---- a/build/win32native/ortp.def
-+++ b/build/win32native/ortp.def
-@@ -163,5 +163,3 @@ EXPORTS
-     rtp_session_resync
-     rtp_session_set_remote_addr_and_port
-     rtp_session_set_time_jump_limit
--
--    copymsg
 diff --git a/build/win32native/ortp.dev b/build/win32native/ortp.dev
 old mode 100755
 new mode 100644
