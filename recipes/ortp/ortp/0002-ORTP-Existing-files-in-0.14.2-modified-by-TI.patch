@@ -1,0 +1,1061 @@
+From 1cbe4ff1769234363a01abc5fadc1ccd56c479aa Mon Sep 17 00:00:00 2001
+From: Naveen S <naveens@ti.com>
+Date: Tue, 1 Feb 2011 12:06:57 +0530
+Subject: [PATCH 2/2] ORTP: Existing files in 0.14.2 modified by TI
+
+---
+ build/win32native/ortp.def |    2 -
+ include/ortp/ortp.h        |   10 ++--
+ include/ortp/rtpsession.h  |    5 ++-
+ src/Makefile.am            |    2 +
+ src/avprofile.c            |   41 ++++++++++++--
+ src/ortp.c                 |  112 ++++++++++++++++-----------------------
+ src/port.c                 |    1 +
+ src/rtcp.c                 |    1 +
+ src/rtpparse.c             |    2 +-
+ src/rtpsession.c           |  123 +++++++++++++++++++++++--------------------
+ src/rtpsession_inet.c      |   34 ++++++++++++-
+ src/tests/Makefile.am      |   10 +++-
+ src/tests/rtpsend.c        |   82 +++++++++++++++++++----------
+ 13 files changed, 254 insertions(+), 171 deletions(-)
+ mode change 100644 => 100755 AUTHORS
+ mode change 100644 => 100755 COPYING
+ mode change 100644 => 100755 ChangeLog
+ mode change 100644 => 100755 INSTALL
+ mode change 100644 => 100755 Makefile.am
+ mode change 100644 => 100755 NEWS
+ mode change 100644 => 100755 README
+ mode change 100644 => 100755 TODO
+ mode change 100755 => 100644 build/win32native/ortp.def
+ mode change 100755 => 100644 build/win32native/ortp.dev
+ mode change 100644 => 100755 configure.ac
+ mode change 100644 => 100755 include/ortp/port.h
+ mode change 100644 => 100755 oRTP.prj
+ mode change 100644 => 100755 ortp.doxygen.in
+ mode change 100644 => 100755 ortp.pc.in
+ mode change 100644 => 100755 ortp.spec.in
+ mode change 100644 => 100755 pkg.list
+ mode change 100644 => 100755 src/avprofile.c
+ mode change 100644 => 100755 src/jitterctl.c
+ mode change 100644 => 100755 src/port.c
+ mode change 100644 => 100755 src/rtpsession.c
+ mode change 100644 => 100755 src/rtpsession_inet.c
+
+diff --git a/AUTHORS b/AUTHORS
+old mode 100644
+new mode 100755
+diff --git a/COPYING b/COPYING
+old mode 100644
+new mode 100755
+diff --git a/ChangeLog b/ChangeLog
+old mode 100644
+new mode 100755
+diff --git a/INSTALL b/INSTALL
+old mode 100644
+new mode 100755
+diff --git a/Makefile.am b/Makefile.am
+old mode 100644
+new mode 100755
+diff --git a/NEWS b/NEWS
+old mode 100644
+new mode 100755
+diff --git a/README b/README
+old mode 100644
+new mode 100755
+diff --git a/TODO b/TODO
+old mode 100644
+new mode 100755
+diff --git a/build/win32native/ortp.def b/build/win32native/ortp.def
+old mode 100755
+new mode 100644
+diff --git a/build/win32native/ortp.dev b/build/win32native/ortp.dev
+old mode 100755
+new mode 100644
+diff --git a/configure.ac b/configure.ac
+old mode 100644
+new mode 100755
+diff --git a/include/ortp/ortp.h b/include/ortp/ortp.h
+index 8176af5..c230448 100644
+--- a/include/ortp/ortp.h
++++ b/include/ortp/ortp.h
+@@ -82,11 +82,11 @@ void ortp_exit(void);
+ /***************/
+ 
+ typedef enum {
+-	ORTP_DEBUG=1,
+-	ORTP_MESSAGE=1<<1,
+-	ORTP_WARNING=1<<2,
+-	ORTP_ERROR=1<<3,
+-	ORTP_FATAL=1<<4,
++	ORTP_MESSAGE=1,
++	ORTP_WARNING=1<<1,
++	ORTP_ERROR  =1<<2,
++	ORTP_FATAL  =1<<3,
++	ORTP_DEBUG  =1<<4,
+ 	ORTP_LOGLEV_END=1<<5
+ } OrtpLogLevel;
+ 
+diff --git a/include/ortp/port.h b/include/ortp/port.h
+old mode 100644
+new mode 100755
+diff --git a/include/ortp/rtpsession.h b/include/ortp/rtpsession.h
+index 8d1e857..5c95fca 100644
+--- a/include/ortp/rtpsession.h
++++ b/include/ortp/rtpsession.h
+@@ -45,7 +45,10 @@
+ typedef enum {
+ 	RTP_SESSION_RECVONLY,
+ 	RTP_SESSION_SENDONLY,
+-	RTP_SESSION_SENDRECV
++	RTP_SESSION_SENDRECV,
++	RTP_SESSION_VIDEO_RECVONLY,
++	RTP_SESSION_VIDEO_SENDONLY,
++	RTP_SESSION_VIDEO_SENDRECV
+ } RtpSessionMode;
+ 
+ 
+diff --git a/oRTP.prj b/oRTP.prj
+old mode 100644
+new mode 100755
+diff --git a/ortp.doxygen.in b/ortp.doxygen.in
+old mode 100644
+new mode 100755
+diff --git a/ortp.pc.in b/ortp.pc.in
+old mode 100644
+new mode 100755
+diff --git a/ortp.spec.in b/ortp.spec.in
+old mode 100644
+new mode 100755
+diff --git a/pkg.list b/pkg.list
+old mode 100644
+new mode 100755
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 1ffd0de..032dfc8 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -28,6 +28,8 @@ libortp_la_SOURCES=	str_utils.c 	\
+ 			utils.c utils.h \
+ 			rtcpparse.c \
+ 			event.c \
++			rtpsendh264.c \
++			rtprecvh264.c \
+ 			stun.c stun_udp.c \
+ 			srtp.c
+ 
+diff --git a/src/avprofile.c b/src/avprofile.c
+old mode 100644
+new mode 100755
+index 0dcf9e6..784aacf
+--- a/src/avprofile.c
++++ b/src/avprofile.c
+@@ -20,11 +20,11 @@
+ 
+ #include <ortp/payloadtype.h>
+ 
+-char offset127=127; 
+-char offset0xD5=(char)0xD5; 
++char offset127=127;
++char offset0xD5=(char)0xD5;
+ char offset0[4] = {0x00, 0x00, 0x00, 0x00};
+ 
+-/* 
++/*
+  * IMPORTANT : some compiler don't support the tagged-field syntax. Those
+  * macros are there to trap the problem This means that if you want to keep
+  * portability, payload types must be defined with their fields in the right
+@@ -99,6 +99,17 @@ PayloadType payload_type_pcm8000={
+ 	CHANNELS(1)
+ };
+ 
++PayloadType payload_type_pcm8000stereo={
++	TYPE( PAYLOAD_AUDIO_CONTINUOUS),
++	CLOCK_RATE(8000),
++	BITS_PER_SAMPLE(8),
++	ZERO_PATTERN( offset0),
++	PATTERN_LENGTH(1),
++	NORMAL_BITRATE( 128000),
++	MIME_TYPE ("PCMS"),
++	CHANNELS(2)
++};
++
+ PayloadType payload_type_l16_mono={
+ 	TYPE( PAYLOAD_AUDIO_CONTINUOUS),
+ 	CLOCK_RATE(44100),
+@@ -110,6 +121,17 @@ PayloadType payload_type_l16_mono={
+ 	CHANNELS(1)
+ };
+ 
++PayloadType payload_type_pcmu16000={
++	TYPE( PAYLOAD_AUDIO_CONTINUOUS),
++	CLOCK_RATE( 16000),
++	BITS_PER_SAMPLE(8),
++	ZERO_PATTERN( &offset127),
++	PATTERN_LENGTH( 1),
++	NORMAL_BITRATE( 128000),
++	MIME_TYPE ("PCMU"),
++	CHANNELS(1)
++};
++
+ PayloadType payload_type_l16_stereo={
+ 	TYPE( PAYLOAD_AUDIO_CONTINUOUS),
+ 	CLOCK_RATE(44100),
+@@ -254,8 +276,15 @@ void av_profile_init(RtpProfile *profile)
+ 	rtp_profile_set_payload(profile,31,&payload_type_h261);
+ 	rtp_profile_set_payload(profile,32,&payload_type_mpv);
+ 	rtp_profile_set_payload(profile,34,&payload_type_h263);
++	rtp_profile_set_payload(profile,102,&payload_type_h264);
++
++	rtp_profile_set_payload(profile,98,&payload_type_pcm8000);
++	rtp_profile_set_payload(profile,99,&payload_type_pcm8000stereo);
++	rtp_profile_set_payload(profile,96,&payload_type_pcmu16000);
++	//rtp_profile_set_payload(profile,97,&payload_type_pcmu16000_1);
++
+ }
+-	
++
+ /* these are extra payload types that can be used dynamically */
+ PayloadType payload_type_lpc1015={
+ 	TYPE( PAYLOAD_AUDIO_PACKETIZED),
+@@ -296,7 +325,7 @@ PayloadType payload_type_ilbc={
+ 	BITS_PER_SAMPLE(0),
+ 	ZERO_PATTERN(NULL),
+ 	PATTERN_LENGTH(0),
+-	NORMAL_BITRATE(13300), /* the minimum, with 30ms frames */ 
++	NORMAL_BITRATE(13300), /* the minimum, with 30ms frames */
+ 	MIME_TYPE ("iLBC"),
+ 	CHANNELS(1),
+ };
+@@ -346,7 +375,7 @@ PayloadType payload_type_evrc0={
+ 	CHANNELS(1)
+ };
+ 
+- 
++
+ PayloadType payload_type_h263_1998={
+ 	TYPE( PAYLOAD_VIDEO),
+ 	CLOCK_RATE(90000),
+diff --git a/src/jitterctl.c b/src/jitterctl.c
+old mode 100644
+new mode 100755
+diff --git a/src/ortp.c b/src/ortp.c
+index f833adc..6a791c5 100644
+--- a/src/ortp.c
++++ b/src/ortp.c
+@@ -270,73 +270,53 @@ void ortp_global_stats_display()
+ void rtp_stats_display(const rtp_stats_t *stats, const char *header)
+ {
+ #ifndef WIN32
+-  ortp_log(ORTP_MESSAGE,
+-	   "oRTP-stats:\n   %s :\n",
+-	   header);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of rtp packet sent=%lld\n",
+-	   (long long)stats->packet_sent);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of rtp bytes sent=%lld bytes\n",
+-	   (long long)stats->sent);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of rtp packet received=%lld\n",
+-	   (long long)stats->packet_recv);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of rtp bytes received=%lld bytes\n",
+-	   (long long)stats->hw_recv);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of incoming rtp bytes successfully delivered to the application=%lld \n",
+-	   (long long)stats->recv);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of times the application queried a packet that didn't exist=%lld \n",
+-	   (long long)stats->unavaillable);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of rtp packet lost=%lld\n",
+-	   (long long) stats->cum_packet_loss);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of rtp packets received too late=%lld\n",
+-	   (long long)stats->outoftime);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of bad formatted rtp packets=%lld\n",
+-	   (long long)stats->bad);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of packet discarded because of queue overflow=%lld\n",
+-	   (long long)stats->discarded);
++	ortp_log(ORTP_MESSAGE,
++	      "oRTP-stats:\n   %s :\n"
++	      " number of rtp packet sent=%lld\n"
++	      " number of rtp bytes sent=%lld bytes\n"
++	      " number of rtp packet received=%lld\n"
++	      " number of rtp bytes received=%lld bytes\n"
++	      " number of incoming rtp bytes successfully delivered to the application=%lld \n"
++	      " number of times the application queried a packet that didn't exist=%lld \n"
++		" number of rtp packet lost=%lld\n"
++	      " number of rtp packets received too late=%lld\n"
++	      " number of bad formatted rtp packets=%lld\n"
++	      " number of packet discarded because of queue overflow=%lld\n",
++	      header,
++	      (long long)stats->packet_sent,
++	      (long long)stats->sent,
++	      (long long)stats->packet_recv,
++	      (long long)stats->hw_recv,
++	      (long long)stats->recv,
++	      (long long)stats->unavaillable,
++		(long long)stats->cum_packet_loss,
++	      (long long)stats->outoftime,
++	      (long long)stats->bad,
++	      (long long)stats->discarded);
+ #else
+-  ortp_log(ORTP_MESSAGE,
+-	   "oRTP-stats:\n   %s :\n",
+-	   header);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of rtp packet sent=%I64d\n",
+-	   (uint64_t)stats->packet_sent);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of rtp bytes sent=%I64d bytes\n",
+-	   (uint64_t)stats->sent);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of rtp packet received=%I64d\n",
+-	   (uint64_t)stats->packet_recv);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of rtp bytes received=%I64d bytes\n",
+-	   (uint64_t)stats->hw_recv);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of incoming rtp bytes successfully delivered to the application=%I64d \n",
+-	   (uint64_t)stats->recv);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of times the application queried a packet that didn't exist=%I64d \n",
+-	   (uint64_t)stats->unavaillable);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of rtp packet lost=%I64d\n",
+-	   (uint64_t) stats->cum_packet_loss);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of rtp packets received too late=%I64d\n",
+-	   (uint64_t)stats->outoftime);
+-  ortp_log(ORTP_MESSAGE,
+-		 " number of bad formatted rtp packets=%I64d\n",
+-	   (uint64_t)stats->bad);
+-  ortp_log(ORTP_MESSAGE,
+-	   " number of packet discarded because of queue overflow=%I64d\n",
+-	   (uint64_t)stats->discarded);
++	ortp_log(ORTP_MESSAGE,
++	      "oRTP-stats:\n   %s :\n"
++	      " number of rtp packet sent=%I64d\n"
++	      " number of rtp bytes sent=%I64d bytes\n"
++	      " number of rtp packet received=%I64d\n"
++	      " number of rtp bytes received=%I64d bytes\n"
++	      " number of incoming rtp bytes successfully delivered to the application=%I64d \n"
++	      " number of times the application queried a packet that didn't exist=%I64d \n"
++		" number of rtp packet lost=%I64d\n"
++	      " number of rtp packets received too late=%I64d\n"
++	      " number of bad formatted rtp packets=%I64d\n"
++	      " number of packet discarded because of queue overflow=%I64d\n",
++	      header,
++	      (uint64_t)stats->packet_sent,
++	      (uint64_t)stats->sent,
++	      (uint64_t)stats->packet_recv,
++	      (uint64_t)stats->hw_recv,
++	      (uint64_t)stats->recv,
++	      (uint64_t)stats->unavaillable,
++		(uint64_t) stats->cum_packet_loss,
++	      (uint64_t)stats->outoftime,
++	      (uint64_t)stats->bad,
++	      (uint64_t)stats->discarded);
+ #endif
+ }
+ 
+diff --git a/src/port.c b/src/port.c
+old mode 100644
+new mode 100755
+index dc94ed1..24212da
+--- a/src/port.c
++++ b/src/port.c
+@@ -99,6 +99,7 @@ int set_non_blocking_socket (ortp_socket_t sock)
+ 	
+ 
+ #if	!defined(_WIN32) && !defined(_WIN32_WCE)
++	ortp_warning("in set_non_blocking_socket");
+ 	return fcntl (sock, F_SETFL, O_NONBLOCK);
+ #else
+ 	unsigned long nonBlock = 1;
+diff --git a/src/rtcp.c b/src/rtcp.c
+index 983cfea..60a878e 100644
+--- a/src/rtcp.c
++++ b/src/rtcp.c
+@@ -335,6 +335,7 @@ void rtp_session_rtcp_process_send(RtpSession *session){
+ 		m=make_sr(session);
+ 		/* send the compound packet */
+ 		rtp_session_rtcp_send(session,m);
++		ortp_warning("Rtcp compound message sent.");
+ 		ortp_debug("Rtcp compound message sent.");
+ 	}
+ }
+diff --git a/src/rtpparse.c b/src/rtpparse.c
+index 3bb750c..426761e 100644
+--- a/src/rtpparse.c
++++ b/src/rtpparse.c
+@@ -1,4 +1,4 @@
+-/*
++/*     
+   The oRTP library is an RTP (Realtime Transport Protocol - rfc3550) stack.
+   Copyright (C) 2001  Simon MORLAT simon.morlat@linphone.org
+ 
+diff --git a/src/rtpsession.c b/src/rtpsession.c
+old mode 100644
+new mode 100755
+index 5831b44..a1dd5c5
+--- a/src/rtpsession.c
++++ b/src/rtpsession.c
+@@ -73,12 +73,12 @@ void wait_point_wakeup_at(WaitPoint *wp, uint32_t t, bool_t dosleep){
+ 
+ bool_t wait_point_check(WaitPoint *wp, uint32_t t){
+ 	bool_t ok=FALSE;
+-	
++
+ 	if (wp->wakeup){
+ 		if (TIME_IS_NEWER_THAN(t,wp->time)){
+ 			wp->wakeup=FALSE;
+ 			ok=TRUE;
+-			
++
+ 		}
+ 	}
+ 	return ok;
+@@ -105,7 +105,7 @@ void rtp_putq(queue_t *q, mblk_t *mp)
+ 	/* insert message block by increasing time stamp order : the last (at the bottom)
+ 		message of the queue is the newest*/
+ 	ortp_debug("rtp_putq(): Enqueuing packet with ts=%i and seq=%i",rtp->timestamp,rtp->seq_number);
+-	
++
+ 	if (qempty(q)) {
+ 		putq(q,mp);
+ 		return;
+@@ -117,7 +117,7 @@ void rtp_putq(queue_t *q, mblk_t *mp)
+ 	{
+ 		tmprtp=(rtp_header_t*)tmp->b_rptr;
+ 		ortp_debug("rtp_putq(): Seeing packet with seq=%i",tmprtp->seq_number);
+-		
++
+  		if (rtp->seq_number == tmprtp->seq_number)
+  		{
+  			/* this is a duplicated packet. Don't queue it */
+@@ -125,16 +125,16 @@ void rtp_putq(queue_t *q, mblk_t *mp)
+  			freemsg(mp);
+  			return;
+ 		}else if (RTP_SEQ_IS_GREATER(rtp->seq_number,tmprtp->seq_number)){
+-			
++
+ 			insq(q,tmp->b_next,mp);
+ 			return;
+  		}
+ 		tmp=tmp->b_prev;
+ 	}
+-	/* this packet is the oldest, it has to be 
++	/* this packet is the oldest, it has to be
+ 	placed on top of the queue */
+ 	insq(q,qfirst(q),mp);
+-	
++
+ }
+ 
+ 
+@@ -144,7 +144,7 @@ mblk_t *rtp_getq(queue_t *q,uint32_t timestamp, int *rejected)
+ 	mblk_t *tmp,*ret=NULL,*old=NULL;
+ 	rtp_header_t *tmprtp;
+ 	uint32_t ts_found=0;
+-	
++
+ 	*rejected=0;
+ 	ortp_debug("rtp_getq(): Timestamp %i wanted.",timestamp);
+ 
+@@ -187,7 +187,7 @@ mblk_t *rtp_getq_permissive(queue_t *q,uint32_t timestamp, int *rejected)
+ {
+ 	mblk_t *tmp,*ret=NULL;
+ 	rtp_header_t *tmprtp;
+-	
++
+ 	*rejected=0;
+ 	ortp_debug("rtp_getq_permissive(): Timestamp %i wanted.",timestamp);
+ 
+@@ -215,15 +215,17 @@ rtp_session_init (RtpSession * session, int mode)
+ {
+ 	JBParameters jbp;
+ 	memset (session, 0, sizeof (RtpSession));
+-	session->rtp.max_rq_size = 100;/* maximum number of packet allowed to be queued */
++	session->rtp.max_rq_size = 512;/* maximum number of packet allowed to be queued */
+ 	session->mode = (RtpSessionMode) mode;
+-	if ((mode == RTP_SESSION_RECVONLY) || (mode == RTP_SESSION_SENDRECV))
++	if ((mode == RTP_SESSION_RECVONLY) || (mode == RTP_SESSION_SENDRECV) ||
++            (mode == RTP_SESSION_VIDEO_RECVONLY) || (mode == RTP_SESSION_VIDEO_SENDRECV))
+ 	{
+ 		rtp_session_set_flag (session, RTP_SESSION_RECV_SYNC);
+ 		rtp_session_set_flag (session, RTP_SESSION_RECV_NOT_STARTED);
+-		
++
+ 	}
+-	if ((mode == RTP_SESSION_SENDONLY) || (mode == RTP_SESSION_SENDRECV))
++	if ((mode == RTP_SESSION_SENDONLY) || (mode == RTP_SESSION_SENDRECV) ||
++            (mode == RTP_SESSION_VIDEO_SENDONLY) || (mode == RTP_SESSION_VIDEO_SENDRECV))
+ 	{
+ 		rtp_session_set_flag (session, RTP_SESSION_SEND_NOT_STARTED);
+ 		session->snd.ssrc=uint32_t_random();
+@@ -257,8 +259,11 @@ rtp_session_init (RtpSession * session, int mode)
+ 	rtp_session_set_send_payload_type(session,0);
+ 	/*sets supposed recv payload type to undefined */
+ 	rtp_session_set_recv_payload_type(session,-1);
+-	/* configure jitter buffer with working default parameters */
+-	jbp.min_size=RTP_DEFAULT_JITTER_TIME;
++#if 1
++	/* configure jitter buffer with working default parameters for non-video only */
++     if ((mode == RTP_SESSION_RECVONLY) || (mode == RTP_SESSION_SENDRECV) ||
++         (mode == RTP_SESSION_SENDONLY)) {
++        jbp.min_size=RTP_DEFAULT_JITTER_TIME;
+ 	jbp.nom_size=RTP_DEFAULT_JITTER_TIME;
+ 	jbp.max_size=-1;
+ 	jbp.adaptive=TRUE;
+@@ -266,6 +271,8 @@ rtp_session_init (RtpSession * session, int mode)
+ 	rtp_session_set_jitter_buffer_params(session,&jbp);
+ 	rtp_session_set_time_jump_limit(session,5000);
+ 	rtp_session_enable_rtcp(session,TRUE);
++      }
++#endif
+ 	session->recv_buf_size = UDP_MAX_SIZE;
+ 	session->symmetric_rtp = FALSE;
+ 	session->permissive=FALSE;
+@@ -275,9 +282,9 @@ rtp_session_init (RtpSession * session, int mode)
+ /**
+  * Creates a new rtp session.
+  * If the session is able to send data (RTP_SESSION_SENDONLY or
+- * RTP_SESSION_SENDRECV), then a random SSRC number is choosed for 
++ * RTP_SESSION_SENDRECV), then a random SSRC number is choosed for
+  * the outgoing stream.
+- * @param mode One of the RtpSessionMode flags.	
++ * @param mode One of the RtpSessionMode flags.
+  *
+  * @return the newly created rtp session.
+ **/
+@@ -296,7 +303,7 @@ rtp_session_new (int mode)
+  *	to receive or send on this session according to the timestamp passed to the respective functions.
+  *  You can also use blocking mode (see rtp_session_set_blocking_mode() ), to simply block within
+  *	the receive and send functions.
+- *	If @yesno is FALSE, the ortp scheduler will not manage those sessions, meaning that blocking mode 
++ *	If @yesno is FALSE, the ortp scheduler will not manage those sessions, meaning that blocking mode
+  *  and the use of session_set_select() for this session are disabled.
+  *@param session a rtp session.
+  *@param yesno 	a boolean to indicate the scheduling mode.
+@@ -328,7 +335,7 @@ rtp_session_set_scheduling_mode (RtpSession * session, int yesno)
+ 
+ /**
+  *	This function implicitely enables the scheduling mode if yesno is TRUE.
+- *	rtp_session_set_blocking_mode() defines the behaviour of the rtp_session_recv_with_ts() and 
++ *	rtp_session_set_blocking_mode() defines the behaviour of the rtp_session_recv_with_ts() and
+  *	rtp_session_send_with_ts() functions. If @yesno is TRUE, rtp_session_recv_with_ts()
+  *	will block until it is time for the packet to be received, according to the timestamp
+  *	passed to the function. After this time, the function returns.
+@@ -370,7 +377,7 @@ rtp_session_set_profile (RtpSession * session, RtpProfile * profile)
+  *	yesno is set to FALSE, the RTCP sending of packet is disabled.
+  *	This functionnality might be needed for some equipments that do not
+  *	support RTCP, leading to a traffic of ICMP errors on the network.
+- *	It can also be used to save bandwidth despite the RTCP bandwidth is 
++ *	It can also be used to save bandwidth despite the RTCP bandwidth is
+  *	actually and usually very very low.
+ **/
+ void rtp_session_enable_rtcp(RtpSession *session, bool_t yesno){
+@@ -457,7 +464,7 @@ void rtp_session_set_recv_buf_size(RtpSession *session, int bufsize){
+ 
+ /**
+  *	This function provides the way for an application to be informed of various events that
+- *	may occur during a rtp session. @signal is a string identifying the event, and @cb is 
++ *	may occur during a rtp session. @signal is a string identifying the event, and @cb is
+  *	a user supplied function in charge of processing it. The application can register
+  *	several callbacks for the same signal, in the limit of #RTP_CALLBACK_TABLE_MAX_ENTRIES.
+  *	Here are name and meaning of supported signals types:
+@@ -478,7 +485,7 @@ void rtp_session_set_recv_buf_size(RtpSession *session, int bufsize){
+  *  "rtcp_bye": we have received a RTCP bye packet. Arguments of the callback
+  *              functions are a const char * containing the leaving reason and
+  *              the user_data.
+- * 
++ *
+  *	Returns: 0 on success, -EOPNOTSUPP if the signal does not exists, -1 if no more callbacks
+  *	can be assigned to the signal type.
+  *
+@@ -677,7 +684,7 @@ mblk_t * rtp_session_create_packet(RtpSession *session,int header_size, const ui
+ 	mblk_t *mp;
+ 	int msglen=header_size+payload_size;
+ 	rtp_header_t *rtp;
+-	
++
+ 	mp=allocb(msglen,BPRI_MED);
+ 	rtp=(rtp_header_t*)mp->b_rptr;
+ 	rtp_header_init_from_session(rtp,session);
+@@ -711,7 +718,7 @@ mblk_t * rtp_session_create_packet_with_data(RtpSession *session, uint8_t *paylo
+ 	mblk_t *mp,*mpayload;
+ 	int header_size=RTP_FIXED_HEADER_SIZE; /* revisit when support for csrc is done */
+ 	rtp_header_t *rtp;
+-	
++
+ 	mp=allocb(header_size,BPRI_MED);
+ 	rtp=(rtp_header_t*)mp->b_rptr;
+ 	rtp_header_init_from_session(rtp,session);
+@@ -726,7 +733,7 @@ mblk_t * rtp_session_create_packet_with_data(RtpSession *session, uint8_t *paylo
+ 
+ 
+ /**
+- * Creates a new rtp packet using the buffer given in arguments (no copy). 
++ * Creates a new rtp packet using the buffer given in arguments (no copy).
+  * In the header, ssrc and payload_type according to the session's
+  *context. Timestamp and seq number are not set, there will be set when the packet is going to be
+  *	sent with rtp_session_sendm_with_ts().
+@@ -742,7 +749,7 @@ mblk_t * rtp_session_create_packet_in_place(RtpSession *session,uint8_t *buffer,
+ {
+ 	mblk_t *mp;
+ 	rtp_header_t *rtp;
+-	
++
+ 	mp=esballoc(buffer,size,BPRI_MED,freefn);
+ 
+ 	rtp=(rtp_header_t*)mp->b_rptr;
+@@ -751,7 +758,7 @@ mblk_t * rtp_session_create_packet_in_place(RtpSession *session,uint8_t *buffer,
+ }
+ 
+ /**
+- *	Send the rtp datagram @mp to the destination set by rtp_session_set_remote_addr() 
++ *	Send the rtp datagram @mp to the destination set by rtp_session_set_remote_addr()
+  *	with timestamp @timestamp. For audio data, the timestamp is the number
+  *	of the first sample resulting of the data transmitted. See rfc1889 for details.
+  *  The packet (@mp) is freed once it is sended.
+@@ -801,18 +808,18 @@ rtp_session_sendm_with_ts (RtpSession * session, mblk_t *mp, uint32_t timestamp)
+ 		wait_point_lock(&session->snd.wp);
+ 		if (TIME_IS_STRICTLY_NEWER_THAN (packet_time, sched->time_))
+ 		{
+-			wait_point_wakeup_at(&session->snd.wp,packet_time,(session->flags & RTP_SESSION_BLOCKING_MODE)!=0);	
++			wait_point_wakeup_at(&session->snd.wp,packet_time,(session->flags & RTP_SESSION_BLOCKING_MODE)!=0);
+ 			session_set_clr(&sched->w_sessions,session);	/* the session has written */
+ 		}
+ 		else session_set_set(&sched->w_sessions,session);	/*to indicate select to return immediately */
+ 		wait_point_unlock(&session->snd.wp);
+ 	}
+-	
++
+ 
+ 	rtp=(rtp_header_t*)mp->b_rptr;
+-	
++
+ 	packsize = msgdsize(mp) ;
+-	
++
+ 	rtp->timestamp=timestamp;
+ 	if (session->snd.telephone_events_pt==rtp->paytype)
+ 	{
+@@ -874,7 +881,7 @@ extern void rtcp_parse(RtpSession *session, mblk_t *mp);
+ 
+ static void payload_type_changed_notify(RtpSession *session, int paytype){
+ 	session->rcv.pt = paytype;
+-	rtp_signal_table_emit (&session->on_payload_type_changed);	
++	rtp_signal_table_emit (&session->on_payload_type_changed);
+ }
+ 
+ 
+@@ -922,7 +929,7 @@ rtp_session_recvm_with_ts (RtpSession * session, uint32_t user_ts)
+ 		}
+ 		rtp_session_unset_flag (session,RTP_SESSION_RECV_NOT_STARTED);
+ 	}else{
+-		/*prevent reading from the sockets when two 
++		/*prevent reading from the sockets when two
+ 		consecutives calls for a same timestamp*/
+ 		if (user_ts==session->rtp.rcv_last_app_ts)
+ 			read_socket=FALSE;
+@@ -943,11 +950,11 @@ rtp_session_recvm_with_ts (RtpSession * session, uint32_t user_ts)
+ 		freemsg(mp);
+ 		mp=NULL;
+ 	}
+-	
++
+ 	/* then now try to return a media packet, if possible */
+ 	/* first condition: if the session is starting, don't return anything
+ 	 * until the queue size reaches jitt_comp */
+-	
++
+ 	if (session->flags & RTP_SESSION_RECV_SYNC)
+ 	{
+ 		queue_t *q = &session->rtp.rq;
+@@ -971,13 +978,15 @@ rtp_session_recvm_with_ts (RtpSession * session, uint32_t user_ts)
+ 	/*calculate the stream timestamp from the user timestamp */
+ 	ts = user_ts + session->rtp.rcv_diff_ts;
+ 	if (session->rtp.jittctl.enabled==TRUE){
+-		if (session->permissive)
++		if (session->permissive) {
+ 			mp = rtp_getq_permissive(&session->rtp.rq, ts,&rejected);
++			ortp_message("Using permissive algorithm");
++		}
+ 		else{
+ 			mp = rtp_getq(&session->rtp.rq, ts,&rejected);
+ 		}
+ 	}else mp=getq(&session->rtp.rq);/*no jitter buffer at all*/
+-	
++
+ 	stream->stats.outoftime+=rejected;
+ 	ortp_global_stats.outoftime+=rejected;
+ 
+@@ -998,7 +1007,7 @@ rtp_session_recvm_with_ts (RtpSession * session, uint32_t user_ts)
+ 		{
+ 			payload_type_changed_notify(session, rtp->paytype);
+ 		}
+-		/* patch the packet so that it has a timestamp compensated by the 
++		/* patch the packet so that it has a timestamp compensated by the
+ 		adaptive jitter buffer mechanism */
+ 		if (session->rtp.jittctl.adaptive){
+ 			uint32_t changed_ts;
+@@ -1022,7 +1031,7 @@ rtp_session_recvm_with_ts (RtpSession * session, uint32_t user_ts)
+ 		ortp_global_stats.unavaillable++;
+ 	}
+ 	rtp_session_rtcp_process_recv(session);
+-	
++
+ 	if (session->flags & RTP_SESSION_SCHEDULED)
+ 	{
+ 		/* if we are in blocking mode, then suspend the calling process until timestamp
+@@ -1085,14 +1094,14 @@ static int msg_to_buf (mblk_t * mp, uint8_t *buffer, int len)
+  *	pcm/pcmu/pcma/adpcm types.
+  *	rtp_session_recvm_with_ts() does better job.
+  *
+- *	Tries to read the bytes of the incoming rtp stream related to timestamp ts. In case 
+- *	where the user supplied buffer @buffer is not large enough to get all the data 
++ *	Tries to read the bytes of the incoming rtp stream related to timestamp ts. In case
++ *	where the user supplied buffer @buffer is not large enough to get all the data
+  *	related to timestamp ts, then *( have_more) is set to 1 to indicate that the application
+  *	should recall the function with the same timestamp to get more data.
+- *	
+- *  When the rtp session is scheduled (see rtp_session_set_scheduling_mode() ), and the 
++ *
++ *  When the rtp session is scheduled (see rtp_session_set_scheduling_mode() ), and the
+  *	blocking mode is on (see rtp_session_set_blocking_mode() ), then the calling thread
+- *	is suspended until the timestamp given as argument expires, whatever a received packet 
++ *	is suspended until the timestamp given as argument expires, whatever a received packet
+  *	fits the query or not.
+  *
+  *	Important note: it is clear that the application cannot know the timestamp of the first
+@@ -1102,12 +1111,12 @@ static int msg_to_buf (mblk_t * mp, uint8_t *buffer, int len)
+  *
+  *	This function internally calls rtp_session_recvm_with_ts() to get a rtp packet. The content
+  *	of this packet is then copied into the user supplied buffer in an intelligent manner:
+- *	the function takes care of the size of the supplied buffer and the timestamp given in  
++ *	the function takes care of the size of the supplied buffer and the timestamp given in
+  *	argument. Using this function it is possible to read continous audio data (e.g. pcma,pcmu...)
+  *	with for example a standart buffer of size of 160 with timestamp incrementing by 160 while the incoming
+  *	stream has a different packet size.
+  *
+- *Returns: if a packet was availlable with the corresponding timestamp supplied in argument 
++ *Returns: if a packet was availlable with the corresponding timestamp supplied in argument
+  *	then the number of bytes written in the user supplied buffer is returned. If no packets
+  *	are availlable, either because the sender has not started to send the stream, or either
+  *	because silence packet are not transmitted, or either because the packet was lost during
+@@ -1242,10 +1251,10 @@ int rtp_session_recv_with_ts (RtpSession * session, uint8_t * buffer,
+ }
+ /**
+  *	When the rtp session is scheduled and has started to send packets, this function
+- *	computes the timestamp that matches to the present time. Using this function can be 
++ *	computes the timestamp that matches to the present time. Using this function can be
+  *	usefull when sending discontinuous streams. Some time can be elapsed between the end
+  *	of a stream burst and the begin of a new stream burst, and the application may be not
+- *	not aware of this elapsed time. In order to get a valid (current) timestamp to pass to 
++ *	not aware of this elapsed time. In order to get a valid (current) timestamp to pass to
+  *	#rtp_session_send_with_ts() or #rtp_session_sendm_with_ts(), the application may
+  *	use rtp_session_get_current_send_ts().
+  *
+@@ -1296,8 +1305,8 @@ uint32_t rtp_session_get_current_recv_ts(RtpSession *session){
+ }
+ 
+ /**
+- * oRTP has the possibility to inform the application through a callback registered 
+- * with rtp_session_signal_connect about crazy incoming RTP stream that jumps from 
++ * oRTP has the possibility to inform the application through a callback registered
++ * with rtp_session_signal_connect about crazy incoming RTP stream that jumps from
+  * a timestamp N to N+some_crazy_value. This lets the opportunity for the application
+  * to reset the session in order to resynchronize, or any other action like stopping the call
+  * and reporting an error.
+@@ -1355,7 +1364,7 @@ void rtp_session_dispatch_event(RtpSession *session, OrtpEvent *ev){
+ 	int i;
+ 	for(i=0,it=session->eventqs;it!=NULL;it=it->next,++i){
+ 		ortp_ev_queue_put((OrtpEvQueue*)it->data,ortp_event_dup(ev));
+-	}	
++	}
+ 	ortp_event_destroy(ev);
+ }
+ 
+@@ -1399,7 +1408,7 @@ void rtp_session_resync(RtpSession *session){
+ }
+ 
+ /**
+- * Reset the session: local and remote addresses are kept. It resets timestamp, sequence 
++ * Reset the session: local and remote addresses are kept. It resets timestamp, sequence
+  * number, and calls rtp_session_resync().
+  *
+  * @param session a rtp session.
+@@ -1459,7 +1468,7 @@ void *rtp_session_get_data(const RtpSession *session){
+ 
+ /**
+  * Enable or disable the "rtp symmetric" hack which consists of the following:
+- * after the first packet is received, the source address of the packet 
++ * after the first packet is received, the source address of the packet
+  * is set to be the destination address for all next packets.
+  * This is useful to pass-through firewalls.
+  * @param session a rtp session
+@@ -1473,11 +1482,11 @@ rtp_session_set_symmetric_rtp (RtpSession * session, bool_t yesno)
+ }
+ 
+ /**
+- *	If yesno is TRUE, thus a connect() syscall is done on the socket to 
++ *	If yesno is TRUE, thus a connect() syscall is done on the socket to
+  *	the destination address set by rtp_session_set_remote_addr(), or
+  *	if the session does symmetric rtp (see rtp_session_set_symmetric_rtp())
+  *	a the connect() is done to the source address of the first packet received.
+- *	Connecting a socket has effect of rejecting all incoming packets that 
++ *	Connecting a socket has effect of rejecting all incoming packets that
+  *	don't come from the address specified in connect().
+  *	It also makes ICMP errors (such as connection refused) available to the
+  *	application.
+@@ -1497,7 +1506,7 @@ static float compute_bw(struct timeval *orig, unsigned int bytes){
+ 	gettimeofday(&current,NULL);
+ 	time=(float)(current.tv_sec - orig->tv_sec) +
+ 		((float)(current.tv_usec - orig->tv_usec)*1e-6);
+-	bw=((float)bytes)*8/(time+0.001); 
++	bw=((float)bytes)*8/(time+0.001);
+ 	/*+0.0001 avoids a division by zero without changing the results significatively*/
+ 	return bw;
+ }
+@@ -1622,7 +1631,7 @@ void rtp_session_process (RtpSession * session, uint32_t time, RtpScheduler *sch
+ 		wait_point_wakeup(&session->snd.wp);
+ 	}
+ 	wait_point_unlock(&session->snd.wp);
+-	
++
+ 	wait_point_lock(&session->rcv.wp);
+ 	if (wait_point_check(&session->rcv.wp,time)){
+ 		session_set_set(&sched->r_sessions,session);
+diff --git a/src/rtpsession_inet.c b/src/rtpsession_inet.c
+old mode 100644
+new mode 100755
+index b66dda1..3915ad4
+--- a/src/rtpsession_inet.c
++++ b/src/rtpsession_inet.c
+@@ -16,7 +16,7 @@
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+-
++#include <errno.h>
+ #include "ortp/ortp.h"
+ #include "utils.h"
+ #include "ortp/rtpsession.h"
+@@ -176,6 +176,34 @@ static ortp_socket_t create_and_bind(const char *addr, int port, int *sock_famil
+ 			ortp_warning ("Fail to increase buffer size for socket (port %i): %s.", port, getSocketError());
+ 		}
+ #endif
++#if 1	//Added to increase socket buffer size on Netra
++		int bufsize = 1048576;	//524288;	//262144;	//131072;
++		err = setsockopt(sock, SOL_SOCKET, SO_SNDBUF, (void *)&bufsize, sizeof(bufsize)); 
++		if (err == -1) {
++			ortp_warning ("Fail to increase buffer size for socket (port %i): %s.", port, getSocketError());
++		}
++		bufsize = 1048576;	//524288;	//262144;	//131072;
++		err = setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (void *)&bufsize, sizeof(bufsize)); 
++		if (err == -1) {
++			ortp_warning ("Fail to increase buffer size for socket (port %i): %s.", port, getSocketError());
++		}
++		
++		bufsize = 0;
++		socklen_t buflen = 0;
++		err =  getsockopt(sock, SOL_SOCKET, SO_SNDBUF, (void *)&bufsize, &buflen); 
++		//err = getsockopt(sock, SOL_SOCKET, SO_SNDBUF, (void *)&bufsize, (socklen_t *)&buflen); 
++		if (err == -1) {
++			ortp_warning ("Fail to increase buffer size for socket (port %i): %s.", port, getSocketError());
++		}
++		ortp_warning ("getsockopt SO_SNDBUF bufsize = %d buflen = %d \n",(int)bufsize,(int)buflen);
++		bufsize = 0;
++		err =  getsockopt(sock, SOL_SOCKET, SO_RCVBUF, (void *)&bufsize, &buflen); 
++		//err = getsockopt(sock, SOL_SOCKET, SO_RCVBUF, (void *)&bufsize, (socklen_t *)&buflen); 
++		if (err == -1) {
++			ortp_warning ("Fail to increase buffer size for socket (port %i): %s.", port, getSocketError());
++		}
++		ortp_warning ("getsockopt SO_RCVBUF bufsize = %d buflen = %d\n",(int)bufsize,(int)buflen);
++#endif
+ 		set_non_blocking_socket (sock);
+ 	}
+ 	return sock;
+@@ -725,6 +753,9 @@ static int rtp_sendmsg(int sock,mblk_t *m, struct sockaddr *rem_addr, int addr_l
+ 	msg.msg_controllen=0;
+ 	msg.msg_flags=0;
+ 	error=sendmsg(sock,&msg,0);
++	if(-1 == error) {
++			perror("SendMSG Failed:\n");
++	}
+ 	return error;
+ }
+ #endif	
+@@ -781,6 +812,7 @@ rtp_session_rtp_send (RtpSession * session, mblk_t * m)
+ #endif
+ 	}
+ 	if (error < 0){
++		ortp_warning("rtp_sendmsg error < 0");
+ 		if (session->on_network_error.count>0){
+ 			rtp_signal_table_emit3(&session->on_network_error,(long)"Error sending RTP packet",INT_TO_POINTER(getSocketErrorCode()));
+ 		}else ortp_warning ("Error sending rtp packet: %s ; socket=%i", getSocketError(), sockfd);
+diff --git a/src/tests/Makefile.am b/src/tests/Makefile.am
+index f45d9df..9ee3abb 100644
+--- a/src/tests/Makefile.am
++++ b/src/tests/Makefile.am
+@@ -1,10 +1,14 @@
+ SUBDIRS=win_receiver win_sender
+ 
+-noinst_PROGRAMS= rtpsend rtprecv mrtpsend mrtprecv test_timer rtpmemtest tevrtpsend tevrtprecv tevmrtprecv
++noinst_PROGRAMS= rtpsendvid rtprecvvid rtpsendsph rtprecvsph mrtpsend mrtprecv test_timer rtpmemtest tevrtpsend tevrtprecv tevmrtprecv
+ 
+-rtpsend_SOURCES= rtpsend.c
++rtpsendsph_SOURCES= rtpsendsph.c
+ 
+-rtprecv_SOURCES= rtprecv.c
++rtprecvsph_SOURCES= rtprecvsph.c
++
++rtpsendvid_SOURCES= rtpsendvid.c
++
++rtprecvvid_SOURCES= rtprecvvid.c
+ 
+ mrtpsend_SOURCES= mrtpsend.c
+ 
+diff --git a/src/tests/rtpsend.c b/src/tests/rtpsend.c
+index 19935bd..c1e5fb2 100644
+--- a/src/tests/rtpsend.c
++++ b/src/tests/rtpsend.c
+@@ -18,6 +18,7 @@
+ */
+ 
+ #include <ortp/ortp.h>
++#include <ortp/rtpsendh264.h>
+ #include <signal.h>
+ #include <stdlib.h>
+ 
+@@ -27,6 +28,7 @@
+ #include <stdio.h>
+ #endif
+ 
++#define BUF_SIZE 60000
+ int runcond=1;
+ 
+ void stophandler(int signum)
+@@ -36,16 +38,24 @@ void stophandler(int signum)
+ 
+ static char *help="usage: rtpsend	filename dest_ip4addr dest_port [ --with-clockslide <value> ] [ --with-jitter <milliseconds>]\n";
+ 
++
++
++
++/*************************************************************************/
+ int main(int argc, char *argv[])
+ {
+-	RtpSession *session;
+-	unsigned char buffer[160];
++ RtpSession *sessionSnd;
++ // need 2 bufs to process remaining bytes after process call 
++	unsigned char *buf1 = malloc(BUF_SIZE);
++ unsigned char *buf2 = malloc(BUF_SIZE);
++ unsigned char *buffer=buf1;
+ 	int i;
+ 	FILE *infile;
+-	char *ssrc;
++//	char *ssrc;
+ 	uint32_t user_ts=0;
+-	int clockslide=0;
++	int clockslide=0, bytesppkt = BUF_SIZE;
+ 	int jitter=0;
++ int tbr=0, tbs=0, br=0;
+ 	if (argc<4){
+ 		printf(help);
+ 		return -1;
+@@ -70,23 +80,9 @@ int main(int argc, char *argv[])
+ 		}
+ 	}
+ 	
+-	ortp_init();
+-	ortp_scheduler_init();
+-	ortp_set_log_level_mask(ORTP_MESSAGE|ORTP_WARNING|ORTP_ERROR);
+-	session=rtp_session_new(RTP_SESSION_SENDONLY);	
+-	
+-	rtp_session_set_scheduling_mode(session,1);
+-	rtp_session_set_blocking_mode(session,1);
+-	rtp_session_set_connected_mode(session,TRUE);
+-	rtp_session_set_remote_addr(session,argv[2],atoi(argv[3]));
+-	rtp_session_set_payload_type(session,0);
+-	
+-	ssrc=getenv("SSRC");
+-	if (ssrc!=NULL) {
+-		printf("using SSRC=%i.\n",atoi(ssrc));
+-		rtp_session_set_ssrc(session,atoi(ssrc));
+-	}
+-		
++ sessionSnd = rtp_init_video_send(atoi(argv[3]),atoi(argv[3])+2, argv[2]);
++ /* ?? TODO: audio port no to be updated: above 2nd arg */
++
+ 	#ifndef _WIN32
+ 	infile=fopen(argv[1],"r");
+ 	#else
+@@ -99,13 +95,39 @@ int main(int argc, char *argv[])
+ 	}
+ 
+ 	signal(SIGINT,stophandler);
+-	while( ((i=fread(buffer,1,160,infile))>0) && (runcond) )
++	while( ((i=fread(buffer+br,1,(bytesppkt-br),infile))>0) && (runcond) )
+ 	{
+-		rtp_session_send_with_ts(session,buffer,i,user_ts);
+-		user_ts+=160;
+-		if (clockslide!=0 && user_ts%(160*50)==0){
++   int bc;
++   tbr+=i;
++   bc = rtp_h264_send_stream(sessionSnd,buffer,i+br,user_ts);
++   tbs+=bc;
++   printf("bytes given %d & consumed %d: diff %d \n",i+br, bc, (i+br-bc));
++   /*	rtp_session_send_with_ts(session,buffer,i,user_ts);*/
++		user_ts+=bc;
++   // find current used buffer and copy unused samples to other buffer
++   // set the buffer to be used next time
++   buf2=buf2;
++#if 1
++   br = (i+br-bc);
++   if (br!=0){
++     if (buffer == buf1){
++       memcpy(buf2, buf1+bc, br);
++       buffer = buf2;
++     }
++     else{  
++       memcpy(buf1, buf2+bc, br);
++       buffer = buf2;
++     }
++   }
++   // set extra samples to be read from file and start pointer
++   //bytesppkt = (BUF_SIZE - br);    
++#endif
++
++
++
++		if (clockslide!=0 && user_ts%(bytesppkt*50)==0){
+ 			ortp_message("Clock sliding of %i miliseconds now",clockslide);
+-			rtp_session_make_time_distorsion(session,clockslide);
++			rtp_session_make_time_distorsion(sessionSnd,clockslide);
+ 		}
+ 		/*this will simulate a burst of late packets */
+ 		if (jitter && (user_ts%(8000)==0)) {
+@@ -120,9 +142,11 @@ int main(int argc, char *argv[])
+ 	}
+ 
+ 	fclose(infile);
+-	rtp_session_destroy(session);
+-	ortp_exit();
+-	ortp_global_stats_display();
+ 
++ printf("TB read: %d TB sent:%d TBlost: %d \n",tbr, tbs,tbr-tbs);
++ RTP_close(sessionSnd);
+ 	return 0;
+ }
++
++
++
+-- 
+1.7.0.4
+

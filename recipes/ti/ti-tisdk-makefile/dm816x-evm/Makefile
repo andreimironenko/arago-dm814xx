@@ -11,17 +11,17 @@ PATH := ${PATH}:${CSTOOL_PATH}
 #==============================================================================
 # Build components to enable all other build targets. 
 #==============================================================================
-components: linux cmem syslink c6accel 
+components: linux cmem syslink
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-components_clean: linux_clean syslink_clean cmem_clean c6accel_clean
+components_clean: linux_clean syslink_clean cmem_clean 
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-all: components u-boot opengldemos sademo matrix omx
+all: components u-boot opengldemos matrix omx
 
 #==============================================================================
 # Install everything
@@ -323,7 +323,7 @@ opengldemos_install:
 # Build Signal Analyzer demo
 ################################################################################
 
-sademo: components
+sademo: components c6accel
 	. $(LINUX_DEVKIT_DIR)/environment-setup; cd $(SADEMO_INSTALL_DIR)/sigan-gui-r; qmake; cd -
 	$(MAKE) -C $(SADEMO_INSTALL_DIR) \
 		ROOTDIR=$(DVSDK_INSTALL_DIR) \
@@ -331,7 +331,7 @@ sademo: components
 		FFT_QT_GUI_INSTALL_DIR=$(SADEMO_INSTALL_DIR)/sigan-gui-r
 	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR)/sigan-gui-r
 
-sademo_clean:
+sademo_clean: components_clean c6accel_clean
 	$(MAKE) -C $(SADEMO_INSTALL_DIR) clean
 	if [ -e $(SADEMO_INSTALL_DIR)/sigan-gui-r/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR)/sigan-gui-r distclean; fi
 

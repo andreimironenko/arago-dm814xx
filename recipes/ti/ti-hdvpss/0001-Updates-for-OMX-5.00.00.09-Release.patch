@@ -1,0 +1,119 @@
+From 294d9562c5a8373b4b3cba40bbb58732a47cee77 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Tue, 1 Feb 2011 14:00:25 +0530
+Subject: [PATCH] Updates for OMX 5.00.00.09 Release
+
+---
+ .../vps/drivers/capture/src/vpsdrv_captureApi.c    |    8 ++++++++
+ .../ti/psp/vps/drivers/m2m/src/vpsdrv_m2mDei.c     |    8 ++++----
+ packages/ti/psp/vps/drivers/m2m/src/vpsdrv_m2mSc.c |    8 ++++----
+ packages/ti/psp/vps/hal/src/vpshal_cig.c           |   16 ++++++++++++----
+ 4 files changed, 28 insertions(+), 12 deletions(-)
+
+diff --git a/packages/ti/psp/vps/drivers/capture/src/vpsdrv_captureApi.c b/packages/ti/psp/vps/drivers/capture/src/vpsdrv_captureApi.c
+index 26877ee..16504d5 100644
+--- a/packages/ti/psp/vps/drivers/capture/src/vpsdrv_captureApi.c
++++ b/packages/ti/psp/vps/drivers/capture/src/vpsdrv_captureApi.c
+@@ -650,6 +650,14 @@ Int32 Vps_captControl ( Fdrv_Handle handle, UInt32 cmd,
+         case IOCTL_VPS_CAPT_RESET_VIP1:
+             status  = Vps_captVipInstReset(VPSHAL_VIP_INST_2);
+             break;
++        case IOCTL_VPS_CAPT_CHECK_OVERFLOW:
++            status = Vps_captCheckOverflow(
++                        (Vps_CaptOverFlowStatus *) cmdStatusArgs);
++            break;
++        case IOCTL_VPS_CAPT_RESET_AND_RESTART:
++            status = Vps_captResetAndRestart(
++                        (Vps_CaptOverFlowStatus *) cmdArgs);
++            break;
+ 
+         default:
+             /*
+diff --git a/packages/ti/psp/vps/drivers/m2m/src/vpsdrv_m2mDei.c b/packages/ti/psp/vps/drivers/m2m/src/vpsdrv_m2mDei.c
+index b0031a8..1630b94 100644
+--- a/packages/ti/psp/vps/drivers/m2m/src/vpsdrv_m2mDei.c
++++ b/packages/ti/psp/vps/drivers/m2m/src/vpsdrv_m2mDei.c
+@@ -2123,10 +2123,10 @@ static Int32 vpsMdrvDeiSetScCoeffIoctl(VpsMdrv_DeiHandleObj *hObj, Ptr cmdArgs)
+          * with driver */
+         if (0u != hObj->numPendReq)
+         {
+-            GT_1trace(VpsMdrvDeiTrace, GT_ERR,
+-                "Can't get context buffers when %d request are pending!!",
+-                hObj->numPendReq);
+-            retVal = FVID2_EAGAIN;
++            //GT_1trace(VpsMdrvDeiTrace, GT_ERR,
++            //    "Can't get context buffers when %d request are pending!!",
++            //    hObj->numPendReq);
++            //retVal = FVID2_EAGAIN;
+         }
+     }
+ 
+diff --git a/packages/ti/psp/vps/drivers/m2m/src/vpsdrv_m2mSc.c b/packages/ti/psp/vps/drivers/m2m/src/vpsdrv_m2mSc.c
+index dc66bb5..5b99214 100644
+--- a/packages/ti/psp/vps/drivers/m2m/src/vpsdrv_m2mSc.c
++++ b/packages/ti/psp/vps/drivers/m2m/src/vpsdrv_m2mSc.c
+@@ -753,16 +753,16 @@ Int32 VpsMdrv_scGetProcessedFrms(FVID2_Handle handle,
+             if (0 != handleObj->reqCnt)
+             {
+                 retVal =  (FVID2_EAGAIN);
+-                GT_0trace(VpsMdrvScwbTrace, GT_INFO, "AGAIN: Request under process\n");
++//                GT_0trace(VpsMdrvScwbTrace, GT_INFO, "AGAIN: Request under process\n");
+             }
+             /* If not buffer queueud return with FVID2_ENO_MORE_BUFFERS
+              * error */
+             else
+             {
+                 retVal = (FVID2_ENO_MORE_BUFFERS);
+-                GT_0trace(VpsMdrvScwbTrace,
+-                    GT_ERR,
+-                    "AGAIN: No More buffers to process\n");
++//                GT_0trace(VpsMdrvScwbTrace,
++//                    GT_ERR,
++//                    "AGAIN: No More buffers to process\n");
+             }
+ 
+         }
+diff --git a/packages/ti/psp/vps/hal/src/vpshal_cig.c b/packages/ti/psp/vps/hal/src/vpshal_cig.c
+index d6b1589..5af3f11 100644
+--- a/packages/ti/psp/vps/hal/src/vpshal_cig.c
++++ b/packages/ti/psp/vps/hal/src/vpshal_cig.c
+@@ -649,17 +649,23 @@ Int32 VpsHal_cigSetConfig(VpsHal_Handle handle,
+ Int32 VpsHal_cigGetConfig(VpsHal_Handle handle, VpsHal_CigConfig *config)
+ {
+     Int32               retVal;
+-    UInt32              tempReg;
++    UInt32              tempReg, cookie;
+     CSL_VpsCigRegsOvly  regOvly;
++    VpsHal_CigObj      *cigObj;
+ 
+     /* Check for NULL pointer */
+     GT_assert(VpsHalTrace, (NULL != handle));
+     GT_assert(VpsHalTrace, (NULL != config));
+ 
+-    regOvly = ((VpsHal_CigObj *) handle)->baseAddress;
++    cigObj = (VpsHal_CigObj *) handle;
++    regOvly = cigObj->baseAddress;
+ 
+-    /* Get CIG configurations */
+-    tempReg = regOvly->CIG_REG0;
++    cookie = Hwi_disable();
++
++    /* Get CIG configurations. Since local variable is used for
++       storing configuration for PIP and Main window, getting
++       configuration from local variable. */
++    tempReg = cigObj->cigCfg0Reg;
+ 
+     if (0 != (tempReg & CSL_VPS_CIG_CIG_REG0_CIG_EN_MASK))
+     {
+@@ -732,6 +738,8 @@ Int32 VpsHal_cigGetConfig(VpsHal_Handle handle, VpsHal_CigConfig *config)
+     {
+         config->pipWinSz = VPSHAL_CIG_PWS_SUB_WINDOW;
+     }
++    Hwi_restore(cookie);
++
+ 
+     /* Get CIG width and height configurations */
+     tempReg = regOvly->CIG_REG1;
+-- 
+1.7.0.4
+

@@ -8,7 +8,7 @@ require ti-staging.inc
 PR="${MACHINE_KERNEL_PR}"
 PR_append = "a"
 
-PV="4_00_00_00"
+PV="5_00_00_00"
 
 CODEC_SUITE_NAME="${WORKDIR}/${PN}_${PV}"
 

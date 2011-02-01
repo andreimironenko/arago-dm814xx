@@ -1,5 +1,6 @@
 require ti-linuxutils.inc
 
+PE = "1"
 PV = "3_21_00_02"
 PVExtra = "_eng"
 
