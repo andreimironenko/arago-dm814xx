@@ -14,6 +14,7 @@ SADEMO_ROOT  = "${WORKDIR}/signal-analyzer-demo_${PV}"
 
 SRC_URI = "http://install.source.dir.local/signal-analyzer-demo_${PV}.tar.gz;name=sademo"
 
+DEPENDS = "qwt ti-c6accel"
 PROVIDES += "ti-integra-demos"
 
 inherit qt4e
