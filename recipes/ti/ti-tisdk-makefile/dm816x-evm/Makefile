@@ -21,17 +21,17 @@ components_clean: linux_clean syslink_clean cmem_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-all: components u-boot opengldemos matrix omx
+all: components u-boot matrix omx
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install syslink_install u-boot_install c6accel_install opengldemos_install sademo_install matrix_install omx_install
+install: linux_install cmem_install syslink_install u-boot_install c6accel_install sademo_install matrix_install omx_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clean: components_clean u-boot_clean opengldemos_clean sademo_clean matrix_clean omx_clean
+clean: components_clean u-boot_clean sademo_clean matrix_clean omx_clean
 
 #==============================================================================
 # A help message target.
@@ -70,9 +70,9 @@ help:
 	@echo "    c6accel_clean                : Remove generated c6accel files"
 	@echo "    c6accel_install              : Install c6accel examples"
 	@echo
-	@echo "    opengldemos                  : Build the OPENGL graphics SDK demos for $(PLATFORM)"
-	@echo "    opengldemos_clean            : Remove OPENGL graphics SDK demo files."
-	@echo "    opengldemos_install          : install OPENGL graphics SDK demo executables."
+	# @echo "    opengldemos                  : Build the OPENGL graphics SDK demos for $(PLATFORM)"
+	# @echo "    opengldemos_clean            : Remove OPENGL graphics SDK demo files."
+	# @echo "    opengldemos_install          : install OPENGL graphics SDK demo executables."
 	@echo
 	@echo "    sademo                       : Build the Signal Analyzer demo for $(PLATFORM)"
 	@echo "    sademo_clean                 : Remove Signal Analyzer demo files."
@@ -286,37 +286,37 @@ c6accel_install:
 ################################################################################
 # Build openGL demos
 ################################################################################
-opengldemos:
-	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
-		BUILD=release \
-		OMAPES=6.x \
-		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
-		CSTOOL_DIR=${CSTOOL_DIR} \
-		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
-		all
+# opengldemos:
+# 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
+# 		BUILD=release \
+# 		OMAPES=6.x \
+# 		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
+# 		CSTOOL_DIR=${CSTOOL_DIR} \
+# 		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
+# 		all
 
-opengldemos_clean:
-	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
-		BUILD=release \
-		OMAPES=6.x \
-		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
-		CSTOOL_DIR=${CSTOOL_DIR} \
-		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
-		clean
+# opengldemos_clean:
+# 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
+# 		BUILD=release \
+# 		OMAPES=6.x \
+# 		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
+# 		CSTOOL_DIR=${CSTOOL_DIR} \
+# 		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
+# 		clean
 
-opengldemos_install:
-	mkdir -p ${EXEC_DIR}/opengl-demos/etc/init.d
-	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
-		BUILD=release \
-		OMAPES=6.x \
-		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
-		CSTOOL_DIR=${CSTOOL_DIR} \
-		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
-		TARGETFS_INSTALL_DIR=$(EXEC_DIR)/opengl-demos \
-		install
-	for file in `find $(GRAPHICS_INSTALL_DIR)/gfx_rel_es3.x -name "*.ko"`; do \
-	    install $${file} $(EXEC_DIR)/opengl-demos; \
-	done
+# opengldemos_install:
+# 	mkdir -p ${EXEC_DIR}/opengl-demos/etc/init.d
+# 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
+# 		BUILD=release \
+# 		OMAPES=6.x \
+# 		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
+# 		CSTOOL_DIR=${CSTOOL_DIR} \
+# 		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
+# 		TARGETFS_INSTALL_DIR=$(EXEC_DIR)/opengl-demos \
+# 		install
+# 	for file in `find $(GRAPHICS_INSTALL_DIR)/gfx_rel_es3.x -name "*.ko"`; do \
+# 	    install $${file} $(EXEC_DIR)/opengl-demos; \
+# 	done
 
 
 ################################################################################
