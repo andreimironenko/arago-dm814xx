@@ -23,7 +23,6 @@ SRC_URI[syslinktarball.sha256sum] = "c8c61af64af512e877d645f949bb4f6c1dcace637ca
 HTTP_PROXY_IGNORE="bangsdowebsvr01.india.ti.com:8060"
 SRC_URI += "http://bangsdowebsvr01.india.ti.com:8060/SysLink_int/${SYSLINKPV}${SYSLINKPVextra}/exports/syslink_${SYSLINKPV}${SYSLINKPVextra}.tar.gz;name=syslinktarball \
             file://linux-omap3-2.6.37-psp04.00.00.09/ti816x/0001-Change-EVENTQ-for-audio.patch \
-            file://linux-omap3-2.6.37-psp04.00.00.09/ti816x/0001-I2C1-disabled-from-kernel.patch \
             file://defconfig.vpss \
 "
 
