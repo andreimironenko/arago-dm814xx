@@ -1,0 +1,25 @@
+From dfbb761112433b27afb9bffa2d3c2d6d799a1d18 Mon Sep 17 00:00:00 2001
+From: Vaibhav Bedia <vaibhav.bedia@ti.com>
+Date: Tue, 1 Feb 2011 17:39:53 +0530
+Subject: [PATCH] Change EVENTQ for audio
+
+---
+ arch/arm/mach-omap2/board-ti8168evm.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/board-ti8168evm.c b/arch/arm/mach-omap2/board-ti8168evm.c
+index 427a64e..4b9bfc2 100644
+--- a/arch/arm/mach-omap2/board-ti8168evm.c
++++ b/arch/arm/mach-omap2/board-ti8168evm.c
+@@ -292,7 +292,7 @@ static struct snd_platform_data ti8168_evm_snd_data = {
+ 	.num_serializer = ARRAY_SIZE(ti8168_iis_serializer_direction),
+ 	.tdm_slots	= 2,
+ 	.serial_dir	= ti8168_iis_serializer_direction,
+-	.asp_chan_q	= EVENTQ_2,
++	.asp_chan_q	= EVENTQ_3,
+ 	.version	= MCASP_VERSION_2,
+ 	.txnumevt	= 1,
+ 	.rxnumevt	= 1,
+-- 
+1.6.2.4
+

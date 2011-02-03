@@ -3,6 +3,5 @@ require ti-omx.inc
 PV = "05_00_00_09"
 PVExtra = ""
 
-SRC_URI[omx.md5sum] = "d662b35d1441bf9e9a01942d09849850"
-SRC_URI[omx.sha256sum] = "f29c3c1d58a88b0a3d91d3896c5004420917dad8aea2a0d85d216c3bccc9af9e"
-
+SRC_URI[omx.md5sum] = "2316f0e6431c545561efa75e3883c248"
+SRC_URI[omx.sha256sum] = "dcae06c7819488e2c04b06ff08e0f1b0d33eacdc2b7d1cadde2a1fe51cef0c0d"
