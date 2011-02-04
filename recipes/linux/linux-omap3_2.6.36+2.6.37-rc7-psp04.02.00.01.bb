@@ -1,5 +1,7 @@
 require linux-omap3.inc
 
+DEFAULT_PREFERENCE = "-1"
+
 KVER = "2.6.37-rc7"
 PSPREL = "04.02.00.01"
 
