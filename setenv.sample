@@ -10,6 +10,6 @@ export OEBASE=$HOME/oe
 export BBPATH=$OEBASE/arago:$OEBASE/arago-oe-dev
 export PATH=$OEBASE/arago-bitbake/bin/:$OEBASE/arago-utils/:$PATH
 
-# The whitelist seems to be broken for now, thus preserve all the vars
-export BB_PRESERVE_ENV=1
-# export BB_ENV_EXTRAWHITE="OEBASE http_proxy ftp_proxy"
+# Preserve important/all environment variables
+export BB_ENV_EXTRAWHITE="OEBASE MACHINE META_SDK_PATH http_proxy https_proxy ftp_proxy no_proxy GIT_PROXY_COMMAND"
+# export BB_PRESERVE_ENV=1
