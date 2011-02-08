@@ -1,8 +1,8 @@
 include Rules.make
 
-DEFAULT_LINUXKERNEL_CONFIG=ti8168_evm_defconfig
-DEFAULT_UBOOT_CONFIG=ti8168_evm_config
-MIN_UBOOT_CONFIG=ti8168_evm_min_sd
+DEFAULT_LINUXKERNEL_CONFIG=ti8148_evm_defconfig
+DEFAULT_UBOOT_CONFIG=ti8148_evm_config
+MIN_UBOOT_CONFIG=ti8148_evm_min_sd
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
@@ -119,9 +119,9 @@ u-boot-min:
 u-boot-min_clean:
 	rm -f $(PSP_INSTALL_DIR)/u-boot-*/MLO
 
-u-boot: u-boot-min
+u-boot: 
 	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_UBOOT_CONFIG)
-	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) u-boot.ti
+#	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) u-boot.ti
 
 u-boot_clean: u-boot-min_clean
 	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) distclean
@@ -168,6 +168,8 @@ syslink_cfg:
         -e s:^M3_ELF.rootDir.*:M3_ELF.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
         -e s:C64P_COFF,://C64P_COFF:g \
         -e s:C64P_ELF,://C64P_ELF:g \
+        -e s:M3_ELF,://M3_ELF:g \
+        -e s:A8_ELF$$://A8_ELF:g \
         ${SYSLINK_INSTALL_DIR}/config.bld
 
 syslink_hlos: 
@@ -187,6 +189,22 @@ syslink_hlos:
 		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
 		SYSLINK_PLATFORM=TI81XX \
 		KDIR=$(LINUXKERNEL_INSTALL_DIR)
+	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/usr/Linux/ \
+		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
+		SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages;${SYSLINK_INSTALL_DIR}" \
+		ARCH=arm \
+		CROSS_COMPILE=${CSTOOL_PREFIX} \
+		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
+		SYSLINK_PLATFORM=TI81XX \
+		KDIR=$(LINUXKERNEL_INSTALL_DIR) release
+	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/usr/Linux/ \
+		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
+		SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages;${SYSLINK_INSTALL_DIR}" \
+		ARCH=arm \
+		CROSS_COMPILE=${CSTOOL_PREFIX} \
+		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
+		SYSLINK_PLATFORM=TI81XX \
+		KDIR=$(LINUXKERNEL_INSTALL_DIR) debug
 
 syslink_hlos_clean: 
 	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/knl/Linux/ \
@@ -230,7 +248,8 @@ syslink_install:
 c6accel:
 	XDCPATH=${C6ACCEL_XDCPATH} \
 	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
-	PLATFORM="TI816X" \
+	PLATFORM="TI814X" \
+	PLATFORM_XDC="ti.platforms.evmTI814X" \
 	ARM_ISA=armv7-a \
 	DSP_ISA=674 \
 	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
@@ -251,7 +270,7 @@ c6accel:
 
 c6accel_clean:
 	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
-	PLATFORM="TI816X" \
+	PLATFORM="TI814X" \
 	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
 	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
 	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
@@ -271,7 +290,7 @@ c6accel_clean:
 
 c6accel_install:
 	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
-	PLATFORM="TI816X" \
+	PLATFORM="TI814X" \
 	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
 	LINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
 	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
@@ -319,21 +338,22 @@ opengldemos_install:
 ################################################################################
 
 sademo:
-	. $(LINUX_DEVKIT_DIR)/environment-setup; cd $(SADEMO_INSTALL_DIR)/sigan-gui-r; qmake; cd -
-	$(MAKE) -C $(SADEMO_INSTALL_DIR) \
+	. $(LINUX_DEVKIT_DIR)/environment-setup; cd $(SADEMO_INSTALL_DIR); qmake; cd -
+	$(MAKE) -C $(SADEMO_INSTALL_DIR)/app \
 		ROOTDIR=$(DVSDK_INSTALL_DIR) \
-		PLATFORM_XDC=ti.platforms.evmDM8168 \
-		FFT_QT_GUI_INSTALL_DIR=$(SADEMO_INSTALL_DIR)/sigan-gui-r
-	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR)/sigan-gui-r
+	        PLATFORM="TI814X" \
+	        PLATFORM_XDC="ti.platforms.evmTI814X" \
+		FFT_QT_GUI_INSTALL_DIR=$(SADEMO_INSTALL_DIR)
+	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR)
 
 sademo_clean:
-	$(MAKE) -C $(SADEMO_INSTALL_DIR) clean
-	if [ -e $(SADEMO_INSTALL_DIR)/sigan-gui-r/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR)/sigan-gui-r distclean; fi
+	$(MAKE) -C $(SADEMO_INSTALL_DIR)/app PLATFORM="TI814X" clean 
+	if [ -e $(SADEMO_INSTALL_DIR)/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR) distclean; fi
 
 sademo_install: c6accel_install
 	install -d $(EXEC_DIR)/signal-analyzer
-	install $(SADEMO_INSTALL_DIR)/sigan-gui-r/sigan_demo_app $(EXEC_DIR)/signal-analyzer
-	install $(SADEMO_INSTALL_DIR)/scripts/bin/fft_demo_8khz.pcm $(EXEC_DIR)/signal-analyzer
+	install $(SADEMO_INSTALL_DIR)/sigan_demo_app $(EXEC_DIR)/signal-analyzer
+	install $(SADEMO_INSTALL_DIR)/app/scripts/bin/fft_demo_8khz.pcm $(EXEC_DIR)/signal-analyzer
 	cd $(EXEC_DIR)/signal-analyzer; ln -s ../c6accel/test_files; cd -
 	cd $(EXEC_DIR)/signal-analyzer; ln -s ../c6accel/ti816x.xe674; cd -
 
