@@ -98,6 +98,7 @@ BSP_COMPONENTS_ti816x = "\
     ti-docs-qsg-hardcopy \
     ti-docs-sdg \
     ti-docs-psp \
+    ti-host-tools-psp \
     ti-tisdk-mksdboot \
     linux-omap3-src \
     pinmux-utility \
