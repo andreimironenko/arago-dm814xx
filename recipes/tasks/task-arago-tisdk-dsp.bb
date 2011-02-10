@@ -41,7 +41,6 @@ DSP_COMPONENTS_ti816x = "\
     ti-dsp-benchmark-apps \
     ti-hdvpss-display-utils \
     ti-hdvpss-display-utils-loader \
-    ti-hdvpss-display-utils-module \
     ti-integra-demos \
     "
 
@@ -51,7 +50,6 @@ DSP_COMPONENTS_c6a814x-evm = "\
     ti-dsp-benchmark-apps \
     ti-hdvpss-display-utils \
     ti-hdvpss-display-utils-loader \
-    ti-hdvpss-display-utils-module \
     ti-integra-demos \
     "
 
