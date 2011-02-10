@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install additional utilities/demos for SDKs"
-PR = "r7"
+PR = "r8"
 LICENSE = "MIT"
 
 inherit task
@@ -21,7 +21,6 @@ UTILS_append_am37x-evm = " matrix-tui"
 UTILS_append_am180x-evm = " matrix-tui"
 UTILS_append_am181x-evm = " matrix-tui"
 UTILS_append_am3517-evm = " matrix-tui"
-UTILS_append_am389x-evm = " matrix-tui"
 
 RDEPENDS_${PN} = "\
     ${UTILS} \

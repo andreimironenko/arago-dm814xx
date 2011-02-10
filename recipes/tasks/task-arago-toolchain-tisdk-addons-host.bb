@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install sources for additional utilities/demos for SDKs"
-PR = "r7"
+PR = "r8"
 LICENSE = "MIT"
 
 inherit task
@@ -20,7 +20,6 @@ UTILS_omapl138 = " \
 # Add matrix-tui sources for AM devices
 UTILS_append_am37x-evm = " matrix-tui-src"
 UTILS_append_am3517-evm = " matrix-tui-src"
-UTILS_append_am389x-evm = " matrix-tui-src"
 UTILS_append_am180x-evm = " matrix-tui-src"
 UTILS_append_am181x-evm = " matrix-tui-src"
 
