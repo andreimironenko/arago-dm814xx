@@ -38,6 +38,7 @@ DSP_COMPONENTS_omap3 = "\
 DSP_COMPONENTS_ti816x = "\
     ti-syslink-examples \
     ti-c6accel-apps \
+    ti-dsp-benchmark-apps \
     ti-hdvpss-display-utils \
     ti-hdvpss-display-utils-loader \
     ti-hdvpss-display-utils-module \
@@ -47,9 +48,11 @@ DSP_COMPONENTS_ti816x = "\
 DSP_COMPONENTS_c6a814x-evm = "\
     ti-syslink-examples \
     ti-c6accel-apps \
+    ti-dsp-benchmark-apps \
     ti-hdvpss-display-utils \
     ti-hdvpss-display-utils-loader \
     ti-hdvpss-display-utils-module \
+    ti-integra-demos \
     "
 
 DSP_COMPONENTS = ""
