@@ -1,6 +1,6 @@
 DESCRIPTION = "Additional packages beyond console packages shared by TI SDKs"
 LICENSE = "MIT"
-PR = "r5"
+PR = "r6"
 
 inherit task
 
@@ -9,6 +9,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 SECONDARY_BOOTLOADER = ""
 SECONDARY_BOOTLOADER_omap3 = "x-load"
 SECONDARY_BOOTLOADER_ti816x = "u-boot-min-sd"
+SECONDARY_BOOTLOADER_ti814x = "u-boot-min-sd"
 
 RDEPENDS_${PN} = "\
     dbus \
