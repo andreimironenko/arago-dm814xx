@@ -10,7 +10,7 @@ require ti-eula-unpack.inc
 
 PLATFORM_omapl138 = "omapl138"
 PLATFORM_ti816x = "TI816X"
-PLATFORM_ti814x = "ti814x"
+PLATFORM_ti814x = "TI814X"
 PLATFORM ?= "<UNDEFINED_PLATFORM>"
 
 COMPATIBLE_MACHINE = "(da850-omapl138-evm|ti816x|ti814x)"
