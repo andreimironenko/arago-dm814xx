@@ -5,13 +5,14 @@ LICENSE = "TI"
 
 require ti-paths.inc
 require ti-staging.inc
-require ti-eula-unpack.inc
+# require ti-eula-unpack.inc
 
-PR = "r1"
+PR = "r2"
 
 S = "${WORKDIR}/edma3_lld_${PV}"
 
-SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/${SRC_URI_edma3lldsite}/edma3_lld/edma3-lld-bios5/${PV}/exports/EDMA3_LLD_setuplinux_${PV}.bin;name=edma3lldbin"
+# SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/${SRC_URI_edma3lldsite}/edma3_lld/edma3-lld-bios5/${PV}/exports/EDMA3_LLD_setuplinux_${PV}.bin;name=edma3lldbin"
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_tii/psp/edma3_lld/edma3-lld-bios6/${PV}//exports/edma3_lld_${PV}.tar.gz;name=edma3lldbin"
 
 BINFILE="EDMA3_LLD_setuplinux_${PV}.bin"
 TI_BIN_UNPK_CMDS="Y:workdir"
