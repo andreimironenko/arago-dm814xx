@@ -205,6 +205,7 @@ do_compile() {
             SYSLINK_VARIANT="${SYSLINKVARIANT}" \
             SYSLINK_LOADER="${SYSLINKLOADER}" \
             SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages" \
+            SYSLINK_SDK=EZSDK \
             KDIR="${STAGING_KERNEL_DIR}"
     done
 
@@ -218,25 +219,18 @@ do_compile() {
         SYSLINK_LOADER="${SYSLINKLOADER}" \
         SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages"
 
-    cd ${SYSLINK_ROOT}/ti/syslink/utils/hlos/usr/Linux && make debug \
-        ARCH="${TARGET_ARCH}" \
-        CROSS_COMPILE="${TARGET_PREFIX}" \
-        TOOLCHAIN_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
-        SYSLINK_PLATFORM="${SYSLINKPLATFORM}" \
-        SYSLINK_VARIANT="${SYSLINKVARIANT}" \
-        SYSLINK_LOADER="${SYSLINKLOADER}" \
-        SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages"
-
-    cd ${SYSLINK_ROOT}/ti/syslink/utils/hlos/usr/Linux && make release \
-        ARCH="${TARGET_ARCH}" \
-        CROSS_COMPILE="${TARGET_PREFIX}" \
-        TOOLCHAIN_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
-        SYSLINK_PLATFORM="${SYSLINKPLATFORM}" \
-        SYSLINK_VARIANT="${SYSLINKVARIANT}" \
-        SYSLINK_LOADER="${SYSLINKLOADER}" \
-        SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages"
-
     # Build the gpp (hlos) user space samples 
+    # First build the common lib for samples.
+    cd ${SYSLINK_ROOT}/ti/syslink/samples/hlos/common/usr/Linux && make \
+        ARCH="${TARGET_ARCH}" \
+        CROSS_COMPILE="${TARGET_PREFIX}" \
+        TOOLCHAIN_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+        SYSLINK_PLATFORM="${SYSLINKPLATFORM}" \
+        SYSLINK_VARIANT="${SYSLINKVARIANT}" \
+        SYSLINK_LOADER="${SYSLINKLOADER}" \
+        SYSLINK_SDK=EZSDK \
+        SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages"
+
     for sample in ${SYSLINKHLOSSAMPLES}; do
         cd ${SYSLINK_ROOT}/ti/syslink/samples/hlos/$sample/usr/Linux && make \
             ARCH="${TARGET_ARCH}" \
@@ -245,6 +239,7 @@ do_compile() {
             SYSLINK_PLATFORM="${SYSLINKPLATFORM}" \
             SYSLINK_VARIANT="${SYSLINKVARIANT}" \
             SYSLINK_LOADER="${SYSLINKLOADER}" \
+            SYSLINK_SDK=EZSDK \
             SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages"
     done
 
