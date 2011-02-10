@@ -105,6 +105,13 @@ BSP_COMPONENTS_ti816x = "\
     "
 
 BSP_COMPONENTS_ti814x = "\
+    ti-tisdk-setup \
+    ti-tisdk-relnotes \
+    ti-docs-qsg-hardcopy \
+    ti-docs-sdg \
+    ti-docs-psp \
+    ti-host-tools-psp \
+    ti-tisdk-mksdboot \
     linux-omap3-src \
     "
 
