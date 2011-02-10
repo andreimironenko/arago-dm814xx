@@ -9,8 +9,8 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 PR = "r2"
 
-S  = "${WORKDIR}/signal-analyzer-demo_${PV}/sigan-gui-r"
-SADEMO_ROOT  = "${WORKDIR}/signal-analyzer-demo_${PV}"
+S  = "${WORKDIR}/signal-analyzer-demo_${PV}/"
+SADEMO_ROOT  = "${WORKDIR}/signal-analyzer-demo_${PV}/app"
 
 SRC_URI = "http://install.source.dir.local/signal-analyzer-demo_${PV}.tar.gz;name=sademo"
 
