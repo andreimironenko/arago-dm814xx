@@ -11,6 +11,7 @@ RELNOTESTOPIC_omapl138 = "OMAPL138_DVSDK_4.00_Release_Notes"
 RELNOTESTOPIC_omap3evm = "OMAP3530_DVSDK_4.00_Release_Notes"
 RELNOTESTOPIC_dm37x-evm = "TMS320DM3730_DVSDK_4.00_Release_Notes"
 RELNOTESTOPIC_ti816x = "C6A816x_AM389x_EZSDK_5.00_Release_Notes"
+RELNOTESTOPIC_ti814x = "C6A814x_AM387x_EZSDK_5.00_Release_Notes"
 
 RELNOTESURL = "http://ap-fpdsp-swapps.dal.design.ti.com/index.php/${RELNOTESTOPIC}"
 
@@ -20,6 +21,7 @@ SDK_SHORT_PLATFORM_omapl138 = "omapl138"
 SDK_SHORT_PLATFORM_omap3evm = "omap3530"
 SDK_SHORT_PLATFORM_dm37x-evm = "dm3730"
 SDK_SHORT_PLATFORM_ti816x = "c6a816x-am389x"
+SDK_SHORT_PLATFORM_ti814x = "c6a814x-am387x"
 
 require ti-paths.inc
 
