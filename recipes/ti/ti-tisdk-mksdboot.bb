@@ -10,6 +10,7 @@ require ti-staging.inc
 PLATFORM_omapl138 = "omapl138"
 PLATFORM_omap3 = "omap35x"
 PLATFORM_ti816x = "ti816x"
+PLATFORM_ti814x = "ti814x"
 
 SRC_URI = "file://mksdboot.sh \
 	   file://README \
