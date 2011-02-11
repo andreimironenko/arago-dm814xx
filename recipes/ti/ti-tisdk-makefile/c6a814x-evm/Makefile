@@ -119,9 +119,9 @@ u-boot-min:
 u-boot-min_clean:
 	rm -f $(PSP_INSTALL_DIR)/u-boot-*/MLO
 
-u-boot: 
+u-boot: u-boot-min
 	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) $(DEFAULT_UBOOT_CONFIG)
-#	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) u-boot.ti
+	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) u-boot.ti
 
 u-boot_clean: u-boot-min_clean
 	$(MAKE) -C $(PSP_INSTALL_DIR)/u-boot-* CROSS_COMPILE=$(CSTOOL_PREFIX) distclean
@@ -189,22 +189,6 @@ syslink_hlos:
 		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
 		SYSLINK_PLATFORM=TI81XX \
 		KDIR=$(LINUXKERNEL_INSTALL_DIR)
-	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/usr/Linux/ \
-		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
-		SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages;${SYSLINK_INSTALL_DIR}" \
-		ARCH=arm \
-		CROSS_COMPILE=${CSTOOL_PREFIX} \
-		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
-		SYSLINK_PLATFORM=TI81XX \
-		KDIR=$(LINUXKERNEL_INSTALL_DIR) release
-	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/usr/Linux/ \
-		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
-		SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages;${SYSLINK_INSTALL_DIR}" \
-		ARCH=arm \
-		CROSS_COMPILE=${CSTOOL_PREFIX} \
-		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
-		SYSLINK_PLATFORM=TI81XX \
-		KDIR=$(LINUXKERNEL_INSTALL_DIR) debug
 
 syslink_hlos_clean: 
 	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/knl/Linux/ \
@@ -347,7 +331,7 @@ sademo:
 	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR)
 
 sademo_clean:
-	$(MAKE) -C $(SADEMO_INSTALL_DIR)/app PLATFORM="TI814X" clean 
+	$(MAKE) -C $(SADEMO_INSTALL_DIR)/app PLATFORM="TI814X" clean
 	if [ -e $(SADEMO_INSTALL_DIR)/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR) distclean; fi
 
 sademo_install: c6accel_install
@@ -358,7 +342,7 @@ sademo_install: c6accel_install
 	cd $(EXEC_DIR)/signal-analyzer; ln -s ../c6accel/ti816x.xe674; cd -
 
 ################################################################################
-# Build Martix GUI Appication Launcher
+# Build Martix GUI Application Launcher
 ################################################################################
 matrix:
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd demos/matrix-gui-e* ; qmake ; $(MAKE) PLATFORM=ti816x

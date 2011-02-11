@@ -173,6 +173,8 @@ syslink_cfg:
 	-e s:^A8_ELF.rootDir.*:A8_ELF.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
         -e s:C64P_COFF,://C64P_COFF:g \
         -e s:C64P_ELF,://C64P_ELF:g \
+        -e s:M3_ELF,://M3_ELF:g \
+        -e s:A8_ELF$$://A8_ELF:g \
         ${SYSLINK_INSTALL_DIR}/config.bld
 
 syslink_hlos: 
@@ -236,6 +238,7 @@ c6accel:
 	XDCPATH=${C6ACCEL_XDCPATH} \
 	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
 	PLATFORM="TI816X" \
+	PLATFORM_XDC="ti.platforms.evmTI816X" \
 	ARM_ISA=armv7-a \
 	DSP_ISA=674 \
 	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
@@ -323,22 +326,23 @@ c6accel_install:
 # Build Signal Analyzer demo
 ################################################################################
 
-sademo: components c6accel
-	. $(LINUX_DEVKIT_DIR)/environment-setup; cd $(SADEMO_INSTALL_DIR)/sigan-gui-r; qmake; cd -
-	$(MAKE) -C $(SADEMO_INSTALL_DIR) \
+sademo:
+	. $(LINUX_DEVKIT_DIR)/environment-setup; cd $(SADEMO_INSTALL_DIR); qmake; cd -
+	$(MAKE) -C $(SADEMO_INSTALL_DIR)/app \
 		ROOTDIR=$(DVSDK_INSTALL_DIR) \
+	        PLATFORM="TI816X" \
 		PLATFORM_XDC=ti.platforms.evmDM8168 \
-		FFT_QT_GUI_INSTALL_DIR=$(SADEMO_INSTALL_DIR)/sigan-gui-r
-	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR)/sigan-gui-r
+		FFT_QT_GUI_INSTALL_DIR=$(SADEMO_INSTALL_DIR)
+	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR)
 
-sademo_clean: components_clean c6accel_clean
-	$(MAKE) -C $(SADEMO_INSTALL_DIR) clean
-	if [ -e $(SADEMO_INSTALL_DIR)/sigan-gui-r/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR)/sigan-gui-r distclean; fi
+sademo_clean:
+	$(MAKE) -C $(SADEMO_INSTALL_DIR)/app PLATFORM="TI816X" clean
+	if [ -e $(SADEMO_INSTALL_DIR)/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR) distclean; fi
 
 sademo_install: c6accel_install
 	install -d $(EXEC_DIR)/signal-analyzer
-	install $(SADEMO_INSTALL_DIR)/sigan-gui-r/sigan_demo_app $(EXEC_DIR)/signal-analyzer
-	install $(SADEMO_INSTALL_DIR)/scripts/bin/fft_demo_8khz.pcm $(EXEC_DIR)/signal-analyzer
+	install $(SADEMO_INSTALL_DIR)/sigan_demo_app $(EXEC_DIR)/signal-analyzer
+	install $(SADEMO_INSTALL_DIR)/app/scripts/bin/fft_demo_8khz.pcm $(EXEC_DIR)/signal-analyzer
 	cd $(EXEC_DIR)/signal-analyzer; ln -s ../c6accel/test_files; cd -
 	cd $(EXEC_DIR)/signal-analyzer; ln -s ../c6accel/ti816x.xe674; cd -
 
