@@ -5,11 +5,12 @@ require ti-paths.inc
 
 DEPENDS = "ti-post-process-wiki-native"
 
-PR = "r1"
+PR = "r2"
 
-COMPATIBLE_MACHINE = "c6a816x-evm|dm816x-evm"
+COMPATIBLE_MACHINE = "(c6a816x-evm|dm816x-evm|c6a814x-evm)"
 
 TOPIC_ti816x = "EZ_SDK_FAQ"
+TOPIC_ti814x = "EZ_SDK_FAQ"
 
 TOPICFILE = "${@bb.data.getVar('TOPIC', d, 1).replace('/','_')}"
 TOPICURL = "http://processors.wiki.ti.com/index.php/${TOPIC}"
