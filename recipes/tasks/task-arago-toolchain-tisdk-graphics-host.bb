@@ -12,9 +12,13 @@ GRAPHICS_APPS_omap3 = " \
     libgles-omap3-src \   
     "
    
-GRAPHICS_APPS_c6a816x-evm = " \
+GRAPHICS_APPS_ti816x = " \
     libgles-omap3-src \
     matrix-gui-e-src \
+    "
+
+GRAPHICS_APPS_ti814x = " \
+    libgles-omap3-src \
     "
 
 GRAPHICS_APPS_omapl138 = " \

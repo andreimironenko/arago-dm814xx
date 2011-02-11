@@ -3,7 +3,7 @@ LICENSE = "TI TSPA"
 
 PR = "r9"
 
-COMPATIBLE_MACHINE = "(omap3|ti816x)"
+COMPATIBLE_MACHINE = "(omap3|ti816x|ti814x)"
 
 DEPENDS = "virtual/libx11 libxau libxdmcp"
 
@@ -264,12 +264,14 @@ RDEPENDS_${PN} += "fbset devmem2"
 
 #HACK! These are binaries, so we can't guarantee that LDFLAGS match :(
 INSANE_SKIP_${PN} = True
+INSANE_SKIP_${PN}-dev = True
 INSANE_SKIP_${PN}-blitwsegl = True
 INSANE_SKIP_${PN}-flipwsegl = True
 INSANE_SKIP_${PN}-frontwsegl = True
 INSANE_SKIP_${PN}-linuxfbwsegl = True
 INSANE_SKIP_${PN}-x11wsegl = True
 INSANE_SKIP_${PN}-tests = True
+INSANE_SKIP_${PN}-rawtrainingcourses = True
 INSANE_SKIP_xserver-kdrive-powervrsgx = True
 
 # Quality control is really poor on these SDKs, so hack around the latest madness:
