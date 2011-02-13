@@ -6,6 +6,8 @@ require arago-image.inc
 
 COMPATIBLE_MACHINE = "(?!arago)"
 
+IMAGE_FSTYPES = "jffs2 tar.gz"
+
 IMAGE_INSTALL += "\
     task-arago-base \
     task-arago-console \
