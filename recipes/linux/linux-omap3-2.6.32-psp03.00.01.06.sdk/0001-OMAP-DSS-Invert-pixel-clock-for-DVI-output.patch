@@ -1,0 +1,29 @@
+From 76ecfa69d9047a6f10d42bff6473a216bd2b87f9 Mon Sep 17 00:00:00 2001
+From: Vaibhav Hiremath <hvaibhav@ti.com>
+Date: Tue, 30 Nov 2010 19:01:58 +0530
+Subject: [PATCH] OMAP:DSS: Invert pixel clock for DVI output
+
+On Dm37x, with higher resolution green tints has been observed.
+Inverting pixel clock from OMAP-DSS fixes this issue.
+
+Signed-off-by: Vaibhav Hiremath <hvaibhav@ti.com>
+---
+ drivers/video/omap2/displays/panel-generic.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/video/omap2/displays/panel-generic.c b/drivers/video/omap2/displays/panel-generic.c
+index eb48d1a..fe61ad4 100644
+--- a/drivers/video/omap2/displays/panel-generic.c
++++ b/drivers/video/omap2/displays/panel-generic.c
+@@ -37,7 +37,7 @@ static struct omap_video_timings generic_panel_timings = {
+ 
+ static int generic_panel_probe(struct omap_dss_device *dssdev)
+ {
+-	dssdev->panel.config = OMAP_DSS_LCD_TFT;
++	dssdev->panel.config = OMAP_DSS_LCD_TFT | OMAP_DSS_LCD_IPC;
+ 	dssdev->panel.timings = generic_panel_timings;
+ 
+ 	return 0;
+-- 
+1.6.2.4
+
