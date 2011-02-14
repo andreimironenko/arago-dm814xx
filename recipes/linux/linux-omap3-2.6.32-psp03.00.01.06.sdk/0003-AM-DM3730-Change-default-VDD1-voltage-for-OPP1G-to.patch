@@ -1,0 +1,48 @@
+From 459264c655f6bc09c76083018bdc9d182ea172a3 Mon Sep 17 00:00:00 2001
+From: Ranjith Lohithakshan <ranjithl@ti.com>
+Date: Thu, 23 Dec 2010 10:25:12 +0530
+Subject: [PATCH 3/4] AM/DM3730: Change default VDD1 voltage for OPP1G to 1.375V
+
+The patch updates the default VDD1 voltage for OPP1G to 1.375V. Also
+the VP1 max limit is extended to 1.4V.
+
+Based on AM/DM3730 PCB constraints, the vdd_mpu_iva (VDD1) voltage value
+calibrated before enabling SmartReflex is advised to be 1.38V. Minimum
+(1.28V) and typical (1.33V) values provided can be achieved only with very
+good power delivery network design.
+
+Signed-off-by: Ranjith Lohithakshan <ranjithl@ti.com>
+---
+ arch/arm/mach-omap2/pm34xx.c      |    2 +-
+ arch/arm/mach-omap2/smartreflex.h |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/pm34xx.c b/arch/arm/mach-omap2/pm34xx.c
+index d1cc528..b7956c4 100644
+--- a/arch/arm/mach-omap2/pm34xx.c
++++ b/arch/arm/mach-omap2/pm34xx.c
+@@ -171,7 +171,7 @@ struct omap_opp omap37x_mpu_rate_table[] = {
+ 	/*OPP3 (OPP120)*/
+ 	{S800M, VDD1_OPP3, 0x35},
+ 	/*OPP4 (OPPTM)*/
+-	{S1000M, VDD1_OPP4, 0x3C},
++	{S1000M, VDD1_OPP4, 0x3e},
+ };
+ 
+ struct omap_opp omap37x_dsp_rate_table[] = {
+diff --git a/arch/arm/mach-omap2/smartreflex.h b/arch/arm/mach-omap2/smartreflex.h
+index f20406b..f346854 100644
+--- a/arch/arm/mach-omap2/smartreflex.h
++++ b/arch/arm/mach-omap2/smartreflex.h
+@@ -68,7 +68,7 @@
+ #define PRM_VP1_VSTEPMAX_VSTEPMAX		(0x04 << 0)
+ 
+ /* PRM_VP1_VLIMITTO */
+-#define PRM_VP1_VLIMITTO_VDDMAX		(0x3C << 24)
++#define PRM_VP1_VLIMITTO_VDDMAX		(0x40 << 24)
+ #define PRM_VP1_VLIMITTO_VDDMIN		(0x0 << 16)
+ #define PRM_VP1_VLIMITTO_TIMEOUT	(0xFFFF << 0)
+ 
+-- 
+1.6.2.4
+
