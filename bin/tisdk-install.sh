@@ -93,12 +93,12 @@ update_rules_make()
     dirname="`basename $install_dir/${name}_*`"
 
     if [ "$name" = "libgles-omap3" ]; then
-       dirname="`basename $install_dir/omap35x_graphics_sdk_*`"
+       dirname="`basename $install_dir/graphics-sdk_*`"
     fi
 
-    if [ "$name" = "signal-analyzer-demo" ]; then
-       dirname="`basename $install_dir/demos/signal-analyzer*`"
-    fi
+    # if [ "$name" = "signal-analyzer-demo" ]; then
+    #    dirname="`basename $install_dir/demos/signal-analyzer*`"
+    # fi
 
     # update rules.make
     sed -i -e s/\<__${name}__\>/${dirname}/g \
