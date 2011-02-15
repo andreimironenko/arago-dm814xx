@@ -140,7 +140,7 @@ fi
 # creating boot.scr
 execute "mkdir -p /tmp/sdk"
 cat <<EOF >/tmp/sdk/boot.cmd
-setenv bootargs 'console=ttyO0,115200n8 root=/dev/mmcblk0p2 rw mem=166M earlyprink vram=50M ti814xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd'
+setenv bootargs 'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 rw mem=166M earlyprink vram=50M ti814xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd'
 fatload mmc 1 0x80009000 uImage
 bootm 0x80009000
 EOF
@@ -160,9 +160,8 @@ execute "cp /tmp/sdk/boot.scr /tmp/sdk/$$/"
 execute "cp /tmp/sdk/boot.cmd /tmp/sdk/$$/"
 execute "cp $sdkdir/psp/prebuilt-images/uImage /tmp/sdk/$$/"
 execute "cp $sdkdir/psp/prebuilt-images/u-boot.bin /tmp/sdk/$$/"
-execute "cp $sdkdir/psp/prebuilt-images/u-boot.noxip.bin /tmp/sdk/$$/"
 execute "cp $sdkdir/psp/prebuilt-images/MLO /tmp/sdk/$$/"
-execute "cp $sdkdir/bin/top_ti816x_evm.png /tmp/sdk/$$/"
+execute "cp $sdkdir/bin/top_ti814x_evm.png /tmp/sdk/$$/"
 execute "cp $sdkdir/bin/windows_users.htm /tmp/sdk/$$/"
 execute "cp $sdkdir/bin/README.boot.scr /tmp/sdk/$$/"
 
@@ -197,7 +196,7 @@ if [ "$pc2" != "" ]; then
   execute "mount ${device}3 /tmp/sdk/$$"
   execute "cp -ar $copy /tmp/sdk/$$"
   execute "cp $sdkdir/bin/setup.htm /tmp/sdk/$$"
-  execute "cp $sdkdir/bin/top_ti816x_evm.png /tmp/sdk/$$/"
+  execute "cp $sdkdir/bin/top_ti814x_evm.png /tmp/sdk/$$/"
   execute "cp $sdkdir/docs/C6A814x_AM387x_EVM_Quick_start_guide.pdf /tmp/sdk/$$/quickstartguide.pdf"
   sync
   echo "unmounting ${device}3"
