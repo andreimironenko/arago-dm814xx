@@ -11,6 +11,8 @@ S = "${WORKDIR}/TI814X-LINUX-PSP-04.01.00.01/src/u-boot/u-boot-04.01.00.01"
 UVER = "2010.06"
 PSPREL = "04.01.00.01"
 
+SRC_URI =+ "file://${PSPREL}/0001-ti8168-Make-default-build-for-DDR3-400MHz.patch"
+
 PR = "r2"
 
 UBOOT_MACHINE = "ti8148_evm_config"
