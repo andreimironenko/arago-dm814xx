@@ -7,10 +7,10 @@ BRANCH = "ti81xx-master"
 # Use literal tags in SRCREV, when available, instead of commit IDs
 SRCREV = "v2010.06_TI814XPSP_04.01.00.02"
 
-SRC_URI =+ "file://0001-ti8148-Add-the-2nd-stage-bootcmd.patch"
-
 UVER = "2010.06"
 PSPREL = "04.01.00.02"
+
+SRC_URI =+ "file://${PSPREL}/0001-ti8148-Add-the-2nd-stage-bootcmd.patch"
 
 PR = "r1"
 
