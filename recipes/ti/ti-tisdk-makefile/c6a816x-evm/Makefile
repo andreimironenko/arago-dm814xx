@@ -328,11 +328,11 @@ sademo:
 	        PLATFORM="TI816X" \
 		PLATFORM_XDC=ti.platforms.evmDM8168 \
 		FFT_QT_GUI_INSTALL_DIR=$(SADEMO_INSTALL_DIR)
-	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR)
+	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR) PLATFORM="TI816X"
 
 sademo_clean:
 	$(MAKE) -C $(SADEMO_INSTALL_DIR)/app PLATFORM="TI816X" clean
-	if [ -e $(SADEMO_INSTALL_DIR)/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR) distclean; fi
+	if [ -e $(SADEMO_INSTALL_DIR)/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR) PLATFORM="TI816X" distclean; fi
 
 sademo_install: c6accel_install
 	install -d $(EXEC_DIR)/signal-analyzer

@@ -328,24 +328,24 @@ sademo:
 	        PLATFORM="TI814X" \
 	        PLATFORM_XDC="ti.platforms.evmTI814X" \
 		FFT_QT_GUI_INSTALL_DIR=$(SADEMO_INSTALL_DIR)
-	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR)
+	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR) PLATFORM="TI814X"
 
 sademo_clean:
 	$(MAKE) -C $(SADEMO_INSTALL_DIR)/app PLATFORM="TI814X" clean
-	if [ -e $(SADEMO_INSTALL_DIR)/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR) distclean; fi
+	if [ -e $(SADEMO_INSTALL_DIR)/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR) PLATFORM="TI814X" distclean; fi
 
 sademo_install: c6accel_install
 	install -d $(EXEC_DIR)/signal-analyzer
 	install $(SADEMO_INSTALL_DIR)/sigan_demo_app $(EXEC_DIR)/signal-analyzer
 	install $(SADEMO_INSTALL_DIR)/app/scripts/bin/fft_demo_8khz.pcm $(EXEC_DIR)/signal-analyzer
 	cd $(EXEC_DIR)/signal-analyzer; ln -s ../c6accel/test_files; cd -
-	cd $(EXEC_DIR)/signal-analyzer; ln -s ../c6accel/ti816x.xe674; cd -
+	cd $(EXEC_DIR)/signal-analyzer; ln -s ../c6accel/ti814x.xe674; cd -
 
 ################################################################################
 # Build Martix GUI Application Launcher
 ################################################################################
 matrix:
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd demos/matrix-gui-e* ; qmake ; $(MAKE) PLATFORM=ti816x
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd demos/matrix-gui-e* ; qmake ; $(MAKE) PLATFORM=ti814x
 
 matrix_clean:
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup;  cd demos/matrix-gui-e* ; qmake ; $(MAKE) distclean
@@ -353,9 +353,9 @@ matrix_clean:
 matrix_install:
 	install -d $(EXEC_DIR)/matrix
 	install -m 0755 $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/matrix_gui $(EXEC_DIR)/matrix
-	cp -ar $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/ti816x/bin \
+	cp -ar $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/ti814x/bin \
         $(EXEC_DIR)/matrix/
-	cp -ar $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/ti816x/html \
+	cp -ar $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/ti814x/html \
         $(EXEC_DIR)/matrix/
 	cp -ar $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/images/ \
         $(EXEC_DIR)/matrix/
