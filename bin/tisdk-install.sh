@@ -96,9 +96,9 @@ update_rules_make()
        dirname="`basename $install_dir/graphics-sdk_*`"
     fi
 
-    # if [ "$name" = "signal-analyzer-demo" ]; then
-    #    dirname="`basename $install_dir/demos/signal-analyzer*`"
-    # fi
+    if [ "$name" = "signal-analyzer-demo" ]; then
+       dirname="`basename $install_dir/demos/signal-analyzer*`"
+    fi
 
     # update rules.make
     sed -i -e s/\<__${name}__\>/${dirname}/g \
