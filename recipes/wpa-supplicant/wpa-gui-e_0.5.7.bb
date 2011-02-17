@@ -5,10 +5,9 @@ a method to add or edit wpa_supplicant networks."
 SECTION = "network"
 LICENSE = "GPL BSD"
 HOMEPAGE = "http://hostap.epitest.fi/wpa_supplicant/"
-DEPENDS = "librsvg-native imagemagick-native"
 RDEPENDS_${PN} = "wpa-supplicant"
 RRECOMMENDS_${PN} = "glibc-gconv-utf-16"
-PR = "r1"
+PR = "r2"
 
 SRC_URI = "http://hostap.epitest.fi/releases/wpa_supplicant-${PV}.tar.gz;name=archive"
 
