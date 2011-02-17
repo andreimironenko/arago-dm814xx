@@ -10,6 +10,8 @@ SRCREV = "v2010.06_TI816XPSP_04.00.00.09"
 UVER = "2010.06"
 PSPREL = "04.00.00.09"
 
+SRC_URI =+ "file://${PSPREL}/0001-ti8168-Make-default-build-for-DDR3-400MHz.patch"
+
 PR = "r2"
 
 UBOOT_MACHINE = "ti8168_evm_config"
