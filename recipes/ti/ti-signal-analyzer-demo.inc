@@ -76,6 +76,6 @@ pkg_postinst_ti-integra-demos_ti816x () {
 }
 
 pkg_postinst_ti-integra-demos_ti814x () {
-	ln -sf ${installdir}/c6accel-apps/ti816x.${DSPSUFFIX} ${installdir}/ti-integra-demos/
+	ln -sf ${installdir}/c6accel-apps/ti814x.${DSPSUFFIX} ${installdir}/ti-integra-demos/
 	ln -sf ${installdir}/c6accel-apps/test_files ${installdir}/ti-integra-demos/
 }
