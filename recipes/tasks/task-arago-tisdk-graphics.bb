@@ -25,12 +25,6 @@ MATRIX_APPS = "\
     ${FFT_DEMO} \
     "
 
-MATRIX_APPS_ti814x = "\
-    libxml2 \
-    ${QTWIDGET_DEMO} \
-    ${FFT_DEMO} \
-    "
-
 # Install 3D graphics for all omap3 SOC_FAMILY devices
 GRAPHICS_3D = ""
 GRAPHICS_3D_omap3 = "libgles-omap3-rawdemos"
