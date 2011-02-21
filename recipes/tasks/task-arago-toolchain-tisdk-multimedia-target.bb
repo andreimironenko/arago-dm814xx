@@ -7,6 +7,7 @@ inherit task
 RDEPENDS_${PN} = "\
     gstreamer-dev \
     gst-plugins-base-dev \
+    ortp-dev \
 #    gst-plugins-good-dev \
 #    gst-plugins-ugly-dev \
 #    gst-plugins-bad-dev \
