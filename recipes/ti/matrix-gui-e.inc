@@ -20,7 +20,9 @@ PLATFORM_am180x-evm = "am180x"
 PLATFORM_am181x-evm = "am181x"
 PLATFORM_am3517-evm = "am3517"
 
-SRC_URI = "svn://gforge.ti.com/svn/matrix_gui/;module=trunk;proto=https;user=anonymous;pswd='' "
+SRC_URI = "svn://gforge.ti.com/svn/matrix_gui/;module=trunk;proto=https;user=anonymous;pswd='' \
+           file://TI816X_Enable_Multi_Display.patch \
+"
 
 S = "${WORKDIR}/trunk"
 
