@@ -39,7 +39,7 @@ do_install() {
     install -d ${D}/${installdir}/ti-hdvpss-display-utils
     install -m 0755 ${S}/firmware/firmware_loader ${D}/${installdir}/ti-hdvpss-display-utils/
     install -m 0755 ${S}/firmware/${PLATFORM}/*.xem3 ${D}/${installdir}/ti-hdvpss-display-utils/
-    install -m 0755 ${S}/firmware/change_resolution.sh ${D}/${installdir}/ti-hdvpss-display-utils/
+    install -m 0755 ${S}/firmware/${PLATFORM}/change_resolution.sh ${D}/${installdir}/ti-hdvpss-display-utils/
   
     # Install the init script
     install -d ${D}${sysconfdir}/init.d
