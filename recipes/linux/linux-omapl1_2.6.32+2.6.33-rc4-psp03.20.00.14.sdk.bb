@@ -5,7 +5,7 @@ PSPREL = "03.20.00.14.sdk"
 
 SRCREV = "v2.6.33-rc4_DAVINCIPSP_03.20.00.14"
 
-COMPATIBLE_MACHINE = "am180x-evm"
+COMPATIBLE_MACHINE = "am180x-evm|da850-omapl138-evm"
 
 # Add PSP supported patches that go on top of the 03.20.00.14 release
 # These patches should be removed with the next PSP release.
