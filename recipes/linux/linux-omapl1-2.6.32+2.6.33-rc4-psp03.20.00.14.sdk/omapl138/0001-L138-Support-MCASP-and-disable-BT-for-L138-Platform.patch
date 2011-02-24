@@ -1,0 +1,91 @@
+From c3e7b5b99449c654af820f18279b34f045072462 Mon Sep 17 00:00:00 2001
+From: Sanjay Kumar Champati <csanjay@mistralsolutions.com>
+Date: Tue, 22 Feb 2011 19:35:18 +0900
+Subject: [PATCH] L138: Support MCASP and disable BT for L138 Platform
+
+This patch Supports:
+
+1. Enable MCASP feature on L138 EVM.
+2. Disbale BT feature on L138.
+3. Modified defconfig file enable default MCASP configuration.
+
+Signed-off-by: Sanjay Kumar Champati <csanjay@mistralsolutions.com>
+---
+ arch/arm/configs/da850_omapl138_defconfig |    5 +++--
+ arch/arm/mach-davinci/board-da850-evm.c   |    3 +--
+ arch/arm/mach-davinci/da850.c             |    2 --
+ 3 files changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/configs/da850_omapl138_defconfig b/arch/arm/configs/da850_omapl138_defconfig
+index 4034c2a..084cde8 100644
+--- a/arch/arm/configs/da850_omapl138_defconfig
++++ b/arch/arm/configs/da850_omapl138_defconfig
+@@ -1,7 +1,7 @@
+ #
+ # Automatically generated make config: don't edit
+ # Linux kernel version: 2.6.33-rc4
+-# Wed Dec  1 04:52:46 2010
++# Tue Feb 22 16:21:41 2011
+ #
+ CONFIG_ARM=y
+ CONFIG_SYS_SUPPORTS_APM_EMULATION=y
+@@ -243,7 +243,7 @@ CONFIG_ARCH_DAVINCI_DA850=y
+ # CONFIG_DA8XX_MAX_SPEED_372 is not set
+ # CONFIG_DA8XX_MAX_SPEED_408 is not set
+ CONFIG_DA8XX_MAX_SPEED_456=y
+-CONFIG_DAVINCI_UART1_AFE=y
++# CONFIG_DAVINCI_UART1_AFE is not set
+ CONFIG_ARCH_DAVINCI_DA8XX=y
+ # CONFIG_ARCH_DAVINCI_DM365 is not set
+ 
+@@ -1353,6 +1353,7 @@ CONFIG_USB_HID=y
+ # CONFIG_HID_SMARTJOYPLUS is not set
+ # CONFIG_HID_TOPSEED is not set
+ # CONFIG_HID_THRUSTMASTER is not set
++# CONFIG_HID_WACOM is not set
+ # CONFIG_HID_ZEROPLUS is not set
+ CONFIG_USB_SUPPORT=y
+ CONFIG_USB_ARCH_HAS_HCD=y
+diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
+index 7fed9e2..abf3099 100755
+--- a/arch/arm/mach-davinci/board-da850-evm.c
++++ b/arch/arm/mach-davinci/board-da850-evm.c
+@@ -1315,7 +1315,7 @@ static __init void da850_evm_init(void)
+ 					" failed: %d\n", ret);
+ 	}
+ 
+-#ifndef CONFIG_WIFI_CONTROL_FUNC
++
+ 	if (HAS_MCASP) {
+ 		if ((HAS_MCBSP0 || HAS_MCBSP1))
+ 			pr_warning("WARNING: both McASP and McBSP are enabled, "
+@@ -1334,7 +1334,6 @@ static __init void da850_evm_init(void)
+ 
+ 		da8xx_register_mcasp(0, &da850_evm_snd_data);
+ 	}
+-#endif
+ 
+ 	ret = da8xx_pinmux_setup(da850_lcdcntl_pins);
+ 	if (ret)
+diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
+index 4f4b43f..c8d556e 100755
+--- a/arch/arm/mach-davinci/da850.c
++++ b/arch/arm/mach-davinci/da850.c
+@@ -786,14 +786,12 @@ const short da850_rmii_pins[] __initdata = {
+ 	-1
+ };
+ 
+-#ifndef CONFIG_WIFI_CONTROL_FUNC
+ const short da850_mcasp_pins[] __initdata = {
+ 	DA850_AHCLKX, DA850_ACLKX, DA850_AFSX,
+ 	DA850_ACLKR, DA850_AFSR, DA850_AMUTE,
+ 	DA850_AXR_11, DA850_AXR_12,
+ 	-1
+ };
+-#endif
+ 
+ const short da850_lcdcntl_pins[] __initdata = {
+ 	DA850_LCD_D_0, DA850_LCD_D_1, DA850_LCD_D_2, DA850_LCD_D_3,
+-- 
+1.7.3.4
+

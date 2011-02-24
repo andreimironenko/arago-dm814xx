@@ -34,6 +34,11 @@ WILINK_PATCHES = " \
 	file://0005-Modified-defconfig-for-WL1271-DC-support-on-AM1808.patch\
 	"
 
+# Apply the patch to disable BT on OMAPL138 only
+SRC_URI_append_da850-omapl138-evm = " \
+   file://0001-L138-Support-MCASP-and-disable-BT-for-L138-Platform.patch \
+  "
+
 SRC_URI += "${WILINK_PATCHES}"
 
 sysroot_stage_all_append() {
