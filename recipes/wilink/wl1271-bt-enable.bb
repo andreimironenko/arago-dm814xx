@@ -3,9 +3,9 @@ SECTION = "network"
 LICENSE = "BSD"
 DEPENDS += "virtual/kernel"
 
-MACHINE_KERNEL_PR_append = "c"
+MACHINE_KERNEL_PR_append = "d"
 
-COMPATIBLE_MACHINE = "am180x-evm"
+COMPATIBLE_MACHINE = "am180x-evm|da850-omapl138-evm"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/ecs/WL1271_Linux_SDK/Demos/wl1271-demos_v1.tar"
 
