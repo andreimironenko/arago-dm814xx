@@ -1,5 +1,7 @@
 require ti-omx.inc
 
+COMPATIBLE_MACHINE = "(dm816x-evm)"
+
 PV = "05_00_00_08"
 PVExtra = "_pre-alpha1"
 

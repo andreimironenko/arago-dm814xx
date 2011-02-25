@@ -20,9 +20,16 @@ DEPENDS += "ti-xdais ti-codec-engine ti-framework-components"
 DEPENDS += "ti-hdvpss"
 DEPENDS += "ortp alsa-lib"
 
+VCTARGET_ti816x = "vc3"
+VCTARGET_ti814x = "Cent_vc3"
+VCTARGET = "<UNDEFINED>"
+VSTARGET_ti816x = "vs2"
+VSTARGET_ti814x = "Cent_vs2_hdvpss"
+VSTARGET = "<UNDEFINED>"
+
 do_compile() {
     # Build VC3 (Video Conference)
-    cd ${S}/packages && make vc3 \
+    cd ${S}/packages && make ${VCTARGET} \
         ROOTDIR=${S}/packages \
         INTERNAL_SW_ROOT=${S}/packages \
         EXTERNAL_SW_ROOT=${DVSDK_INSTALL_DIR} \
@@ -43,9 +50,7 @@ do_compile() {
         rtp_PATH=${STAGING_DIR_TARGET}/usr \
         CODEGEN_PATH_M3=${CODEGEN_ARM_INSTALL_DIR} \
         CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
-        DEST_ROOT=${S}/rebuilt-binaries \
-        PROFILE_m3video=debug \
-        PROFILE_m3vpss=debug 
+        DEST_ROOT=${S}/rebuilt-binaries
 
     # Clean before building next target
     cd ${S}/packages && make cleanall \
@@ -67,12 +72,10 @@ do_compile() {
         hdvpss_PATH=${HDVPSS_INSTALL_DIR} \
         CODEGEN_PATH_M3=${CODEGEN_ARM_INSTALL_DIR} \
         CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
-        DEST_ROOT=${S}/rebuilt-binaries \
-        PROFILE_m3video=debug \
-        PROFILE_m3vpss=debug 
+        DEST_ROOT=${S}/rebuilt-binaries
 
     # Build VS2 {Video Surveillance}
-    cd ${S}/packages && make vs2 \
+    cd ${S}/packages && make i${VSTARGET}  \
         ROOTDIR=${S}/packages \
         INTERNAL_SW_ROOT=${S}/packages \
         EXTERNAL_SW_ROOT=${DVSDK_INSTALL_DIR} \
@@ -91,9 +94,7 @@ do_compile() {
         hdvpss_PATH=${HDVPSS_INSTALL_DIR} \
         CODEGEN_PATH_M3=${CODEGEN_ARM_INSTALL_DIR} \
         CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
-        DEST_ROOT=${S}/rebuilt-binaries \
-        PROFILE_m3video=debug \
-        PROFILE_m3vpss=debug 
+        DEST_ROOT=${S}/rebuilt-binaries
 
 }
 

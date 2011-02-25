@@ -70,6 +70,16 @@ MULTIMEDIA_SOURCETREE_ti816x = " \
     ti-omx-src \
     ortp-src \
     "
+
+MULTIMEDIA_SOURCETREE_ti814x = " \
+    ti-cgt470-src \
+    ti-codecs-dm814x-src \
+    ti-ivahd-hdvicp20api-src \
+    ti-hdvpss-src \
+    ti-omx-src \
+    ortp-src \
+    "
+
 RRECOMMENDS_${PN} = "\
     ${MULTIMEDIA_SOURCETREE} \
     "
