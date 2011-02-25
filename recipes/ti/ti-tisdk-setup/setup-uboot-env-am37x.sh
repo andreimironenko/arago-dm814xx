@@ -23,24 +23,25 @@ if [ -f $cwd/../.targetfs ]; then
     rootpath=`cat $cwd/../.targetfs`
 else
     echo "Where is your target filesystem extracted?"
-    read -p "[ ${HOME}/targetfs ]" rootpath
+    read -p "[ ${HOME}/targetNFS ]" rootpath
 
     if [ ! -n "$rootpath" ]; then
-        rootpath="${HOME}/targetfs"
+        rootpath="${HOME}/targetNFS"
     fi
     echo
 fi
 
-uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
+uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyS0,115200n8 rw mem=99M mpurate=1000"
-videoargs1="omap_vout.vid1_static_vrfb_alloc=y"
-videoargs2="omapfb.vrfb=y vram=20M omapfb.vram=0:20M"
-videoargs3="omapfb.mode=dvi:720x480MR-16@60"
-videoargs="$videoargs1 $videoargs2 $videoargs3"
-fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3"
-fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath"
+baseargs="console=ttyS0,115200n8 rw noinitrd mpurate=1000"
+videoargs=""
+fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3 rootwait"
+fsnfsargs1="root=/dev/nfs nfsroot="
+fsnfsargs2="$ip:"
+fsnfsargs3="$rootpath"
+fsnfsargs4=",nolock,rsize=1024,wsize=1024"
+fsnfsargs=$fsnfsargs1$fsnfsargs2$fsnfsargs3$fsnfsargs4
 
 echo "Select Linux kernel location:"
 echo " 1: TFTP"
@@ -141,7 +142,8 @@ if [ ! -n "$minicom" ]; then
     minicom="y"
 fi
 
-if [ "$minicom" == "y" ]; then
+#Use = instead of == for POSIX compliance and dash compatibility
+if [ "$minicom" = "y" ]; then
     minicomfile=setup_$platform_$cfg.minicom
     minicomfilepath=$cwd/../$minicomfile
 
@@ -160,16 +162,28 @@ if [ "$minicom" == "y" ]; then
     do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv oldbootargs \$\{bootargs\}\"" $minicomfilepath
-    do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs \c\"" $minicomfilepath
-    echo "send \"$videoargs1 \c\"" >> $minicomfilepath
-    echo "send \"$videoargs2 \c\"" >> $minicomfilepath
-    echo "send \"$videoargs3 \c\"" >> $minicomfilepath
-#    echo "send \"$videoargs4 \c\"" >> $minicomfilepath
+
+#   For dash compatibility need to use printf instead of echo
+#   because dash shell will expand the \c by default
+#   do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs \c\"" $minicomfilepath
+    echo "expect {" >> $minicomfilepath
+    check_status
+    echo "    \"$prompt\"" >> $minicomfilepath
+    check_status
+    echo "}" >> $minicomfilepath
+    check_status
+    printf "send \"setenv bootargs $baseargs \c\"\n" >> $minicomfilepath
+    check_status
+
+#   For dash compatibility need to use printf instead of echo
     if [ "$fs" -eq "1" ]; then
-        echo "send \"$fsnfsargs \c\"" >> $minicomfilepath
+        printf "send \"$fsnfsargs1\c\"\n" >> $minicomfilepath
+        printf "send \"$fsnfsargs2\c\"\n" >> $minicomfilepath
+        printf "send \"$fsnfsargs3\c\"\n" >> $minicomfilepath
+        printf "send \"$fsnfsargs4 \c\"\n" >> $minicomfilepath
         echo "send \"ip=dhcp\"" >> $minicomfilepath
     else
-        echo "send \"$fssdargs \c\"" >> $minicomfilepath
+        printf "send \"$fssdargs \c\"\n" >> $minicomfilepath
         echo "send \"ip=off\"" >> $minicomfilepath
     fi
     if [ "$kernel" -eq "1" ]; then
@@ -184,7 +198,8 @@ if [ "$minicom" == "y" ]; then
     do_expect "\"$prompt\"" "send \"saveenv\"" $minicomfilepath
     do_expect "\"$prompt\"" "! killall -s SIGHUP minicom" $minicomfilepath
 
-    echo "Successfully wrote $minicomfile"
+    echo -n "Successfully wrote "
+    readlink -m $minicomfilepath
     echo
     echo "Would you like to run the setup script now (y/n)? This requires you to connect"
     echo "the RS-232 cable between your host and EVM as well as your ethernet cable as"
@@ -203,13 +218,16 @@ if [ "$minicom" == "y" ]; then
         minicomsetup="y"
     fi
 
-    if [ "$minicomsetup" == "y" ]; then
-        pushd $cwd/..
+    savedir=""
+#Use = instead of == for POSIX compliance and dash compatibility
+    if [ "$minicomsetup" = "y" ]; then
+#For dash compatibility, do not use pushd and popd
+        savedir=$cwd
+        cd "$cwd/.."
         check_status
         minicom -S $minicomfile
-        popd >> /dev/null
+        cd $savedir
         check_status
-
     fi
     
     echo "You can manually run minicom in the future with this setup script using: minicom -S $minicomfile"
