@@ -11,6 +11,8 @@ SRC_URI[psptarball.sha256sum] = "8a2dd8738efaf083718c6ab0da6815d272e23fdf60a6e09
 
 S = ${WORKDIR}/TI814X-LINUX-PSP-04.01.00.02/host-tools
 
+PACKAGE_STRIP = "no"
+
 do_install () {
     install -d ${D}/${installdir}/ti-psp-tree/host-tools
     cp -pPrf ${S}/* ${D}${installdir}/ti-psp-tree/host-tools/
