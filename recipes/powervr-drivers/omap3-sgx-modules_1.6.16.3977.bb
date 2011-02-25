@@ -21,6 +21,8 @@ SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/gf
 SRC_URI[md5sum] = "4163ee51bc05689b6f61e7eadf5ab9cf"
 SRC_URI[sha256sum] = "1afe0dc4974c3c0a0ccf267a531d0964459d1cdf1929e732958230641973da94"
 
+SRC_URI +=  "file://sysutils_linux.c"
+
 S = "${WORKDIR}/Graphics_SDK_${SGXPV}/GFX_Linux_KM"
 
 PVRBUILD = "release"
@@ -36,6 +38,12 @@ MODULESLOCATION_ti816x = "dc_ti81xx_linux"
 MODULESLOCATION_ti814x = "dc_ti81xx_linux"
 
 MAKE_TARGETS = " BUILD=${PVRBUILD} TI_PLATFORM=${TI_PLATFORM}"
+
+do_prepsources() {
+    cp -f ${WORKDIR}/sysutils_linux.c ${S}/services4/system/ti81xx/
+}
+
+addtask prepsources after do_unpack before do_patch
 
 do_install() {
 	mkdir -p ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/gpu/pvr

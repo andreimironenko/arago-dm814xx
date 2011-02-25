@@ -3,6 +3,8 @@
 
 if [ "$(machine_id)" = "ti8168evm" ] ; then
 	echo TI816x
+elif [ "$(machine_id)" = "ti8148evm" ] ; then
+	echo TI814x
 else
 	devmem2 0x4800244c | \
 	grep 'Value at address' | \
