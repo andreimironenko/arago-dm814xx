@@ -180,6 +180,7 @@ syslink_hlos:
 		CROSS_COMPILE=${CSTOOL_PREFIX} \
 		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
 		SYSLINK_PLATFORM=TI81XX \
+		SYSLINK_VARIANT=TI814X \
 		KDIR=$(LINUXKERNEL_INSTALL_DIR)
 	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/usr/Linux/ \
 		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
@@ -188,6 +189,7 @@ syslink_hlos:
 		CROSS_COMPILE=${CSTOOL_PREFIX} \
 		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
 		SYSLINK_PLATFORM=TI81XX \
+		SYSLINK_VARIANT=TI814X \
 		KDIR=$(LINUXKERNEL_INSTALL_DIR)
 
 syslink_hlos_clean: 
@@ -198,6 +200,7 @@ syslink_hlos_clean:
 		CROSS_COMPILE=${CSTOOL_PREFIX} \
 		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
 		SYSLINK_PLATFORM=TI81XX \
+		SYSLINK_VARIANT=TI814X \
 		KDIR=$(LINUXKERNEL_INSTALL_DIR) clean
 	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/usr/Linux/ \
 		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
@@ -206,6 +209,7 @@ syslink_hlos_clean:
 		CROSS_COMPILE=${CSTOOL_PREFIX} \
 		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
 		SYSLINK_PLATFORM=TI81XX \
+		SYSLINK_VARIANT=TI814X \
 		KDIR=$(LINUXKERNEL_INSTALL_DIR) clean
 
 syslink_rtos: syslink_cfg
@@ -223,8 +227,8 @@ syslink: syslink_hlos syslink_rtos
 
 syslink_install:
 	install -d $(EXEC_DIR)/syslink
-	install ${SYSLINK_INSTALL_DIR}/ti/syslink/lib/modules/TI81XX/syslink.ko $(EXEC_DIR)/syslink
-	cp ${SYSLINK_INSTALL_DIR}/ti/syslink/lib/syslink.a $(EXEC_DIR)/syslink
+	install ${SYSLINK_INSTALL_DIR}/ti/syslink/bin/TI814X/syslink.ko $(EXEC_DIR)/syslink
+	cp ${SYSLINK_INSTALL_DIR}/ti/syslink/lib/syslink.a* $(EXEC_DIR)/syslink
 
 ##############################################################################
 #  Build c6accel
@@ -353,10 +357,10 @@ matrix_clean:
 matrix_install:
 	install -d $(EXEC_DIR)/matrix
 	install -m 0755 $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/matrix_gui $(EXEC_DIR)/matrix
-	cp -ar $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/ti814x/bin \
+	cp -arf $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/ti814x/bin \
         $(EXEC_DIR)/matrix/
-	cp -ar $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/ti814x/html \
+	cp -arf $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/ti814x/html \
         $(EXEC_DIR)/matrix/
-	cp -ar $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/images/ \
+	cp -arf $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/images/ \
         $(EXEC_DIR)/matrix/
 
