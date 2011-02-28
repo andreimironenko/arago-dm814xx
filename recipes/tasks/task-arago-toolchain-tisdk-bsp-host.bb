@@ -99,6 +99,7 @@ BSP_COMPONENTS_ti816x = "\
     ti-docs-sdg \
     ti-docs-psp \
     ti-host-tools-psp \
+    ti-psp-driver-examples \
     ti-tisdk-mksdboot \
     linux-omap3-src \
     pinmux-utility \
@@ -111,6 +112,7 @@ BSP_COMPONENTS_ti814x = "\
     ti-docs-sdg \
     ti-docs-psp \
     ti-host-tools-psp \
+    ti-psp-driver-examples \
     ti-tisdk-mksdboot \
     linux-omap3-src \
     "
