@@ -1,0 +1,13 @@
+Index: trunk/ti816x/html/menu_dsp.html
+===================================================================
+--- trunk/ti816x/html/menu_dsp.html	(revision 232)
++++ trunk/ti816x/html/menu_dsp.html	(working copy)
+@@ -83,8 +83,6 @@
+   </div>
+   <div class="object">
+   </div>
+-  <div class="object">
+-  </div>
+ 
+   <div class="object">
+     <object type="application/x-matrix" >
