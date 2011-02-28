@@ -116,6 +116,19 @@ sub remove_script
 }
 
 ################################################################################
+# remove_span
+################################################################################
+sub remove_span
+{
+    my $lines = $_[0];
+    my $pattern = $_[1];
+
+    for (my $cnt = 0; $cnt < scalar @$lines; $cnt++) {
+        @$lines[$cnt] =~ s/> <span $pattern(.*)<.span>/ $pattern$1/i;
+    }
+}
+
+################################################################################
 # insert_header
 ################################################################################
 sub insert_header
@@ -182,6 +195,7 @@ sub process_page
 
     remove_div(\@lines, "id=\"jump-to-nav\"");
     remove_div(\@lines, "id=\"BreadCrumbsTrail\"");
+    remove_span(\@lines, "class=\"mw-headline\"");
 
     remove_link(\@lines, "rel=\"search\"");
     remove_link(\@lines, "title=\"Creative Commons\"");
