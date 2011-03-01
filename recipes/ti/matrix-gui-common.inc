@@ -22,7 +22,11 @@ PLATFORM_am3517-evm = "am3517"
 
 #Checkout the project repository to get access to the scripts and data
 #files.
-SRC_URI = "svn://gforge.ti.com/svn/matrix_gui/;module=trunk;proto=https;user=anonymous;pswd='' "
+SRC_URI = "svn://gforge.ti.com/svn/matrix_gui/;module=trunk;proto=https;user=anonymous;pswd='' \
+           file://TI816X_Enable_Multi_Display.patch \
+           file://TI81xx_Fix_dspbenchmarks_memory_map.patch \
+           file://TI816X_Adjust_DSP_Menu.patch \
+"
 
 S = "${WORKDIR}/trunk"
 
