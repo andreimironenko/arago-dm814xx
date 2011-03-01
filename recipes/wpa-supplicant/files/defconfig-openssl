@@ -7,8 +7,9 @@
 # be modified from here. In most cass, these lines should use += in order not
 # to override previous values of the variables.
 
-CFLAGS = $(TARGET_CFLAGS) -I../hostapd -I../utils -I../driver/modules -Wall -MMD
-LIBS = $(TARGET_LDFLAGS)
+CFLAGS = $(TARGET_CFLAGS) -I../hostapd -I../utils -I../driver/modules -Wall -MMD $(TOOLCHAIN_OPTIONS)
+LIBS = $(TARGET_LDFLAGS) $(TOOLCHAIN_OPTIONS)
+LIBS_p = $(TARGET_LDFLAGS) $(TOOLCHAIN_OPTIONS)
 
 # Driver interface for Host AP driver
 CONFIG_DRIVER_HOSTAP=y

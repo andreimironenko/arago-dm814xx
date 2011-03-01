@@ -4,7 +4,7 @@ LICENSE = "GPLv2 BSD"
 HOMEPAGE = "http://hostap.epitest.fi/wpa_supplicant/"
 DEPENDS = "virtual/kernel openssl"
 
-PR = "r3-arago1"
+PR = "r3-arago2"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
@@ -33,6 +33,8 @@ FILES_wpa-supplicant-passphrase = "/usr/sbin/wpa_passphrase"
 RREPLACES = "wpa-supplicant-cli"
 
 RRECOMMENDS_${PN} = "wpa-supplicant-passphrase"
+
+export TOOLCHAIN_OPTIONS
 
 do_configure () {
 	install -m 0644 ${WORKDIR}/defconfig-openssl .config
