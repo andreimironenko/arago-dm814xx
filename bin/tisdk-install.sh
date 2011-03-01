@@ -291,7 +291,7 @@ echo "
 #
 display_in_bom()
 {
-    echo "Checking for $1"
+    # echo "Checking for $1"
     case "$1" in
       *ti-*) return 1 ;;
       *qt4-embedded*) return 1 ;;
