@@ -228,11 +228,11 @@ echo "
 <HTML>
 <HEAD>
 <TITLE>
-$machine_family EZ SDK ${SDK_VERSION} Installation Summary 
+$machine EZ SDK ${SDK_VERSION} Installation Summary 
 </TITLE>
 </HEAD>
 <BODY>
-<h1><CENTER> $machine_family EZ SDK ${SDK_VERSION} Software Manifest </CENTER></h1>
+<h1><CENTER> $machine EZ SDK ${SDK_VERSION} Software Manifest </CENTER></h1>
 <h2><b><u>Legend</u></b></h2>
 <table border=1 width=45%>
 <tr><td>Package Name</td><td>The name of the application or files</td></tr>
@@ -332,11 +332,11 @@ echo "
 <HTML>
 <HEAD>
 <TITLE>
-$machine_family EZ SDK ${SDK_VERSION} Installation Build of Materials
+$machine EZ SDK ${SDK_VERSION} Installation Build of Materials
 </TITLE>
 </HEAD>
 <BODY>
-<h1><CENTER> $machine_family EZ SDK ${SDK_VERSION} Build of Materials </CENTER></h1>
+<h1><CENTER> $machine EZ SDK ${SDK_VERSION} Build of Materials </CENTER></h1>
 <h2><b><u>Legend</u></b></h2>
 <table border=1 width=45%>
 <tr><td>Package Name</td><td>The name of the application or files</td></tr>
