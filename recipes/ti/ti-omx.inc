@@ -14,11 +14,17 @@ SRC_URI = "http://install.source.dir.local/omx_${PV}${PVExtra}.tar.gz;name=omx"
 SYSLINK_ROOT = "${WORKDIR}/syslink_${SYSLINKPV}${SYSLINKPVextra}"
 export SYSLINK_ROOT
 
-DEPENDS = "ti-sysbios ti-xdctools ti-ipc ti-cgt470 ti-osal ti-syslink"
-DEPENDS += "ti-ivahd-hdvicp20api ti-codecs-dm816x"
-DEPENDS += "ti-xdais ti-codec-engine ti-framework-components"
-DEPENDS += "ti-hdvpss"
-DEPENDS += "ortp alsa-lib"
+DEPENDS_ti816x = "ti-sysbios ti-xdctools ti-ipc ti-cgt470 ti-osal ti-syslink"
+DEPENDS_ti816x += "ti-ivahd-hdvicp20api ti-codecs-dm816x"
+DEPENDS_ti816x += "ti-xdais ti-codec-engine ti-framework-components"
+DEPENDS_ti816x += "ti-hdvpss"
+DEPENDS_ti816x += "ortp alsa-lib"
+
+DEPENDS_ti814x = "ti-sysbios ti-xdctools ti-ipc ti-cgt470 ti-osal ti-syslink"
+DEPENDS_ti814x += "ti-ivahd-hdvicp20api ti-codecs-dm814x"
+DEPENDS_ti814x += "ti-xdais ti-codec-engine ti-framework-components"
+DEPENDS_ti814x += "ti-hdvpss"
+DEPENDS_ti814x += "ortp alsa-lib"
 
 VCTARGET_ti816x = "vc3"
 VCTARGET_ti814x = "Cent_vc3"
@@ -75,7 +81,7 @@ do_compile() {
         DEST_ROOT=${S}/rebuilt-binaries
 
     # Build VS2 {Video Surveillance}
-    cd ${S}/packages && make i${VSTARGET}  \
+    cd ${S}/packages && make ${VSTARGET}  \
         ROOTDIR=${S}/packages \
         INTERNAL_SW_ROOT=${S}/packages \
         EXTERNAL_SW_ROOT=${DVSDK_INSTALL_DIR} \
