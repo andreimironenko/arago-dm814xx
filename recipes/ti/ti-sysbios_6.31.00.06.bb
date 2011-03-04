@@ -9,3 +9,4 @@ SRC_URI[sysbiosbin.sha256sum] = "6e48e305349d6dff456bc56c13edfd7f45a4e9f5cc62953
 HTTP_PROXY_IGNORE="www.sanb.design.ti.com"
 SRC_URI = "http://www.sanb.design.ti.com/tisb_releases/BIOS/6_31_00_06/exports/bios_setuplinux_${PV}.bin;name=sysbiosbin"
 
+TI_BIN_UNPK_CMDS="Y: qY:workdir:Y"
