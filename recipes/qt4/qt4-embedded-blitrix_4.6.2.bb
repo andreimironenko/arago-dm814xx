@@ -25,7 +25,7 @@ PR = "${INC_PR}.1"
 
 # This recipe is valid for SOC_FAMILY devices that are based on the
 # cortex-A8 with neon.
-COMPATIBLE_MACHINE = "omap3|ti816x"
+COMPATIBLE_MACHINE = "omap3|ti816x|ti814x"
 
 # Required so that this is a valid recipe for qt4-embedded target
 # NOTE: In order for this recipe to be picked-up when qt4-embedded
