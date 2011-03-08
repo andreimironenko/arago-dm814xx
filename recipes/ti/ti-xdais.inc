@@ -6,9 +6,10 @@ SECTION = "devel"
 require ti-paths.inc
 require ti-staging.inc
 
-PR = "r1"
+PR = "r2"
+PVExtra = ""
 
-S = "${WORKDIR}/xdais_${PV}"
+S = "${WORKDIR}/xdais_${PV}${PVExtra}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/xdais/${PV}/exports/xdais_${PV}.tar.gz;name=xdaistarball"
 
