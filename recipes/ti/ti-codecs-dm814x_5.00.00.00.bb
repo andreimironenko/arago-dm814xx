@@ -12,16 +12,16 @@ PV="5_00_00_00"
 
 CODEC_SUITE_NAME="${WORKDIR}/${PN}_${PV}"
 
-SRC_URI = "http://install.source.dir.local/REL.500.V.H264AVC.D.HP.IVAHD.01.00.00.00.zip;name=h264dec \
-           http://install.source.dir.local/REL.500.V.H264AVC.E.IVAHD.01.00.00.00.zip;name=h264enc \
+SRC_URI = "http://install.source.dir.local/ivahd_h264dec_01_00_00_00_production.tar;name=h264dec \
+           http://install.source.dir.local/ivahd_h264enc_01_00_00_00_production.tar;name=h264enc \
 
 "
 
-SRC_URI[h264dec.md5sum] = "b555a33e9e99d42c1aa9c5ce9992c396"
-SRC_URI[h264dec.sha256sum] = "146ac8a116c45d5fd95fd5a51cc0b9e833bd32b2958cba4cffe9e153bead15dc"
+SRC_URI[h264dec.md5sum] = "b6b002eefdcf7ee0e213b2bb184d1b38"
+SRC_URI[h264dec.sha256sum] = "bb683dc5f7fecd3122c2af6e1942a58cd105f29b34654fd8b60e71dc9436d853"
 
-SRC_URI[h264enc.md5sum] = "d2e19b1b3aa61f33759ea772c4c5012e"
-SRC_URI[h264enc.sha256sum] = "108c96e9dfd9f68eb93859cf1b4ce11ad1483660c062dba3e11af49cfa62c9dc"
+SRC_URI[h264enc.md5sum] = "ddd866095d157e685e5c6e04500b3c79"
+SRC_URI[h264enc.sha256sum] = "e89040bfc81291b2f321f5b835f0e44ad61c0eeccfe13aff019112e97aef11df"
 
 S = "${CODEC_SUITE_NAME}"
 
@@ -29,8 +29,8 @@ addtask prepsources after do_unpack before do_patch
 
 do_prepsources () {
     cd ${WORKDIR}
-    tar -xf "${WORKDIR}/REL.500.V.H264AVC.D.HP.IVAHD.01.00.00.00/ivahd_h264dec_01_00_00_00_production.tar"
-    tar -xf "${WORKDIR}/REL.500.V.H264AVC.E.IVAHD.01.00.00.00/ivahd_h264enc_01_00_00_00_production.tar"
+    tar -xf "${WORKDIR}/ivahd_h264dec_01_00_00_00_production.tar"
+    tar -xf "${WORKDIR}/ivahd_h264enc_01_00_00_00_production.tar"
 
     mkdir -p ${CODEC_SUITE_NAME}/packages/ti/sdo/codecs
 
