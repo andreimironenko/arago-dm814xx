@@ -10,7 +10,7 @@ BRANCH ?= "master"
 SRC_URI = "git://arago-project.org/git/projects/linux-davinci.git;protocol=git;branch=${BRANCH} \
 	file://defconfig"
 
-COMPATIBLE_MACHINE = "(dm6446-evm|dm6467-evm|dm6467t-evm|dm355-evm|dm365-evm)"
+COMPATIBLE_MACHINE = "(dm6446-evm|dm6467-evm|dm6467t-evm|dm355-evm|dm365-evm|dm368-evm)"
 
 S = "${WORKDIR}/git"
 
