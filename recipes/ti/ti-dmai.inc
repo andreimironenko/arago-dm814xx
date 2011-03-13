@@ -18,13 +18,6 @@ DMAIBRANCH           ?= "<UNDEFINED_DMAIBRANCH>"
 S = "${WORKDIR}/${DMAIBRANCH}/davinci_multimedia_application_interface/dmai_${PV}"
 
 SRC_URI = "svn://gforge.ti.com/svn/dmai/;module=${DMAIBRANCH};proto=https;user=anonymous;pswd='' \
-		file://loadmodules-ti-dmai-dm6446_al.sh \
-		file://loadmodules-ti-dmai-dm6467_al.sh \
-		file://loadmodules-ti-dmai-o3530_al.sh \
-		file://loadmodules-ti-dmai-dm355_al.sh \
-		file://loadmodules-ti-dmai-dm365_al.sh \
-		file://loadmodules-ti-dmai-ol137_al.sh \
-		file://loadmodules-ti-dmai-ol138_al.sh \
 	    file://doxygen_templates.tar.gz \
         file://arago-tdox \
 	"
@@ -109,7 +102,7 @@ do_compile () {
             CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
             LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \	
             MVTOOL_PREFIX="${TARGET_PREFIX}" \
-	    C6ACCEL_INSTALL_DIR="${C6ACCEL_INSTALL_DIR}" \
+	        C6ACCEL_INSTALL_DIR="${C6ACCEL_INSTALL_DIR}" \
             PLATFORM="${DMAIPLATFORM}" 
 	done
 }
@@ -122,7 +115,6 @@ do_install () {
     install -d ${D}/${installdir}/ti-dmai-apps
     cd ${S}
     make PLATFORM="${DMAIPLATFORM}" EXEC_DIR=${D}/${installdir}/ti-dmai-apps install 
-    install -m 0755 ${WORKDIR}/loadmodules-ti-dmai-${DMAIPLATFORM}.sh ${D}/${installdir}/ti-dmai-apps/loadmodules.sh 
 
     install -d ${D}${DMAI_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${DMAI_INSTALL_DIR_RECIPE}
@@ -134,11 +126,11 @@ INSANE_SKIP_ti-dmai-apps = True
 
 RDEPENDS_ti-dmai-apps_dm6446    += "ti-codecs-dm6446-server   ti-cmem-module ti-dsplink-module"
 RDEPENDS_ti-dmai-apps_dm6467    += "ti-codecs-dm6467          ti-cmem-module ti-dsplink-module"
-RDEPENDS_ti-dmai-apps_omap3     += "ti-codecs-omap3530-server ti-cmem-module ti-dsplink-module ti-lpm-module ti-sdma-module"
+RDEPENDS_ti-dmai-apps_omap3     += "ti-codecs-omap3530-server ti-cmem-module ti-dsplink-module ti-lpm-module ti-sdma-module ti-tisdk-loadmodule"
 RDEPENDS_ti-dmai-apps_dm355     += "ti-codecs-dm355           ti-cmem-module ti-dm355mm-module"
-RDEPENDS_ti-dmai-apps_dm365     += "ti-codecs-dm365           ti-cmem-module ti-dm365mm-module ti-edma-module ti-irq-module"
+RDEPENDS_ti-dmai-apps_dm365     += "ti-codecs-dm365           ti-cmem-module ti-dm365mm-module ti-edma-module ti-irq-module ti-tisdk-loadmodule"
 RDEPENDS_ti-dmai-apps_omapl137  += "ti-codecs-omapl137-server ti-cmem-module ti-dsplink-module"
-RDEPENDS_ti-dmai-apps_omapl138  += "ti-codecs-omapl138-server ti-cmem-module ti-dsplink-module"
+RDEPENDS_ti-dmai-apps_omapl138  += "ti-codecs-omapl138-server ti-cmem-module ti-dsplink-module ti-tisdk-loadmodule"
 
 pkg_postinst_ti-dmai-apps () {
 	ln -sf ${installdir}/ti-codecs-server/*.${DSPSUFFIX} ${installdir}/ti-dmai-apps/
