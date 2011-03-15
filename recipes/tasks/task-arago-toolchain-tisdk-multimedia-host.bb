@@ -69,6 +69,16 @@ MULTIMEDIA_SOURCETREE_ti816x = " \
     ti-hdvpss-src \
     ti-omx-src \
     ortp-src \
+    ti-sysbios-src \
+    ti-xdctools-src \
+    ti-edma3lld-src \
+    ti-framework-components-src \
+    ti-linuxutils-src \
+    ti-xdais-src \
+    ti-osal-src \
+    ti-ipc-src \
+    ti-syslink-src \
+    ti-codec-engine-src \
     "
 
 MULTIMEDIA_SOURCETREE_ti814x = " \
@@ -78,6 +88,16 @@ MULTIMEDIA_SOURCETREE_ti814x = " \
     ti-hdvpss-src \
     ti-omx-src \
     ortp-src \
+    ti-sysbios-src \
+    ti-xdctools-src \
+    ti-edma3lld-src \
+    ti-framework-components-src \
+    ti-linuxutils-src \
+    ti-xdais-src \
+    ti-osal-src \
+    ti-ipc-src \
+    ti-syslink-src \
+    ti-codec-engine-src \
     "
 
 RRECOMMENDS_${PN} = "\
