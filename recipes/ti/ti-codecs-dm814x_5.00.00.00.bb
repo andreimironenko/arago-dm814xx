@@ -29,8 +29,8 @@ addtask prepsources after do_unpack before do_patch
 
 do_prepsources () {
     cd ${WORKDIR}
-    tar -xf "${WORKDIR}/ivahd_h264dec_01_00_00_00_production.tar"
-    tar -xf "${WORKDIR}/ivahd_h264enc_01_00_00_00_production.tar"
+#    tar -xf "${WORKDIR}/ivahd_h264dec_01_00_00_00_production.tar"
+#    tar -xf "${WORKDIR}/ivahd_h264enc_01_00_00_00_production.tar"
 
     mkdir -p ${CODEC_SUITE_NAME}/packages/ti/sdo/codecs
 
