@@ -15,7 +15,11 @@ S = "${WORKDIR}/trunk"
 
 inherit module
 
-PR = "${MACHINE_KERNEL_PR}+svnr${SRCPV}"
+PR = "${MACHINE_KERNEL_PR}+svnr${SRCPV}-r1"
+
+do_compile_prepend () {
+	sed -i "s/arm-none-linux-gnueabi-/${TARGET_PREFIX}/g" ${S}/Makefile
+}
 
 do_install () {
         install -d ${D}/lib/modules/${KERNEL_VERSION}/crypto/ocf/
