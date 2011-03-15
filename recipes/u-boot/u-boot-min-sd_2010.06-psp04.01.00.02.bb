@@ -11,6 +11,7 @@ UVER = "2010.06"
 PSPREL = "04.01.00.02"
 
 SRC_URI =+ "file://${PSPREL}/0001-ti8148-Add-the-2nd-stage-bootcmd.patch"
+SRC_URI =+ "file://${PSPREL}/0001-TI814x-Enable-interleaving-and-set-IVA-clock-speed.patch"
 
 PR = "r1"
 
