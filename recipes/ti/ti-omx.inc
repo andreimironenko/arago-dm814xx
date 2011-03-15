@@ -27,10 +27,10 @@ DEPENDS_ti814x += "ti-hdvpss"
 DEPENDS_ti814x += "ortp alsa-lib"
 
 VCTARGET_ti816x = "vc3"
-VCTARGET_ti814x = "Cent_vc3"
+VCTARGET_ti814x = "vc"
 VCTARGET = "<UNDEFINED>"
 VSTARGET_ti816x = "vs2"
-VSTARGET_ti814x = "Cent_vs2_hdvpss"
+VSTARGET_ti814x = "vs"
 VSTARGET = "<UNDEFINED>"
 
 do_compile() {
@@ -100,7 +100,9 @@ do_compile() {
         hdvpss_PATH=${HDVPSS_INSTALL_DIR} \
         CODEGEN_PATH_M3=${CODEGEN_ARM_INSTALL_DIR} \
         CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
-        DEST_ROOT=${S}/rebuilt-binaries
+        DEST_ROOT=${S}/rebuilt-binaries \
+        PROFILE_m3video=whole_program_debug \
+        PROFILE_m3vpss=whole_program_debug
 
 }
 
