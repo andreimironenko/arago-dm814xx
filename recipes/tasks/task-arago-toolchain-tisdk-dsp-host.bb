@@ -62,6 +62,7 @@ DSP_SOURCETREE_ti816x = "\
     ti-syslink-src \
     ti-codec-engine-src \
     ti-c6accel-src \
+    ti-c6run-src \
     ti-dsp-benchmark-src \
     ti-dsplib-c674x-src \
     ti-imglib-c64plus-src \
@@ -84,6 +85,7 @@ DSP_SOURCETREE_ti814x = "\
     ti-syslink-src \
     ti-codec-engine-src \
     ti-c6accel-src \
+    ti-c6run-src \
     ti-dsp-benchmark-src \
     ti-dsplib-c674x-src \
     ti-imglib-c64plus-src \
