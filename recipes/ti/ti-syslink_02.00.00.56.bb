@@ -4,6 +4,9 @@ PV = "02_00_00_56"
 PVwithdots = "02.00.00.56"
 PVextra = "_alpha2"
 
+# This is an internal engineering release. Do not use this release by default.
+DEFAULT_PREFERENCE = "-1"
+
 SRC_URI[syslinktarball.md5sum] = "3c64532333e630e3742af84501d0dc7f"
 SRC_URI[syslinktarball.sha256sum] = "d04eb1e3141f2056f3cd000c21a98c3bac14c4a43c88b74f0fb5d783bddeefe9"
 
