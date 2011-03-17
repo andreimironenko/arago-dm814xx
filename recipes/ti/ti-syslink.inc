@@ -1,7 +1,7 @@
 DESCRIPTION = "SYSLINK Inter-Processor Communications (IPC) for TI ARM/DSP processors"
 HOMEPAGE = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/syslink/index.html"
 SECTION = "devel"
-LICENSE = "TI"
+LICENSE = "BSD"
 
 # TODO :: multi-machine, add m3 build as well?
 # TODO :: proper staging?
@@ -18,15 +18,15 @@ PROVIDES += "ti-syslink-examples"
 
 # This package builds a kernel module, use kernel PR as base and append a local version
 PR = "${MACHINE_KERNEL_PR}"
-PR_append = "i"
+PR_append = "j"
+
+PVextra = ""
 
 S = "${WORKDIR}/syslink_${PV}${PVextra}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/syslink/${PV}/exports/syslink_${PV}.tar.gz;name=syslinktarball"
 
-DEPENDS = "ti-sysbios ti-xdctools ti-cgt6x ti-ipc"  
-# Need to add M3 support in subsequent update
-#DEPENDS_append_ti816x = " ti-cgt470"
+DEPENDS = "ti-sysbios ti-xdctools ti-cgt6x ti-ipc ti-cgt470"
 DEPENDS += "virtual/kernel" 
 
 SYSLINKHLOSSAMPLES = "procMgr frameq gateMP heapBufMP heapMemMP listMP messageQ notify ringIO ringIO_gpp sharedRegion"
@@ -38,29 +38,40 @@ SYSLINKPLATFORM_omap3     = "OMAP3530"
 SYSLINKPLATFORM_omapl137  = "OMAPL1XX"
 SYSLINKPLATFORM_omapl138  = "OMAPL1XX"
 SYSLINKPLATFORM_ti816x    = "TI81XX"
+SYSLINKPLATFORM_ti814x    = "TI81XX"
 SYSLINKPLATFORM          ?= "<UNDEFINED_SYSLINKPLATFORM>"
 
-# COFF/ELF config - omap3 can be coff/elf, omapl only coff, ti816x only elf
+SYSLINKVARIANT_omap3     = "OMAP3530"
+SYSLINKVARIANT_omapl137  = "OMAPL1XX"
+SYSLINKVARIANT_omapl138  = "OMAPL1XX"
+SYSLINKVARIANT_ti816x    = "TI816X"
+SYSLINKVARIANT_ti814x    = "TI814X"
+SYSLINKVARIANT          ?= "<UNDEFINED_SYSLINKVARIANT>"
+
+# COFF/ELF config - omap3 can be coff/elf, omapl only coff, ti816x and ti814x only elf
 
 # this really needs to be a list... in the case of ELF/COFF (and this could use DSPSUFFIX?)
 SYSLINKSUFFIX_omap3       = "x64P"
 SYSLINKSUFFIX_omapl137    = "x674"
 SYSLINKSUFFIX_omapl138    = "x674"
 SYSLINKSUFFIX_ti816x      = "xe674"
+SYSLINKSUFFIX_ti814x      = "xe674"
 SYSLINKSUFFIX            ?= "<UNDEFINED_SYSLINKSUFFIX>"
 
 SYSLINKLOADER_omap3       = "COFF"
 SYSLINKLOADER_omapl137    = "COFF"
 SYSLINKLOADER_omapl138    = "COFF"
 SYSLINKLOADER_ti816x      = "ELF"
+SYSLINKLOADER_ti814x      = "ELF"
 SYSLINKLOADER            ?= "<UNDEFINED_SYSLINKLOADER>"
 
 # Do we really need to configure this? - configured already in config.bld
 XDCTARGETS_omap3          = "ti.targets.C64P"
 XDCTARGETS_omapl137       = "ti.targets.C674"
 XDCTARGETS_omapl138       = "ti.targets.C674"
-# for ti816x, we should later also build for ti.targets.arm.elf.M3
-XDCTARGETS_ti816x         = "ti.targets.elf.C674"
+# for ti816x and ti814x, we should later also build for ti.targets.arm.elf.M3
+XDCTARGETS_ti816x         = "ti.targets.elf.C674 ti.targets.arm.elf.M3"
+XDCTARGETS_ti814x         = "ti.targets.elf.C674 ti.targets.arm.elf.M3"
 XDCTARGETS               ?= "<UNDEFINED_XDCTARGETS>"
 export XDCTARGETS
 
@@ -83,10 +94,26 @@ do_configure() {
         -e s:^C674_COFF.rootDir.*:C674_COFF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
         -e s:^C674_ELF.rootDir.*:C674_ELF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
         -e s:^M3_ELF.rootDir.*:M3_ELF.rootDir\ =\ \"${CODEGEN_ARM_INSTALL_DIR}\":g \
+        -e s:^A8_ELF.rootDir.*:A8_ELF.rootDir\ =\ \"${CODEGEN_ARM_INSTALL_DIR}\":g \
         ${S}/config.bld
 }
 
 do_configure_append_ti816x() {
+
+    # Update config.bld to remove unused build targets
+    # - This will leave 'only the C674_ELF target'
+    sed -i \
+        -e s:C64P_COFF,://C64P_COFF:g \
+        -e s:C64P_ELF,://C64P_ELF:g \
+        -e s:C674_COFF,://C674_COFF:g \
+        ${S}/config.bld
+
+    sed -i \
+        -e 's/"ti.platforms.evmDA830:dsp",//g' \
+        ${S}/config.bld
+}
+
+do_configure_append_ti814x() {
 
     # Update config.bld to remove unused build targets
     # - This will leave 'only the C674_ELF target'
@@ -164,6 +191,7 @@ do_compile() {
         ARCH="${TARGET_ARCH}" \
         CROSS_COMPILE="${TARGET_PREFIX}" \
         SYSLINK_PLATFORM="${SYSLINKPLATFORM}" \
+        SYSLINK_VARIANT="${SYSLINKVARIANT}" \
         SYSLINK_LOADER="${SYSLINKLOADER}" \
         SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages" \
         KDIR="${STAGING_KERNEL_DIR}"
@@ -174,8 +202,10 @@ do_compile() {
             ARCH="${TARGET_ARCH}" \
             CROSS_COMPILE="${TARGET_PREFIX}" \
             SYSLINK_PLATFORM="${SYSLINKPLATFORM}" \
+            SYSLINK_VARIANT="${SYSLINKVARIANT}" \
             SYSLINK_LOADER="${SYSLINKLOADER}" \
             SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages" \
+            SYSLINK_SDK=EZSDK \
             KDIR="${STAGING_KERNEL_DIR}"
     done
 
@@ -185,23 +215,45 @@ do_compile() {
         CROSS_COMPILE="${TARGET_PREFIX}" \
         TOOLCHAIN_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
         SYSLINK_PLATFORM="${SYSLINKPLATFORM}" \
+        SYSLINK_VARIANT="${SYSLINKVARIANT}" \
         SYSLINK_LOADER="${SYSLINKLOADER}" \
         SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages"
 
     # Build the gpp (hlos) user space samples 
+    # First build the common lib for samples.
+    cd ${SYSLINK_ROOT}/ti/syslink/samples/hlos/common/usr/Linux && make \
+        ARCH="${TARGET_ARCH}" \
+        CROSS_COMPILE="${TARGET_PREFIX}" \
+        TOOLCHAIN_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+        SYSLINK_PLATFORM="${SYSLINKPLATFORM}" \
+        SYSLINK_VARIANT="${SYSLINKVARIANT}" \
+        SYSLINK_LOADER="${SYSLINKLOADER}" \
+        SYSLINK_SDK=EZSDK \
+        SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages"
+
     for sample in ${SYSLINKHLOSSAMPLES}; do
         cd ${SYSLINK_ROOT}/ti/syslink/samples/hlos/$sample/usr/Linux && make \
             ARCH="${TARGET_ARCH}" \
             CROSS_COMPILE="${TARGET_PREFIX}" \
             TOOLCHAIN_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
             SYSLINK_PLATFORM="${SYSLINKPLATFORM}" \
+            SYSLINK_VARIANT="${SYSLINKVARIANT}" \
             SYSLINK_LOADER="${SYSLINKLOADER}" \
+            SYSLINK_SDK=EZSDK \
             SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages"
     done
 
     # Build the dsp/arm (rtos) code (system and samples)
+    # cd ${SYSLINK_ROOT}/ti/syslink && \
+    #     ${XDC_INSTALL_DIR}/xdc --jobs=${BB_NUMBER_THREADS} -PR .
+    export XDCOPTIONS=v
     cd ${SYSLINK_ROOT}/ti/syslink && \
-        ${XDC_INSTALL_DIR}/xdc --jobs=${BB_NUMBER_THREADS} -PR .
+        ${XDC_INSTALL_DIR}/xdc -P \
+	 `${XDC_INSTALL_DIR}/bin/xdcpkg ${SYSLINK_ROOT}/ti/syslink | grep -v samples`
+    export XDCARGS="profile=debug"
+    cd ${SYSLINK_ROOT}/ti/syslink && \
+        ${XDC_INSTALL_DIR}/xdc --jobs=${BB_NUMBER_THREADS} -P \
+	 `${XDC_INSTALL_DIR}/bin/xdcpkg ${SYSLINK_ROOT}/ti/syslink | grep samples`
 }
 
 KERNEL_VERSION = "${@base_read_file('${STAGING_KERNEL_DIR}/kernel-abiversion')}"
@@ -210,17 +262,11 @@ do_install () {
 
     # Install the hlos kernel module
     install -d ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp
-    install -m 0755 ${SYSLINK_ROOT}/ti/syslink/lib/modules/${SYSLINKPLATFORM}/syslink.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp/
+    install -m 0755 ${SYSLINK_ROOT}/ti/syslink/bin/${SYSLINKVARIANT}/syslink.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp/
 
-    # TODO :: Should these be put in the kernel modules tree, and installed using modprobe - unsure since these are example modules
-    # Install the hlos example kernel module apps and remove duplicate copy of syslink.ko
+    # Install the hlos example kernel modules and apps
     install -d ${D}/${installdir}/ti-syslink-examples
-    install -m 0755 ${SYSLINK_ROOT}/ti/syslink/lib/modules/${SYSLINKPLATFORM}/*.ko ${D}/${installdir}/ti-syslink-examples/
-    rm ${D}/${installdir}/ti-syslink-examples/syslink.ko
-
-    # Install the hlos example apps 
-    install -d ${D}/${installdir}/ti-syslink-examples/
-    cp -pPrf ${SYSLINK_ROOT}/ti/syslink/lib/samples/*.exe ${D}/${installdir}/ti-syslink-examples/
+    install -m 0755 ${SYSLINK_ROOT}/ti/syslink/bin/${SYSLINKVARIANT}/samples/* ${D}/${installdir}/ti-syslink-examples/
 
     # Install the rtos example apps 
     cd ${SYSLINK_ROOT}/ti/syslink/samples/rtos
@@ -236,8 +282,12 @@ do_install () {
     # install -m 0755 ${SYSLINK_ROOT}/ti/syslink/lib/syslink.a ${D}/${installdir}/ti-syslink-examples/
     
     # Install/Stage the Source Tree
-    install -d ${D}${SYSLINK_INSTALL_DIR_RECIPE}/packages
-    cp -pPrf ${S}/* ${D}${SYSLINK_INSTALL_DIR_RECIPE}/packages
+    install -d ${D}${SYSLINK_INSTALL_DIR_RECIPE}
+    cp -pPrf ${S}/* ${D}${SYSLINK_INSTALL_DIR_RECIPE}
+    # Force install the .ko in the older location
+    # TODO: Remove/Revert this on c6accel and friends update.
+    mkdir -p ${D}${SYSLINK_INSTALL_DIR_RECIPE}/ti/syslink/lib/modules/${SYSLINKPLATFORM}
+    cp -f ${S}/ti/syslink/bin/${SYSLINKVARIANT}/syslink.ko ${D}${SYSLINK_INSTALL_DIR_RECIPE}/ti/syslink/lib/modules/${SYSLINKPLATFORM}/syslink.ko
 }
 
 PACKAGES += "ti-syslink-module"
