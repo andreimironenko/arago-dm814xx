@@ -138,7 +138,7 @@ DESCRIPTION_gdbserver = "gdb - GNU debugger"
 
 def ang_get_main_version(d):
 	import os,bb
-	if os.path.exists(bb.data.getVar('TOOLCHAIN_PATH', d, 1)+'/'):
+	if os.path.exists(bb.data.getVar('TOOLCHAIN_PATH', d, 1)+'/version'):
 		f = open(bb.data.getVar('TOOLCHAIN_PATH', d, 1)+'/version', 'r')
 		l = f.readlines();
 		f.close();
