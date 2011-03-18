@@ -34,7 +34,7 @@ C6RUNPLATFORMS_dm37x-evm     = "dm3730"
 C6RUNPLATFORMS_hawkboard     = "hawkboard"
 C6RUNPLATFORMS_beagleboard   = "beagleboard"
 C6RUNPLATFORMS_ti816x        = "TI816x"
-C4RUNPLATFORMS_ti814x        = "TI814x"
+C6RUNPLATFORMS_ti814x        = "TI814x"
 C6RUNPLATFORMS              ?= "<UNDEFINED_C6RUNPLATFORMS>"
 
 C6RUNDSPREGIONBASEADDR_omapl137    = "0xC2000000"
