@@ -7,7 +7,7 @@
 #  Script to install TI SDK
 #
 
-VERSION="1.3"
+VERSION="1.4"
 
 #
 # Display program usage
@@ -21,6 +21,7 @@ Usage: `basename $1` [options] --machine <machine_name> --toolchain <toolchain p
   --graphics            Install graphics packages
   --bsp                 Install board support packages
   --addons              Install addon demos/utilities
+  --crypto              Install crypto applications/libraries
   --dsp                 Install c64p dsp packages
   --multimedia          Install multimedia packages
   --force               Force installation on unsupported host
@@ -79,8 +80,7 @@ update_rules_make()
   for i in ${install_dir}/usr/lib/opkg/info/*-src*.control; do
     name="`cat $i | grep Package | awk {'print $2'}`"
     
-    echo $name | grep ti-*
-    # echo $name | grep ti-*  >/dev/null
+    echo $name | grep ti-*  >/dev/null
     # if package contain ti- prefix then remove it
     if [ $? -eq 0 ]; then
       name="`echo $name | cut -f2-5 -d-`"
@@ -147,6 +147,13 @@ move_to_install_dir()
   rm -rf $install_dir/sbin
 }
 
+# the Source entry other than the repository where the sources were
+# downloaded from.
+print_arago_entries() {
+    echo "<br>Files from:<br><a href=git://arago-project.org/git/arago.git>git://arago-project.org/git/arago.git</a><br><a href=git://arago-project.org/git/arago-oe-dev.git>git://arago-project.org/git/arago-oe-dev.git</a>"
+}
+
+
 #
 # Generate software manifest file
 #
@@ -166,24 +173,79 @@ echo "
     package="`cat $i | grep Package: | awk {'print $2'}`"
     version="`cat $i | grep Version: | awk {'print $2'} | cut -f1-2 -d-`"
     license="`cat $i | grep License: | awk {'print $2,$3,$4'} `"
-    source="`cat $i | grep Source: | awk {'print $2'} | cut -f1 -d\;`"
+    sources="`cat $i | grep Source: | cut -d ':' -f2-`"
+    long_version="`cat $i | grep Version: | awk {'print $2'}`"
+    architecture="`cat $i | grep Architecture: | awk {'print $2'}`"
+    location="$package""_""$long_version""_""$architecture"".ipk"
+
     case "$license" in 
       *unknown*) highlight="bgcolor=yellow" ;;
       *GPLv3*) highlight="bgcolor=yellow" ;;
       *) highlight="" ;;
     esac
 
-    case "$source" in
-      file://*) source="http://www.ti.com";;
-      http://install.source.dir.local*) source="http://www.ti.com";;
-      *india.ti.com*) source="http://www.ti.com";;
-      *sanb.design.ti.com*) source="http://www.ti.com";;
-      *dal.design.ti.com*) source="http://www.ti.com";;
-      *) ;;
-    esac
+    # source variable contains the text to be used in the manifest
+    source=""
+    # Are there additional files in the package that come from the
+    # arago/OE metadata?
+    extra_files="0"
+    modified="No"
+    for s in $sources
+    do
+        case "$s" in
+          file://*)
+            extra_files="1"
+            source="http://www.ti.com"
+            ;;
+          http://install.source.dir.local*)
+            # If we are pulling something from a local file system then
+            # it is not a public modification and this should be marked
+            # as modified.  This should not be the normal case.
+            source="<a href='http://www.ti.com'>TI</a>"
+            modified="Yes"
+            ;;
+          *india.ti.com*) 
+            source="<a href='http://www.ti.com'>TI</a>"
+            modified="Yes"
+            ;;
+          *sanb.design.ti.com*)
+            source="<a href='http://www.ti.com'>TI</a>"
+            modified="Yes"
+            ;;
+          *dal.design.ti.com*)
+            source="<a href='http://www.ti.com'>TI</a>"
+            modified="Yes"
+            ;;
+          *)
+            source="$source""<a href=$s>$s</a>";;
+        esac
+    done
+
+    if [ "$extra_files" == "1" ]
+    then
+        source="$source"`print_arago_entries`
+    fi
 
     case "$package" in
       task-*) continue ;;
+      libgles-omap3-src)
+            delivered_as="Binary"
+            modified="Yes"
+            license="TI Proprietary"            
+            source="<a href='http://www.imgtec.com'>Imagination Technologies</a>"
+            ;;
+      ti-cgt6x-src)
+            delivered_as="Binary"
+            modified="No"
+            license="TI Proprietary"            
+            source="<a href='http://www.ti.com'>TI</a>"
+            ;;
+      ti-cgt470-src)
+            delivered_as="Binary"
+            modified="No"
+            license="TI Proprietary"            
+            source="<a href='http://www.ti.com'>TI</a>"
+            ;;
       *-src) delivered_as="Source and Binary"
             modified="Yes" 
             location="$2"
@@ -213,7 +275,7 @@ echo "
     fi
     
     echo "
-<tr><td>${package} </td><td>${version}</td> <td $highlight> ${license} </td><td>$location</td><td>$delivered_as</td><td>$modified</td> <td><a href=$source>$source</a></td></tr>
+<tr><td>${package} </td><td>${version}</td> <td $highlight> ${license} </td><td>$location</td><td>$delivered_as</td><td>$modified</td> <td>$source</td></tr>
 "
   done
 echo "</table><br><br>"
@@ -422,9 +484,10 @@ prepare_install ()
 host_install ()
 {
   mkdir -p ${install_dir}/usr/lib/opkg
-  echo "Install $bsp_src $addons_src $dsp_src $multimedia_src $graphics_src ti-tisdk-makefile"
+  echo "Install $bsp_src $addons_src $crypto_src $dsp_src $multimedia_src $graphics_src ti-tisdk-makefile"
   execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_conf}  update"
   execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir -f ${opkg_conf} install  $bsp_src $addons_src $dsp_src $multimedia_src $graphics_src ti-tisdk-makefile"
+  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir} -f ${opkg_conf} remove  -force-depends  libc6 update-rc.d"
 
   update_rules_make
 
@@ -479,9 +542,10 @@ install_arago_sdk ()
 
   ! test -z $graphics && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  install $graphics_sdk_target "
   ! test -z $multimedia && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  install $multimedia_sdk_target "
+  ! test -z $crypto && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  install $crypto_sdk_target "
 
   # remove these packages (see arago/meta/meta-toolchain-target.bb)
-  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir}/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf} remove  -force-depends     libc6 libc6-dev glibc-extra-nss libgcc1 linux-libc-headers-dev libthread-db1 sln gettext gettext-dev  libgettextlib libgettextsrc"
+  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir}/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf} remove  -force-depends     libc6 libc6-dev glibc-extra-nss libgcc1 linux-libc-headers-dev libthread-db1 sln gettext gettext-dev libgettextlib libgettextsrc"
 
   ! test -z $graphics && install_graphics_sdk_host 
 
@@ -522,6 +586,13 @@ while [ $# -gt 0 ]; do
       bsp_src="task-arago-toolchain-tisdk-bsp-host";
       bsp_bin="task-arago-tisdk-bsp";
       bsp="yes";
+      shift;
+      ;;
+    --crypto)
+      crypto_src="task-arago-toolchain-tisdk-crypto-host";
+      crypto_bin="task-arago-tisdk-crypto";
+      crypto_sdk_target="task-arago-toolchain-tisdk-crypto-target";
+      crypto="yes";
       shift;
       ;;
     --addons)
@@ -584,6 +655,22 @@ verify_cdrom
 # prepare installation.
 prepare_install
 
+# TODO: IJ installer does not pass --crypto flag yet
+# Temporarly based on machine type we enable crypto
+if [ "$machine" = "dm37x-evm" ]; then
+    crypto_src="task-arago-toolchain-tisdk-crypto-host";
+    crypto_bin="task-arago-tisdk-crypto";
+    crypto_sdk_target="task-arago-toolchain-tisdk-crypto-target";
+    crypto="yes";
+fi 
+
+if [ "$machine" = "da850-omapl138-evm" ]; then
+    crypto_src="task-arago-toolchain-tisdk-crypto-host";
+    crypto_bin="task-arago-tisdk-crypto";
+    crypto_sdk_target="task-arago-toolchain-tisdk-crypto-target";
+    crypto="yes";
+fi 
+
 # create software manifest header and bom header.
 mkdir -p $install_dir/docs
 sw_manifest_header > ${install_dir}/docs/software_manifest.htm
@@ -602,8 +689,8 @@ host_install
 mkdir -p ${install_dir}/filesystem
 cp deploy/images/$machine/*.tar.gz ${install_dir}/filesystem
 export DVSDK_INSTALL_MACHINE="$machine"
-echo "Install  $install_dir $bsp_bin $addons_bin $multimedia_bin $graphics_bin $dsp_bin"
-fakeroot install_rootfs.sh $install_dir $bsp_bin $addons_bin $multimedia_bin $graphics_bin $dsp_bin 
+echo "Install  $install_dir $bsp_bin $crypto_bin $addons_bin $multimedia_bin $graphics_bin $dsp_bin"
+fakeroot install_rootfs.sh $install_dir $bsp_bin $addons_bin $crypto_bin $multimedia_bin $graphics_bin $dsp_bin 
 
 tar zxf `ls -1 ${install_dir}/filesystem/*.tar.gz` -C $install_dir/filesystem --wildcards *.control*
 generate_sw_manifest "Packages installed on the target:" "$install_dir/filesystem" >> ${install_dir}/docs/software_manifest.htm
@@ -622,6 +709,8 @@ sw_manifest_footer >> ${install_dir}/docs/software_manifest.htm
 sw_bom_footer >> ${install_dir}/docs/software_bom.htm
 
 
+mkdir -p ${install_dir}/etc
+cp ${opkg_conf} ${install_dir}/etc/opkg.conf
 rm -rf ${opkg_conf}
 rm -rf ${opkg_sdk_conf}
 rm -rf ${install_dir}/install-tools
