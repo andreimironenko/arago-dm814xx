@@ -58,6 +58,8 @@ LINUX_DEVKIT_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit
 # Where c6accel package is installed.
 C6ACCEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__c6accel__>
 
+# Where c6run package is installed.
+C6RUN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__c6run__>
 
 # Where opengl graphics package is installed.
 GRAPHICS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__libgles-omap3__>

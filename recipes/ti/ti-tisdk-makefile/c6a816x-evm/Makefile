@@ -6,27 +6,27 @@ MIN_UBOOT_CONFIG=ti8168_evm_min_sd
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	components components_clean all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_clean c6accel_install syslink syslink_clean syslink_install opengldemos opengldemos_clean opengldemos_install sademo sademo_clean sademo_install matrix matrix_clean matrix_install
+.PHONY:	components components_clean all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_clean c6accel_install syslink syslink_clean syslink_install opengldemos opengldemos_clean opengldemos_install sademo sademo_clean sademo_install matrix matrix_clean matrix_install c6run c6run_clean c6run_examples c6run_install
 
 #==============================================================================
 # Build components to enable all other build targets. 
 #==============================================================================
-components: linux cmem syslink c6accel 
+components: linux cmem syslink c6accel c6run
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-components_clean: linux_clean syslink_clean cmem_clean c6accel_clean
+components_clean: linux_clean syslink_clean cmem_clean c6accel_clean c6run_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-all: components u-boot opengldemos sademo matrix
+all: components u-boot opengldemos sademo matrix c6run_examples
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install syslink_install u-boot_install c6accel_install opengldemos_install sademo_install matrix_install
+install: linux_install cmem_install syslink_install u-boot_install c6accel_install opengldemos_install sademo_install matrix_install c6run_install
 
 #==============================================================================
 # Clean up all targets.
@@ -70,6 +70,11 @@ help:
 	@echo "    c6accel_clean                : Remove generated c6accel files"
 	@echo "    c6accel_install              : Install c6accel examples"
 	@echo
+	@echo "    c6run                        : Build c6run backend libraries"
+	@echo "    c6run_clean                  : Remove c6run backend libraries"
+	@echo "    c6run_examples               : Build c6run examples & tests"
+	@echo "    c6run_install                : Install c6run examples & tests"
+	@echo 
 	@echo "    opengldemos                  : Build the OPENGL graphics SDK demos for $(PLATFORM)"
 	@echo "    opengldemos_clean            : Remove OPENGL graphics SDK demo files."
 	@echo "    opengldemos_install          : install OPENGL graphics SDK demo executables."
@@ -284,6 +289,97 @@ c6accel_install:
 	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
 	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel" \
 	install
+
+################################################################################
+# Build C6run
+################################################################################
+c6run:
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	TI816x_config
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	clean
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	all
+
+c6run_clean:
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	distclean
+
+c6run_examples:
+	source $(C6RUN_INSTALL_DIR)/environment.sh; \
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	C6RUN_TOOLCHAIN_PATH="$(C6RUN_INSTALL_DIR)" \
+	examples
+
+	source $(C6RUN_INSTALL_DIR)/environment.sh; \
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	C6RUN_TOOLCHAIN_PATH="$(C6RUN_INSTALL_DIR)" \
+	tests
+
+c6run_install:
+	install -d $(EXEC_DIR)/usr/share/ti/c6run-apps
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	INSTALL_DIR="$(EXEC_DIR)/usr/share/ti/c6run-apps" \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	BIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	LINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	LPM_INSTALL_DIR="$(LPM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	install_programs
 
 ################################################################################
 # Build openGL demos
