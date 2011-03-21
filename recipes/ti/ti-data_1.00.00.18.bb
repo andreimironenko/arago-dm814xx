@@ -11,3 +11,5 @@ SRC_URI[dm365_datatarball.sha256sum] = "c6bed3ce8f24a419f95191661c230074c4c951b8
 SRC_URI[omapl138_datatarball.md5sum] = "6c9bb856b8b27421651c0e8612b7ef09"
 SRC_URI[omapl138_datatarball.sha256sum] = "c4de1ed73d7869fb1692c23f2346b7aae13ec7b9dddfc249925ae30c51ed4fc4"
 
+SRC_URI[dm6467_datatarball.md5sum] = "7a3f0f8c319ead4e4919c4a7da68cd0c"
+SRC_URI[dm6467_datatarball.sha256sum] = "4b468cd70b33871b5f4d2e3c38ade3cc287c923949b399fde7cbf1dd4c747335"

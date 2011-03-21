@@ -1,6 +1,7 @@
 DESCRIPTION = "Task to install dsp binaries on ${MACHINE}"
-PR = "r13"
+PR = "r14"
 LICENSE="MIT"
+ALLOW_EMPTY = "1"
 
 inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
@@ -55,9 +56,10 @@ DSP_COMPONENTS_c6a814x-evm = "\
     ti-integra-demos \
     "
 
+DSP_COMPONENTS_am37x-evm = ""
+
 DSP_COMPONENTS = ""
 
 RDEPENDS = "\
     ${DSP_COMPONENTS} \
-	"
-
+    "

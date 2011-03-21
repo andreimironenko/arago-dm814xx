@@ -5,11 +5,13 @@ KERNEL_IMAGETYPE = "uImage"
 
 inherit kernel
 
-SRC_URI = "git://arago-project.org/git/projects/linux-omapl1.git;protocol=git \
+BRANCH ?= "master"
+
+SRC_URI = "git://arago-project.org/git/projects/linux-omapl1.git;protocol=git;branch=${BRANCH} \
 	file://defconfig"
 
 # Requires support for SOC_FAMILY matching in COMPATIBLE_MACHINE
-COMPATIBLE_MACHINE = "(da830-omapl137-evm|da850-omapl138-evm)"
+COMPATIBLE_MACHINE = "(omapl137|da850-omapl138-evm|am180x-evm)"
 
 S = "${WORKDIR}/git"
 

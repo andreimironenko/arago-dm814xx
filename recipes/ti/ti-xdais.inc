@@ -6,7 +6,8 @@ SECTION = "devel"
 require ti-paths.inc
 require ti-staging.inc
 
-PR = "r1"
+PR = "r2"
+PVExtra = ""
 
 S = "${WORKDIR}/xdais_${PV}${PVExtra}"
 

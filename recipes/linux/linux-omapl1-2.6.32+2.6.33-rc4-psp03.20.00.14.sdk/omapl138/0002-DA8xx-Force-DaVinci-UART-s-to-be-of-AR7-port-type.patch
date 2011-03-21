@@ -1,0 +1,51 @@
+From a4cc365798fbd2923dc5607e9de225d9449850c1 Mon Sep 17 00:00:00 2001
+From: Prakash PM <prakash.pm@ti.com>
+Date: Thu, 25 Nov 2010 14:51:21 +0530
+Subject: [PATCH 2/7] DA8xx: Force DaVinci UART's to be of AR7 port type
+
+Since AR7 port type is better match for DaVinci UARTs, patch
+forces DA8xx UART's to AR7 port type which enables AFE
+capability on the ports.
+
+Signed-off-by: Prakash PM <prakash.pm@ti.com>
+---
+ arch/arm/mach-davinci/devices-da8xx.c |    9 ++++++---
+ 1 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
+index 0842590..ef17efb 100755
+--- a/arch/arm/mach-davinci/devices-da8xx.c
++++ b/arch/arm/mach-davinci/devices-da8xx.c
+@@ -58,7 +58,8 @@ static struct plat_serial8250_port da8xx_serial_pdata[] = {
+ 		.mapbase	= DA8XX_UART0_BASE,
+ 		.irq		= IRQ_DA8XX_UARTINT0,
+ 		.flags		= UPF_BOOT_AUTOCONF | UPF_SKIP_TEST |
+-					UPF_IOREMAP,
++					UPF_IOREMAP | UPF_FIXED_TYPE,
++		.type		= PORT_AR7,
+ 		.iotype		= UPIO_MEM,
+ 		.regshift	= 2,
+ 	},
+@@ -66,7 +67,8 @@ static struct plat_serial8250_port da8xx_serial_pdata[] = {
+ 		.mapbase	= DA8XX_UART1_BASE,
+ 		.irq		= IRQ_DA8XX_UARTINT1,
+ 		.flags		= UPF_BOOT_AUTOCONF | UPF_SKIP_TEST |
+-					UPF_IOREMAP,
++					UPF_IOREMAP | UPF_FIXED_TYPE,
++		.type		= PORT_AR7,
+ 		.iotype		= UPIO_MEM,
+ 		.regshift	= 2,
+ 	},
+@@ -74,7 +76,8 @@ static struct plat_serial8250_port da8xx_serial_pdata[] = {
+ 		.mapbase	= DA8XX_UART2_BASE,
+ 		.irq		= IRQ_DA8XX_UARTINT2,
+ 		.flags		= UPF_BOOT_AUTOCONF | UPF_SKIP_TEST |
+-					UPF_IOREMAP,
++					UPF_IOREMAP | UPF_FIXED_TYPE,
++		.type		= PORT_AR7,
+ 		.iotype		= UPIO_MEM,
+ 		.regshift	= 2,
+ 	},
+-- 
+1.7.3.2
+

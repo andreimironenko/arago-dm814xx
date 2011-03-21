@@ -13,32 +13,35 @@ UBOOT_ENV_omap3evm = "setup-uboot-env-omap3530.sh"
 UBOOT_ENV_ti816x = "setup-uboot-env-c6a816x.sh"
 UBOOT_ENV_ti814x = "setup-uboot-env-c6a814x.sh"
 UBOOT_ENV_am37x-evm = "setup-uboot-env-am37x.sh"
+UBOOT_ENV_am3517-evm = "setup-uboot-env-am3517.sh"
+UBOOT_ENV_am180x-evm = "setup-uboot-env-am18x.sh"
+UBOOT_ENV_am181x-evm = "setup-uboot-env-am18x.sh"
+UBOOT_ENV_am389x-evm = "setup-uboot-env-am389x.sh"
 
 SRC_URI = "\
-	file://setup/setup.sh \
-  	file://setup/common.sh \
-  	file://setup/setup-host-check.sh \
-  	file://setup/setup-minicom.sh \
-  	file://setup/setup-package-install.sh \
-  	file://setup/setup-targetfs-nfs.sh \
-  	file://setup/setup-tftp.sh \
-        file://setup/${UBOOT_ENV} \
+	file://setup.sh \
+  	file://common.sh \
+  	file://setup-host-check.sh \
+  	file://setup-minicom.sh \
+  	file://setup-package-install.sh \
+  	file://setup-targetfs-nfs.sh \
+  	file://setup-tftp.sh \
+    file://${UBOOT_ENV} \
 "
-PR = "r23"
+PR = "r27"
 
 do_install () {
-	install -d ${D}/${installdir}
-        cp -pPf ${WORKDIR}/setup/setup.sh ${D}/${installdir} 
-	install -d ${D}/${installdir}/bin
-        cp -pPf ${WORKDIR}/setup/common.sh ${D}/${installdir}/bin
-        cp -pPf ${WORKDIR}/setup/setup-host-check.sh ${D}/${installdir}/bin
-        cp -pPf ${WORKDIR}/setup/setup-minicom.sh ${D}/${installdir}/bin
-        cp -pPf ${WORKDIR}/setup/setup-package-install.sh ${D}/${installdir}/bin
-        cp -pPf ${WORKDIR}/setup/setup-targetfs-nfs.sh ${D}/${installdir}/bin
-        cp -pPf ${WORKDIR}/setup/setup-tftp.sh ${D}/${installdir}/bin
-        cp -pPf ${WORKDIR}/setup/${UBOOT_ENV} ${D}/${installdir}/bin/setup-uboot-env.sh
+    install -m 0755 ${WORKDIR}/setup.sh ${D}/
+	install -d ${D}/bin
+    install -m 0755 ${WORKDIR}/common.sh ${D}/bin
+    install -m 0755 ${WORKDIR}/setup-host-check.sh ${D}/bin
+    install -m 0755 ${WORKDIR}/setup-minicom.sh ${D}/bin
+    install -m 0755 ${WORKDIR}/setup-package-install.sh ${D}/bin
+    install -m 0755 ${WORKDIR}/setup-targetfs-nfs.sh ${D}/bin
+    install -m 0755 ${WORKDIR}/setup-tftp.sh ${D}/bin
+    install -m 0755 ${WORKDIR}/${UBOOT_ENV} ${D}/bin/setup-uboot-env.sh
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-FILES_${PN} = "${installdir}/*"
+FILES_${PN} += "setup.sh"

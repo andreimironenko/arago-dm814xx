@@ -8,6 +8,7 @@ require ti-paths.inc
 require ti-staging.inc
 
 PR = "r1"
+PVExtra = ""
 
 S = "${WORKDIR}/osal_${PV}${PVextra}"
 

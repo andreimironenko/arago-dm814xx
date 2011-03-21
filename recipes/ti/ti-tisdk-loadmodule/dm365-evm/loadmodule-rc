@@ -5,8 +5,8 @@
 # Start Addr    Size    Description
 # -------------------------------------------
 # 0x00001000    32K     ARM TCM memory
-# 0x80000000    48 MB   Linux
-# 0x83000000    12 MB   Video driver memory (Linux)
+# 0x80000000    54 MB   Linux
+# 0x83000000    6  MB   Video driver memory (Linux)
 # 0x83C00000    68 MB   CMEM
 # 0x88000000    BOTTOM  ADDRESS
 

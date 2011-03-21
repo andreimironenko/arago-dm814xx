@@ -1,37 +1,7 @@
-# Arago-specific amendments to the standard gst-plugins-bad recipe to remove
-# dependencies
-DEPENDS := "${@oe_filter_out('libcdio', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('wavpack', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('libvisual', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('jack', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('virtual/libsdl', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('libvpx', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('x264', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('libmms', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('libmusicbrainz', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('schroedinger', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('tremor', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('cdparanoia', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('pango', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('pango', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('virtual/libx11', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('gnome-vfs', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('libxv', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('gtk+', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('libsm', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('libvorbis', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('libtheora', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('libogg', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('hal', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('pulseaudio', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('speex', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('libsoup-2.4', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('flac', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('openssl', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('esound', bb.data.getVar('DEPENDS', d, 1), d)}"
-DEPENDS := "${@oe_filter_out('directfb', bb.data.getVar('DEPENDS', d, 1), d)}"
+# Arago-specific amendments to the standard OE gst-plugins-bad recipes
 
-EXTRA_OECONF_append = " --disable-apexsink "
+# Remove OpenCV for now, as it doesn't build with CSL 2009q1
+DEPENDS := "${@oe_filter_out('opencv', bb.data.getVar('DEPENDS', d, 1), d)}"
 
+# Set the suffix to specify amended packages
 PR_append = "-arago2"
-

@@ -1,32 +1,29 @@
 DESCRIPTION = "Task to install additional utilities/demos for SDKs"
-PR = "r6"
+PR = "r9"
 LICENSE = "MIT"
+ALLOW_EMPTY = "1"
 
 inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-UTILS = ""
-
-UTILS_ti816x = " \
-    matrix-tui \
+UTILS = " \
     am-sysinfo \
     am-benchmarks \
     "
 
-UTILS_omap3 = " \
-    am-sysinfo \
-    am-benchmarks \
-    "
+UTILS_dm6467 = ""
 
-UTILS_dm365 = " \
-    am-sysinfo \
-    am-benchmarks \
-    "
+# Add PRU examples for am180x-evm devices
+UTILS_append_am180x-evm = " ti-pru-sw-examples"
 
-UTILS_omapl138 = " \
-    am-sysinfo \
-    am-benchmarks \
-    "
+# Add Profibus software for am181x-evm devices
+UTILS_append_am181x-evm = " ti-profibus-slave-sw-app"
+
+# Add matrix-tui for AM devices
+UTILS_append_am37x-evm = " matrix-tui"
+UTILS_append_am180x-evm = " matrix-tui"
+UTILS_append_am181x-evm = " matrix-tui"
+UTILS_append_am3517-evm = " matrix-tui"
 
 RDEPENDS_${PN} = "\
     ${UTILS} \

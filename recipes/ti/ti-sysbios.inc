@@ -7,7 +7,7 @@ require ti-paths.inc
 require ti-staging.inc
 require ti-eula-unpack.inc
 
-PR = "r1"
+PR = "r2"
 
 S = "${WORKDIR}/bios_${PV}"
 

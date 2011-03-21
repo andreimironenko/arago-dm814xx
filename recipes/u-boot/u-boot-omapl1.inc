@@ -5,9 +5,10 @@ require recipes/u-boot/u-boot.inc
 
 DESCRIPTION = "u-boot bootloader for OMAPL1 devices"
 
-COMPATIBLE_MACHINE = "(omapl137|omapl138)"
+COMPATIBLE_MACHINE = "(omapl137|da850-omapl138-evm|am180x-evm)"
 
-SRC_URI = "git://arago-project.org/git/projects/u-boot-omapl1.git;protocol=git"
+BRANCH ?= "master"
+SRC_URI = "git://arago-project.org/git/projects/u-boot-omapl1.git;protocol=git;branch=${BRANCH}"
 
 S = "${WORKDIR}/git"
 

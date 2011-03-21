@@ -1,5 +1,7 @@
 require flash-utility.inc
 
+PR = "${INC_PR}.0"
+
 SRC_URI = "\
     https://gforge.ti.com/gf/download/frsrelease/354/3685/setup.exe;name=setup \
     https://gforge.ti.com/gf/download/frsrelease/354/3684/FlashInstaller.msi;name=flashinstaller \

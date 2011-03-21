@@ -36,6 +36,7 @@ PREFERRED_VERSION_ti-codecs_omapl138 = "4_00_00_00"
 PREFERRED_VERSION_ti-codecs-omapl138-server = "4_00_00_00"
 PREFERRED_VERSION_ti-dm355mm-module = "1_13"
 PREFERRED_VERSION_ti-dm365mm-module = "1_0_3"
+PREFERRED_VERSION_ti-dvsdk-demos = "4_00_00_18"
 
 # PREFERRED_VERSION_ti-dvsdk-demos = ""
 # PREFERRED_VERSION_ti-dmai = ""

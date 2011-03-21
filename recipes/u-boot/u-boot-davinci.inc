@@ -7,7 +7,8 @@ DESCRIPTION = "u-boot bootloader for DaVinci devices"
 
 COMPATIBLE_MACHINE = "(dm6446-evm|dm6467-evm|dm6467t-evm|dm355-evm|dm365-evm|dm368-evm)"
 
-SRC_URI = "git://arago-project.org/git/projects/u-boot-davinci.git;protocol=git"
+BRANCH ?= "master"
+SRC_URI = "git://arago-project.org/git/projects/u-boot-davinci.git;protocol=git;branch=${BRANCH}"
 
 S = "${WORKDIR}/git"
 

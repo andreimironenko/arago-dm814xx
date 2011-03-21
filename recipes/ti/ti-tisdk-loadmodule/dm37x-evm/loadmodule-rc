@@ -13,7 +13,6 @@ load () {
     modprobe dsplinkk
     modprobe lpm_omap3530
     modprobe sdmak
-    mknod /dev/dsplink c `awk "\\$2==\"dsplink\" {print \\$1}" /proc/devices` 0
 }
 
 unload () {
@@ -21,7 +20,6 @@ unload () {
     rmmod lpm_omap3530 2>/dev/null
     rmmod dsplinkk 2>/dev/null
     rmmod sdmak 2>/dev/null
-    rm -f /dev/dsplink
 }
 
 case "$1" in

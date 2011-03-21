@@ -1,8 +1,7 @@
 DESCRIPTION = "Scripts to create bootable SD card for ${MACHINE}"
-HOMEPAGE_dm365 = "http://processors.wiki.ti.com/index.php/SD_card_boot_and_flashing_tool_for_DM355_and_DM365"
 LICENSE = GPLv2
 
-PR = "r24"
+PR = "r29"
 
 require ti-paths.inc
 require ti-staging.inc
@@ -11,9 +10,13 @@ PLATFORM_omapl138 = "omapl138"
 PLATFORM_omap3 = "omap35x"
 PLATFORM_ti816x = "ti816x"
 PLATFORM_ti814x = "ti814x"
+PLATFORM_am180x-evm = "am180x"
+PLATFORM_am181x-evm = "am1810"
+PLATFORM_am3517-evm = "am3517"
+PLATFORM_dm365-evm = "dm365"
+PLATFORM_dm368-evm = "dm368"
 
 SRC_URI = "file://mksdboot.sh \
-	   file://README \
            file://setup.htm \
            file://top_${PLATFORM}_evm.png \
            file://README.boot.scr \

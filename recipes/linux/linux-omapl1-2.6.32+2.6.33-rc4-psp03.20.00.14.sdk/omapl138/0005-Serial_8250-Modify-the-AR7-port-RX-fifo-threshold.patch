@@ -1,0 +1,31 @@
+From b459558c9cd11ccd3aa0deecfc9324e598294b6d Mon Sep 17 00:00:00 2001
+From: Prakash PM <prakash.pm@ti.com>
+Date: Wed, 24 Nov 2010 12:54:10 +0530
+Subject: [PATCH 5/7] Serial_8250: Modify the AR7 port RX fifo threshold
+
+This patch modifies the RX fifo threshold from 1 to 8 bytes. This
+increases throughput by 2Kbps at 4Mbps baudrate.
+Modifying the AR7 ports Rx fifo threshold as a temporary workaround
+until we find better solution.
+
+Signed-off-by: Prakash PM <prakash.pm@ti.com>
+---
+ drivers/serial/8250.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/serial/8250.c b/drivers/serial/8250.c
+index 29867b4..0ea2542 100644
+--- a/drivers/serial/8250.c
++++ b/drivers/serial/8250.c
+@@ -301,7 +301,7 @@ static const struct serial8250_config uart_config[] = {
+ 		.name		= "AR7",
+ 		.fifo_size	= 16,
+ 		.tx_loadsz	= 16,
+-		.fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_00,
++		.fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_10,
+ 		.flags		= UART_CAP_FIFO | UART_CAP_AFE,
+ 	},
+ };
+-- 
+1.7.3.2
+

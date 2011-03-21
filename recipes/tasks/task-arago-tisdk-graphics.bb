@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r10"
+PR = "r11"
 LICENSE = "MIT"
 
 inherit task
@@ -34,6 +34,10 @@ GRAPHICS_3D_ti814x = "libgles-omap3-rawdemos"
 RDEPENDS_${PN} = "\
     task-arago-qte \
     qt4-embedded-plugin-phonon-backend-gstreamer \
+    qt4-embedded-plugin-imageformat-gif \
+    qt4-embedded-plugin-imageformat-jpeg \
+    libxml2 \
     ${MATRIX_APPS} \
+    ${QTWIDGET_DEMO} \
     ${GRAPHICS_3D} \
     "

@@ -6,7 +6,7 @@ inherit update-rc.d
 SRC_URI = "\
 file://loadmodule-rc \
 "
-PR = "r1"
+PR = "r3"
 
 do_compile () {
 :

@@ -8,7 +8,7 @@ require ti-paths.inc
 require ti-staging.inc
 require ti-eula-unpack.inc
 
-PR = "r1"
+PR = "r3"
 
 S = "${WORKDIR}/ipc_${PV}"
 
@@ -17,7 +17,6 @@ SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/ip
 DEPENDS = "ti-sysbios ti-cgt6x ti-xdctools"
 
 BINFILE="ipc_setuplinux_${PV}.bin"
-# TI_BIN_UNPK_CMDS="Y: qY:workdir:Y"
 TI_BIN_UNPK_CMDS="Y: q:workdir:Y"
 
 do_install() {
