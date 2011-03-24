@@ -4,7 +4,6 @@ LICENSE = GPLv2
 PR = "r29"
 
 require ti-paths.inc
-require ti-staging.inc
 
 PLATFORM_omapl138 = "omapl138"
 PLATFORM_omap3 = "omap35x"
@@ -46,40 +45,38 @@ do_configure_prepend_omap3evm () {
 }
 
 do_install () {
-	mkdir -p ${D}/${installdir}/bin/
-	cp ${WORKDIR}/mksdboot.sh ${D}/${installdir}/bin/
-    	chmod +x ${D}/${installdir}/bin/mksdboot.sh
-	cp ${WORKDIR}/setup.htm ${D}/${installdir}/bin/
-	cp ${WORKDIR}/top_${PLATFORM}_evm.png ${D}/${installdir}/bin/
-	cp ${WORKDIR}/windows_users.htm ${D}/${installdir}/bin
-	cp ${WORKDIR}/README.boot.scr ${D}/${installdir}/bin
+    install -d ${D}/bin
+    install -m 0755 ${WORKDIR}/mksdboot.sh ${D}/bin
+    install -m 0755 ${WORKDIR}/setup.htm ${D}/bin
+    install -m 0755 ${WORKDIR}/top_${PLATFORM}_evm.png ${D}/bin
+    install -m 0755 ${WORKDIR}/windows_users.htm ${D}/bin
+    install -m 0755 ${WORKDIR}/README.boot.scr ${D}/bin
 }
 
 do_install_da850-omapl138-evm () {
-        mkdir -p ${D}/${installdir}/bin/
-        cp ${WORKDIR}/mksdboot.sh ${D}/${installdir}/bin/
-        chmod +x ${D}/${installdir}/bin/mksdboot.sh
-        cp ${WORKDIR}/setup.htm ${D}/${installdir}/bin/
-        cp ${WORKDIR}/c6748.htm ${D}/${installdir}/bin/
-        cp ${WORKDIR}/top_${PLATFORM}_evm.png ${D}/${installdir}/bin/
-        cp ${WORKDIR}/README.boot.scr ${D}/${installdir}/bin
+        mkdir -p ${D}/bin/
+        cp ${WORKDIR}/mksdboot.sh ${D}/bin/
+        chmod +x ${D}/bin/mksdboot.sh
+        cp ${WORKDIR}/setup.htm ${D}/bin/
+        cp ${WORKDIR}/c6748.htm ${D}/bin/
+        cp ${WORKDIR}/top_${PLATFORM}_evm.png ${D}/bin/
+        cp ${WORKDIR}/README.boot.scr ${D}/bin
 }
 
 
 do_install_dm365 () {
-	mkdir -p ${D}/${installdir}/bin/
-	mkdir -p ${D}/${installdir}/bin/dm3xx_sd_boot-6.1
-	mkdir -p ${D}/${installdir}/bin/dm3xx_sd_boot-6.1/bin.x86
-	cp ${S}/mksdboot.sh ${D}/${installdir}/bin/
-	cp ${S}/dm3xx_sd_boot-6.1/dm3xx_sd_boot ${D}/${installdir}/bin/dm3xx_sd_boot-6.1
-	cp ${S}/dm3xx_sd_boot-6.1/dm3xx_sd.config ${D}/${installdir}/bin/dm3xx_sd_boot-6.1
-	cp ${S}/dm3xx_sd_boot-6.1/bin.x86/dm3xx_boot_make_image ${D}/${installdir}/bin/dm3xx_sd_boot-6.1/bin.x86/
-        mkdir -p ${D}/${installdir}/bin/dm3xx_sd_boot-6.1/sdcard_flash
-	cp ${S}/dm3xx_sd_boot-6.1/sdcard_flash/sdcard_flash_DM36x.bin ${D}/${installdir}/bin/dm3xx_sd_boot-6.1/sdcard_flash
+	mkdir -p ${D}/bin/
+	mkdir -p ${D}/bin/dm3xx_sd_boot-6.1
+	mkdir -p ${D}/bin/dm3xx_sd_boot-6.1/bin.x86
+	cp ${S}/mksdboot.sh ${D}/bin/
+	cp ${S}/dm3xx_sd_boot-6.1/dm3xx_sd_boot ${D}/bin/dm3xx_sd_boot-6.1
+	cp ${S}/dm3xx_sd_boot-6.1/dm3xx_sd.config ${D}/bin/dm3xx_sd_boot-6.1
+	cp ${S}/dm3xx_sd_boot-6.1/bin.x86/dm3xx_boot_make_image ${D}/bin/dm3xx_sd_boot-6.1/bin.x86/
+        mkdir -p ${D}/bin/dm3xx_sd_boot-6.1/sdcard_flash
+	cp ${S}/dm3xx_sd_boot-6.1/sdcard_flash/sdcard_flash_DM36x.bin ${D}/bin/dm3xx_sd_boot-6.1/sdcard_flash
 	
 }
 
-FILES_${PN} = "${installdir}/*"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 INSANE_SKIP_${PN} = True
 
