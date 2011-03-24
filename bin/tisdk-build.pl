@@ -395,7 +395,7 @@ sub copy_output
             next;
         }
     
-        $cmd = "touch $sdkpath/deploy/ipk/$dir/Packages; $arago_staging/usr/bin/ipkg-make-index -r $sdkpath/deploy/ipk/$dir/Packages -p $sdkpath/deploy/ipk/$dir/Packages -l $sdkpath/deploy/ipk/$dir/Packages.filelist -m $sdkpath/deploy/ipk/$dir";
+        $cmd = "touch $sdkpath/deploy/ipk/$dir/Packages; $arago_staging/usr/bin/opkg-make-index -r $sdkpath/deploy/ipk/$dir/Packages -p $sdkpath/deploy/ipk/$dir/Packages -l $sdkpath/deploy/ipk/$dir/Packages.filelist -m $sdkpath/deploy/ipk/$dir";
 
         $result = system($cmd);
 
