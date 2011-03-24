@@ -41,6 +41,8 @@ do_compile() {
     make \
     PLATFORM="${PLATFORM}" \
     PLATFORM_XDC="${PLATFORM_XDC}" \
+    ARM_ISA=armv7-a \
+    DSP_ISA=674 \
     CE_INSTALL_DIR="${CE_INSTALL_DIR}" \
     XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
     LINK_INSTALL_DIR="${SYSLINK_INSTALL_DIR}" \
