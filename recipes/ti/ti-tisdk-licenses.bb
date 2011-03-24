@@ -1,8 +1,10 @@
-DESCRIPTION = "Package contain Makefile and Rule.make used for building DVSDK components"
+DESCRIPTION = "Package containing license text for Licenses found in SDK manifests"
 LICENSE = "TI"
 
 PR = "r1"
 
+# Generic license files.  Will be packaged in source ipk.
+# Licenses specific to a package are handled by the license.bbclass
 SRC_URI = "\
     file://ti-tisdk-licenses/APACHEv2.txt \
     file://ti-tisdk-licenses/ECLIPSEv1.txt \
@@ -17,13 +19,10 @@ SRC_URI = "\
     file://ti-tisdk-licenses/creativecommons.txt \
     file://ti-tisdk-licenses/openssl.txt \
 "
-PR = "r0"
 
-do_install () {
-	install -d ${D}/${installdir}/ti-docs-tree
-	cp -pPrf ${WORKDIR}/licenses/* ${D}/${installdir}/ti-docs-tree
+# Make an empty do_patch function so that the "patches" directory is not
+# added to the sources directory.
+do_patch() {
 }
 
-PACKAGE_ARCH = "${MACHINE_ARCH}"
-
-FILES_${PN} = "${installdir}/*"
+S = "${WORKDIR}/ti-tisdk-licenses"
