@@ -20,6 +20,8 @@ TI_UBOOT_BINARY ?= "u-boot.min.sd"
 UBOOT_MLO_SYMLINK ?= "MLO"
 UBOOT_MLO_IMAGE ?= "MLO-${MACHINE}-${PV}-${PR}"
 
+PROVIDES = "u-boot-min-sd"
+
 do_compile_append () {
         unset LDFLAGS
         unset CFLAGS
