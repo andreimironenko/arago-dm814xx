@@ -1,7 +1,9 @@
 DESCRIPTION = "Texas Instruments Pinmux Utility"
 LICENSE = "BSD"
 
-PR = "r0"
+INC_PR = "r1"
+
+PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 S = "${WORKDIR}"
 
@@ -14,6 +16,4 @@ do_install() {
     install ${S}/Release_Notes.txt ${D}/${installdir}/ti-psp-tree/board-utilities/pinmux_utils/windows
 }
 
-PACKAGE_ARCH = "${MACHINE_ARCH}"
-
-FILES_${PN} = "${installdir}/*"
+FILES_${PN} += "${installdir}/*"
