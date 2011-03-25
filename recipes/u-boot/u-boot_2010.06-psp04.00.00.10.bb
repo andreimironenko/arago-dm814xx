@@ -24,5 +24,7 @@ do_deploy_append () {
     install ${S}/${TI_UBOOT_BINARY} ${DEPLOY_DIR_IMAGE}/${TI_UBOOT_BINARY}
     package_stagefile_shell ${DEPLOY_DIR_IMAGE}/${TI_UBOOT_BINARY}
 
-    ln -sf ${DEPLOY_DIR_IMAGE}/${TI_UBOOT_BINARY} ${DEPLOY_DIR_IMAGE}/${UBOOT_SYMLINK}
+    cd ${DEPLOY_DIR_IMAGE}
+    rm -f ${UBOOT_SYMLINK}
+    ln -sf ${TI_UBOOT_BINARY} ${UBOOT_SYMLINK}
 }
