@@ -19,10 +19,11 @@ PROVIDES += "ti-syslink-examples"
 # This package builds a kernel module, use kernel PR as base and append a local version
 PR = "${MACHINE_KERNEL_PR}"
 PR_append = "i"
+PVExtra = ""
 
-S = "${WORKDIR}/syslink_${PV}${PVextra}"
+S = "${WORKDIR}/syslink_${PV}${PVExtra}"
 
-SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/syslink/${PV}/exports/syslink_${PV}.tar.gz;name=syslinktarball"
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/SysLink/${PV}${PVExtra}/exports/syslink_${PV}${PVExtra}.tar.gz;name=syslinktarball"
 
 DEPENDS = "ti-sysbios ti-xdctools ti-cgt6x ti-ipc ti-cgt470"
 # Need to add M3 support in subsequent update
