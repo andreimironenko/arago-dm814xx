@@ -1,0 +1,35 @@
+From 4d0df3c767cd846c8dc2784926e14e9a1ffb5167 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Thu, 17 Mar 2011 16:45:53 +0530
+Subject: [PATCH] TI81XX Ducati: Avoid clearing extra bits when loading
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ .../ti81xx/ti81xxducati/Linux/Dm8168DucatiMmu.c    |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/ti/syslink/family/hlos/knl/ti81xx/ti81xxducati/Linux/Dm8168DucatiMmu.c b/ti/syslink/family/hlos/knl/ti81xx/ti81xxducati/Linux/Dm8168DucatiMmu.c
+index f133b9b..ae7bb0e 100755
+--- a/ti/syslink/family/hlos/knl/ti81xx/ti81xxducati/Linux/Dm8168DucatiMmu.c
++++ b/ti/syslink/family/hlos/knl/ti81xx/ti81xxducati/Linux/Dm8168DucatiMmu.c
+@@ -58,6 +58,7 @@
+ #include <PwrMgr.h>
+ #include <Dm8168DucatiPwr.h>
+ #include <Dm8168DucatiMmu.h>
++#include <Bitops.h>
+ 
+ 
+ #define REG(x)              *((volatile UInt32 *) (x))
+@@ -107,7 +108,7 @@ Void DM8168DUCATIMMU_enable(PwrMgr_Handle handle)
+             GT_assert (curTrace, (object != NULL));
+ 
+             /*Enable the Ducati Logic*/
+-            REG(object->prcmVA + RM_DEFAULT_RSTCTRL) = 0xEF;
++            CLEAR_BIT(REG(object->prcmVA + RM_DEFAULT_RSTCTRL), 0x4);
+             while((((REG(object->prcmVA + RM_DEFAULT_RSTST)&0x10))!=0x10));
+ #if defined(SYSLINK_VARIANT_TI814X)
+             /* This delay is required only in case of centaurus*/
+-- 
+1.7.0.4
+
