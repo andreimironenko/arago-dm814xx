@@ -8,6 +8,8 @@ require ti-staging.inc
 
 PR = "r1"
 
+PVExtra = ""
+
 S = "${WORKDIR}/framework_components_${PV}${PVExtra}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/fc/${PV}/exports/framework_components_${PV},lite.tar.gz;name=fctarball"
