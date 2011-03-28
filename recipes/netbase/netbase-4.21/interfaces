@@ -13,6 +13,10 @@ iface lo inet loopback
 iface wlan0 inet dhcp
 	wireless_mode managed
 	wireless_essid any
+
+iface tiwlan0 inet dhcp
+	wireless_mode managed
+	wireless_essid any
 #
 #
 # Same as above but locked to a specific access point:
