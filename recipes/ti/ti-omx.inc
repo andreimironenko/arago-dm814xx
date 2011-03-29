@@ -60,6 +60,7 @@ do_compile() {
 
     # Clean before building next target
     cd ${S}/packages && make cleanall \
+        BUILD=make \
         ROOTDIR=${S}/packages \
         INTERNAL_SW_ROOT=${S}/packages \
         EXTERNAL_SW_ROOT=${DVSDK_INSTALL_DIR} \
