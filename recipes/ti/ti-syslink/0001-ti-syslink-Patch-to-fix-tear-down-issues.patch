@@ -1,0 +1,1049 @@
+From 0b1636aa3dc2eceaf89b85539498b17940083793 Mon Sep 17 00:00:00 2001
+From: Naveen S <naveens@ti.com>
+Date: Tue, 29 Mar 2011 15:12:38 +0530
+Subject: [PATCH 1/2] ti-syslink: Patch to fix tear down issues
+
+---
+ ti/syslink/docs/index.html                         |  828 ++++++++++----------
+ ti/syslink/family/hlos/knl/ti81xx/Platform.c       |   34 +-
+ ti/syslink/ipc/hlos/knl/GateHWSpinlock.c           |   23 +-
+ ti/syslink/ipc/rtos/syslinkMemMgr/SyslinkMemMgr.c  |   16 +-
+ .../ipc/rtos/syslinkMemMgr/SyslinkMemMgr.xdc       |    3 +-
+ 5 files changed, 485 insertions(+), 419 deletions(-)
+
+diff --git a/ti/syslink/docs/index.html b/ti/syslink/docs/index.html
+index 4b243c9..f05c263 100755
+--- a/ti/syslink/docs/index.html
++++ b/ti/syslink/docs/index.html
+@@ -1,403 +1,433 @@
+-<html xmlns:v="urn:schemas-microsoft-com:vml"
+-xmlns:o="urn:schemas-microsoft-com:office:office"
+-xmlns:w="urn:schemas-microsoft-com:office:word"
+-xmlns:x="urn:schemas-microsoft-com:office:excel"
+-xmlns:p="urn:schemas-microsoft-com:office:powerpoint"
+-xmlns:a="urn:schemas-microsoft-com:office:access"
+-xmlns:dt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882"
+-xmlns:s="uuid:BDC6E3F0-6DA3-11d1-A2A3-00AA00C14882"
+-xmlns:rs="urn:schemas-microsoft-com:rowset" xmlns:z="#RowsetSchema"
+-xmlns:b="urn:schemas-microsoft-com:office:publisher"
+-xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+-xmlns:c="urn:schemas-microsoft-com:office:component:spreadsheet"
+-xmlns:odc="urn:schemas-microsoft-com:office:odc"
+-xmlns:oa="urn:schemas-microsoft-com:office:activation"
+-xmlns:html="http://www.w3.org/TR/REC-html40"
+-xmlns:q="http://schemas.xmlsoap.org/soap/envelope/"
+-xmlns:rtc="http://microsoft.com/officenet/conferencing" xmlns:D="DAV:"
+-xmlns:Repl="http://schemas.microsoft.com/repl/"
+-xmlns:mt="http://schemas.microsoft.com/sharepoint/soap/meetings/"
+-xmlns:x2="http://schemas.microsoft.com/office/excel/2003/xml"
+-xmlns:ppda="http://www.passport.com/NameSpace.xsd"
+-xmlns:ois="http://schemas.microsoft.com/sharepoint/soap/ois/"
+-xmlns:dir="http://schemas.microsoft.com/sharepoint/soap/directory/"
+-xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+-xmlns:dsp="http://schemas.microsoft.com/sharepoint/dsp"
+-xmlns:udc="http://schemas.microsoft.com/data/udc"
+-xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+-xmlns:sub="http://schemas.microsoft.com/sharepoint/soap/2002/1/alerts/"
+-xmlns:ec="http://www.w3.org/2001/04/xmlenc#"
+-xmlns:sp="http://schemas.microsoft.com/sharepoint/"
+-xmlns:sps="http://schemas.microsoft.com/sharepoint/soap/"
+-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+-xmlns:udcs="http://schemas.microsoft.com/data/udc/soap"
+-xmlns:udcxf="http://schemas.microsoft.com/data/udc/xmlfile"
+-xmlns:udcp2p="http://schemas.microsoft.com/data/udc/parttopart" xmlns:st="&#1;"
+-xmlns="http://www.w3.org/TR/REC-html40">
+-
+-<head>
+-<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+-<meta name=ProgId content=Word.Document>
+-<meta name=Generator content="Microsoft Word 11">
+-<meta name=Originator content="Microsoft Word 11">
+-<link rel=File-List href="index_files/filelist.xml">
+-<title>SYSLINK Document Index</title>
+-<!--[if gte mso 9]><xml>
+- <o:DocumentProperties>
+-  <o:Author>a0876262</o:Author>
+-  <o:LastAuthor>a0131654</o:LastAuthor>
+-  <o:Revision>7</o:Revision>
+-  <o:TotalTime>88</o:TotalTime>
+-  <o:Created>2010-04-15T15:01:00Z</o:Created>
+-  <o:LastSaved>2010-12-06T11:38:00Z</o:LastSaved>
+-  <o:Pages>1</o:Pages>
+-  <o:Words>169</o:Words>
+-  <o:Characters>964</o:Characters>
+-  <o:Company>Texas Instruments</o:Company>
+-  <o:Lines>8</o:Lines>
+-  <o:Paragraphs>2</o:Paragraphs>
+-  <o:CharactersWithSpaces>1131</o:CharactersWithSpaces>
+-  <o:Version>11.9999</o:Version>
+- </o:DocumentProperties>
+-</xml><![endif]--><!--[if gte mso 9]><xml>
+- <w:WordDocument>
+-  <w:Zoom>75</w:Zoom>
+-  <w:ValidateAgainstSchemas/>
+-  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+-  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+-  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+-  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+- </w:WordDocument>
+-</xml><![endif]--><!--[if gte mso 9]><xml>
+- <w:LatentStyles DefLockedState="false" LatentStyleCount="156">
+- </w:LatentStyles>
+-</xml><![endif]-->
+-<style>
+-<!--
++<html xmlns:v="urn:schemas-microsoft-com:vml"
++xmlns:o="urn:schemas-microsoft-com:office:office"
++xmlns:w="urn:schemas-microsoft-com:office:word"
++xmlns:x="urn:schemas-microsoft-com:office:excel"
++xmlns:p="urn:schemas-microsoft-com:office:powerpoint"
++xmlns:a="urn:schemas-microsoft-com:office:access"
++xmlns:dt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882"
++xmlns:s="uuid:BDC6E3F0-6DA3-11d1-A2A3-00AA00C14882"
++xmlns:rs="urn:schemas-microsoft-com:rowset" xmlns:z="#RowsetSchema"
++xmlns:b="urn:schemas-microsoft-com:office:publisher"
++xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
++xmlns:c="urn:schemas-microsoft-com:office:component:spreadsheet"
++xmlns:odc="urn:schemas-microsoft-com:office:odc"
++xmlns:oa="urn:schemas-microsoft-com:office:activation"
++xmlns:html="http://www.w3.org/TR/REC-html40"
++xmlns:q="http://schemas.xmlsoap.org/soap/envelope/"
++xmlns:rtc="http://microsoft.com/officenet/conferencing" xmlns:D="DAV:"
++xmlns:Repl="http://schemas.microsoft.com/repl/"
++xmlns:mt="http://schemas.microsoft.com/sharepoint/soap/meetings/"
++xmlns:x2="http://schemas.microsoft.com/office/excel/2003/xml"
++xmlns:ppda="http://www.passport.com/NameSpace.xsd"
++xmlns:ois="http://schemas.microsoft.com/sharepoint/soap/ois/"
++xmlns:dir="http://schemas.microsoft.com/sharepoint/soap/directory/"
++xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
++xmlns:dsp="http://schemas.microsoft.com/sharepoint/dsp"
++xmlns:udc="http://schemas.microsoft.com/data/udc"
++xmlns:xsd="http://www.w3.org/2001/XMLSchema"
++xmlns:sub="http://schemas.microsoft.com/sharepoint/soap/2002/1/alerts/"
++xmlns:ec="http://www.w3.org/2001/04/xmlenc#"
++xmlns:sp="http://schemas.microsoft.com/sharepoint/"
++xmlns:sps="http://schemas.microsoft.com/sharepoint/soap/"
++xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++xmlns:udcs="http://schemas.microsoft.com/data/udc/soap"
++xmlns:udcxf="http://schemas.microsoft.com/data/udc/xmlfile"
++xmlns:udcp2p="http://schemas.microsoft.com/data/udc/parttopart" xmlns:st="&#1;"
++xmlns="http://www.w3.org/TR/REC-html40">
++
++<head>
++<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
++<meta name=ProgId content=Word.Document>
++<meta name=Generator content="Microsoft Word 11">
++<meta name=Originator content="Microsoft Word 11">
++<link rel=File-List href="index_files/filelist.xml">
++<title>SYSLINK Document Index</title>
++<!--[if gte mso 9]><xml>
++ <o:DocumentProperties>
++  <o:Author>a0876262</o:Author>
++  <o:LastAuthor>a0131654</o:LastAuthor>
++  <o:Revision>7</o:Revision>
++  <o:TotalTime>88</o:TotalTime>
++  <o:Created>2010-04-15T15:01:00Z</o:Created>
++  <o:LastSaved>2010-12-06T11:38:00Z</o:LastSaved>
++  <o:Pages>1</o:Pages>
++  <o:Words>169</o:Words>
++  <o:Characters>964</o:Characters>
++  <o:Company>Texas Instruments</o:Company>
++  <o:Lines>8</o:Lines>
++  <o:Paragraphs>2</o:Paragraphs>
++  <o:CharactersWithSpaces>1131</o:CharactersWithSpaces>
++  <o:Version>11.9999</o:Version>
++ </o:DocumentProperties>
++</xml><![endif]--><!--[if gte mso 9]><xml>
++ <w:WordDocument>
++  <w:Zoom>75</w:Zoom>
++  <w:ValidateAgainstSchemas/>
++  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
++  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
++  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
++  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
++ </w:WordDocument>
++</xml><![endif]--><!--[if gte mso 9]><xml>
++ <w:LatentStyles DefLockedState="false" LatentStyleCount="156">
++ </w:LatentStyles>
++</xml><![endif]-->
++<style>
++<!--
+ a:hover
+ {
+  color              : #333333 ;
+  text-decoration    : none ;
+-}
+-
+- /* Font Definitions */
+- @font-face
+-	{font-family:Tahoma;
+-	panose-1:2 11 6 4 3 5 4 4 2 4;
+-	mso-font-charset:0;
+-	mso-generic-font-family:swiss;
+-	mso-font-pitch:variable;
+-	mso-font-signature:1627421319 -2147483648 8 0 66047 0;}
+-@font-face
+-	{font-family:Verdana;
+-	panose-1:2 11 6 4 3 5 4 4 2 4;
+-	mso-font-charset:0;
+-	mso-generic-font-family:swiss;
+-	mso-font-pitch:variable;
+-	mso-font-signature:536871559 0 0 0 415 0;}
+- /* Style Definitions */
+- p.MsoNormal, li.MsoNormal, div.MsoNormal
+-	{mso-style-parent:"";
+-	mso-margin-top-alt:auto;
+-	margin-right:0in;
+-	mso-margin-bottom-alt:auto;
+-	margin-left:0in;
+-	mso-pagination:widow-orphan;
+-	font-size:12.0pt;
+-	font-family:"Times New Roman";
+-	mso-fareast-font-family:"Times New Roman";
+-	mso-bidi-font-family:"Times New Roman";
+-	mso-believe-normal-left:yes;}
+-a:link, span.MsoHyperlink
+-	{color:#22A1EA;
+-	mso-text-animation:none;
+-	text-decoration:none;
+-	text-underline:none;
+-	text-decoration:none;
+-	text-line-through:none;}
+-a:visited, span.MsoHyperlinkFollowed
+-	{color:#22A1EA;
+-	mso-text-animation:none;
+-	text-decoration:none;
+-	text-underline:none;
+-	text-decoration:none;
+-	text-line-through:none;}
+-p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+-	{mso-style-noshow:yes;
+-	margin:0in;
+-	margin-bottom:.0001pt;
+-	mso-pagination:widow-orphan;
+-	font-size:8.0pt;
+-	font-family:Tahoma;
+-	mso-fareast-font-family:"Times New Roman";
+-	mso-bidi-font-family:"Times New Roman";}
+-p.msoacetate0, li.msoacetate0, div.msoacetate0
+-	{mso-style-name:msoacetate;
+-	mso-style-noshow:yes;
+-	margin:0in;
+-	margin-bottom:.0001pt;
+-	mso-pagination:widow-orphan;
+-	font-size:8.0pt;
+-	font-family:Tahoma;
+-	mso-fareast-font-family:"Times New Roman";
+-	mso-bidi-font-family:"Times New Roman";}
+-@page Section1
+-	{size:8.5in 11.0in;
+-	margin:1.0in 1.25in 1.0in 1.25in;
+-	mso-header-margin:.5in;
+-	mso-footer-margin:.5in;
+-	mso-paper-source:0;}
+-div.Section1
+-	{page:Section1;}
+--->
+-</style>
+-<!--[if gte mso 10]>
+-<style>
+- /* Style Definitions */
+- table.MsoNormalTable
+-	{mso-style-name:"Table Normal";
+-	mso-tstyle-rowband-size:0;
+-	mso-tstyle-colband-size:0;
+-	mso-style-noshow:yes;
+-	mso-style-parent:"";
+-	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+-	mso-para-margin:0in;
+-	mso-para-margin-bottom:.0001pt;
+-	mso-pagination:widow-orphan;
+-	font-size:10.0pt;
+-	font-family:"Times New Roman";
+-	mso-ansi-language:#0400;
+-	mso-fareast-language:#0400;
+-	mso-bidi-language:#0400;}
+-</style>
+-<![endif]--><![if mso 9]>
+-<style>
+-p.MsoNormal
+-	{margin-left:7.5pt;}
+-</style>
+-<![endif]><!--[if gte mso 9]><xml>
+- <o:shapedefaults v:ext="edit" spidmax="27650"/>
+-</xml><![endif]--><!--[if gte mso 9]><xml>
+- <o:shapelayout v:ext="edit">
+-  <o:idmap v:ext="edit" data="1"/>
+- </o:shapelayout></xml><![endif]-->
+-</head>
+-
+-<body bgcolor=white lang=EN-US link="#22A1EA" vlink="#22A1EA" style='tab-interval:
+-.5in;margin-left:7.5pt;margin-top:7.5pt;margin-right:7.5pt;margin-bottom:7.5pt'>
+-
+-<div class=Section1>
+-
+-<div style='border:solid #148ACE 1.0pt;mso-border-alt:solid #148ACE .75pt;
+-padding:4.0pt 0in 4.0pt 0in;margin-top:3.75pt'>
+-
+-<p class=MsoNormal align=center style='margin-top:7.5pt;margin-right:15.5pt;
+-margin-bottom:0in;margin-left:15.5pt;margin-bottom:.0001pt;text-align:center;
+-background:#148ACE;vertical-align:middle'><b style='mso-bidi-font-weight:normal'><span
+-lang=PT-BR style='font-size:16.0pt;font-family:Verdana;color:white;mso-ansi-language:
+-PT-BR'>SysLink <o:p></o:p></span></b></p>
+-
+-</div>
+-
+-<div style='border:solid #148ACE 1.0pt;mso-border-alt:solid #148ACE .75pt;
+-padding:4.0pt 0in 4.0pt 0in;margin-bottom:3.75pt'>
+-
+-<p class=MsoNormal align=center style='margin-top:0in;margin-right:15.5pt;
+-margin-bottom:3.75pt;margin-left:15.5pt;text-align:center;background:#148ACE;
+-vertical-align:middle'><b style='mso-bidi-font-weight:normal'><span lang=PT-BR
+-style='font-size:10.0pt;font-family:Verdana;color:white;mso-ansi-language:PT-BR'>VERSION
+-02.00.00.67_alpha2<o:p></o:p></span></b></p>
+-
+-</div>
+-
+-<div style='border:solid #148ACE 1.0pt;mso-border-alt:solid #148ACE .75pt;
+-padding:4.0pt 0in 4.0pt 0in;margin-top:3.75pt;margin-bottom:7.5pt'>
+-
+-<p class=MsoNormal align=center style='margin-top:3.75pt;margin-right:15.5pt;
+-margin-bottom:7.5pt;margin-left:15.5pt;text-align:center;background:white;
+-vertical-align:middle'><b style='mso-bidi-font-weight:normal'><span lang=PT-BR
+-style='font-size:14.0pt;font-family:Verdana;color:#148ACE;mso-ansi-language:
+-PT-BR'>OMAP3530<o:p></o:p></span></b></p>
+-
+-<p class=MsoNormal align=center style='margin-top:3.75pt;margin-right:15.5pt;
+-margin-bottom:7.5pt;margin-left:15.5pt;text-align:center;background:white;
+-vertical-align:middle'><b style='mso-bidi-font-weight:normal'><span lang=PT-BR
+-style='font-size:14.0pt;font-family:Verdana;color:#148ACE;mso-ansi-language:
+-PT-BR'>TI81XX<o:p></o:p></span></b></p>
+-
+-<p class=MsoNormal align=center style='margin-top:3.75pt;margin-right:15.5pt;
+-margin-bottom:7.5pt;margin-left:15.5pt;text-align:center;background:white;
+-vertical-align:middle'><b style='mso-bidi-font-weight:normal'><span lang=PT-BR
+-style='font-size:14.0pt;font-family:Verdana;color:#148ACE;mso-ansi-language:
+-PT-BR'>OMAPL1XX<span style='mso-bidi-font-weight:bold'><o:p></o:p></span></span></b></p>
+-
+-</div>
+-
+-<div style='margin-top:3.75pt;margin-bottom:7.5pt'>
+-
+-<p class=MsoNormal style='margin-top:3.75pt;margin-right:7.5pt;margin-bottom:
+-7.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
+-middle'><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
+-color:black;mso-ansi-language:PT-BR'>The documents included with SysLink are
+-listed here under categories based on their intended usage. <o:p></o:p></span></p>
+-
+-</div>
+-
+-<div style='margin-top:18.75pt'>
+-
+-<p class=MsoNormal style='margin-top:18.75pt;margin-right:7.5pt;margin-bottom:
+-0in;margin-left:0in;margin-bottom:.0001pt;text-align:justify;background:#148ACE;
+-vertical-align:middle'><b><span lang=PT-BR style='font-family:Verdana;
+-color:white;mso-ansi-language:PT-BR'><!-- ================================= Getting started ====================- -->GETTING
+-STARTED <o:p></o:p></span></b></p>
+-
+-</div>
+-
+-<div style='margin-top:3.75pt;margin-bottom:1.5pt'>
+-
+-<p class=MsoNormal style='margin-top:3.75pt;margin-right:7.5pt;margin-bottom:
+-1.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
+-middle'><b><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
+-color:black;mso-ansi-language:PT-BR'><a
+-href="SysLink_02.00.00.67_alpha2_ReleaseNotes.pdf">SysLink_02.00.00.67_alpha2_ReleaseNotes.pdf</a>
+-<o:p></o:p></span></b></p>
+-
+-</div>
+-
+-<div style='margin-bottom:1.5pt'>
+-
+-<p class=MsoNormal style='margin-top:0in;margin-right:7.5pt;margin-bottom:1.5pt;
+-margin-left:7.5pt;background:white;vertical-align:middle'><span lang=PT-BR
+-style='font-size:8.0pt;font-family:Verdana;color:#0C5680;mso-ansi-language:
+-PT-BR'>[ReleaseNotes.pdf] <o:p></o:p></span></p>
+-
+-</div>
+-
+-<div style='margin-top:1.5pt;margin-bottom:7.5pt'>
+-
+-<p class=MsoNormal style='margin-top:1.5pt;margin-right:7.5pt;margin-bottom:
+-7.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
+-middle'><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
+-color:black;mso-ansi-language:PT-BR'>This document provides information on the
+-current release. <o:p></o:p></span></p>
+-
+-</div>
+-
+-<div style='margin-top:3.75pt;margin-bottom:1.5pt'>
+-
+-<p class=MsoNormal style='margin-top:3.75pt;margin-right:7.5pt;margin-bottom:
+-1.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
+-middle'><b><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
+-color:black;mso-ansi-language:PT-BR'><a
+-href="SysLink_02.00.00.67_alpha2_InstallGuide.pdf">SysLink_02.00.00.67_alpha2_InstallGuide.pdf</a>
+-<o:p></o:p></span></b></p>
+-
+-</div>
+-
+-<div style='margin-bottom:1.5pt'>
+-
+-<p class=MsoNormal style='margin-top:0in;margin-right:7.5pt;margin-bottom:1.5pt;
+-margin-left:7.5pt;background:white;vertical-align:middle'><span lang=PT-BR
+-style='font-size:8.0pt;font-family:Verdana;color:#0C5680;mso-ansi-language:
+-PT-BR'>[InstallGuide.pdf] <o:p></o:p></span></p>
+-
+-</div>
+-
+-<div style='margin-top:1.5pt;margin-bottom:7.5pt'>
+-
+-<p class=MsoNormal style='margin-top:1.5pt;margin-right:7.5pt;margin-bottom:
+-7.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
+-middle'><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
+-color:black;mso-ansi-language:PT-BR'>This document provides information to get
+-started with installing SysLink. <o:p></o:p></span></p>
+-
+-<p class=MsoNormal style='margin-top:3.75pt;margin-right:7.5pt;margin-bottom:
+-1.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
+-middle'><b><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
+-color:black;mso-ansi-language:PT-BR'><a
+-href="SysLink_02.00.00.67_alpha2_UserGuide.pdf"><span style='font-size:12.0pt;
+-font-family:"Times New Roman";color:windowtext;mso-ansi-language:EN-US;
+-font-weight:normal'><span style='mso-spacerun:yes'> </span></span>SysLink_02.00.00.67_alpha2_UserGuide.pdf</a>
+-<o:p></o:p></span></b></p>
+-
+-<p class=MsoNormal style='margin-top:0in;margin-right:7.5pt;margin-bottom:1.5pt;
+-margin-left:7.5pt;background:white;vertical-align:middle'><span lang=PT-BR
+-style='font-size:8.0pt;font-family:Verdana;color:#0C5680;mso-ansi-language:
+-PT-BR'>[UserGuide.pdf] <o:p></o:p></span></p>
+-
+-<p class=MsoNormal style='margin-top:1.5pt;margin-right:7.5pt;margin-bottom:
+-7.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
+-middle'><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
+-color:black;mso-ansi-language:PT-BR'>This document provides information </span><span
+-style='font-size:10.0pt;font-family:Verdana;color:black'>enabling users to
+-write and debug applications using SysLink</span><span lang=PT-BR
+-style='font-size:10.0pt;font-family:Verdana;color:black;mso-ansi-language:PT-BR'>.<o:p></o:p></span></p>
+-
+-<p class=MsoNormal style='margin-top:18.75pt;margin-right:7.5pt;margin-bottom:
+-0in;margin-left:0in;margin-bottom:.0001pt;text-align:justify;background:#148ACE;
+-vertical-align:middle'><b><span lang=PT-BR style='font-family:Verdana;
+-color:white;mso-ansi-language:PT-BR'>API REFERENCE GUIDE<o:p></o:p></span></b></p>
+-
+-<p class=MsoNormal style='margin-top:3.75pt;margin-right:7.5pt;margin-bottom:
+-1.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
+-middle'><b><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
+-color:black;mso-ansi-language:PT-BR'><a href="doxygen/html/index.html">API
+-REFERENCE GUIDE</a> <o:p></o:p></span></b></p>
+-
+-<p class=MsoNormal style='margin-top:0in;margin-right:7.5pt;margin-bottom:1.5pt;
+-margin-left:7.5pt;background:white;vertical-align:middle'><span lang=PT-BR
+-style='font-size:8.0pt;font-family:Verdana;color:#0C5680;mso-ansi-language:
+-PT-BR'>[index.html] <o:p></o:p></span></p>
+-
+-<p class=MsoNormal style='margin-top:1.5pt;margin-right:7.5pt;margin-bottom:
+-7.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
+-middle'><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
+-color:black;mso-ansi-language:PT-BR'>Provides doxygen generated API reference
+-guide for the application developers. <o:p></o:p></span></p>
+-
+-</div>
+-
+-<div style='margin-top:18.75pt'>
+-
+-<p class=MsoNormal style='margin-top:18.75pt;margin-right:7.5pt;margin-bottom:
+-0in;margin-left:0in;margin-bottom:.0001pt;text-align:justify;background:#148ACE;
+-vertical-align:middle'><b><span lang=PT-BR style='font-family:Verdana;
+-color:white;mso-ansi-language:PT-BR'>CDOC SOURCE CODE REFERENCE GUIDE for RTOS
+-IPC <o:p></o:p></span></b></p>
+-
+-</div>
+-
+-<div style='margin-top:3.75pt;margin-bottom:1.5pt'>
+-
+-<p class=MsoNormal style='margin-top:3.75pt;margin-right:7.5pt;margin-bottom:
+-1.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
+-middle'><b><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
+-color:black;mso-ansi-language:PT-BR'><a href="cdoc/index.html">RTOS IPC
+-reference</a> <o:p></o:p></span></b></p>
+-
+-</div>
+-
+-<div style='margin-bottom:1.5pt'>
+-
+-<p class=MsoNormal style='margin-top:0in;margin-right:7.5pt;margin-bottom:1.5pt;
+-margin-left:7.5pt;background:white;vertical-align:middle'><span lang=PT-BR
+-style='font-size:8.0pt;font-family:Verdana;color:#0C5680;mso-ansi-language:
+-PT-BR'>[index.html] <o:p></o:p></span></p>
+-
+-</div>
+-
+-<div style='margin-top:1.5pt;margin-bottom:7.5pt'>
+-
+-<p class=MsoNormal style='margin-top:1.5pt;margin-right:7.5pt;margin-bottom:
+-7.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
+-middle'><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
+-color:black;mso-ansi-language:PT-BR'>Provides cdoc generated Source Code
+-reference guide for RTOS IPC. <o:p></o:p></span></p>
+-
+-</div>
+-
+-</div>
+-
+-</body>
+-
+-</html>
++}
++
++ /* Font Definitions */
++ @font-face
++	{font-family:Tahoma;
++	panose-1:2 11 6 4 3 5 4 4 2 4;
++	mso-font-charset:0;
++	mso-generic-font-family:swiss;
++	mso-font-pitch:variable;
++	mso-font-signature:1627421319 -2147483648 8 0 66047 0;}
++@font-face
++	{font-family:Verdana;
++	panose-1:2 11 6 4 3 5 4 4 2 4;
++	mso-font-charset:0;
++	mso-generic-font-family:swiss;
++	mso-font-pitch:variable;
++	mso-font-signature:536871559 0 0 0 415 0;}
++ /* Style Definitions */
++ p.MsoNormal, li.MsoNormal, div.MsoNormal
++	{mso-style-parent:"";
++	mso-margin-top-alt:auto;
++	margin-right:0in;
++	mso-margin-bottom-alt:auto;
++	margin-left:0in;
++	mso-pagination:widow-orphan;
++	font-size:12.0pt;
++	font-family:"Times New Roman";
++	mso-fareast-font-family:"Times New Roman";
++	mso-bidi-font-family:"Times New Roman";
++	mso-believe-normal-left:yes;}
++a:link, span.MsoHyperlink
++	{color:#22A1EA;
++	mso-text-animation:none;
++	text-decoration:none;
++	text-underline:none;
++	text-decoration:none;
++	text-line-through:none;}
++a:visited, span.MsoHyperlinkFollowed
++	{color:#22A1EA;
++	mso-text-animation:none;
++	text-decoration:none;
++	text-underline:none;
++	text-decoration:none;
++	text-line-through:none;}
++p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
++	{mso-style-noshow:yes;
++	margin:0in;
++	margin-bottom:.0001pt;
++	mso-pagination:widow-orphan;
++	font-size:8.0pt;
++	font-family:Tahoma;
++	mso-fareast-font-family:"Times New Roman";
++	mso-bidi-font-family:"Times New Roman";}
++p.msoacetate0, li.msoacetate0, div.msoacetate0
++	{mso-style-name:msoacetate;
++	mso-style-noshow:yes;
++	margin:0in;
++	margin-bottom:.0001pt;
++	mso-pagination:widow-orphan;
++	font-size:8.0pt;
++	font-family:Tahoma;
++	mso-fareast-font-family:"Times New Roman";
++	mso-bidi-font-family:"Times New Roman";}
++@page Section1
++	{size:8.5in 11.0in;
++	margin:1.0in 1.25in 1.0in 1.25in;
++	mso-header-margin:.5in;
++	mso-footer-margin:.5in;
++	mso-paper-source:0;}
++div.Section1
++	{page:Section1;}
++-->
++</style>
++<!--[if gte mso 10]>
++<style>
++ /* Style Definitions */
++ table.MsoNormalTable
++	{mso-style-name:"Table Normal";
++	mso-tstyle-rowband-size:0;
++	mso-tstyle-colband-size:0;
++	mso-style-noshow:yes;
++	mso-style-parent:"";
++	mso-padding-alt:0in 5.4pt 0in 5.4pt;
++	mso-para-margin:0in;
++	mso-para-margin-bottom:.0001pt;
++	mso-pagination:widow-orphan;
++	font-size:10.0pt;
++	font-family:"Times New Roman";
++	mso-ansi-language:#0400;
++	mso-fareast-language:#0400;
++	mso-bidi-language:#0400;}
++</style>
++<![endif]--><![if mso 9]>
++<style>
++p.MsoNormal
++	{margin-left:7.5pt;}
++</style>
++<![endif]><!--[if gte mso 9]><xml>
++ <o:shapedefaults v:ext="edit" spidmax="27650"/>
++</xml><![endif]--><!--[if gte mso 9]><xml>
++ <o:shapelayout v:ext="edit">
++  <o:idmap v:ext="edit" data="1"/>
++ </o:shapelayout></xml><![endif]-->
++</head>
++
++<body bgcolor=white lang=EN-US link="#22A1EA" vlink="#22A1EA" style='tab-interval:
++.5in;margin-left:7.5pt;margin-top:7.5pt;margin-right:7.5pt;margin-bottom:7.5pt'>
++
++<div class=Section1>
++
++<div style='border:solid #148ACE 1.0pt;mso-border-alt:solid #148ACE .75pt;
++padding:4.0pt 0in 4.0pt 0in;margin-top:3.75pt'>
++
++<p class=MsoNormal align=center style='margin-top:7.5pt;margin-right:15.5pt;
++margin-bottom:0in;margin-left:15.5pt;margin-bottom:.0001pt;text-align:center;
++background:#148ACE;vertical-align:middle'><b style='mso-bidi-font-weight:normal'><span
++lang=PT-BR style='font-size:16.0pt;font-family:Verdana;color:white;mso-ansi-language:
++PT-BR'>SysLink <o:p></o:p></span></b></p>
++
++</div>
++
++<div style='border:solid #148ACE 1.0pt;mso-border-alt:solid #148ACE .75pt;
++padding:4.0pt 0in 4.0pt 0in;margin-bottom:3.75pt'>
++
++<p class=MsoNormal align=center style='margin-top:0in;margin-right:15.5pt;
++margin-bottom:3.75pt;margin-left:15.5pt;text-align:center;background:#148ACE;
++vertical-align:middle'><b style='mso-bidi-font-weight:normal'><span lang=PT-BR
++style='font-size:10.0pt;font-family:Verdana;color:white;mso-ansi-language:PT-BR'>VERSION
++02.00.00.67_p1_alpha2<o:p></o:p></span></b></p>
++
++</div>
++
++<div style='border:solid #148ACE 1.0pt;mso-border-alt:solid #148ACE .75pt;
++padding:4.0pt 0in 4.0pt 0in;margin-top:3.75pt;margin-bottom:7.5pt'>
++
++<p class=MsoNormal align=center style='margin-top:3.75pt;margin-right:15.5pt;
++margin-bottom:7.5pt;margin-left:15.5pt;text-align:center;background:white;
++vertical-align:middle'><b style='mso-bidi-font-weight:normal'><span lang=PT-BR
++style='font-size:14.0pt;font-family:Verdana;color:#148ACE;mso-ansi-language:
++PT-BR'>OMAP3530<o:p></o:p></span></b></p>
++
++<p class=MsoNormal align=center style='margin-top:3.75pt;margin-right:15.5pt;
++margin-bottom:7.5pt;margin-left:15.5pt;text-align:center;background:white;
++vertical-align:middle'><b style='mso-bidi-font-weight:normal'><span lang=PT-BR
++style='font-size:14.0pt;font-family:Verdana;color:#148ACE;mso-ansi-language:
++PT-BR'>TI81XX<o:p></o:p></span></b></p>
++
++<p class=MsoNormal align=center style='margin-top:3.75pt;margin-right:15.5pt;
++margin-bottom:7.5pt;margin-left:15.5pt;text-align:center;background:white;
++vertical-align:middle'><b style='mso-bidi-font-weight:normal'><span lang=PT-BR
++style='font-size:14.0pt;font-family:Verdana;color:#148ACE;mso-ansi-language:
++PT-BR'>OMAPL1XX<span style='mso-bidi-font-weight:bold'><o:p></o:p></span></span></b></p>
++
++</div>
++
++<div style='margin-top:3.75pt;margin-bottom:7.5pt'>
++
++<p class=MsoNormal style='margin-top:3.75pt;margin-right:7.5pt;margin-bottom:
++7.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
++middle'><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
++color:black;mso-ansi-language:PT-BR'>The documents included with SysLink are
++listed here under categories based on their intended usage. <o:p></o:p></span></p>
++
++</div>
++
++<div style='margin-top:18.75pt'>
++
++<p class=MsoNormal style='margin-top:18.75pt;margin-right:7.5pt;margin-bottom:
++0in;margin-left:0in;margin-bottom:.0001pt;text-align:justify;background:#148ACE;
++vertical-align:middle'><b><span lang=PT-BR style='font-family:Verdana;
++color:white;mso-ansi-language:PT-BR'><!-- ================================= Getting started ====================- -->GETTING
++STARTED <o:p></o:p></span></b></p>
++
++</div>
++
++<div style='margin-top:3.75pt;margin-bottom:1.5pt'>
++
++<p class=MsoNormal style='margin-top:3.75pt;margin-right:7.5pt;margin-bottom:
++1.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
++middle'><b><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
++color:black;mso-ansi-language:PT-BR'><a
++href="SysLink_02.00.00.67_p1_alpha2_ReleaseNotes.pdf">SysLink_02.00.00.67_p1_alpha2_ReleaseNotes.pdf</a>
++<o:p></o:p></span></b></p>
++
++</div>
++
++<div style='margin-bottom:1.5pt'>
++
++<p class=MsoNormal style='margin-top:0in;margin-right:7.5pt;margin-bottom:1.5pt;
++margin-left:7.5pt;background:white;vertical-align:middle'><span lang=PT-BR
++style='font-size:8.0pt;font-family:Verdana;color:#0C5680;mso-ansi-language:
++PT-BR'>[ReleaseNotes.pdf] <o:p></o:p></span></p>
++
++</div>
++
++<div style='margin-top:1.5pt;margin-bottom:7.5pt'>
++
++<p class=MsoNormal style='margin-top:1.5pt;margin-right:7.5pt;margin-bottom:
++7.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
++middle'><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
++color:black;mso-ansi-language:PT-BR'>This document provides information on the
++current patch release. <o:p></o:p></span></p>
++
++</div>
++
++<div style='margin-top:3.75pt;margin-bottom:1.5pt'>
++
++<p class=MsoNormal style='margin-top:3.75pt;margin-right:7.5pt;margin-bottom:
++1.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
++middle'><b><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
++color:black;mso-ansi-language:PT-BR'><a
++href="SysLink_02.00.00.67_alpha2_ReleaseNotes.pdf">SysLink_02.00.00.67_alpha2_ReleaseNotes.pdf</a>
++<o:p></o:p></span></b></p>
++
++</div>
++
++<div style='margin-bottom:1.5pt'>
++
++<p class=MsoNormal style='margin-top:0in;margin-right:7.5pt;margin-bottom:1.5pt;
++margin-left:7.5pt;background:white;vertical-align:middle'><span lang=PT-BR
++style='font-size:8.0pt;font-family:Verdana;color:#0C5680;mso-ansi-language:
++PT-BR'>[ReleaseNotes.pdf] <o:p></o:p></span></p>
++
++</div>
++
++<div style='margin-top:1.5pt;margin-bottom:7.5pt'>
++
++<p class=MsoNormal style='margin-top:1.5pt;margin-right:7.5pt;margin-bottom:
++7.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
++middle'><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
++color:black;mso-ansi-language:PT-BR'>This document provides information on the
++current release. <o:p></o:p></span></p>
++
++</div>
++
++<div style='margin-top:3.75pt;margin-bottom:1.5pt'>
++
++<p class=MsoNormal style='margin-top:3.75pt;margin-right:7.5pt;margin-bottom:
++1.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
++middle'><b><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
++color:black;mso-ansi-language:PT-BR'><a
++href="SysLink_02.00.00.67_alpha2_InstallGuide.pdf">SysLink_02.00.00.67_alpha2_InstallGuide.pdf</a>
++<o:p></o:p></span></b></p>
++
++</div>
++
++<div style='margin-bottom:1.5pt'>
++
++<p class=MsoNormal style='margin-top:0in;margin-right:7.5pt;margin-bottom:1.5pt;
++margin-left:7.5pt;background:white;vertical-align:middle'><span lang=PT-BR
++style='font-size:8.0pt;font-family:Verdana;color:#0C5680;mso-ansi-language:
++PT-BR'>[InstallGuide.pdf] <o:p></o:p></span></p>
++
++</div>
++
++<div style='margin-top:1.5pt;margin-bottom:7.5pt'>
++
++<p class=MsoNormal style='margin-top:1.5pt;margin-right:7.5pt;margin-bottom:
++7.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
++middle'><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
++color:black;mso-ansi-language:PT-BR'>This document provides information to get
++started with installing SysLink. <o:p></o:p></span></p>
++
++<p class=MsoNormal style='margin-top:3.75pt;margin-right:7.5pt;margin-bottom:
++1.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
++middle'><b><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
++color:black;mso-ansi-language:PT-BR'><a
++href="SysLink_02.00.00.67_alpha2_UserGuide.pdf"><span style='font-size:12.0pt;
++font-family:"Times New Roman";color:windowtext;mso-ansi-language:EN-US;
++font-weight:normal'><span style='mso-spacerun:yes'> </span></span>SysLink_02.00.00.67_alpha2_UserGuide.pdf</a>
++<o:p></o:p></span></b></p>
++
++<p class=MsoNormal style='margin-top:0in;margin-right:7.5pt;margin-bottom:1.5pt;
++margin-left:7.5pt;background:white;vertical-align:middle'><span lang=PT-BR
++style='font-size:8.0pt;font-family:Verdana;color:#0C5680;mso-ansi-language:
++PT-BR'>[UserGuide.pdf] <o:p></o:p></span></p>
++
++<p class=MsoNormal style='margin-top:1.5pt;margin-right:7.5pt;margin-bottom:
++7.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
++middle'><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
++color:black;mso-ansi-language:PT-BR'>This document provides information </span><span
++style='font-size:10.0pt;font-family:Verdana;color:black'>enabling users to
++write and debug applications using SysLink</span><span lang=PT-BR
++style='font-size:10.0pt;font-family:Verdana;color:black;mso-ansi-language:PT-BR'>.<o:p></o:p></span></p>
++
++<p class=MsoNormal style='margin-top:18.75pt;margin-right:7.5pt;margin-bottom:
++0in;margin-left:0in;margin-bottom:.0001pt;text-align:justify;background:#148ACE;
++vertical-align:middle'><b><span lang=PT-BR style='font-family:Verdana;
++color:white;mso-ansi-language:PT-BR'>API REFERENCE GUIDE<o:p></o:p></span></b></p>
++
++<p class=MsoNormal style='margin-top:3.75pt;margin-right:7.5pt;margin-bottom:
++1.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
++middle'><b><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
++color:black;mso-ansi-language:PT-BR'><a href="doxygen/html/index.html">API
++REFERENCE GUIDE</a> <o:p></o:p></span></b></p>
++
++<p class=MsoNormal style='margin-top:0in;margin-right:7.5pt;margin-bottom:1.5pt;
++margin-left:7.5pt;background:white;vertical-align:middle'><span lang=PT-BR
++style='font-size:8.0pt;font-family:Verdana;color:#0C5680;mso-ansi-language:
++PT-BR'>[index.html] <o:p></o:p></span></p>
++
++<p class=MsoNormal style='margin-top:1.5pt;margin-right:7.5pt;margin-bottom:
++7.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
++middle'><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
++color:black;mso-ansi-language:PT-BR'>Provides doxygen generated API reference
++guide for the application developers. <o:p></o:p></span></p>
++
++</div>
++
++<div style='margin-top:18.75pt'>
++
++<p class=MsoNormal style='margin-top:18.75pt;margin-right:7.5pt;margin-bottom:
++0in;margin-left:0in;margin-bottom:.0001pt;text-align:justify;background:#148ACE;
++vertical-align:middle'><b><span lang=PT-BR style='font-family:Verdana;
++color:white;mso-ansi-language:PT-BR'>CDOC SOURCE CODE REFERENCE GUIDE for RTOS
++IPC <o:p></o:p></span></b></p>
++
++</div>
++
++<div style='margin-top:3.75pt;margin-bottom:1.5pt'>
++
++<p class=MsoNormal style='margin-top:3.75pt;margin-right:7.5pt;margin-bottom:
++1.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
++middle'><b><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
++color:black;mso-ansi-language:PT-BR'><a href="cdoc/index.html">RTOS IPC
++reference</a> <o:p></o:p></span></b></p>
++
++</div>
++
++<div style='margin-bottom:1.5pt'>
++
++<p class=MsoNormal style='margin-top:0in;margin-right:7.5pt;margin-bottom:1.5pt;
++margin-left:7.5pt;background:white;vertical-align:middle'><span lang=PT-BR
++style='font-size:8.0pt;font-family:Verdana;color:#0C5680;mso-ansi-language:
++PT-BR'>[index.html] <o:p></o:p></span></p>
++
++</div>
++
++<div style='margin-top:1.5pt;margin-bottom:7.5pt'>
++
++<p class=MsoNormal style='margin-top:1.5pt;margin-right:7.5pt;margin-bottom:
++7.5pt;margin-left:7.5pt;text-align:justify;background:white;vertical-align:
++middle'><span lang=PT-BR style='font-size:10.0pt;font-family:Verdana;
++color:black;mso-ansi-language:PT-BR'>Provides cdoc generated Source Code
++reference guide for RTOS IPC. <o:p></o:p></span></p>
++
++</div>
++
++</div>
++
++</body>
++
++</html>
+diff --git a/ti/syslink/family/hlos/knl/ti81xx/Platform.c b/ti/syslink/family/hlos/knl/ti81xx/Platform.c
+index 1295ff7..a3ab6c2 100755
+--- a/ti/syslink/family/hlos/knl/ti81xx/Platform.c
++++ b/ti/syslink/family/hlos/knl/ti81xx/Platform.c
+@@ -4,7 +4,7 @@
+  *  @brief      Implementation of Platform initialization logic.
+  *
+  *
+- *  @ver        02.00.00.67_alpha2
++ *  @ver        02.00.00.67_p1_alpha2
+  *  
+  *  ============================================================================
+  *  
+@@ -816,25 +816,29 @@ Platform_setup (void)
+ 
+ /* Intialize RINGIO Transport for DSP */
+     if (status >= 0) {
+-        for (i = 0; i < (MultiProc_getNumProcessors () - 1); i++) {
++        for (i = 0; 
++            (i < (MultiProc_getNumProcessors () - 1)) && (status >= 0); i++) {
+             RingIOTransportShm_Params_init (NULL,
+                           &config->ringIOTransportShmParams [i]);
+             Platform_module->ringIOTransportShmHandle [i] =
+             RingIOTransportShm_create  (i,
+                                         &config->ringIOTransportShmParams [i]);
+-        }
+ #if !defined(SYSLINK_BUILD_OPTIMIZE)
+-        if (status < 0) {
+-            GT_setFailureReason (curTrace,
+-                                 GT_4CLASS,
+-                                 "Platform_setup",
+-                                 status,
+-                                 "RingIOTransportShm_create failed!");
+-        }
+-        else {
+-            Platform_module->ringIOTransportShmInitSlaveFlag [i] = TRUE;
+-        }
++            if (status < 0) {
++                GT_setFailureReason (curTrace,
++                                     GT_4CLASS,
++                                     "Platform_setup",
++                                     status,
++                                     "RingIOTransportShm_create failed!");
++            }
++            else {
+ #endif /* if !defined(SYSLINK_BUILD_OPTIMIZE) */
++                Platform_module->ringIOTransportShmInitSlaveFlag [i] = TRUE;
++#if !defined(SYSLINK_BUILD_OPTIMIZE)
++            }
++#endif /* if !defined(SYSLINK_BUILD_OPTIMIZE) */
++
++        }
+     }
+ 
+ /* Intialize coff loader */
+@@ -2655,7 +2659,7 @@ Platform_stopCallback (UInt16 procId, Ptr arg)
+     }
+ 
+     Platform_refCount--;
+-    if (Platform_refCount == 0) {
++//    if (Platform_refCount == 0) {
+         if (handle->bslaveAdditionalReg != NULL) {
+             Memory_free (NULL,
+                          handle->bslaveAdditionalReg,
+@@ -2668,7 +2672,7 @@ Platform_stopCallback (UInt16 procId, Ptr arg)
+                          handle->slaveCfg.numSRs * sizeof (Platform_SlaveSRConfig));
+             handle->slaveSRCfg = NULL;
+         }
+-    }
++//    }
+ 
+     if (entryBaseAddrs != NULL) {
+         Memory_free (NULL,
+diff --git a/ti/syslink/ipc/hlos/knl/GateHWSpinlock.c b/ti/syslink/ipc/hlos/knl/GateHWSpinlock.c
+index 443857c..a32e237 100755
+--- a/ti/syslink/ipc/hlos/knl/GateHWSpinlock.c
++++ b/ti/syslink/ipc/hlos/knl/GateHWSpinlock.c
+@@ -4,7 +4,7 @@
+  *  @brief      Gate based on Hardware SpinLock.
+  *
+  *
+- *  @ver        02.00.00.67_alpha2
++ *  @ver        02.00.00.67_p1_alpha2
+  *  
+  *  ============================================================================
+  *  
+@@ -130,6 +130,7 @@ static
+ #endif /* if !defined(SYSLINK_BUILD_DEBUG) */
+ GateHWSpinlock_Module_State GateHWSpinlock_state =
+ {
++    .refCount = 0,
+     .defaultCfg.defaultProtection  = GateHWSpinlock_LocalProtect_INTERRUPT,
+     .defaultCfg.numLocks           = 64,/* Max limit supported in netra platform*/
+     .defInstParams.resourceId      = 0,
+@@ -291,7 +292,9 @@ Int32
+ GateHWSpinlock_destroy (void)
+ {
+     Int32 status = GateHWSpinlock_S_SUCCESS;
+-        IArg  key;
++    IArg  key;
++    UInt32 reservedSize;
++
+ 
+     GT_0trace (curTrace, GT_ENTER, "GateHWSpinlock_destroy");
+ 
+@@ -310,8 +313,22 @@ GateHWSpinlock_destroy (void)
+     }
+     else {
+ #endif /* if !defined(SYSLINK_BUILD_OPTIMIZE) */
+-        if (--GateHWSpinlock_module->refCount == 1) {
++        GateHWSpinlock_module->refCount --;
++
++        if (GateHWSpinlock_module->refCount == 0) {
++
+             Gate_leaveSystem (key);
++
++            reservedSize = (GateHWSpinlock_module->numLocks/32);
++            if (GateHWSpinlock_module->numLocks % 32) {
++                reservedSize += 1;
++            }
++
++            Memory_free (NULL,
++                         GateHWSpinlock_module->reservedMaskArr,
++                         reservedSize * sizeof(UInt32));
++            GateHWSpinlock_module->reservedMaskArr = NULL;
++
+             /* Clear cfg area */
+             Memory_set ((Ptr) &GateHWSpinlock_module->cfg,
+                         0,
+diff --git a/ti/syslink/ipc/rtos/syslinkMemMgr/SyslinkMemMgr.c b/ti/syslink/ipc/rtos/syslinkMemMgr/SyslinkMemMgr.c
+index abb7b0f..e91d2ff 100755
+--- a/ti/syslink/ipc/rtos/syslinkMemMgr/SyslinkMemMgr.c
++++ b/ti/syslink/ipc/rtos/syslinkMemMgr/SyslinkMemMgr.c
+@@ -4,7 +4,7 @@
+  *  @brief   Implements front end for the SyslinkMemMgr implementations.
+  *
+  *
+- *  @ver        02.00.00.67_alpha2
++ *  @ver        02.00.00.67_p1_alpha2
+  *  
+  *  ============================================================================
+  *  
+@@ -82,11 +82,13 @@ Int SyslinkMemMgr_Instance_init(SyslinkMemMgr_Object       *obj,
+             SyslinkMemMgr_RemoteProxyShMem_Params_init(&custom1Params);
+             custom1Params.heapHandle = params->heapHandle;
+             obj->memMgrHandle = SyslinkMemMgr_RemoteProxyShMem_create(&custom1Params, eb);
++            obj->memMgrType = params->memMgrType;
+         break;
+         case SyslinkMemMgr_TYPE_TILERMEM:
+             SyslinkMemMgr_RemoteProxyTilerMem_Params_init(&custom2Params);
+             custom2Params.heapHandle = params->heapHandle;
+             obj->memMgrHandle = SyslinkMemMgr_RemoteProxyTilerMem_create(&custom2Params, eb);
++            obj->memMgrType = params->memMgrType;
+         break;
+         default:
+         break;
+@@ -99,6 +101,18 @@ Void SyslinkMemMgr_Instance_finalize(SyslinkMemMgr_Object *obj,
+                                      Int                   status)
+ {
+ 
++    switch(obj->memMgrType) {
++
++        case SyslinkMemMgr_TYPE_SHAREDMEM:
++             SyslinkMemMgr_RemoteProxyShMem_delete(&obj->memMgrHandle);
++        break;
++        case SyslinkMemMgr_TYPE_TILERMEM:
++             SyslinkMemMgr_RemoteProxyTilerMem_delete(&obj->memMgrHandle);
++        break;
++        default:
++        break;
++
++    }
+ 
+ }
+ 
+diff --git a/ti/syslink/ipc/rtos/syslinkMemMgr/SyslinkMemMgr.xdc b/ti/syslink/ipc/rtos/syslinkMemMgr/SyslinkMemMgr.xdc
+index bf1049c..3e35026 100755
+--- a/ti/syslink/ipc/rtos/syslinkMemMgr/SyslinkMemMgr.xdc
++++ b/ti/syslink/ipc/rtos/syslinkMemMgr/SyslinkMemMgr.xdc
+@@ -4,7 +4,7 @@
+  *  @brief      XDC file
+  *
+  *
+- *  @ver        02.00.00.67_alpha2
++ *  @ver        02.00.00.67_p1_alpha2
+  *  
+  *  ============================================================================
+  *  
+@@ -88,6 +88,7 @@ module SyslinkMemMgr inherits ti.syslink.ipc.rtos.interfaces.ISyslinkMemMgr {
+     internal:
+     struct Instance_State {
+         ISyslinkMemMgr.Handle memMgrHandle;
++        UInt32                memMgrType;
+     }
+ 
+ }
+-- 
+1.7.0.4
+

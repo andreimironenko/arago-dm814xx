@@ -1,0 +1,27 @@
+From 647404d0341bb57cd175e5f706799eb702be734f Mon Sep 17 00:00:00 2001
+From: Naveen S <naveens@ti.com>
+Date: Tue, 29 Mar 2011 15:37:57 +0530
+Subject: [PATCH 2/2] ti-syslink: Cache invalidate fix added
+
+---
+ ti/syslink/ipc/rtos/shMem/FrameQBufMgr_ShMem.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/ti/syslink/ipc/rtos/shMem/FrameQBufMgr_ShMem.c b/ti/syslink/ipc/rtos/shMem/FrameQBufMgr_ShMem.c
+index becb4fb..e456917 100755
+--- a/ti/syslink/ipc/rtos/shMem/FrameQBufMgr_ShMem.c
++++ b/ti/syslink/ipc/rtos/shMem/FrameQBufMgr_ShMem.c
+@@ -3761,6 +3761,10 @@ _FrameQBufMgr_ShMem_open(FrameQBufMgr_ShMem_Object       * obj,
+          /*Invalidate the  virtAddr contents */
+         pAttrs = obj->attrs;
+         if (obj->ctrlStructCacheFlag == TRUE) {
++            Cache_inv((Ptr)obj->pnameserverEntry,
++                      sizeof (FrameQBufMgr_NameServerEntry),
++                      Cache_Type_ALL,
++                      TRUE);
+              Cache_inv((Ptr)pAttrs,
+                        sizeof (FrameQBufMgr_ShMem_Attrs),
+                        Cache_Type_ALL,
+-- 
+1.7.0.4
+
