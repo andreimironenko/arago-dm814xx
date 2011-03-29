@@ -1,0 +1,112 @@
+From 89eeed84189550b04ecba501f4ece6bf33118819 Mon Sep 17 00:00:00 2001
+From: Naveen S <naveens@ti.com>
+Date: Tue, 29 Mar 2011 16:10:29 +0530
+Subject: [PATCH] ti-ipc: Fix for cache invalidate issue
+
+---
+ packages/ti/sdo/ipc/ListMP.c |   44 ++++++++++++++++++++++++++++++++---------
+ 1 files changed, 34 insertions(+), 10 deletions(-)
+
+diff --git a/packages/ti/sdo/ipc/ListMP.c b/packages/ti/sdo/ipc/ListMP.c
+index f1d2dc2..a6f372a 100644
+--- a/packages/ti/sdo/ipc/ListMP.c
++++ b/packages/ti/sdo/ipc/ListMP.c
+@@ -1,5 +1,5 @@
+-/* 
+- * Copyright (c) 2011, Texas Instruments Incorporated
++/* --COPYRIGHT--,BSD
++ * Copyright (c) $(CPYYEAR), Texas Instruments Incorporated
+  * All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without
+@@ -28,7 +28,7 @@
+  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+- * */
++ * --/COPYRIGHT--*/
+ /*
+  *  ======== ListMP.c ========
+  *  Implementation of functions specified in ListMP.xdc.
+@@ -50,7 +50,7 @@
+  */
+ #if defined(xdc_target__isa_64P) || defined(xdc_target__isa_674)
+ #define ISA_64P             1
+-#define CACHEL1DLINESIZE        64
++#define CACHEL1DLINESIZE	64
+ #endif
+ 
+ #ifdef ISA_64P
+@@ -58,6 +58,7 @@
+ #include <ti/sysbios/family/c64p/Hwi.h>
+ #else
+ #include <ti/sysbios/hal/Cache.h>
++#include <ti/sysbios/hal/Hwi.h>
+ #endif
+ 
+ #include <ti/sdo/ipc/_Ipc.h>
+@@ -399,7 +400,13 @@ Ptr ListMP_getHead(ListMP_Handle handle)
+         elem = NULL;
+     }
+     else {
++#ifndef ISA_64P
++        if (obj->cacheEnabled) {
++            /* invalidate elem */
++            Cache_inv(localHeadNext, sizeof(ListMP_Elem), Cache_Type_ALL, TRUE);
++        }
+ 
++#endif
+         if (ti_sdo_ipc_SharedRegion_translate == FALSE) {
+             localNext = (ListMP_Elem *)localHeadNext->next;
+         }
+@@ -740,7 +747,7 @@ Int ListMP_putHead(ListMP_Handle handle, ListMP_Elem *elem)
+ {
+     ti_sdo_ipc_ListMP_Object *obj = (ti_sdo_ipc_ListMP_Object *)handle;
+     UInt key;
+-    Int  id;
++    Int	 id;
+     ListMP_Elem *localNextElem;
+     SharedRegion_SRPtr sharedElem;
+     SharedRegion_SRPtr sharedHead;
+@@ -830,7 +837,7 @@ Int ListMP_putTail(ListMP_Handle handle, ListMP_Elem *elem)
+ {
+     ti_sdo_ipc_ListMP_Object *obj = (ti_sdo_ipc_ListMP_Object *)handle;
+     UInt key;
+-    Int  id;
++    Int	 id;
+     ListMP_Elem *localPrevElem;
+     SharedRegion_SRPtr sharedElem;
+     SharedRegion_SRPtr sharedHead;
+@@ -1168,8 +1175,25 @@ Void ti_sdo_ipc_ListMP_elemClear(ti_sdo_ipc_ListMP_Elem *elem)
+ 
+ 
+ /*
++ *! Revision History
++ *! ================
++ *! 26-Aug-2010 jv      Fix SDOCM00066117: Optimize cache calls for C64P.
++ *! 23-Jul-2010 jv      Fix SDOCM00071733: obj->attrs must be flushed from
++ *!                     cache to help ROV (not a runtime problem).
++ *! 13-May-2010 skp     Fixed SDOCM00070083 (finalize() has incorrect logic)
++ *! 19-Apr-2010 skp     SDOCM00069154 Handle cannot be typedef'd as opaque type
++ *! 09-Mar-2010 skp     Fixed SDOCM00066819 (assert that region has valid heap)
++ *! 04-Mar-2010 skp     Fixed SDOCM00067361 (allow anonymous create)
++ *! 18-Feb-2010 skp     Fixes for SDOCM00066913 (ROUND_UP issues)
++ *! 16-Feb-2010 skp     Fix SDOCM00066724 - Mod_open return Mod_E_NOTFOUND...
++ *! 08-Jan-2010 jv      Fix SDOCM00065682 - finalize needs to be fixed.
++ *! 02-Oct-2009 jv      Collapse ListMP shared memory into here.
++ *! 21-Jul-2009 jv      Add support for Type_FAST.
++ *! 24-Jun-2009 jv      Fix SDOCM00059334. ListMP_open to return FAIL if not
++ *!                     created yet. Check return of create calls.
++ *! 20-Mar-2009 jv      Add support for NameServer key remove.
++ *! 13-Mar-2009 jv      Add proxy support for Fast Hw Queues
++ *! 29-Jan-2009 jv      Add functions that are part of interface.
++ *! 06-Jan-2009 jv      Modified according to new interface
++ *! 26-Nov-2008 jv      Created file.
+  */
+-/*
+- *  @(#) ti.sdo.ipc; 1, 0, 0, 0,508; 1-20-2011 10:08:06; /db/vtree/library/trees/ipc/ipc.git/src/ ipc-f23
+- */
+-
+-- 
+1.7.0.4
+
