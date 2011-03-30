@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install corresponding development packages for Board Support Package"
-PR = "r3"
+PR = "r4"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -19,6 +19,11 @@ BLUETOOTH_SUPPORT_omapl138 = "\
     "
 
 BLUETOOTH_SUPPORT_ti816x = "\
+    bluez4-dev \
+    openobex-dev \
+    "
+
+BLUETOOTH_SUPPORT_ti814x = "\
     bluez4-dev \
     openobex-dev \
     "
