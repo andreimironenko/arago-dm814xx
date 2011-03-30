@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install sources for additional utilities/demos for SDKs"
-PR = "r8"
+PR = "r9"
 LICENSE = "MIT"
 
 inherit task
@@ -9,8 +9,14 @@ UTILS = ""
 
 UTILS_COMMON = " \
     am-sysinfo-src \
-    am-benchmarks-src \
     "
+
+# Add am-benchmarks sources for supported devices
+UTILS_append_omapl138 = " am-benchmarks-src"
+UTILS_append_omap3 = " am-benchmarks-src"
+UTILS_append_ti816x = " am-benchmarks-src"
+UTILS_append_dm365 = " am-benchmarks-src"
+
 
 # Add pru and profibus sources for omapl138 devices
 UTILS_omapl138 = " \
