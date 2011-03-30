@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install Board Support Package binaries on ${MACHINE}"
-PR = "r17"
+PR = "r18"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -53,6 +53,17 @@ BLUETOOTH_SUPPORT_omapl138 = "\
     "
 
 BLUETOOTH_SUPPORT_ti816x = "\
+    bluez4 \
+    bluez4-agent \
+    libasound-module-bluez \
+    bluez-hcidump \
+    openobex \
+    openobex-apps \
+    obexftp \
+    ussp-push \
+    "
+
+BLUETOOTH_SUPPORT_ti814x = "\
     bluez4 \
     bluez4-agent \
     libasound-module-bluez \
