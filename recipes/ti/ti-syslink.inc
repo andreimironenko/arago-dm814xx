@@ -26,8 +26,6 @@ S = "${WORKDIR}/syslink_${PV}${PVExtra}"
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/SysLink/${PV}${PVExtra}/exports/syslink_${PV}${PVExtra}.tar.gz;name=syslinktarball"
 
 DEPENDS = "ti-sysbios ti-xdctools ti-cgt6x ti-ipc ti-cgt470"
-# Need to add M3 support in subsequent update
-#DEPENDS_append_ti816x = " ti-cgt470"
 DEPENDS += "virtual/kernel" 
 
 SYSLINKHLOSSAMPLES = "procMgr frameq gateMP heapBufMP heapMemMP listMP messageQ notify ringIO ringIO_gpp sharedRegion"

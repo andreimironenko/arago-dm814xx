@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 cwd=`dirname $0`
 . $cwd/common.sh
@@ -9,7 +9,7 @@ echo "This step will set up the u-boot variables for booting the EVM."
 
 ipdefault=`ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1 }'`
 platform=`grep PLATFORM= $cwd/../Rules.make | cut -d= -f2`
-prompt="EVM >"
+prompt="DM36x EVM #"
 
 echo "Autodetected the following ip address of your host, correct it if necessary"
 read -p "[ $ipdefault ] " ip
@@ -46,15 +46,43 @@ fi
 uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyS0,115200n8 rw mem=48M"
-videoargs1="dm365_imp.oper_mode=0 davinci_capture.device_type=4"
-videoargs2="davinci_display.cont2_bufsize=6291456"
-videoargs3="vpfe_capture.cont_bufoffset=6291456"
-videoargs4="vpfe_capture.cont_bufsize=6291456"
-videoargs5="davinci_enc_mngr.ch0_output=LCD"
-videoargs6="davinci_enc_mngr.ch0_mode=480x272"
-extendedvideoargs="setenv extendedvideoargs $videoargs1 $videoargs2 $videoargs3 $videoargs4 $videoargs5 $videoargs6"
-videoargs="\${extendedvideoargs}"
+baseargs="console=ttyS0,115200n8 rw dm365_imp.oper_mode=0"
+videoargs1="video=davincifb:vid0=OFF:vid1=OFF:osd0=480x272x16,4050K"
+
+echo "Select Capture input type :"
+echo " 1: Camera"
+echo " 2: Composite/Component"
+echo
+read -p "[ 1 ] " cinput
+
+if [ ! -n "$cinput" ]; then
+    cinput="1"
+fi
+
+if [ "$cinput" -eq "1" ]; then
+    # Do not reserve any memory for video drivers. Mainly because we assume that
+    # applications will use user allocated buffers for display and capture.
+    # The only application today needs driver allocated buffer is GStreamer
+    # v4l2src element and since this element does not support Camera input yet
+    # no need to waste this memory.
+    
+    videoargs2=" mem=60MB vpfe_capture.interface=1 "
+    videoargs3=" "
+else
+    # Reserve 13MB for video driver. This memory will be used by capture 
+    # driver to store 1080P buffer. Most of the dvsdk applications supports
+    # user allocated buffer but GStreamer v4l2src works with driver allocated
+    # buffers. If you are not using GStreamer v42lsrc then probably consider 
+    # giving back this memory to Linux.
+
+    videoargs2=" mem=48MB davinci_capture.device_type=4 "
+    videoargs3=" vpfe_capture.cont_bufsize=12582912 "
+fi
+echo
+
+videoargs4="davinci_enc_mngr.ch0_output=LCD"
+videoargs5="davinci_enc_mngr.ch0_mode=480x272"
+videoargs="$videoargs1 $videoargs2 $videoargs3 $videoargs4 $videoargs5 "
 fssdargs="root=/dev/mmcblk0p2 rootwait"
 fsnfsargs="root=/dev/nfs nfsroot=$ip:$rootpath"
 fsflashargs="root=/dev/mtdblock4 rootfstype=jffs2"
@@ -114,7 +142,7 @@ if [ "$kernel" -eq "1" ]; then
     bootcmd="setenv bootcmd 'dhcp;setenv serverip $ip;tftpboot;bootm'"
     serverip="setenv serverip $ip"
     bootfile="setenv bootfile $uimage"
-    
+
     if [ "$fs" -eq "1" ]; then
         bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
         cfg="uimage-tftp_fs-nfs"
@@ -128,15 +156,15 @@ if [ "$kernel" -eq "1" ]; then
 elif [ "$kernel" -eq "2" ]; then
     if [ "$fs" -eq "1" ]; then
         bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
-        bootcmd="setenv bootcmd 'bootm 0x80700000'"
+        bootcmd="setenv bootcmd 'mmc rescan 0; fatload mmc 0 0x80700000 uImage; bootm 0x80700000'"
         cfg="uimage-sd_fs-nfs"
     elif [ "$fs" -eq "2" ]; then
         bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
-        bootcmd="setenv bootcmd 'bootm 0x80700000'"
+        bootcmd="setenv bootcmd 'mmc rescan 0; fatload mmc 0 0x80700000 uImage; bootm 0x80700000'"
         cfg="uimage-sd_fs-sd"
     else
         bootargs="setenv bootargs $baseargs $videoargs $fsflashargs ip=off"
-        bootcmd="setenv bootcmd 'bootm 0x80700000'"
+        bootcmd="setenv bootcmd 'mmc rescan 0; fatload mmc 0 0x80700000 uImage; bootm 0x80700000'"
         cfg="uimage-sd_fs-flash"
     fi
 else
@@ -161,7 +189,6 @@ echo "Resulting u-boot variable settings:"
 echo
 echo "setenv bootdelay 4"
 echo "setenv baudrate 115200"
-echo $extendedvideoargs
 echo $bootargs
 echo $bootcmd
 
@@ -219,15 +246,12 @@ if [ "$minicom" == "y" ]; then
     do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv oldbootargs \$\{bootargs\}\"" $minicomfilepath
-    do_expect "\"$prompt\"" "send \"setenv extendedvideoargs  \c\"" $minicomfilepath
+    do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs \c\"" $minicomfilepath
     echo "send \"$videoargs1 \c\"" >> $minicomfilepath
     echo "send \"$videoargs2 \c\"" >> $minicomfilepath
     echo "send \"$videoargs3 \c\"" >> $minicomfilepath
     echo "send \"$videoargs4 \c\"" >> $minicomfilepath
     echo "send \"$videoargs5 \c\"" >> $minicomfilepath
-    echo "send \"$videoargs6 \"" >> $minicomfilepath
-
-    do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs $videoargs \c\"" $minicomfilepath
     if [ "$fs" -eq "1" ]; then
         echo "send \"$fsnfsargs \c\"" >> $minicomfilepath
         echo "send \"ip=dhcp\"" >> $minicomfilepath
