@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r32
+PR = "r32"
 LICENSE = "MIT"
 
 inherit task
