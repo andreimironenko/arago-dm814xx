@@ -3,9 +3,7 @@
 cwd=`dirname $0`
 . $cwd/common.sh
 
-SDKinstall=`grep TI_SDK_PATH= $cwd/../Rules.make | cut -d= -f2`
-
-dstdefault=$SDKinstall/targetNFS
+dstdefault="${HOME}/targetfs"
 
 
 echo "--------------------------------------------------------------------------------"
