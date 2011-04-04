@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support Package sources (or development header) packages on host"
-PR = "r34"
+PR = "r35"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -42,6 +42,10 @@ BSP_COMPONENTS_append_omap3 = "\
 BSP_COMPONENTS_append_ti816x = "\
     linux-omap3-src \
     pinmux-utility \
+    "
+
+BSP_COMPONENTS_append_ti814x = "\
+    linux-omap3-src \
     "
 
 # Add components to omap3 components
