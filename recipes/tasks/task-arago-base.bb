@@ -1,6 +1,6 @@
 DESCRIPTION = "Basic task to get a device booting"
 LICENSE = "MIT"
-PR = "r10"
+PR = "r11"
 
 inherit task
 
@@ -20,6 +20,8 @@ ARAGO_BASE = "\
     arago-feed-configs \
     initscript-telnetd \
     devmem2 \
+    ethtool \
+    tcpdump \
     "
 
 # minimal set of packages - needed to boot
