@@ -65,12 +65,6 @@ MULTIMEDIA_SOURCETREE_omapl138 = " \
     "
 
 MULTIMEDIA_SOURCETREE_ti816x = " \
-    ti-cgt470-src \
-    ti-codecs-dm816x-src \
-    ti-ivahd-hdvicp20api-src \
-    ti-hdvpss-src \
-    ti-omx-src \
-    ortp-src \
     ti-sysbios-src \
     ti-xdctools-src \
     ti-edma3lld-src \
@@ -83,13 +77,16 @@ MULTIMEDIA_SOURCETREE_ti816x = " \
     ti-codec-engine-src \
     "
 
-MULTIMEDIA_SOURCETREE_ti814x = " \
+MULTIMEDIA_SOURCETREE_append_dm816x-custom = " \
     ti-cgt470-src \
-    ti-codecs-dm814x-src \
+    ti-codecs-dm816x-src \
     ti-ivahd-hdvicp20api-src \
     ti-hdvpss-src \
     ti-omx-src \
     ortp-src \
+    "
+
+MULTIMEDIA_SOURCETREE_ti814x = " \
     ti-sysbios-src \
     ti-xdctools-src \
     ti-edma3lld-src \
@@ -101,6 +98,16 @@ MULTIMEDIA_SOURCETREE_ti814x = " \
     ti-syslink-src \
     ti-codec-engine-src \
     "
+
+MULTIMEDIA_SOURCETREE_append_dm814x-custom = " \
+    ti-cgt470-src \
+    ti-codecs-dm814x-src \
+    ti-ivahd-hdvicp20api-src \
+    ti-hdvpss-src \
+    ti-omx-src \
+    ortp-src \
+    "
+
 # Do not pull DSP sources into AMSDK builds
 MULTIMEDIA_SOURCETREE_am180x-evm = ""
 MULTIMEDIA_SOURCETREE_am181x-evm = ""
