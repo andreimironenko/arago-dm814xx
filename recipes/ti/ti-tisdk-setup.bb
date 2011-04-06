@@ -1,7 +1,7 @@
 DESCRIPTION = "Package contain Makefile and Rule.make used for building DVSDK components"
 LICENSE = "TI"
 
-COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|dm37x-evm|dm365-evm|da850-omapl138-evm|dm368-evm|c6a816x-evm|dm816x-evm|c6a814x-evm|dm814x-evm)"
+COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|dm37x-evm|dm365-evm|da850-omapl138-evm|dm368-evm|c6a816x-evm|dm816x-evm|c6a814x-evm|dm814x-evm|dm816x-custom|dm814x-custom)"
 
 require ti-paths.inc
 
