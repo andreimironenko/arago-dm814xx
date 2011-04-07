@@ -75,6 +75,7 @@ MULTIMEDIA_SOURCETREE_ti816x = " \
     ti-ipc-src \
     ti-syslink-src \
     ti-codec-engine-src \
+    ti-omtb-src \
     "
 
 MULTIMEDIA_SOURCETREE_append_dm816x-custom = " \
@@ -97,6 +98,7 @@ MULTIMEDIA_SOURCETREE_ti814x = " \
     ti-ipc-src \
     ti-syslink-src \
     ti-codec-engine-src \
+    ti-omtb-src \
     "
 
 MULTIMEDIA_SOURCETREE_append_dm814x-custom = " \
