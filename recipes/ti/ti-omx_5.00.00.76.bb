@@ -5,8 +5,8 @@ COMPATIBLE_MACHINE = "dm816x-evm"
 PV = "05_00_00_76"
 PVExtra = ""
 
-SRC_URI[omx.md5sum] = "e9c4b0b6ed755892b25c33ecdac9b004"
-SRC_URI[omx.sha256sum] = "3d1fe1dc90378cc10db61860479d01f600b0f0db130febc59545e1cf44699e76"
+SRC_URI[omx.md5sum] = "07004c7f1c66dc3d7afe90359837cfe4"
+SRC_URI[omx.sha256sum] = "0834d77108624e46901cc882c7faee44cc8f6d9ae7d563dbd91a7adf16b75768"
 
 SYSLINKPV = "02_00_00_67"
 SYSLINKPVwithdots = "02.00.00.67"
