@@ -146,6 +146,15 @@ my %machines = (
         dvsdk_factory_default => "no",
         graphics_default    => "yes",
     },
+    "dm816x-custom"     => {
+        SOC_FAMILY          => "ti816x",
+        bsp_default         => "yes",
+        addons_default      => "yes",
+        multimedia_default  => "yes",
+        dsp_default         => "no",
+        dvsdk_factory_default => "no",
+        graphics_default    => "no",
+    },
     "c6a814x-evm"     => {
         SOC_FAMILY          => "ti814x",
         bsp_default         => "yes",
@@ -163,6 +172,15 @@ my %machines = (
         dsp_default         => "yes",
         dvsdk_factory_default => "no",
         graphics_default    => "yes",
+    },
+    "dm814x-custom"     => {
+        SOC_FAMILY          => "ti814x",
+        bsp_default         => "yes",
+        addons_default      => "yes",
+        multimedia_default  => "yes",
+        dsp_default         => "no",
+        dvsdk_factory_default => "no",
+        graphics_default    => "no",
     },
 );
 

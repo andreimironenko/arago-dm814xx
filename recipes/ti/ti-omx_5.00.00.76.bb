@@ -1,12 +1,12 @@
 require ti-omx.inc
 
-COMPATIBLE_MACHINE = "dm816x-custom"
+COMPATIBLE_MACHINE = "dm816x-evm"
 
-PV = "05_00_00_10"
+PV = "05_00_00_76"
 PVExtra = ""
 
-SRC_URI[omx.md5sum] = "dd08d230e771513641ffca1aea5327e0"
-SRC_URI[omx.sha256sum] = "e01b92cde43e74da880f7cf16fd1842cd677b978141242076959a99e3ecfe6dc"
+SRC_URI[omx.md5sum] = "e9c4b0b6ed755892b25c33ecdac9b004"
+SRC_URI[omx.sha256sum] = "3d1fe1dc90378cc10db61860479d01f600b0f0db130febc59545e1cf44699e76"
 
 SYSLINKPV = "02_00_00_67"
 SYSLINKPVwithdots = "02.00.00.67"
