@@ -78,6 +78,10 @@ MULTIMEDIA_SOURCETREE_ti816x = " \
     ti-omtb-src \
     "
 
+MULTIMEDIA_SOURCETREE_append_dm816x-evm = " \
+    ti-omx-libs-sourcetree \
+"
+
 MULTIMEDIA_SOURCETREE_append_dm816x-custom = " \
     ti-cgt470-src \
     ti-codecs-dm816x-src \
@@ -101,6 +105,9 @@ MULTIMEDIA_SOURCETREE_ti814x = " \
     ti-omtb-src \
     "
 
+MULTIMEDIA_SOURCETREE_append_dm814x-evm = " \
+    ti-omx-libs-sourcetree \
+"
 MULTIMEDIA_SOURCETREE_append_dm814x-custom = " \
     ti-cgt470-src \
     ti-codecs-dm814x-src \
