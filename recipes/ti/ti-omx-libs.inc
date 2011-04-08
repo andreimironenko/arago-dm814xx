@@ -19,7 +19,7 @@ DEPENDS += "ti-ivahd-hdvicp20api ti-codecs-dm816x"
 DEPENDS += "ti-xdais ti-codec-engine ti-framework-components"
 DEPENDS += "ti-hdvpss"
 
-PROVIDES = "ti-omx-libs-src"
+PROVIDES = "ti-omx-libs-sourcetree"
 
 EXTRA_OEMAKE = "ROOTDIR=${S}/packages \
         INTERNAL_SW_ROOT=${S}/packages \
@@ -41,14 +41,14 @@ EXTRA_OEMAKE = "ROOTDIR=${S}/packages \
         rtp_PATH=${STAGING_DIR_TARGET}/usr \
         CODEGEN_PATH_M3=${CODEGEN_ARM_INSTALL_DIR} \
         CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
-        DEST_ROOT=${S}/lib \
 "
 
 do_compile() {
     # Build OMX Library Package
     cd ${S}/packages
-    oe_runmake CORE=a8host domx omxcore
+
     # oe_runmake CORE=a8host domx omxcore timmosal 
+    oe_runmake CORE=a8host DEST_ROOT=${S}/lib domx omxcore
 }
 
 do_install() {
@@ -68,5 +68,5 @@ do_install() {
     done
 }
 
-PACKAGES += "ti-omx-libs-src"
-FILES_ti-omx-libs-src = "omx_${PV}"
+PACKAGES += "ti-omx-libs-sourcetree"
+FILES_ti-omx-libs-sourcetree = "omx_${PV}"
