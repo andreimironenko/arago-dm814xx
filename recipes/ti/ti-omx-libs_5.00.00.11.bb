@@ -1,7 +1,5 @@
 require ti-omx-libs.inc
 
-COMPATIBLE_MACHINE = "dm816x-custom"
-
 PV = "05_00_00_11"
 
 SRC_URI[omx.md5sum] = "d3f2ef7dbfcd42e47aa0db217c44ff66"
