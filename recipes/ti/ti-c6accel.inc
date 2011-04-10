@@ -18,7 +18,7 @@ PLATFORM_XDC_ti816x = ti.platforms.evmTI816X
 PLATFORM_XDC_ti814x = ti.platforms.evmTI814X
 PLATFORM_XDC ?= "<UNDEFINED_PLATFORM_XDC>"
 
-COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm37x-evm|c6a816x-evm|dm816x-evm|ti814x)"
+COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm37x-evm|ti816x|ti814x)"
 
 PROVIDES += "ti-c6accel-apps"
 
