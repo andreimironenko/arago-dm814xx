@@ -3,7 +3,7 @@ LICENSE = "CC-BY-SA"
 
 require ti-paths.inc
 
-COMPATIBLE_MACHINE = "(c6a814x-evm|dm814x-evm)"
+COMPATIBLE_MACHINE = "ti814x"
 
 SRC_URI = "ftp://ftp.india.ti.com/PSP/Releases/ODC/Centaurus_PSP/TI814X-LINUX-PSP-04.01.00.03.tgz;name=psptarball"
 SRC_URI[psptarball.md5sum] = "3f4e5ff4837802a27a0a2e42489c0e57"
