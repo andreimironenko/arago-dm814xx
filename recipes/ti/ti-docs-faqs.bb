@@ -7,7 +7,7 @@ DEPENDS = "ti-post-process-wiki-native"
 
 PR = "r2"
 
-COMPATIBLE_MACHINE = "(c6a816x-evm|dm816x-evm|c6a814x-evm|dm814x-evm)"
+COMPATIBLE_MACHINE = "(ti816x|ti814x)"
 
 TOPIC_ti816x = "EZ_SDK_FAQ"
 TOPIC_ti814x = "EZ_SDK_FAQ"
