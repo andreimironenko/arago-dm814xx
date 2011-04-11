@@ -1,6 +1,6 @@
 require ti-omx.inc
 
-COMPATIBLE_MACHINE = "dm814x-evm"
+COMPATIBLE_MACHINE = "dm814x-custom"
 
 PV = "05_00_00_26"
 PVExtra = ""
