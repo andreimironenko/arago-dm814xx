@@ -370,51 +370,7 @@ matrix_install:
 # Build OMX and IL Client Applications 
 ################################################################################
 
-omx_vc:
-	make -C $(OMX_INSTALL_DIR)/packages vc3 \
-		ROOTDIR=$(OMX_INSTALL_DIR)/packages \
-		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR) \
-		INTERNAL_SW_ROOT=$(OMX_INSTALL_DIR)/packages \
-		bios_PATH=$(SYSBIOS_INSTALL_DIR) \
-		fc_PATH=$(FC_INSTALL_DIR) \
-		osal_PATH=$(OSAL_INSTALL_DIR) \
-		xdais_PATH=$(XDAIS_INSTALL_DIR) \
-		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
-		ce_PATH=$(CE_INSTALL_DIR) \
-		h264enc_PATH=$(CODEC_INSTALL_DIR) \
-		h264dec_PATH=$(CODEC_INSTALL_DIR) \
-		hdvicp20api_PATH=$(IVAHD_HDVICP20API_INSTALL_DIR) \
-		ipc_PATH=$(IPC_INSTALL_DIR) \
-		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
-		xdc_PATH=$(XDC_INSTALL_DIR) \
-		hdvpss_PATH=$(HDVPSS_INSTALL_DIR) \
-		CODEGEN_PATH_M3=$(TMS470_CODEGEN_INSTALL_DIR) \
-		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
-		DEST_ROOT=$(OMX_INSTALL_DIR)/rebuilt-binaries
-
-omx_vs:
-	make -C $(OMX_INSTALL_DIR)/packages vs2 \
-		ROOTDIR=$(OMX_INSTALL_DIR)/packages \
-		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR) \
-		INTERNAL_SW_ROOT=$(OMX_INSTALL_DIR)/packages \
-		bios_PATH=$(SYSBIOS_INSTALL_DIR) \
-		fc_PATH=$(FC_INSTALL_DIR) \
-		osal_PATH=$(OSAL_INSTALL_DIR) \
-		xdais_PATH=$(XDAIS_INSTALL_DIR) \
-		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
-		ce_PATH=$(CE_INSTALL_DIR) \
-		h264enc_PATH=$(CODEC_INSTALL_DIR) \
-		h264dec_PATH=$(CODEC_INSTALL_DIR) \
-		hdvicp20api_PATH=$(IVAHD_HDVICP20API_INSTALL_DIR) \
-		ipc_PATH=$(IPC_INSTALL_DIR) \
-		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
-		xdc_PATH=$(XDC_INSTALL_DIR) \
-		hdvpss_PATH=$(HDVPSS_INSTALL_DIR) \
-		CODEGEN_PATH_M3=$(TMS470_CODEGEN_INSTALL_DIR) \
-		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
-		DEST_ROOT=$(OMX_INSTALL_DIR)/rebuilt-binaries
-
-omx: linux syslink omx_vc omx_vs
+omx: linux syslink 
 
 omx_clean:
 	make -C $(OMX_INSTALL_DIR)/packages cleanall \

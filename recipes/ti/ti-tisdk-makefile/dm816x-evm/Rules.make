@@ -80,6 +80,9 @@ SADEMO_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/demos/<__signal-analyzer-demo__>
 # Where OMX package is installed
 OMX_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__omx__>
 
+# Where OMTB package is installed
+OMTB_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/demos/<__omtb__>
+
 # The prefix to be added before the GNU compiler tools (optionally including # path), i.e. "arm_v5t_le-" or "/opt/bin/arm_v5t_le-".
 CSTOOL_DIR=<__CROSS_COMPILER_PATH__>
 CSTOOL_PREFIX=$(CSTOOL_DIR)/bin/arm-none-linux-gnueabi-
