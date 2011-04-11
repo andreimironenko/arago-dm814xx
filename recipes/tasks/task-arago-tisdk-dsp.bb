@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install dsp binaries on ${MACHINE}"
-PR = "r15"
+PR = "r16"
 LICENSE="MIT"
 ALLOW_EMPTY = "1"
 
@@ -40,6 +40,7 @@ DSP_COMPONENTS_am37x-evm = ""
 DSP_COMPONENTS_am3517-evm = ""
 DSP_COMPONENTS_am389x-evm = ""
 DSP_COMPONENTS_am387x-evm = ""
+DSP_COMPONENTS_am45x-evm = ""
 
 DSP_COMPONENTS = ""
 
