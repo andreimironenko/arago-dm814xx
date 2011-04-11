@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install multimedia source (or development header) packages on host"
-PR = "r21"
+PR = "r22"
 LICENSE = "MIT"
 
 inherit task
@@ -16,8 +16,6 @@ MULTIMEDIA_DVSDK_COMMON = " \
     ti-xdais-src \
     gstreamer-ti-src \
  "
-
-MULTIMEDIA_SOURCETREE_am37x-evm = ""
 
 MULTIMEDIA_SOURCETREE_omap3 = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
@@ -62,8 +60,13 @@ MULTIMEDIA_SOURCETREE_omapl138 = " \
     "
 
 # Do not pull DSP sources into AMSDK builds
+MULTIMEDIA_SOURCETREE_am37x-evm = ""
 MULTIMEDIA_SOURCETREE_am180x-evm = ""
 MULTIMEDIA_SOURCETREE_am181x-evm = ""
+MULTIMEDIA_SOURCETREE_am389x-evm = ""
+MULTIMEDIA_SOURCETREE_am3517-evm = ""
+MULTIMEDIA_SOURCETREE_am387x-evm = ""
+MULTIMEDIA_SOURCETREE_am45x-evm = ""
 
 RRECOMMENDS_${PN} = "\
     ${MULTIMEDIA_SOURCETREE} \
