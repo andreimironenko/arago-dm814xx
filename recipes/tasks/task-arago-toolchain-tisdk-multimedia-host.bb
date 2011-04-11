@@ -17,6 +17,20 @@ MULTIMEDIA_DVSDK_COMMON = " \
     gstreamer-ti-src \
  "
 
+MULTIMEDIA_EZSDK_COMMON = " \
+    ti-sysbios-src \
+    ti-xdctools-src \
+    ti-edma3lld-src \
+    ti-framework-components-src \
+    ti-linuxutils-src \
+    ti-xdais-src \
+    ti-osal-src \
+    ti-ipc-src \
+    ti-syslink-src \
+    ti-codec-engine-src \
+    ti-omtb-src \
+ "
+
 MULTIMEDIA_SOURCETREE_am37x-evm = ""
 
 MULTIMEDIA_SOURCETREE_omap3 = " \
@@ -64,25 +78,13 @@ MULTIMEDIA_SOURCETREE_omapl138 = " \
     ti-codecs-omapl138-src \
     "
 
-MULTIMEDIA_SOURCETREE_ti816x = " \
-    ti-sysbios-src \
-    ti-xdctools-src \
-    ti-edma3lld-src \
-    ti-framework-components-src \
-    ti-linuxutils-src \
-    ti-xdais-src \
-    ti-osal-src \
-    ti-ipc-src \
-    ti-syslink-src \
-    ti-codec-engine-src \
-    ti-omtb-src \
-    "
-
-MULTIMEDIA_SOURCETREE_append_dm816x-evm = " \
+MULTIMEDIA_SOURCETREE_dm816x-evm = " \
+    ${MULTIMEDIA_EZSDK_COMMON} \
     ti-omx-libs-sourcetree \
 "
 
-MULTIMEDIA_SOURCETREE_append_dm816x-custom = " \
+MULTIMEDIA_SOURCETREE_dm816x-custom = " \
+    ${MULTIMEDIA_EZSDK_COMMON} \
     ti-cgt470-src \
     ti-codecs-dm816x-src \
     ti-ivahd-hdvicp20api-src \
@@ -91,24 +93,12 @@ MULTIMEDIA_SOURCETREE_append_dm816x-custom = " \
     ortp-src \
     "
 
-MULTIMEDIA_SOURCETREE_ti814x = " \
-    ti-sysbios-src \
-    ti-xdctools-src \
-    ti-edma3lld-src \
-    ti-framework-components-src \
-    ti-linuxutils-src \
-    ti-xdais-src \
-    ti-osal-src \
-    ti-ipc-src \
-    ti-syslink-src \
-    ti-codec-engine-src \
-    ti-omtb-src \
-    "
-
-MULTIMEDIA_SOURCETREE_append_dm814x-evm = " \
+MULTIMEDIA_SOURCETREE_dm814x-evm = " \
+    ${MULTIMEDIA_EZSDK_COMMON} \
     ti-omx-libs-sourcetree \
 "
-MULTIMEDIA_SOURCETREE_append_dm814x-custom = " \
+MULTIMEDIA_SOURCETREE_dm814x-custom = " \
+    ${MULTIMEDIA_EZSDK_COMMON} \
     ti-cgt470-src \
     ti-codecs-dm814x-src \
     ti-ivahd-hdvicp20api-src \
