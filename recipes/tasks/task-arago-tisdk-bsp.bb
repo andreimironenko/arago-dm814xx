@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install Board Support Package binaries on ${MACHINE}"
-PR = "r18"
+PR = "r19"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -28,51 +28,27 @@ BSP_COMPONENTS_omap3 = "\
     x-load \
     "
 
+BSP_COMPONENTS_ti816x = "\
+    u-boot-min-sd \
+    "
+
+BLUETOOTH_STACK = "\
+    bluez4 \
+    bluez4-agent \
+    libasound-module-bluez \
+    bluez-hcidump \
+    openobex \
+    openobex-apps \
+    obexftp \
+    ussp-push \
+    "
+
 BLUETOOTH_SUPPORT = ""
-
-BLUETOOTH_SUPPORT_omap3 = "\
-    bluez4 \
-    bluez4-agent \
-    libasound-module-bluez \
-    bluez-hcidump \
-    openobex \
-    openobex-apps \
-    obexftp \
-    ussp-push \
-    "
-
-BLUETOOTH_SUPPORT_omapl138 = "\
-    bluez4 \
-    bluez4-agent \
-    libasound-module-bluez \
-    bluez-hcidump \
-    openobex \
-    openobex-apps \
-    obexftp \
-    ussp-push \
-    "
-
-BLUETOOTH_SUPPORT_ti816x = "\
-    bluez4 \
-    bluez4-agent \
-    libasound-module-bluez \
-    bluez-hcidump \
-    openobex \
-    openobex-apps \
-    obexftp \
-    ussp-push \
-    "
-
-BLUETOOTH_SUPPORT_ti814x = "\
-    bluez4 \
-    bluez4-agent \
-    libasound-module-bluez \
-    bluez-hcidump \
-    openobex \
-    openobex-apps \
-    obexftp \
-    ussp-push \
-    "
+BLUETOOTH_SUPPORT_omap3 = "${BLUETOOTH_STACK}"
+BLUETOOTH_SUPPORT_omapl138 = "${BLUETOOTH_STACK}"
+BLUETOOTH_SUPPORT_ti816x = "${BLUETOOTH_STACK}"
+BLUETOOTH_SUPPORT_ti814x = "${BLUETOOTH_STACK}"
+BLUETOOTH_SUPPORT_omap4 = "${BLUETOOTH_STACK}"
 
 RDEPENDS_${PN} = "\
     ${BSP_COMPONENTS} \
