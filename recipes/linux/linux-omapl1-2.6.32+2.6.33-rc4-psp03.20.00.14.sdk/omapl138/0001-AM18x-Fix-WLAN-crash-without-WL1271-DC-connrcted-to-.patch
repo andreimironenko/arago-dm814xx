@@ -1,0 +1,79 @@
+From a8a31c35f462ecbedd846937d97ba2e8180308bf Mon Sep 17 00:00:00 2001
+From: Sanjay Kumar Champati <csanjay@mistralsolutions.com>
+Date: Fri, 8 Apr 2011 14:11:52 +0900
+Subject: [PATCH] AM18x-Fix-WLAN-crash-without-WL1271-DC-connrcted-to-platform
+
+Fix the issue for WLAN driver crash, when there is no WL1271 DC
+connected to AM18x platform.
+
+Signed-off-by: Sanjay Kumar Champati <csanjay@mistralsolutions.com>
+---
+ drivers/net/wireless/wilink/DrvMain.c |   25 +++++++++++++++++++++----
+ 1 files changed, 21 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/wireless/wilink/DrvMain.c b/drivers/net/wireless/wilink/DrvMain.c
+index 49d2461..c8e9d5b 100644
+--- a/drivers/net/wireless/wilink/DrvMain.c
++++ b/drivers/net/wireless/wilink/DrvMain.c
+@@ -1587,7 +1587,11 @@ static void drvMain_Sm (TI_HANDLE hDrvMain, ESmEvent eEvent)
+         {
+             pDrvMain->eSmState = SM_STATE_WAIT_NVS_FILE;
+             drvMain_SetDefaults (hDrvMain, pDrvMain->tFileInfo.pBuffer, pDrvMain->tFileInfo.uLength);
+-            hPlatform_DevicePowerOn ();
++            if(hPlatform_DevicePowerOn () == -1)
++	    {
++		eStatus = TI_NOK;
++		break;
++	    }
+ 
+             pDrvMain->tFileInfo.eFileType = FILE_TYPE_NVS;
+             eStatus = wlanDrvIf_GetFile (hOs, &pDrvMain->tFileInfo);
+@@ -1611,7 +1615,11 @@ static void drvMain_Sm (TI_HANDLE hDrvMain, ESmEvent eEvent)
+ 						hPlatform_DevicePowerOffSetLongerDelay();
+ 					 else
+ 						hPlatform_DevicePowerOff();
+-                     hPlatform_DevicePowerOn();
++                     if(hPlatform_DevicePowerOn() == -1)
++		     {
++			eStatus = TI_NOK;
++			break;
++		     }
+             }
+         }
+ 
+@@ -1786,7 +1794,11 @@ static void drvMain_Sm (TI_HANDLE hDrvMain, ESmEvent eEvent)
+             hPlatform_DevicePowerOff ();
+             if (pDrvMain->bRecovery)
+             {
+-                hPlatform_DevicePowerOn ();
++                if(hPlatform_DevicePowerOn () == -1)
++		{
++			eStatus = TI_NOK;
++			break;
++		}
+                 pDrvMain->eSmState = SM_STATE_WAIT_NVS_FILE;
+                 pDrvMain->tFileInfo.eFileType = FILE_TYPE_NVS;
+                 eStatus = wlanDrvIf_GetFile (hOs, &pDrvMain->tFileInfo);
+@@ -1813,7 +1825,11 @@ static void drvMain_Sm (TI_HANDLE hDrvMain, ESmEvent eEvent)
+         context_DisableClient (pDrvMain->tStadHandles.hContext, pDrvMain->uContextId);
+         if (eEvent == SM_EVENT_START)
+         {
+-            hPlatform_DevicePowerOn ();
++            if(hPlatform_DevicePowerOn () == -1)
++	    {
++		eStatus = TI_NOK;
++		break;
++	    }
+             pDrvMain->eSmState = SM_STATE_WAIT_NVS_FILE;
+             pDrvMain->tFileInfo.eFileType = FILE_TYPE_NVS;
+             eStatus = wlanDrvIf_GetFile (hOs, &pDrvMain->tFileInfo);
+@@ -1864,5 +1880,6 @@ static void drvMain_Sm (TI_HANDLE hDrvMain, ESmEvent eEvent)
+          *     us to the SM_STATE_FAILED state (where we wait for Destroy).
+          */
+         eStatus = drvMain_StopActivities (pDrvMain);
++	os_SignalObjectSet (hOs, pDrvMain->pCurrAction->pSignalObject);
+     }
+ }
+-- 
+1.7.3.4
+
