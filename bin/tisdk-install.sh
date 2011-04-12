@@ -97,7 +97,7 @@ update_rules_make()
     fi
 
     if [ "$name" = "signal-analyzer-demo" ]; then
-       dirname="`basename $install_dir/demos/signal-analyzer*`"
+       dirname="`basename $install_dir/example-applications/signal-analyzer*`"
     fi
 
     # update rules.make
