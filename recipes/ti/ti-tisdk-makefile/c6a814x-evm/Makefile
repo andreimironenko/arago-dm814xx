@@ -445,18 +445,18 @@ sademo_install: c6accel_install
 # Build Martix GUI Application Launcher
 ################################################################################
 matrix:
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd demos/matrix-gui-e* ; qmake ; $(MAKE) PLATFORM=ti814x
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd example-applications/matrix-gui-e* ; qmake ; $(MAKE) PLATFORM=ti814x
 
 matrix_clean:
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup;  cd demos/matrix-gui-e* ; qmake ; $(MAKE) distclean
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup;  cd example-applications/matrix-gui-e* ; qmake ; $(MAKE) distclean
 
 matrix_install:
 	install -d $(EXEC_DIR)/matrix
-	install -m 0755 $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/matrix_gui $(EXEC_DIR)/matrix
-	cp -arf $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/ti814x/bin \
+	install -m 0755 $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/matrix_gui $(EXEC_DIR)/matrix
+	cp -arf $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/ti814x/bin \
         $(EXEC_DIR)/matrix/
-	cp -arf $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/ti814x/html \
+	cp -arf $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/ti814x/html \
         $(EXEC_DIR)/matrix/
-	cp -arf $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/images/ \
+	cp -arf $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/images/ \
         $(EXEC_DIR)/matrix/
 
