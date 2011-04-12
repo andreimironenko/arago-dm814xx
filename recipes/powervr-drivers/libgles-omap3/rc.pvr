@@ -92,7 +92,7 @@ case $CPUTYPE in
 
 	sleep 2
 
-	ES_REVISION="$(devmem2 0x50000014 | sed -e s:0x00010205:5: -e s:0x00010201:3: -e s:0x00010003:2: | tail -n1 | awk -F': ' '{print $2}')"
+	ES_REVISION="$(devmem2 0x56000014 | sed -e s:0x00010205:5: -e s:0x00010201:3: -e s:0x00010003:2: | tail -n1 | awk -F': ' '{print $2}')"
 
 	echo "${ES_REVISION}" > /etc/powervr-esrev
 	/usr/bin/pvrsrvinit
@@ -123,7 +123,7 @@ case $CPUTYPE in
 
 	sleep 2
 
-	ES_REVISION="$(devmem2 0x50000014 | sed -e s:0x00010205:5: -e s:0x00010201:3: -e s:0x00010003:2: | tail -n1 | awk -F': ' '{print $2}')"
+	ES_REVISION="$(devmem2 0x56000014 | sed -e s:0x00010205:5: -e s:0x00010201:3: -e s:0x00010003:2: | tail -n1 | awk -F': ' '{print $2}')"
 
 	echo "${ES_REVISION}" > /etc/powervr-esrev
 	/usr/bin/pvrsrvinit
