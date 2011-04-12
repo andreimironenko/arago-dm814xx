@@ -6,32 +6,32 @@ MIN_UBOOT_CONFIG=ti8168_evm_min_sd
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	components components_clean all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_clean c6accel_install syslink syslink_clean syslink_install opengldemos opengldemos_clean opengldemos_install sademo sademo_clean sademo_install matrix matrix_clean matrix_install omx omx_clean omx_install
+.PHONY:	components components_clean all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_clean c6accel_install syslink syslink_clean syslink_install opengldemos opengldemos_clean opengldemos_install sademo sademo_clean sademo_install matrix matrix_clean matrix_install c6run c6run_clean c6run_examples c6run_install
 
 #==============================================================================
 # Build components to enable all other build targets. 
 #==============================================================================
-components: linux cmem syslink
+components: linux cmem syslink c6accel c6run
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-components_clean: linux_clean syslink_clean cmem_clean 
+components_clean: linux_clean syslink_clean cmem_clean c6accel_clean c6run_cleanc6accel_clean c6run_cleanc6accel_clean c6run_cleanc6accel_clean c6run_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-all: components u-boot matrix omx
+all: components u-boot opengldemos sademo matrix c6run_examples omx
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install syslink_install u-boot_install c6accel_install sademo_install matrix_install omx_install
+install: linux_install cmem_install syslink_install u-boot_install c6accel_install opengldemos_install sademo_install matrix_install c6run_install omx_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clean: components_clean u-boot_clean sademo_clean matrix_clean omx_clean
+clean: components_clean u-boot_clean opengldemos_clean sademo_clean matrix_clean c6run_clean omx_clean
 
 #==============================================================================
 # A help message target.
@@ -70,14 +70,18 @@ help:
 	@echo "    c6accel_clean                : Remove generated c6accel files"
 	@echo "    c6accel_install              : Install c6accel examples"
 	@echo
-	# @echo "    opengldemos                  : Build the OPENGL graphics SDK demos for $(PLATFORM)"
-	# @echo "    opengldemos_clean            : Remove OPENGL graphics SDK demo files."
-	# @echo "    opengldemos_install          : install OPENGL graphics SDK demo executables."
+	@echo "    c6run                        : Build c6run backend libraries"
+	@echo "    c6run_clean                  : Remove c6run backend libraries"
+	@echo "    c6run_examples               : Build c6run examples & tests"
+	@echo "    c6run_install                : Install c6run examples & tests"
+	@echo 
+	@echo "    opengldemos                  : Build the OPENGL graphics SDK demos for $(PLATFORM)"
+	@echo "    opengldemos_clean            : Remove OPENGL graphics SDK demo files."
+	@echo "    opengldemos_install          : install OPENGL graphics SDK demo executables."
 	@echo
 	@echo "    sademo                       : Build the Signal Analyzer demo for $(PLATFORM)"
 	@echo "    sademo_clean                 : Remove Signal Analyzer demo files."
 	@echo "    sademo_install               : install Signal Analyzer demo executables."
-	@echo
 	@echo "    matrix                       : Build matrix application launcher"
 	@echo "    matrix_clean                 : Remove all matrix files"
 	@echo "    matrix_install               : Install matrix"
@@ -170,7 +174,6 @@ syslink_cfg:
         -e s:^C674_COFF.rootDir.*:C674_COFF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
         -e s:^Arm9.rootDir.*:Arm9.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
         -e s:^M3_ELF.rootDir.*:M3_ELF.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
-	-e s:^A8_ELF.rootDir.*:A8_ELF.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
         -e s:C64P_COFF,://C64P_COFF:g \
         -e s:C64P_ELF,://C64P_ELF:g \
         -e s:M3_ELF,://M3_ELF:g \
@@ -185,6 +188,7 @@ syslink_hlos:
 		CROSS_COMPILE=${CSTOOL_PREFIX} \
 		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
 		SYSLINK_PLATFORM=TI81XX \
+		SYSLINK_VARIANT=TI816X \
 		KDIR=$(LINUXKERNEL_INSTALL_DIR)
 	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/usr/Linux/ \
 		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
@@ -193,6 +197,7 @@ syslink_hlos:
 		CROSS_COMPILE=${CSTOOL_PREFIX} \
 		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
 		SYSLINK_PLATFORM=TI81XX \
+		SYSLINK_VARIANT=TI816X \
 		KDIR=$(LINUXKERNEL_INSTALL_DIR)
 
 syslink_hlos_clean: 
@@ -203,6 +208,7 @@ syslink_hlos_clean:
 		CROSS_COMPILE=${CSTOOL_PREFIX} \
 		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
 		SYSLINK_PLATFORM=TI81XX \
+		SYSLINK_VARIANT=TI816X \
 		KDIR=$(LINUXKERNEL_INSTALL_DIR) clean
 	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/usr/Linux/ \
 		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
@@ -211,6 +217,7 @@ syslink_hlos_clean:
 		CROSS_COMPILE=${CSTOOL_PREFIX} \
 		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
 		SYSLINK_PLATFORM=TI81XX \
+		SYSLINK_VARIANT=TI816X \
 		KDIR=$(LINUXKERNEL_INSTALL_DIR) clean
 
 syslink_rtos: syslink_cfg
@@ -228,8 +235,8 @@ syslink: syslink_hlos syslink_rtos
 
 syslink_install:
 	install -d $(EXEC_DIR)/syslink
-	install ${SYSLINK_INSTALL_DIR}/ti/syslink/lib/modules/TI81XX/syslink.ko $(EXEC_DIR)/syslink
-	cp ${SYSLINK_INSTALL_DIR}/ti/syslink/lib/syslink.a $(EXEC_DIR)/syslink
+	install ${SYSLINK_INSTALL_DIR}/ti/syslink/bin/TI816X/syslink.ko $(EXEC_DIR)/syslink
+	cp ${SYSLINK_INSTALL_DIR}/ti/syslink/lib/syslink.a* $(EXEC_DIR)/syslink
 
 ##############################################################################
 #  Build c6accel
@@ -287,39 +294,130 @@ c6accel_install:
 	install
 
 ################################################################################
+# Build C6run
+################################################################################
+c6run:
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	SYSLINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
+	IPC_INSTALL_DIR="$(IPC_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	TI816x_config
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	SYSLINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
+	IPC_INSTALL_DIR="$(IPC_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	clean
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	SYSLINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
+	IPC_INSTALL_DIR="$(IPC_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	all
+
+c6run_clean:
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	SYSLINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
+	IPC_INSTALL_DIR="$(IPC_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	distclean
+
+c6run_examples:
+	source $(C6RUN_INSTALL_DIR)/environment.sh; \
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	SYSLINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
+	IPC_INSTALL_DIR="$(IPC_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	C6RUN_TOOLCHAIN_PATH="$(C6RUN_INSTALL_DIR)" \
+	examples
+
+	source $(C6RUN_INSTALL_DIR)/environment.sh; \
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	SYSLINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
+	IPC_INSTALL_DIR="$(IPC_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	C6RUN_TOOLCHAIN_PATH="$(C6RUN_INSTALL_DIR)" \
+	tests
+
+c6run_install:
+	install -d $(EXEC_DIR)/usr/share/ti/c6run-apps
+
+	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
+	INSTALL_DIR="$(EXEC_DIR)/usr/share/ti/c6run-apps" \
+	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
+	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
+	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
+	SYSLINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
+	IPC_INSTALL_DIR="$(IPC_INSTALL_DIR)" \
+	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
+	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
+	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
+	install_programs
+
+################################################################################
 # Build openGL demos
 ################################################################################
-# opengldemos:
-# 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
-# 		BUILD=release \
-# 		OMAPES=6.x \
-# 		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
-# 		CSTOOL_DIR=${CSTOOL_DIR} \
-# 		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
-# 		all
+opengldemos:
+	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
+		BUILD=release \
+		OMAPES=6.x \
+		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
+		CSTOOL_DIR=${CSTOOL_DIR} \
+		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
+		all
 
-# opengldemos_clean:
-# 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
-# 		BUILD=release \
-# 		OMAPES=6.x \
-# 		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
-# 		CSTOOL_DIR=${CSTOOL_DIR} \
-# 		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
-# 		clean
+opengldemos_clean:
+	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
+		BUILD=release \
+		OMAPES=6.x \
+		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
+		CSTOOL_DIR=${CSTOOL_DIR} \
+		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
+		clean
 
-# opengldemos_install:
-# 	mkdir -p ${EXEC_DIR}/opengl-demos/etc/init.d
-# 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
-# 		BUILD=release \
-# 		OMAPES=6.x \
-# 		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
-# 		CSTOOL_DIR=${CSTOOL_DIR} \
-# 		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
-# 		TARGETFS_INSTALL_DIR=$(EXEC_DIR)/opengl-demos \
-# 		install
-# 	for file in `find $(GRAPHICS_INSTALL_DIR)/gfx_rel_es3.x -name "*.ko"`; do \
-# 	    install $${file} $(EXEC_DIR)/opengl-demos; \
-# 	done
+opengldemos_install:
+	mkdir -p ${EXEC_DIR}/opengl-demos/etc/init.d
+	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
+		BUILD=release \
+		OMAPES=6.x \
+		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
+		CSTOOL_DIR=${CSTOOL_DIR} \
+		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
+		TARGETFS_INSTALL_DIR=$(EXEC_DIR)/opengl-demos \
+		install
+	for file in `find $(GRAPHICS_INSTALL_DIR)/gfx_rel_es3.x -name "*.ko"`; do \
+	    install $${file} $(EXEC_DIR)/opengl-demos; \
+	done
 
 
 ################################################################################
@@ -333,11 +431,11 @@ sademo:
 	        PLATFORM="TI816X" \
 		PLATFORM_XDC=ti.platforms.evmDM8168 \
 		FFT_QT_GUI_INSTALL_DIR=$(SADEMO_INSTALL_DIR)
-	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR)
+	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR) PLATFORM="TI816X" C6ACCEL_ROOT=$(C6ACCEL_INSTALL_DIR)
 
 sademo_clean:
 	$(MAKE) -C $(SADEMO_INSTALL_DIR)/app PLATFORM="TI816X" clean
-	if [ -e $(SADEMO_INSTALL_DIR)/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR) distclean; fi
+	if [ -e $(SADEMO_INSTALL_DIR)/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR) PLATFORM="TI816X" distclean; fi
 
 sademo_install: c6accel_install
 	install -d $(EXEC_DIR)/signal-analyzer
@@ -350,19 +448,19 @@ sademo_install: c6accel_install
 # Build Martix GUI Application Launcher
 ################################################################################
 matrix:
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd demos/matrix-gui-e* ; qmake ; $(MAKE) PLATFORM=ti816x
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd example-applications/matrix-gui-e* ; qmake ; $(MAKE) PLATFORM=ti816x
 
 matrix_clean:
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup;  cd demos/matrix-gui-e* ; qmake ; $(MAKE) distclean
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup;  cd example-applications/matrix-gui-e* ; qmake ; $(MAKE) distclean
 
 matrix_install:
 	install -d $(EXEC_DIR)/matrix
-	install -m 0755 $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/matrix_gui $(EXEC_DIR)/matrix
-	cp -ar $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/ti816x/bin \
+	install -m 0755 $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/matrix_gui $(EXEC_DIR)/matrix
+	cp -ar $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/ti816x/bin \
         $(EXEC_DIR)/matrix/
-	cp -ar $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/ti816x/html \
+	cp -ar $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/ti816x/html \
         $(EXEC_DIR)/matrix/
-	cp -ar $(DVSDK_INSTALL_DIR)/demos/matrix-gui-e*/images/ \
+	cp -ar $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/images/ \
         $(EXEC_DIR)/matrix/
 
 
