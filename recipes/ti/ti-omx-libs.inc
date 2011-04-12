@@ -43,12 +43,19 @@ EXTRA_OEMAKE = "ROOTDIR=${S}/packages \
         CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
 "
 
+PARALLEL_MAKE = "-j 2"
+
 do_compile() {
     # Build OMX Library Package
     cd ${S}/packages
 
     # oe_runmake CORE=a8host domx omxcore timmosal 
     oe_runmake CORE=a8host DEST_ROOT=${S}/lib domx omxcore
+
+    oe_runmake DEST_ROOT=${S}/firmware \
+               PROFILE_m3video=debug PROFILE_m3vpss=debug \
+               CONFIG_BLD_XDC_m3=${S}/packages/ti/omx/demos/ti816x/davinciMC/config.bld \
+               vdec_sntducati
 }
 
 do_install() {
@@ -56,13 +63,12 @@ do_install() {
     cp -pPrf ${S}/packages ${D}/omx_${PV}
 
     cp -r ${S}/lib ${D}/omx_${PV}
+    cp -r ${S}/firmware ${D}/omx_${PV}
     cp -r ${S}/packages/ti/omx/docs ${D}/omx_${PV}
 
     install -d ${D}/omx_${PV}/include
     cd ${D}/omx_${PV}/include
-    for i in ../packages/ti/omx/interfaces/openMaxv11/*; do
-        ln -s $i;
-    done
+    ln -s ../packages/ti/omx/interfaces/openMaxv11;
     for i in vdec venc vfpc vfcc vfdc; do
         ln -s ../packages/ti/omx/comp/$i/omx_$i.h;
     done
