@@ -16,6 +16,10 @@ MULTIMEDIA_DVSDK_COMMON = " \
     ti-tisdk-loadmodule \
 "
 
+MULTIMEDIA_EZSDK_COMMON = " \
+    ti-codec-engine-examples \
+"
+
 MULTIMEDIA_dm365 = " \
     ${MULTIMEDIA_DVSDK_COMMON} \
     ti-dvtb \
@@ -71,6 +75,14 @@ MULTIMEDIA_omap3evm = " \
 MULTIMEDIA_am37x-evm = " \
     task-arago-gst \
     gst-ffmpeg \
+    "
+
+MULTIMEDIA_ti816x = " \
+    ${MULTIMEDIA_EZSDK_COMMON} \
+    "
+
+MULTIMEDIA_ti814x = " \
+    ${MULTIMEDIA_EZSDK_COMMON} \
     "
 
 RDEPENDS_${PN} = "\
