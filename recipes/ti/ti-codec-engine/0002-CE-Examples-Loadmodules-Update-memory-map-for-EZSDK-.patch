@@ -1,0 +1,32 @@
+From 06bff03fd715c03e6e2fb80466d8f60dcdbef8b7 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Tue, 12 Apr 2011 22:07:35 +0530
+Subject: [PATCH 2/3] CE Examples Loadmodules: Update memory map for EZSDK Release
+
+---
+ .../apps/system_files/evmTI816X/loadmodules.sh     |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/examples/apps/system_files/evmTI816X/loadmodules.sh b/examples/apps/system_files/evmTI816X/loadmodules.sh
+index 5ef760c..701dbf6 100755
+--- a/examples/apps/system_files/evmTI816X/loadmodules.sh
++++ b/examples/apps/system_files/evmTI816X/loadmodules.sh
+@@ -53,13 +53,13 @@
+ #
+ # Note: phys_end = (addr + 1)
+ #
+-# block 0: 0xa0000000 - 0xa07fffff (8 MB)
++# block 0: 0x94000000 - 0x947fffff (8 MB)
+ # pool:    80 KB, 20 x 4 KB buffers
+ # pool:  1280 KB, 10 x 128 KB buffers
+ # pool:  2048 KB, 2 x 1 MB buffers
+ # heap:  4784 KB, (~4.67 MB)
+ #
+-CMEM_MODPARAMS="phys_start=0xa0000000 phys_end=0xa07fffff pools=20x4096,10x131072,2x1048576"
++CMEM_MODPARAMS="phys_start=0x94000000 phys_end=0x947fffff pools=20x4096,10x131072,2x1048576"
+ 
+ # insert CMEM driver, using two blocks of memory
+ #
+-- 
+1.7.0.4
+

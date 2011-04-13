@@ -1,0 +1,31 @@
+From 6900a54ca6c007129a4ac3a50fb996563caf4f61 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Tue, 12 Apr 2011 22:07:55 +0530
+Subject: [PATCH 3/3]  CE Genserver: Update memory map for EZSDK Release
+
+---
+ packages/ti/sdo/ce/wizards/genserver/logic.xs |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/packages/ti/sdo/ce/wizards/genserver/logic.xs b/packages/ti/sdo/ce/wizards/genserver/logic.xs
+index fd5c36d..7319a91 100644
+--- a/packages/ti/sdo/ce/wizards/genserver/logic.xs
++++ b/packages/ti/sdo/ce/wizards/genserver/logic.xs
+@@ -177,10 +177,10 @@ function defaultMemConfig(serverEnv)
+     }
+     else if (serverEnv.platform == 'ti.platforms.evmTI816X') {
+         memConfig = [
+-            { sect : 'DDR3_HOST',    base : '0x80000000', len : '0x0B000000'},
+-            { sect : 'DDR3',     base : '0x8B000000', len : '0x01800000'},
+-            { sect : 'DDRALGHEAP',   base : '0x8C800000', len : '0x00800000'},
+-            { sect : 'Reserved',     base : '0x8D000000', len : '0x00C00000'}
++            { sect : 'DDR3_HOST',    base : '0x80000000', len : '0x10000000'},
++            { sect : 'DDR3',     base : '0x94A00000', len : '0x01800000'},
++            { sect : 'DDRALGHEAP',   base : '0x96200000', len : '0x00800000'},
++            { sect : 'Reserved',     base : '0x96A00000', len : '0x00C00000'}
+         ];
+     }
+     else if (serverEnv.platform == 'ti.platforms.evmDM8148') {
+-- 
+1.7.0.4
+
