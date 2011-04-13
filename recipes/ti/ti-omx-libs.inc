@@ -62,8 +62,13 @@ do_install() {
     install -d ${D}/omx_${PV}
     cp -pPrf ${S}/packages ${D}/omx_${PV}
 
-    cp -r ${S}/lib ${D}/omx_${PV}
-    cp -r ${S}/firmware ${D}/omx_${PV}
+    install -d ${D}/omx_${PV}/lib
+    cp ${S}/lib/ti/omx/domx/lib/a8host/debug/domx.av5T ${D}/omx_${PV}/lib
+    cp ${S}/lib/ti/omx/omxcore/lib/a8host/debug/omxcore.av5T ${D}/omx_${PV}/lib
+
+    install -d ${D}/omx_${PV}/firmware
+    cp ${S}/firmware/vdec_snt/bin/ti816x-evm/*.xem3 ${D}/omx_${PV}/firmware
+
     cp -r ${S}/packages/ti/omx/docs ${D}/omx_${PV}
 
     install -d ${D}/omx_${PV}/include
