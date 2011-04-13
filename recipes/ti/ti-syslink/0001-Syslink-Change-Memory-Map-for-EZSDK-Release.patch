@@ -1,0 +1,34 @@
+From 183bceb52b9f6b84129f38d30fdfd5b46bc73474 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Tue, 12 Apr 2011 21:39:05 +0530
+Subject: [PATCH] Syslink: Change Memory Map for EZSDK Release
+
+---
+ .../samples/rtos/platforms/ti816x/dsp/Platform.xdc |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/ti/syslink/samples/rtos/platforms/ti816x/dsp/Platform.xdc b/ti/syslink/samples/rtos/platforms/ti816x/dsp/Platform.xdc
+index d1da07b..fd52884 100755
+--- a/ti/syslink/samples/rtos/platforms/ti816x/dsp/Platform.xdc
++++ b/ti/syslink/samples/rtos/platforms/ti816x/dsp/Platform.xdc
+@@ -56,13 +56,13 @@ metaonly module Platform inherits xdc.platform.IPlatform {
+             deviceName:     "TMS320TI816X",
+             externalMemoryMap: [
+                 ["EXT_RAM",
+-                    {name: "EXT_RAM",     base: 0x80000000, len: 0x0A600000, space: "code/data",access: "RWX"}],
++                    {name: "EXT_RAM",     base: 0x80000000, len: 0x10000000, space: "code/data",access: "RWX"}],
+                 ["DDR2",
+-                    {name: "DDR2",        base: 0x8B000000, len: 0x02000000, space: "code/data",access: "RWX"}],
++                    {name: "DDR2",        base: 0x94A00000, len: 0x02000000, space: "code/data",access: "RWX"}],
+                 ["SR0",
+-                    {name: "SR0",         base: 0x8E000000, len: 0x01000000, space: "code/data",access: "RWX"}],
++                    {name: "SR0",         base: 0x97600000, len: 0x01000000, space: "code/data",access: "RWX"}],
+                 ["SR1",
+-                    {name: "SR1",         base: 0x8D000000, len: 0x00C00000, space: "code/data",access: "RWX"}],
++                    {name: "SR1",         base: 0x96A00000, len: 0x00C00000, space: "code/data",access: "RWX"}],
+             ],
+             l1DMode:"32k",
+             l1PMode:"32k",
+-- 
+1.7.0.4
+
