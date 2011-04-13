@@ -1,6 +1,6 @@
 DESCRIPTION = "TI OMX Components"
 SECTION = "devel"
-LICENSE = "TI"
+LICENSE = "BSD"
 
 require ti-paths.inc
 require ti-staging.inc
