@@ -62,7 +62,7 @@ GRAPHICS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__libgles-omap3__>
 SADEMO_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/<__signal-analyzer-demo__>
 
 # Where OMX package is installed
-OMX_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__omx__>
+OMX_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__omx-libs__>
 
 # Where OMTB package is installed
 OMTB_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/<__omtb__>
