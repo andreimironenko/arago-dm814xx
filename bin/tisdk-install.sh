@@ -77,7 +77,13 @@ execute ()
 update_rules_make()
 {
   echo "Updating Rules.make"
-  for i in ${install_dir}/usr/lib/opkg/info/*-src*.control; do
+
+  if [ -e ${install_dir}/usr/lib/opkg/info/*-sourcetree*.control ]; then
+    control_files="${install_dir}/usr/lib/opkg/info/*-src*.control ${install_dir}/usr/lib/opkg/info/*-sourcetree*.control"
+  else
+    control_files="${install_dir}/usr/lib/opkg/info/*-src*.control"
+  fi
+  for i in ${control_files}; do
     name="`cat $i | grep Package | awk {'print $2'}`"
     
     echo $name | grep ti-*  >/dev/null
@@ -87,7 +93,7 @@ update_rules_make()
     fi
 
     # remove -src from the end
-    name="`echo $name | sed -e 's/....$//g'`"
+    name="`echo $name | sed -e 's/-src$//g' -e 's/-sourcetree$//g'`"
 
     # get the directory name
     dirname="`basename $install_dir/${name}_*`"
@@ -98,6 +104,14 @@ update_rules_make()
 
     if [ "$name" = "signal-analyzer-demo" ]; then
        dirname="`basename $install_dir/example-applications/signal-analyzer*`"
+    fi
+
+    if [ "$name" = "omx-libs" ]; then
+       dirname="`basename $install_dir/omx_*`"
+    fi
+
+    if [ "$name" = "omtb" ]; then
+       dirname="`basename $install_dir/example-applications/omtb_*`"
     fi
 
     # update rules.make
