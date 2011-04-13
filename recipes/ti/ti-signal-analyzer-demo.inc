@@ -56,7 +56,7 @@ do_compile() {
         PLATFORM=${PLATFORM} \
         FFT_QT_GUI_INSTALL_DIR=${S} all
 
-   cd ${S} && make PLATFORM=${PLATFORM}
+   cd ${S} && make PLATFORM=${PLATFORM} C6ACCEL_ROOT=${C6ACCEL_INSTALL_DIR}
 }
 
 do_install() {
