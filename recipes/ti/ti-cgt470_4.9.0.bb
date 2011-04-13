@@ -1,5 +1,7 @@
 require ti-cgt470.inc
 
+DEFAULT_PREFERENCE = "-1"
+
 PE = "1"
 PV = "4_9_0"
 PVwithdots = "4.9.0"
