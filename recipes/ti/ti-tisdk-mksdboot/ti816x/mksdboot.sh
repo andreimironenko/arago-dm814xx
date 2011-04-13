@@ -67,7 +67,7 @@ if [ ! -d $sdkdir ]; then
    exit 1;
 fi
 
-if [ ! -f $sdkdir/filesystem/ezsdk-c6a816x-evm-rootfs.tar.gz ]; then
+if [ ! -f $sdkdir/filesystem/ezsdk-*-rootfs.tar.gz ]; then
   echo "ERROR: failed to find rootfs tar in $sdkdir/filesystem "
   exit 1;
 fi
@@ -139,7 +139,7 @@ fi
 # creating boot.scr
 execute "mkdir -p /tmp/sdk"
 cat <<EOF >/tmp/sdk/boot.cmd
-setenv bootargs 'console=ttyO2,115200n8 root=/dev/mmcblk0p2 rw mem=166M earlyprink vram=50M ti816xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd'
+setenv bootargs 'console=ttyO2,115200n8 root=/dev/mmcblk0p2 rw mem=256M earlyprink vram=50M ti816xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd'
 fatload mmc 1 0x80009000 uImage
 bootm 0x80009000
 EOF
