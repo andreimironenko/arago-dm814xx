@@ -21,6 +21,7 @@ SRC_URI[syslinktarball.sha256sum] = "ed574dcb3a5477cfbc69a1c9e768d5197291cb057d1
 
 SRC_URI += "http://software-dl.ti.com/dsps/dsps_public_sw/SysLink/${SYSLINKPV}${SYSLINKPVextra}/exports/syslink_${SYSLINKPV}${SYSLINKPVextra}.tar.gz;name=syslinktarball \
             file://defconfig.vpss \
+            file://fbdev_remove_i2c_initialization.patch \
 "
 
 SYSLINK_ROOT = "${WORKDIR}/syslink_${SYSLINKPV}${SYSLINKPVextra}"
