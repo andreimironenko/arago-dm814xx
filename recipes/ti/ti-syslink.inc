@@ -269,9 +269,8 @@ do_install () {
 
     # Install the rtos example apps 
     cd ${SYSLINK_ROOT}/ti/syslink/samples/rtos
-    for i in $(find . -name "*.${SYSLINKSUFFIX}"); do
-        install -d ${D}/${installdir}/ti-syslink-examples/`dirname ${i} | cut -f4 -d /`
-        install ${i} ${D}/${installdir}/ti-syslink-examples/`dirname ${i} | cut -f4 -d /`
+    for i in $(find . -name "*.${SYSLINKSUFFIX}" | grep ${SOC_FAMILY}); do
+        install ${i} ${D}/${installdir}/ti-syslink-examples/
     done
 
     # TODO :: Fixup - library/headers installation - this shouldn't go into the examples directory....
