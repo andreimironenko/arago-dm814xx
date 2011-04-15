@@ -24,6 +24,7 @@ DSP_EZSDK_COMMON = " \
     ti-osal-src \
     ti-ipc-src \
     ti-syslink-src \
+    ti-syslink-dev \
     ti-codec-engine-src \
     ti-c6accel-src \
     ti-c6run-src \
