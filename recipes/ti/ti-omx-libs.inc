@@ -5,11 +5,15 @@ LICENSE = "BSD"
 require ti-paths.inc
 require ti-staging.inc
 
+inherit pkgconfig
+
 PR = "r1"
 
 S = "${WORKDIR}/omx_${PV}"
 
 SRC_URI = "http://install.source.dir.local/omx_${PV}.tar.gz;name=omx"
+
+SRC_URI =+ "file://omx.pc"
 
 SYSLINK_ROOT = "${WORKDIR}/syslink_${SYSLINKPV}${SYSLINKPVextra}"
 export SYSLINK_ROOT
@@ -44,6 +48,12 @@ EXTRA_OEMAKE = "ROOTDIR=${S}/packages \
 "
 
 PARALLEL_MAKE = "-j 2"
+
+do_configure() {
+    sed -i -e s:@VERSION@:${PV}:g ${WORKDIR}/omx.pc
+    
+    cp ${WORKDIR}/omx.pc ${S}
+}
 
 do_compile() {
     # Build OMX Library Package
@@ -81,7 +91,12 @@ do_install() {
     for i in vdec venc vfpc vfcc vfdc; do
         ln -s ../packages/ti/omx/comp/$i/omx_$i.h;
     done
+
+    install -d ${D}/${libdir}/pkgconfig
+    install ${S}/omx.pc ${D}/${libdir}/pkgconfig/
 }
 
 PACKAGES += "ti-omx-libs-sourcetree"
 FILES_ti-omx-libs-sourcetree = "omx_${PV}"
+
+FILES_ti-omx-dev = "${libdir}/*"

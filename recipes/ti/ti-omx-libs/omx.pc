@@ -1,0 +1,10 @@
+prefix=$${EZSDK}/omx_@VERSION@
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: TI OpenMAX IL
+Description: OpenMAX IL Libraries for ARM/DSP devices
+Version: @VERSION@
+Requires: 
+Libs: ${libdir}/domx.a ${libdir}/omxcore.a
+Cflags: -I${includedir}
