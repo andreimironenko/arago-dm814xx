@@ -17,7 +17,7 @@ export SYSLINK_ROOT
 DEPENDS = "ti-sysbios ti-xdctools ti-ipc ti-cgt470 ti-osal ti-syslink"
 DEPENDS += "ti-ivahd-hdvicp20api ti-codecs-dm816x"
 DEPENDS += "ti-xdais ti-codec-engine ti-framework-components"
-DEPENDS += "ti-hdvpss"
+DEPENDS += "ti-hdvpss ti-uia"
 
 PROVIDES = "ti-omx-libs-sourcetree"
 
