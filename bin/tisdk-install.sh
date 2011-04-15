@@ -155,9 +155,11 @@ move_to_install_dir()
   fi
 
   mv ${install_dir}/usr/share/ti/* ${install_dir}/
-  rm -rf $install_dir/usr
+  rm -rf $install_dir/usr/share/ti
+  rm -rf $install_dir/usr/lib/opkg
+  rm -rf $install_dir/usr/libexec
   rm -rf $install_dir/lib
-  rm -rf $install_dir/etc
+#   rm -rf $install_dir/etc
   rm -rf $install_dir/sbin
 }
 
