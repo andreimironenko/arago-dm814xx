@@ -21,9 +21,13 @@ PR = "${MACHINE_KERNEL_PR}"
 PR_append = "i"
 PVExtra = ""
 
+inherit pkgconfig
+
 S = "${WORKDIR}/syslink_${PV}${PVExtra}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/SysLink/${PV}${PVExtra}/exports/syslink_${PV}${PVExtra}.tar.gz;name=syslinktarball"
+
+SRC_URI =+ "file://syslink.pc"
 
 DEPENDS = "ti-sysbios ti-xdctools ti-cgt6x ti-ipc ti-cgt470"
 DEPENDS += "virtual/kernel" 
@@ -95,6 +99,10 @@ do_configure() {
         -e s:^M3_ELF.rootDir.*:M3_ELF.rootDir\ =\ \"${CODEGEN_ARM_INSTALL_DIR}\":g \
         -e s:^A8_ELF.rootDir.*:A8_ELF.rootDir\ =\ \"${CODEGEN_ARM_INSTALL_DIR}\":g \
         ${S}/config.bld
+
+    sed -i -e s:@VERSION@:${PV}:g ${WORKDIR}/syslink.pc
+    
+    cp ${WORKDIR}/syslink.pc ${S}
 }
 
 do_configure_append_ti816x() {
@@ -286,6 +294,9 @@ do_install () {
     # TODO: Remove/Revert this on c6accel and friends update.
     mkdir -p ${D}${SYSLINK_INSTALL_DIR_RECIPE}/ti/syslink/lib/modules/${SYSLINKPLATFORM}
     cp -f ${S}/ti/syslink/bin/${SYSLINKVARIANT}/syslink.ko ${D}${SYSLINK_INSTALL_DIR_RECIPE}/ti/syslink/lib/modules/${SYSLINKPLATFORM}/syslink.ko
+   
+    install -d ${D}/${libdir}/pkgconfig
+    install ${S}/syslink.pc ${D}/${libdir}/pkgconfig/
 }
 
 PACKAGES += "ti-syslink-module"
@@ -311,3 +322,5 @@ PACKAGES += "ti-syslink-examples"
 RDEPENDS_ti-syslink-examples_append = " ti-syslink-module"
 FILES_ti-syslink-examples = "${installdir}/ti-syslink-examples/*"
 INSANE_SKIP_ti-syslink-examples = True
+
+FILES_ti-syslink-dev = "${libdir}/*"
