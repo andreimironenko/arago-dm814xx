@@ -1,7 +1,6 @@
-DESCRIPTION = "UIA"
-
+DESCRIPTION = "TI Unified Instrumentation Architecture for ARM/DSP Devices"
 SECTION = "devel"
-LICENSE = "TI" 
+LICENSE = "BSD" 
 
 require ti-paths.inc
 
