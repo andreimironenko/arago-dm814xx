@@ -44,6 +44,7 @@ export DSP_BENCHMARK_INSTALL_DIR_RECIPE = "${installdir}/ti-dsp-benchmark-tree"
 export HDVPSS_INSTALL_DIR_RECIPE = "${installdir}/ti-hdvpss-tree"
 export OMX_INSTALL_DIR_RECIPE = "${installdir}/ti-omx-tree"
 export HDVICP20_INSTALL_DIR_RECIPE = "${installdir}/ti-hdvicp20-tree"
+export UIA_INSTALL_DIR_RECIPE = "${installdir}/ti-uia-tree"
 
 # This is where the tools will end up in staging provided PACKAGE_ARCH = ${MACHINE_ARCH} is set
 export CODEGEN_INSTALL_DIR    = "${STAGING_DIR}/${MULTIMACH_TARGET_SYS}${CODEGEN_INSTALL_DIR_RECIPE}"
