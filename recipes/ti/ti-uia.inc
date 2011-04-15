@@ -6,6 +6,7 @@ LICENSE = "TI"
 require ti-paths.inc
 
 PR = "r1"
+PVExtra = ""
 
 S = "${WORKDIR}/uia_${PV}${PVExtra}"
 
