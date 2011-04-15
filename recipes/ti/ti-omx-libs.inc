@@ -54,13 +54,17 @@ do_compile() {
 
     oe_runmake DEST_ROOT=${S}/firmware \
                PROFILE_m3video=debug PROFILE_m3vpss=debug \
-               CONFIG_BLD_XDC_m3=${S}/packages/ti/omx/demos/ti816x/davinciMC/config.bld \
                vdec_sntducati
 }
 
 do_install() {
     install -d ${D}/omx_${PV}
-    cp -pPrf ${S}/packages ${D}/omx_${PV}
+
+    # Run the script that copies only required directories and files
+    ${S}/packages/ti/omx/scripts/install_script.sh  \
+          ${S}/packages/ti/omx/scripts/dirlist.txt  \
+          ${S}/packages/ti/omx/scripts/filelist.txt \
+          ${S} ${D}/omx_${PV}
 
     install -d ${D}/omx_${PV}/lib
     cp ${S}/lib/ti/omx/domx/lib/a8host/debug/domx.av5T ${D}/omx_${PV}/lib
