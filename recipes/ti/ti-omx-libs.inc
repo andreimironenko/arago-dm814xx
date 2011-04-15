@@ -99,4 +99,4 @@ do_install() {
 PACKAGES += "ti-omx-libs-sourcetree"
 FILES_ti-omx-libs-sourcetree = "omx_${PV}"
 
-FILES_ti-omx-dev = "${libdir}/*"
+FILES_ti-omx-libs-dev = "${libdir}/*"
