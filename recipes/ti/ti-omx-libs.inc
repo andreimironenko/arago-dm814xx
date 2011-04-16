@@ -47,7 +47,7 @@ EXTRA_OEMAKE = "ROOTDIR=${S}/packages \
         CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
 "
 
-PARALLEL_MAKE = "-j 2"
+PARALLEL_MAKE = ""
 
 do_configure() {
     sed -i -e s:@VERSION@:${PV}:g ${WORKDIR}/omx.pc
