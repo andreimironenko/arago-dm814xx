@@ -20,6 +20,7 @@ my $multimedia_binary = "task-arago-tisdk-multimedia";
 my $multimedia_sdk_header ="task-arago-toolchain-tisdk-multimedia-target";
 my $dsp_source = "task-arago-toolchain-tisdk-dsp-host";
 my $dsp_binary = "task-arago-tisdk-dsp";
+my $dsp_sdk_target = "task-arago-toolchain-tisdk-dsp-target";
 my $graphics_binary = "task-arago-tisdk-graphics";
 my $graphics_src = "task-arago-toolchain-tisdk-graphics-host";
 my $graphics_sdk_target ="task-arago-toolchain-tisdk-graphics-target";
@@ -769,6 +770,7 @@ sub get_input
     if ($dsp =~ m/yes/i) {
         $packages[$index++] = $dsp_source;
         $packages[$index++] = $dsp_binary;
+        $packages[$index++] = $dsp_sdk_target;
     }
 
     if ($graphics =~ m/yes/i) {

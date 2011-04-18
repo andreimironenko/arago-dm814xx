@@ -558,6 +558,7 @@ install_arago_sdk ()
 
   ! test -z $graphics && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  install $graphics_sdk_target "
   ! test -z $multimedia && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  install $multimedia_sdk_target "
+  ! test -z $dsp && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  install $dsp_sdk_target "
   ! test -z $crypto && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  install $crypto_sdk_target "
 
   # remove these packages (see arago/meta/meta-toolchain-target.bb)
@@ -620,6 +621,7 @@ while [ $# -gt 0 ]; do
     --dsp)
       dsp_src="task-arago-toolchain-tisdk-dsp-host";
       dsp_bin="task-arago-tisdk-dsp";
+      dsp_sdk_target="task-arago-toolchain-tisdk-dsp-target";
       dsp="yes";
       shift;
       ;;
