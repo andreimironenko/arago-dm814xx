@@ -83,7 +83,6 @@ MULTIMEDIA_SOURCETREE_omapl138 = " \
 MULTIMEDIA_SOURCETREE_dm816x-evm = " \
     ${MULTIMEDIA_EZSDK_COMMON} \
     ti-omx-libs-sourcetree \
-    ti-omx-libs-dev \
 "
 
 MULTIMEDIA_SOURCETREE_dm816x-custom = " \
@@ -99,7 +98,6 @@ MULTIMEDIA_SOURCETREE_dm816x-custom = " \
 MULTIMEDIA_SOURCETREE_dm814x-evm = " \
     ${MULTIMEDIA_EZSDK_COMMON} \
     ti-omx-libs-sourcetree \
-    ti-omx-libs-dev \
 "
 
 MULTIMEDIA_SOURCETREE_dm814x-custom = " \

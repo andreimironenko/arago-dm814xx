@@ -8,6 +8,7 @@ RDEPENDS_${PN} = "\
     gstreamer-dev \
     gst-plugins-base-dev \
     ortp-dev \
+    ti-omx-libs-dev \
 #    gst-plugins-good-dev \
 #    gst-plugins-ugly-dev \
 #    gst-plugins-bad-dev \
