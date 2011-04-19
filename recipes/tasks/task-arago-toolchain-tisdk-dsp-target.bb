@@ -9,6 +9,7 @@ DSP_SDK = ""
 
 DSP_EZSDK_COMMON = " \
     ti-syslink-dev \
+    ti-ipc-dev \
 "
 
 DSP_SDK_ti816x = "\
