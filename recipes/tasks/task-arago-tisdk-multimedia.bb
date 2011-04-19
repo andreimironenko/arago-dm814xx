@@ -18,6 +18,7 @@ MULTIMEDIA_DVSDK_COMMON = " \
 
 MULTIMEDIA_EZSDK_COMMON = " \
     ti-codec-engine-examples \
+    ti-omtb \
 "
 
 MULTIMEDIA_dm365 = " \
