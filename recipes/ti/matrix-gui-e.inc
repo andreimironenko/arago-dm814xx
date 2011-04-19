@@ -25,6 +25,9 @@ SRC_URI = "svn://gforge.ti.com/svn/matrix_gui/;module=trunk;proto=https;user=ano
            file://TI816X_Enable_Multi_Display.patch \
            file://TI81xx_Fix_dspbenchmarks_memory_map.patch \
            file://TI816X_Adjust_DSP_Menu.patch \
+           file://video-conference-icon.png \
+           file://menu_main.html \
+           file://menu_multimedia.html \
 "
 
 S = "${WORKDIR}/trunk"
@@ -38,6 +41,14 @@ CXXFLAGS_dm365_append = " -DPlatform_dm365 "
 PACKAGE_ARCH = ${MACHINE_ARCH}
 
 inherit qt4e update-rc.d
+
+do_prepsources() {
+    cp ${WORKDIR}/menu_main.html ${S}/ti816x/html
+    cp ${WORKDIR}/menu_multimedia.html ${S}/ti816x/html
+    cp ${WORKDIR}/video-conference-icon.png ${S}/images
+}
+
+addtask prepsources after do_patch before do_configure
 
 do_install() {
 	install -d ${D}/${bindir}
