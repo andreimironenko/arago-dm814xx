@@ -1,4 +1,4 @@
-prefix=$${EZSDK}/omx_@VERSION@
+prefix=/../../omx_@VERSION@
 libdir=${prefix}/lib
 includedir=${prefix}/include
 
