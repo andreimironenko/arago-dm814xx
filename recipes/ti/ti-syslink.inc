@@ -276,9 +276,10 @@ do_install () {
     install -m 0755 ${SYSLINK_ROOT}/ti/syslink/bin/${SYSLINKVARIANT}/samples/* ${D}/${installdir}/ti-syslink-examples/
 
     # Install the rtos example apps 
+    install -d ${D}/${installdir}/ti-syslink-examples/dsp
     cd ${SYSLINK_ROOT}/ti/syslink/samples/rtos
     for i in $(find . -name "*.${SYSLINKSUFFIX}" | grep ${SOC_FAMILY}); do
-        install ${i} ${D}/${installdir}/ti-syslink-examples/
+        install ${i} ${D}/${installdir}/ti-syslink-examples/dsp/
     done
 
     # TODO :: Fixup - library/headers installation - this shouldn't go into the examples directory....
