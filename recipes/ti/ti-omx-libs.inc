@@ -21,7 +21,7 @@ export SYSLINK_ROOT
 DEPENDS = "ti-sysbios ti-xdctools ti-ipc ti-cgt470 ti-osal ti-syslink"
 DEPENDS += "ti-ivahd-hdvicp20api ti-codecs-dm816x"
 DEPENDS += "ti-xdais ti-codec-engine ti-framework-components"
-DEPENDS += "ti-hdvpss ti-uia"
+DEPENDS += "ti-hdvpss ti-uia ortp alsa-lib"
 
 PROVIDES = "ti-omx-libs-sourcetree"
 
@@ -41,6 +41,7 @@ EXTRA_OEMAKE = "ROOTDIR=${S}/packages \
         syslink_PATH=${SYSLINK_ROOT} \
         xdc_PATH=${XDC_INSTALL_DIR} \
         hdvpss_PATH=${HDVPSS_INSTALL_DIR} \
+        uia_PATH=${UIA_INSTALL_DIR} \
         lindevkit_PATH=${STAGING_DIR_TARGET}/usr \
         rtp_PATH=${STAGING_DIR_TARGET}/usr \
         CODEGEN_PATH_M3=${CODEGEN_ARM_INSTALL_DIR} \
@@ -60,11 +61,11 @@ do_compile() {
     cd ${S}/packages
 
     # oe_runmake CORE=a8host domx omxcore timmosal 
-    oe_runmake CORE=a8host DEST_ROOT=${S}/lib domx omxcore
+    oe_runmake CORE=a8host DEST_ROOT=${S}/lib domx omxcore memcfg
 
     oe_runmake DEST_ROOT=${S}/firmware \
                PROFILE_m3video=debug PROFILE_m3vpss=debug \
-               vdec_sntducati
+               dm816xbmducati
 }
 
 do_install() {
@@ -81,7 +82,7 @@ do_install() {
     cp ${S}/lib/ti/omx/omxcore/lib/a8host/debug/omxcore.av5T ${D}/omx_${PV}/lib
 
     install -d ${D}/omx_${PV}/firmware
-    cp ${S}/firmware/vdec_snt/bin/ti816x-evm/*.xem3 ${D}/omx_${PV}/firmware
+    cp ${S}/firmware/dm816xbm/bin/ti816x-evm/*.xem3 ${D}/omx_${PV}/firmware
 
     cp -r ${S}/packages/ti/omx/docs ${D}/omx_${PV}
 
@@ -94,6 +95,9 @@ do_install() {
 
     install -d ${D}/${libdir}/pkgconfig
     install ${S}/omx.pc ${D}/${libdir}/pkgconfig/
+
+    install -d ${D}${OMX_INSTALL_DIR_RECIPE}
+    cp -pPrf ${S}/* ${D}${OMX_INSTALL_DIR_RECIPE}
 }
 
 PACKAGES += "ti-omx-libs-sourcetree"
