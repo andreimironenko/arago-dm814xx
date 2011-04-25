@@ -1,0 +1,87 @@
+From 5ad404b730d7ac48d463e56d3b9c9f209f2f0a6e Mon Sep 17 00:00:00 2001
+From: Naveen S <naveens@ti.com>
+Date: Mon, 25 Apr 2011 21:31:30 +0530
+Subject: [PATCH 1/3] hdvpss: Generic platform files
+
+---
+ packages/ti/psp/platforms/src/vps_platform.c |   19 +++++++++++++++----
+ packages/ti/psp/platforms/vps_platform.h     |    4 +++-
+ 2 files changed, 18 insertions(+), 5 deletions(-)
+
+diff --git a/packages/ti/psp/platforms/src/vps_platform.c b/packages/ti/psp/platforms/src/vps_platform.c
+index 8e7b248..ec45e98 100644
+--- a/packages/ti/psp/platforms/src/vps_platform.c
++++ b/packages/ti/psp/platforms/src/vps_platform.c
+@@ -554,17 +554,17 @@ UInt32 Vps_platformIsSim(void)
+     return (gPlatformCommonObj.isPlatformEvm ? FALSE : TRUE);
+ }
+ 
+-Int32 Vps_platformSelectVideoDecoder(UInt32 vidDecId)
++Int32 Vps_platformSelectVideoDecoder(UInt32 vidDecId, UInt32 vipInstId)
+ {
+     Int32 status = FVID2_SOK;
+ 
+ #ifdef PLATFORM_EVM_SI
+ #ifdef TI_816X_BUILD
+-    status = Vps_platformTI816xSelectVideoDecoder(vidDecId);
++    status = Vps_platformTI816xSelectVideoDecoder(vidDecId, vipInstId);
+ #endif
+ 
+ #ifdef TI_814X_BUILD
+-    status = Vps_platformTI814xSelectVideoDecoder(vidDecId);
++    status = Vps_platformTI814xSelectVideoDecoder(vidDecId, vipInstId);
+ #endif
+ #endif
+ 
+@@ -602,7 +602,6 @@ Vps_PlatformBoardId Vps_platformGetBoardId(void)
+            of VIP, probing that
+            On 814X VIP instance 0 is used only for TVP7002 */
+         vipInst = VPS_CAPT_INST_VIP1_PORTA;
+-
+         videoDeviceI2cAddr = Vps_platformGetVidDecI2cAddr(
+                                  FVID2_VPS_VID_DEC_SII9135_DRV,
+                                  vipInst);
+@@ -614,6 +613,18 @@ Vps_PlatformBoardId Vps_platformGetBoardId(void)
+             return (VPS_PLATFORM_BOARD_VC);
+         }
+ 
++        videoDeviceI2cAddr = Vps_platformGetVidDecI2cAddr(
++                                 FVID2_VPS_VID_DEC_TVP7002_DRV,
++                                 vipInst);
++        status = Vps_deviceI2cProbeDevice(i2cInst, videoDeviceI2cAddr);
++
++        if (FVID2_SOK == status)
++        {
++            gPlatformCommonObj.platBoardId = VPS_PLATFORM_BOARD_CATALOG;
++            return (VPS_PLATFORM_BOARD_CATALOG);
++        }
++
++
+         /* Unknown board */
+         gPlatformCommonObj.platBoardId = VPS_PLATFORM_BOARD_UNKNOWN;
+     }
+diff --git a/packages/ti/psp/platforms/vps_platform.h b/packages/ti/psp/platforms/vps_platform.h
+index 59c361d..f774d56 100644
+--- a/packages/ti/psp/platforms/vps_platform.h
++++ b/packages/ti/psp/platforms/vps_platform.h
+@@ -123,6 +123,8 @@ typedef enum
+     /**< TVP5158 based board. */
+     VPS_PLATFORM_BOARD_VC,
+     /**< TVP7002/SII9135 based board. */
++    VPS_PLATFORM_BOARD_CATALOG,
++    /**< TVP7002/SIL1161A. */
+     VPS_PLATFORM_BOARD_MAX
+     /**< Max board ID. */
+ } Vps_PlatformBoardId;
+@@ -222,7 +224,7 @@ UInt32 Vps_platformIsSim(void);
+ Vps_PlatformBoardId Vps_platformGetBoardId(void);
+ 
+ /* Function to select video decoder when video decoder is muxed at board level */
+-Int32 Vps_platformSelectVideoDecoder(UInt32 vidDecId);
++Int32 Vps_platformSelectVideoDecoder(UInt32 vidDecId, UInt32 vipInstId);
+ 
+ /* Reset video related devices on EVM */
+ Int32 Vps_platformVideoResetVideoDevices();
+-- 
+1.7.0.4
+

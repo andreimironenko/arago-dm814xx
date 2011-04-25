@@ -1,0 +1,234 @@
+From 6dde2376a5fdcca36b33adf3bdc284549695768c Mon Sep 17 00:00:00 2001
+From: Naveen S <naveens@ti.com>
+Date: Mon, 25 Apr 2011 21:32:37 +0530
+Subject: [PATCH 3/3] hdvpss: TI*16x platform files
+
+---
+ .../psp/platforms/ti816x/src/vps_platformTI816x.c  |  104 +++++++++++++++++---
+ .../ti/psp/platforms/ti816x/vps_platformTI816x.h   |    2 +-
+ 2 files changed, 89 insertions(+), 17 deletions(-)
+
+diff --git a/packages/ti/psp/platforms/ti816x/src/vps_platformTI816x.c b/packages/ti/psp/platforms/ti816x/src/vps_platformTI816x.c
+index 8f09647..5722073 100644
+--- a/packages/ti/psp/platforms/ti816x/src/vps_platformTI816x.c
++++ b/packages/ti/psp/platforms/ti816x/src/vps_platformTI816x.c
+@@ -61,6 +61,9 @@
+ /* IO expander present on the daughter card */
+ #define VPS_VSVC_BOARD_IO_EXP1_I2C_ADDR (0x21u)
+ 
++/* IO expander present on the daughter card */
++#define VPS_VSVC_BOARD_IO_EXP2_I2C_ADDR (0x23u)
++
+ /* THS7353 filter I2C address present in VC daughter card */
+ #define VPS_VC_BOARD_THS7353_I2C_ADDR   (0x2Eu)
+ 
+@@ -110,6 +113,7 @@
+ #define VPS_VS_IO_EXP_RESET_DEV_MASK        (0x03u)
+ #define VPS_VC_IO_EXP_RESET_DEV_MASK        (0x0Fu)
+ #define VPS_VC_IO_EXP_SEL_VIN0_S1_MASK      (0x04u)
++#define VPS_VC_IO_EXP_SEL_VIN1_S1_MASK      (0x08u)
+ #define VPS_VC_IO_EXP_THS7368_DISABLE_MASK  (0x10u)
+ #define VPS_VC_IO_EXP_THS7368_BYPASS_MASK   (0x20u)
+ #define VPS_VC_IO_EXP_THS7368_FILTER1_MASK  (0x40u)
+@@ -353,7 +357,7 @@ UInt8 Vps_platformTI816xGetVidDecI2cAddr(UInt32 vidDecId, UInt32 vipInstId)
+     UInt8 devAddr;
+     UInt8 devAddrTvp5158[VPS_CAPT_INST_MAX] = { 0x58, 0x5c, 0x5a, 0x5e };
+     UInt8 devAddrSii9135[VPS_CAPT_INST_MAX] = { 0x31, 0x00, 0x30, 0x00 };
+-    UInt8 devAddrTvp7002[VPS_CAPT_INST_MAX] = { 0x5d, 0x00, 0x00, 0x00 };
++    UInt8 devAddrTvp7002[VPS_CAPT_INST_MAX] = { 0x5d, 0x00, 0x5c, 0x00 };
+ 
+     assert(vipInstId<VPS_CAPT_INST_MAX);
+ 
+@@ -687,8 +691,10 @@ Int32 Vps_platformTI816xResetVideoDevices(void)
+     UInt32      resetMask;
+     UInt32      i2cInst = Vps_platformTI816xGetI2cInstId();
+     UInt32      ioExpI2cAddr = VPS_VSVC_BOARD_IO_EXP1_I2C_ADDR;
++    UInt32      boardId;
+ 
+-    if (VPS_PLATFORM_BOARD_VS == Vps_platformGetBoardId())
++    boardId = Vps_platformGetBoardId();
++    if (VPS_PLATFORM_BOARD_VS == boardId)
+     {
+         resetMask = VPS_VS_IO_EXP_RESET_DEV_MASK;
+     }
+@@ -710,6 +716,21 @@ Int32 Vps_platformTI816xResetVideoDevices(void)
+ 
+     Task_sleep(1000);
+ 
++    if (VPS_PLATFORM_BOARD_CATALOG == boardId)
++    {
++        ioExpI2cAddr = VPS_VSVC_BOARD_IO_EXP2_I2C_ADDR;
++        status = Vps_deviceRawWrite8(
++                     i2cInst,
++                     ioExpI2cAddr,
++                     gPlatformTI816xCommonObj.ioExpVal,
++                     2);
++        assert(status==FVID2_SOK);
++
++        Task_sleep(1000);
++    }
++
++     ioExpI2cAddr = VPS_VSVC_BOARD_IO_EXP1_I2C_ADDR;
++
+     /* Applicable for both VS and VC boards */
+     gPlatformTI816xCommonObj.ioExpVal[0] |= resetMask;
+     status = Vps_deviceRawWrite8(
+@@ -721,6 +742,19 @@ Int32 Vps_platformTI816xResetVideoDevices(void)
+ 
+     Task_sleep(500);
+ 
++    if (VPS_PLATFORM_BOARD_CATALOG == boardId)
++    {
++     ioExpI2cAddr = VPS_VSVC_BOARD_IO_EXP2_I2C_ADDR;
++        status = Vps_deviceRawWrite8(
++                     i2cInst,
++                     ioExpI2cAddr,
++                     gPlatformTI816xCommonObj.ioExpVal,
++                     2);
++        assert(status==FVID2_SOK);
++
++        Task_sleep(500);
++
++    }
+     /* IO expander unlock */
+     vpsPlatformIoExpUnLock();
+ 
+@@ -802,6 +836,11 @@ Vps_PlatformBoardRev Vps_platformTI816xGetDcBoardRev(void)
+             boardRev = VPS_PLATFORM_BOARD_REV_C;
+         }
+     }
++    else if (VPS_PLATFORM_BOARD_CATALOG == boardId)
++    {
++        /*only one Revision*/
++        boardRev = VPS_PLATFORM_BOARD_REV_A;
++    }
+ 
+     return (boardRev);
+ }
+@@ -977,27 +1016,49 @@ static Int32 Vps_platformTI816xEnableI2c(void)
+     }
+ }
+ 
+-/* In TI816X, TVP7002 and SiL9135A are muxed on the VC board. */
+-Int32 Vps_platformTI816xSelectVideoDecoder(UInt32 vidDecId)
++/* In TI816X, TVP7002 and SiL9135A are muxed on the VC board.
++   TVP7002 and SIl1161A are muxed on the catalog board*/
++Int32 Vps_platformTI816xSelectVideoDecoder(UInt32 vidDecId, UInt32 vipInstId)
+ {
+     UInt32 i2cInstId = Vps_platformTI816xGetI2cInstId();
+     UInt32 i2cDevAddr = VPS_VSVC_BOARD_IO_EXP1_I2C_ADDR;
+     Int32  status = FVID2_SOK;
++    UInt32 instId;
+ 
+-    if (VPS_PLATFORM_BOARD_VC == Vps_platformGetBoardId())
++    Vps_PlatformBoardId boardId = Vps_platformGetBoardId();
++    if ((VPS_PLATFORM_BOARD_VC == boardId) ||
++        (VPS_PLATFORM_BOARD_CATALOG == boardId))
+     {
+         /* IO expander lock */
+         vpsPlatformIoExpLock();
+-
++        instId = vipInstId / VPSHAL_VIP_INST_MAX;
+         if (FVID2_VPS_VID_DEC_TVP7002_DRV == vidDecId)
+         {
+-            gPlatformTI816xCommonObj.ioExpVal[1] &=
+-                ~VPS_VC_IO_EXP_SEL_VIN0_S1_MASK;
++
++               if (instId == 0)
++               {
++                   gPlatformTI816xCommonObj.ioExpVal[1] &=
++                        ~VPS_VC_IO_EXP_SEL_VIN0_S1_MASK;
++
++               }
++               else
++               {
++                    if (VPS_PLATFORM_BOARD_CATALOG == boardId)
++                    {
++                       gPlatformTI816xCommonObj.ioExpVal[1] &=
++                            ~VPS_VC_IO_EXP_SEL_VIN1_S1_MASK;
++                    }
++
++               }
+         }
+         else
+         {
+-            gPlatformTI816xCommonObj.ioExpVal[1] |=
+-                VPS_VC_IO_EXP_SEL_VIN0_S1_MASK;
++                if (instId == 0)
++                {
++                    gPlatformTI816xCommonObj.ioExpVal[1] |=
++                        VPS_VC_IO_EXP_SEL_VIN0_S1_MASK;
++                }
++            /*add SIL1161A for Catalog board here */
+         }
+         status = Vps_deviceRawWrite8(
+                      i2cInstId,
+@@ -1006,7 +1067,6 @@ Int32 Vps_platformTI816xSelectVideoDecoder(UInt32 vidDecId)
+                      2);
+ 
+         Task_sleep(500);
+-
+         /* IO expander unlock */
+         vpsPlatformIoExpUnLock();
+     }
+@@ -1019,11 +1079,13 @@ Int32 Vps_platformTI816xEnableTvp7002Filter(FVID2_Standard standard)
+     Int32       status = FVID2_SOK;
+     UInt32      i2cInstId, i2cDevAddr;
+     UInt8       filterSel;
+-
++    Vps_PlatformBoardId boardId = Vps_platformGetBoardId();
+     i2cInstId = Vps_platformTI816xGetI2cInstId();
+-    if (VPS_PLATFORM_BOARD_VC == Vps_platformGetBoardId())
++    if ((VPS_PLATFORM_BOARD_VC == boardId) ||
++        (VPS_PLATFORM_BOARD_CATALOG == boardId))
+     {
+-        if (Vps_platformGetDcBoardRev() <= VPS_PLATFORM_BOARD_REV_B)
++        if ((Vps_platformGetDcBoardRev() <= VPS_PLATFORM_BOARD_REV_B) &&
++            VPS_PLATFORM_BOARD_VC == boardId)
+         {
+             /* For REV A and REV B VC boards, THS7353 is used */
+             i2cDevAddr = VPS_VC_BOARD_THS7353_I2C_ADDR;
+@@ -1031,7 +1093,7 @@ Int32 Vps_platformTI816xEnableTvp7002Filter(FVID2_Standard standard)
+         }
+         else
+         {
+-            /* From REV C VC board, THS7368 is used which is controlled
++            /* From REV C VC board or catalog board, THS7368 is used which is controlled
+              * through the IO expander */
+             i2cDevAddr = VPS_VSVC_BOARD_IO_EXP1_I2C_ADDR;
+ 
+@@ -1109,7 +1171,17 @@ Int32 Vps_platformTI816xEnableTvp7002Filter(FVID2_Standard standard)
+                          2);
+ 
+             Task_sleep(500);
+-
++            if (VPS_PLATFORM_BOARD_CATALOG == boardId)
++            {
++                i2cDevAddr = VPS_VSVC_BOARD_IO_EXP2_I2C_ADDR;
++                status |= Vps_deviceRawWrite8(
++                             i2cInstId,
++                             i2cDevAddr,
++                             gPlatformTI816xCommonObj.ioExpVal,
++                             2);
++
++                Task_sleep(500);
++            }
+             /* IO expander unlock */
+             vpsPlatformIoExpUnLock();
+         }
+diff --git a/packages/ti/psp/platforms/ti816x/vps_platformTI816x.h b/packages/ti/psp/platforms/ti816x/vps_platformTI816x.h
+index 1b8ecc2..d93b834 100644
+--- a/packages/ti/psp/platforms/ti816x/vps_platformTI816x.h
++++ b/packages/ti/psp/platforms/ti816x/vps_platformTI816x.h
+@@ -78,7 +78,7 @@ Int32 Vps_platformTI816xSimVideoInputSelect(UInt32 vipInstId,
+ Int32 Vps_platformTI816xSetVencPixClk(Vps_SystemVPllClk *vpllCfg);
+ 
+ /* Function to select video decoder when video decoder are muxed at board level */
+-Int32 Vps_platformTI816xSelectVideoDecoder(UInt32 vidDecId);
++Int32 Vps_platformTI816xSelectVideoDecoder(UInt32 vidDecId, UInt32 vipInstId);
+ 
+ /* reset video devices using GPIO IO expander */
+ Int32 Vps_platformTI816xResetVideoDevices(void);
+-- 
+1.7.0.4
+

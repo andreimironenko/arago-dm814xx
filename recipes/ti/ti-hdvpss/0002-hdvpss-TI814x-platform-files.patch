@@ -1,0 +1,158 @@
+From a4ce2abcb4f89545afea2929f2e7f6db3b2c3f4a Mon Sep 17 00:00:00 2001
+From: Naveen S <naveens@ti.com>
+Date: Mon, 25 Apr 2011 21:32:04 +0530
+Subject: [PATCH 2/3] hdvpss: TI814x platform files
+
+---
+ .../psp/platforms/ti814x/src/vps_platformTI814x.c  |   32 ++++++++++----------
+ .../ti/psp/platforms/ti814x/vps_platformTI814x.h   |    2 +-
+ 2 files changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/packages/ti/psp/platforms/ti814x/src/vps_platformTI814x.c b/packages/ti/psp/platforms/ti814x/src/vps_platformTI814x.c
+index 77ee6a3..96a36e7 100644
+--- a/packages/ti/psp/platforms/ti814x/src/vps_platformTI814x.c
++++ b/packages/ti/psp/platforms/ti814x/src/vps_platformTI814x.c
+@@ -117,14 +117,14 @@ ADPLLJ_CLKCRTL_Register SPEC bug  bit 19,bit29 -- CLKLDOEN,CLKDCOEN */
+  *  P6 - THS73861_FILTER1
+  *  P5 - THS73861_BYPASS
+  *  P4 - THS73861_DISABLE
+- *  P0 - TVP7002_RSTN 
++ *  P0 - TVP7002_RSTN
+  */
+ #define VPS_VC_A2_PCF8575_TVP_RESETn_MASK       (VPS_VC_A2_PCF8575_P0_MASK)
+ #define VPS_VC_A2_PCF8575_THS73861_DISABLE_MASK (VPS_VC_A2_PCF8575_P4_MASK)
+ #define VPS_VC_A2_PCF8575_THS73861_BYPASS_MASK  (VPS_VC_A2_PCF8575_P5_MASK)
+ #define VPS_VC_A2_PCF8575_THS73861_FILTER1_MASK (VPS_VC_A2_PCF8575_P6_MASK)
+ #define VPS_VC_A2_PCF8575_THS73861_FILTER2_MASK (VPS_VC_A2_PCF8575_P7_MASK)
+-        
++
+ /* ========================================================================== */
+ /*                         Structure Declarations                             */
+ /* ========================================================================== */
+@@ -341,7 +341,7 @@ Int32 Vps_platformTI814xDeviceInit(Vps_PlatformDeviceInitParams *initPrms)
+         {
+             status = Vps_getVcCardVersion(&gTi814xBoardVer);
+             /* Two versions of VC cards */
+-            assert ((gTi814xBoardVer.vcCard == VPS_PLATFORM_BOARD_REV_B) || 
++            assert ((gTi814xBoardVer.vcCard == VPS_PLATFORM_BOARD_REV_B) ||
+                     (gTi814xBoardVer.vcCard == VPS_PLATFORM_BOARD_REV_A));
+         }
+     }
+@@ -823,9 +823,9 @@ Int32 Vps_platformTI814xResetVideoDevices(void)
+ 
+     regValue[0] = 0x00;
+     regValue[1] = 0x00;
+-    /* 2 versions of VC card - IO expander and filters are different between 
++    /* 2 versions of VC card - IO expander and filters are different between
+        them */
+-    if ((boardId == VPS_PLATFORM_BOARD_VC) && 
++    if ((boardId == VPS_PLATFORM_BOARD_VC) &&
+         (gTi814xBoardVer.vcCard == VPS_PLATFORM_BOARD_REV_B))
+     {
+         status = Vps_deviceRawRead8(i2cInst, ioExpI2cAddr, regValue, 2u);
+@@ -847,13 +847,13 @@ Int32 Vps_platformTI814xResetVideoDevices(void)
+     }
+     else
+     {
+-        if ((boardId == VPS_PLATFORM_BOARD_VC) && 
++        if ((boardId == VPS_PLATFORM_BOARD_VC) &&
+             (gTi814xBoardVer.vcCard == VPS_PLATFORM_BOARD_REV_A))
+         {
+             regValue[0] = 0xEF;
+             regValue[1] = 0xFE;
+         }
+-        else 
++        else
+         {
+             /* Bring TVP outof reset and enable THS73681 filter */
+             regValue[0] |= (UInt8)(VPS_VC_A2_PCF8575_TVP_RESETn_MASK);
+@@ -909,7 +909,7 @@ Int32 Vps_platformTI814xEnableTvp7002Filter(FVID2_Standard standard)
+     if (VPS_PLATFORM_BOARD_VC == Vps_platformGetBoardId())
+     {
+         i2cInstId = Vps_platformTI814xGetI2cInstId();
+-        
++
+         if (gTi814xBoardVer.vcCard == VPS_PLATFORM_BOARD_REV_A)
+         {
+             i2cDevAddr = VPS_VC_BOARD_THS7353_I2C_ADDR;
+@@ -917,8 +917,8 @@ Int32 Vps_platformTI814xEnableTvp7002Filter(FVID2_Standard standard)
+         }
+         else if(gTi814xBoardVer.vcCard == VPS_PLATFORM_BOARD_REV_B)
+         {
+-            status = Vps_platformTi814xEnableThs73681(standard, 
+-                                            i2cInstId, 
++            status = Vps_platformTi814xEnableThs73681(standard,
++                                            i2cInstId,
+                                             gTi814xBoardVer.vcIoExpAddr);
+         }
+         else
+@@ -1074,7 +1074,7 @@ static Int32 Vps_platformTI814xEnableI2c(void)
+ #endif
+ 
+ /* In TI814X, GMII1 and SiL9135A are muxed on the VC board. */
+-Int32 Vps_platformTI814xSelectVideoDecoder(UInt32 vidDecId)
++Int32 Vps_platformTI814xSelectVideoDecoder(UInt32 vidDecId, UInt32 vipInstId)
+ {
+     UInt32 i2cInstId = Vps_platformTI814xGetI2cInstId();
+     UInt32 i2cDevAddr;
+@@ -1196,7 +1196,7 @@ static Int32 Vps_getVcCardVersion (Vps_BoardVersion *boardVer)
+     Vps_PlatformBoardRev version;
+     UInt8  regValue[2];
+     UInt32 expAddr;
+-    
++
+     version = boardVer->vcCard;
+     status = FVID2_SOK;
+ 
+@@ -1205,7 +1205,7 @@ static Int32 Vps_getVcCardVersion (Vps_BoardVersion *boardVer)
+         Semaphore_pend(boardVer->ioExpLock, BIOS_WAIT_FOREVER);
+ 
+         /* Check if its Alpha 1 - REV A */
+-        status = Vps_deviceRawRead8(Vps_platformTI814xGetI2cInstId(), 
++        status = Vps_deviceRawRead8(Vps_platformTI814xGetI2cInstId(),
+                         VPS_VC_BOARD_A1_IO_EXP_I2C_ADDR, regValue, 2u);
+         if (status == FVID2_SOK)
+         {
+@@ -1214,7 +1214,7 @@ static Int32 Vps_getVcCardVersion (Vps_BoardVersion *boardVer)
+         }
+         else
+         {   /* Otherwise shoule be Alpha 2 - check to ensure */
+-            status = Vps_deviceRawRead8(Vps_platformTI814xGetI2cInstId(), 
++            status = Vps_deviceRawRead8(Vps_platformTI814xGetI2cInstId(),
+                             VPS_VC_BOARD_A2_IO_EXP_I2C_ADDR, regValue, 2u);
+             if (status == FVID2_SOK)
+             {
+@@ -1224,7 +1224,7 @@ static Int32 Vps_getVcCardVersion (Vps_BoardVersion *boardVer)
+         }
+         boardVer->vcCard      = version;
+         boardVer->vcIoExpAddr = expAddr;
+-        
++
+         Semaphore_post(boardVer->ioExpLock);
+     }
+     return (status);
+@@ -1240,7 +1240,7 @@ static Int32 Vps_platformTi814xEnableThs73681(FVID2_Standard standard,
+ 
+     status = Vps_deviceRawRead8(i2cInst, ioExpAddr, regValue, 2u);
+     assert(status==FVID2_SOK);
+-    
++
+     /*  PCF8575 - mappings
+         P7 - THS73861_FILTER2
+         P6 - THS73861_FILTER1
+diff --git a/packages/ti/psp/platforms/ti814x/vps_platformTI814x.h b/packages/ti/psp/platforms/ti814x/vps_platformTI814x.h
+index 3c9a204..1dbec4b 100644
+--- a/packages/ti/psp/platforms/ti814x/vps_platformTI814x.h
++++ b/packages/ti/psp/platforms/ti814x/vps_platformTI814x.h
+@@ -78,7 +78,7 @@ Int32 Vps_platformTI814xSimVideoInputSelect(UInt32 vipInstId,
+ Int32 Vps_platformTI814xSetVencPixClk(Vps_SystemVPllClk *vpllCfg);
+ 
+ /* Function to select video decoder when video decoder are muxed at board level */
+-Int32 Vps_platformTI814xSelectVideoDecoder(UInt32 vidDecId);
++Int32 Vps_platformTI814xSelectVideoDecoder(UInt32 vidDecId, UInt32 vipInstId);
+ 
+ /* reset video devices using GPIO IO expander */
+ Int32 Vps_platformTI814xResetVideoDevices(void);
+-- 
+1.7.0.4
+
