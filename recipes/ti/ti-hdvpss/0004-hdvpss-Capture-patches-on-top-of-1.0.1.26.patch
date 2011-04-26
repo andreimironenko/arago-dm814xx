@@ -1,0 +1,243 @@
+From a24ba7db68ab55ad5c282f76c07f2f336657f6a7 Mon Sep 17 00:00:00 2001
+From: Naveen S <naveens@ti.com>
+Date: Tue, 26 Apr 2011 15:48:59 +0530
+Subject: [PATCH 4/4] hdvpss: Capture patches on top of 1.0.1.26
+
+---
+ .../vps/drivers/capture/src/vpsdrv_captureApi.c    |  137 ++++++++++++++++++++
+ .../vps/drivers/capture/src/vpsdrv_capturePriv.h   |    2 +
+ packages/ti/psp/vps/vps_capture.h                  |   34 +++++-
+ 3 files changed, 171 insertions(+), 2 deletions(-)
+
+diff --git a/packages/ti/psp/vps/drivers/capture/src/vpsdrv_captureApi.c b/packages/ti/psp/vps/drivers/capture/src/vpsdrv_captureApi.c
+index 7d731ac..61146ce 100644
+--- a/packages/ti/psp/vps/drivers/capture/src/vpsdrv_captureApi.c
++++ b/packages/ti/psp/vps/drivers/capture/src/vpsdrv_captureApi.c
+@@ -613,6 +613,9 @@ Int32 Vps_captControl ( Fdrv_Handle handle, UInt32 cmd,
+             case IOCTL_VPS_CAPT_PRINT_ADV_STATISTICS:
+                 status = Vps_captPrintAdvancedStatistics((UInt32)cmdArgs);
+                 break;
++            case IOCTL_VPS_CAPT_FLUSH:
++                status = Vps_captFlush(handle, (FVID2_FrameList*)cmdStatusArgs);
++                break;
+             default:
+                 /*
+                  * illegal IOCTL
+@@ -661,6 +664,9 @@ Int32 Vps_captControl ( Fdrv_Handle handle, UInt32 cmd,
+         case IOCTL_VPS_CAPT_PRINT_ADV_STATISTICS:
+             status = Vps_captPrintAdvancedStatistics((UInt32)cmdArgs);
+             break;
++        case IOCTL_VPS_CAPT_FLUSH:
++            status = Vps_captFlush(handle, (FVID2_FrameList*)cmdStatusArgs);
++            break;
+ 
+         default:
+             /*
+@@ -1655,3 +1661,134 @@ Int32 Vps_captPrintAdvancedStatistics(UInt32 totalTimeInMsecs)
+ 
+     return 0;
+ }
++
++Int32 Vps_captDequeueFromQueToFrameList(VpsUtils_QueHandle *queHandle, FVID2_FrameList *frameList)
++{
++    Int32 dequeStatus;
++    volatile Ptr pData;
++
++    do
++    {
++        /*
++         * Max frames limit exceeded exit
++         */
++        if(frameList->numFrames >= FVID2_MAX_FVID_FRAME_PTR)
++           break;
++
++        pData = NULL;
++
++        /*
++         * deque from handle, could be blocking for the first time
++         * based on 'timeout'
++         */
++        dequeStatus = VpsUtils_queGet ( queHandle,
++                                        (Ptr*)&pData, 1, BIOS_NO_WAIT );
++
++        if ( dequeStatus == FVID2_SOK && pData != NULL )
++        {
++            /*
++             * deque is successful, add to frame list
++             */
++            frameList->frames[frameList->numFrames] =
++                ( FVID2_Frame * ) pData;
++            frameList->numFrames++;
++        }
++
++        /*
++         * Max frames limit exceeded exit
++         */
++        if(frameList->numFrames >= FVID2_MAX_FVID_FRAME_PTR)
++           break;
++    }
++    while ( dequeStatus == FVID2_SOK );
++
++    return FVID2_SOK;
++}
++
++Int32 Vps_captFlush( Fdrv_Handle handle, FVID2_FrameList * frameList )
++{
++    Vps_CaptObj *pObj = ( Vps_CaptObj * ) handle;
++    Int32 status = FVID2_SOK, instId, streamId, chId;
++    Vps_CaptChObj *pChObj;
++
++
++    /*
++     * if global handle then make handle as NULL, this indicates
++     * we need to check over all driver instances
++     */
++    if ( handle == ( Fdrv_Handle ) VPS_CAPT_INST_VIP_ALL )
++        handle = NULL;
++
++    /*
++     * parameter checking
++     */
++    if (frameList == NULL )
++    {
++        return FVID2_EFAIL;
++    }
++
++    /*
++     * init frame list fields
++     */
++    frameList->numFrames = 0;
++    frameList->perListCfg = NULL;
++    frameList->drvData = NULL;
++    frameList->reserved = NULL;
++
++    /*
++     * for every instance
++     */
++    for ( instId = 0; instId < VPS_CAPT_INST_MAX; instId++ )
++    {
++
++        if ( handle == NULL )
++        {
++            /*
++             * if handle is NULL, i.e global handle, then get handle using 'instId',
++             * else use user supplied handle
++             */
++            pObj = &gVps_captCommonObj.captureObj[instId];
++        }
++
++        if ( pObj->state == VPS_CAPT_STATE_CREATED
++                ||
++             pObj->state == VPS_CAPT_STATE_STOPPED
++            )
++        {
++            /* dequeue frames to frame list for this driver inst */
++            for (streamId = 0u; streamId < pObj->numStream; streamId ++)
++            {
++                Vps_captDequeueFromQueToFrameList(&pObj->fullQue[streamId], frameList);
++
++                for (chId = 0u; chId < pObj->numCh; chId ++)
++                {
++                    pChObj = &pObj->chObj[streamId][chId];
++
++                    Vps_captDequeueFromQueToFrameList(&pChObj->tmpQue, frameList);
++                    Vps_captDequeueFromQueToFrameList(&pChObj->emptyQue, frameList);
++                }
++            }
++        }
++        else
++        {
++            /* invalid state for dequeue all */
++            if ( handle != NULL )
++                status = FVID2_EFAIL;
++        }
++
++        if ( handle != NULL )
++            break;  /* if not global handle, then we are done, so exit */
++
++        /*
++         * Max frames limit exceeded exit
++         */
++        if(frameList->numFrames >= FVID2_MAX_FVID_FRAME_PTR)
++           break;
++
++        /*
++         * global handle mode, so check other driver instances also
++         */
++    }
++
++    return status;
++}
+diff --git a/packages/ti/psp/vps/drivers/capture/src/vpsdrv_capturePriv.h b/packages/ti/psp/vps/drivers/capture/src/vpsdrv_capturePriv.h
+index 7137c91..74bc81d 100644
+--- a/packages/ti/psp/vps/drivers/capture/src/vpsdrv_capturePriv.h
++++ b/packages/ti/psp/vps/drivers/capture/src/vpsdrv_capturePriv.h
+@@ -486,4 +486,6 @@ Int32 Vps_captAddToList(Vps_CaptObj *pObj, Vps_CaptChObj *pChObj);
+ Int32 Vps_captDoDisSyncStartSequence(Vps_CaptObj *pObj);
+ UInt8 *Vps_captGetListAddr(Vps_CaptObj *pObj);
+ 
++Int32 Vps_captFlush( Fdrv_Handle handle, FVID2_FrameList * frameList );
++
+ #endif /*  _VPS_CAPT_PRIV_H_  */
+diff --git a/packages/ti/psp/vps/vps_capture.h b/packages/ti/psp/vps/vps_capture.h
+index a3b38df..48dbe16 100644
+--- a/packages/ti/psp/vps/vps_capture.h
++++ b/packages/ti/psp/vps/vps_capture.h
+@@ -279,7 +279,7 @@
+   * Example, this IOCTL can be used to convert 60fps input source to 30fps
+   * by dropping frames.
+   *
+-  * This control can be done indepedantly for each stream, channel.
++  * This control can be done independently for each stream, channel.
+   *
+   * \param cmdArgs       [IN]  Vps_CaptFrameSkip *
+   * \param cmdArgsStatus [OUT] NULL
+@@ -294,7 +294,7 @@
+   *
+   * This IOCTL can be used to get status about a specific channel, stream
+   *
+-  * This control can be done indepedantly for each stream, channel.
++  * This control can be done independently for each stream, channel.
+   *
+   * \param cmdArgs       [IN]  Vps_CaptChGetStatusArgs *
+   * \param cmdArgsStatus [OUT] Vps_CaptChStatus *
+@@ -393,6 +393,36 @@
+  */
+ #define IOCTL_VPS_CAPT_RESET_AND_RESTART    (VPS_CAPT_IOCTL_BASE + 0x0007u)
+ 
++
++/**
++ *  \brief Flush capture driver and dequeue all frames including those that are not captured
++ *
++ *  This API can be called only when driver is in stopped state.
++ *  Driver is in stopped state when,
++ *  - FIVD2_stop() is called
++ *  - FVID2_create() is called and FVID2_start() is not called.
++ *
++ *  This will return frames from all streams for a given capture handle.
++ *  If this IOCTL is called with global handle then this will return
++ *  frames from all capture handles.
++ *
++ *  Since maximum FVID2_MAX_FVID_FRAME_PTR frames can be returned at a time.
++ *  This function should be called in a loop until FVID2_FrameList.numFrames = 0
++ *  is returned in order to get back all the frames from the capture driver.
++ *
++ *  In case capture is in running state this function will return error.
++ *
++ *  This IOCTL will return capture frames, non-captured frames, as well as all frames
++ *  held inside the hardware.
++ *
++ *  \param cmdArgs       [IN]  NULL
++ *  \param cmdArgsStatus [OUT] FVID2_FrameList
++ *
++ *  \return FVID2_SOK
++ */
++#define IOCTL_VPS_CAPT_FLUSH                 (VPS_CAPT_IOCTL_BASE + 0x0008u)
++
++
+ /* @} */
+ 
+ /**
+-- 
+1.7.0.4
+

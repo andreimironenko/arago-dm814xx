@@ -1,7 +1,7 @@
 From 6dde2376a5fdcca36b33adf3bdc284549695768c Mon Sep 17 00:00:00 2001
 From: Naveen S <naveens@ti.com>
 Date: Mon, 25 Apr 2011 21:32:37 +0530
-Subject: [PATCH 3/3] hdvpss: TI*16x platform files
+Subject: [PATCH 3/4] hdvpss: TI*16x platform files
 
 ---
  .../psp/platforms/ti816x/src/vps_platformTI816x.c  |  104 +++++++++++++++++---

@@ -1,7 +1,7 @@
 From a4ce2abcb4f89545afea2929f2e7f6db3b2c3f4a Mon Sep 17 00:00:00 2001
 From: Naveen S <naveens@ti.com>
 Date: Mon, 25 Apr 2011 21:32:04 +0530
-Subject: [PATCH 2/3] hdvpss: TI814x platform files
+Subject: [PATCH 2/4] hdvpss: TI814x platform files
 
 ---
  .../psp/platforms/ti814x/src/vps_platformTI814x.c  |   32 ++++++++++----------
