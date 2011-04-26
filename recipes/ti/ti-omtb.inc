@@ -13,8 +13,8 @@ SRC_URI = "http://install.source.dir.local/omtb_${PV}${PVExtra}.tar.gz;name=omtb
 
 DEPENDS_dm816x-custom = "ti-omx"
 DEPENDS_dm814x-custom = "ti-omx"
-DEPENDS_dm816x-evm = "ti-omx-libs"
-DEPENDS_dm814x-evm = "ti-omx-libs"
+DEPENDS_dm816x-evm = "ti-omx-libs alsa-lib"
+DEPENDS_dm814x-evm = "ti-omx-libs alsa-lib"
 
 EXTRA_OEMAKE = "ROOTDIR=${S} \
         EZSDK_INSTALL_DIR=${DVSDK_INSTALL_DIR} \
