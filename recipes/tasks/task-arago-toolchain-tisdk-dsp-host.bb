@@ -75,10 +75,12 @@ DSP_SOURCETREE_omap3 = "\
 
 DSP_SOURCETREE_ti816x = "\
     ${DSP_EZSDK_COMMON} \
+    ti-media-controller-utils-src \
     "
 
 DSP_SOURCETREE_ti814x = "\
     ${DSP_EZSDK_COMMON} \
+    ti-media-controller-utils-src \
     "
 
 DSP_SOURCETREE = " "
