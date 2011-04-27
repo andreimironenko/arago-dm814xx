@@ -2,8 +2,8 @@ require ti-omx-libs.inc
 
 PV = "05_00_00_76"
 
-SRC_URI[omx.md5sum] = "880dab92e0c5d3f94f838b21018ab49a"
-SRC_URI[omx.sha256sum] = "d56624653b46899c45265a69d1d02d0b102e76b0aeb2680a198b7785a9b602b2"
+SRC_URI[omx.md5sum] = "4f49b6c2155d1476df0a771b89c26f91"
+SRC_URI[omx.sha256sum] = "bd3a41f10d6aba777baf97d215b415b0722f56e698d592a5b9218df9946695b9"
 
 SYSLINKPV = "02_00_00_68"
 SYSLINKPVwithdots = "02.00.00.68"
