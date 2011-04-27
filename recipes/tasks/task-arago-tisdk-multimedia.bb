@@ -23,6 +23,7 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-media-controller-utils \
     ti-media-controller-hdvpss-loader \
     ti-media-controller-hdvicp2-loader \
+    ti-data \
 "
 
 MULTIMEDIA_dm365 = " \
