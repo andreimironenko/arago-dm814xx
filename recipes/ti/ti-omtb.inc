@@ -1,11 +1,11 @@
 DESCRIPTION = "TI OMX Test Bench"
 SECTION = "devel"
-LICENSE = "TI"
+LICENSE = "BSD"
 
 require ti-paths.inc
 require ti-staging.inc
 
-PR = "r1"
+PR = "r2"
 
 S = "${WORKDIR}/omtb_${PV}${PVExtra}"
 
@@ -33,13 +33,15 @@ EXTRA_OEMAKE = "ROOTDIR=${S} \
 "
 
 do_compile() {
-    # Build OMTB application
-    cd ${S}
-
     oe_runmake DEST_ROOT=${S}/pre-built \
                dm816xbm
 }
 
 do_install() {
-     :
+    install -d ${D}/${installdir}/ti-omtb
+    install ${S}/pre-built/dm816xbm/bin/ti816x-evm/* ${D}/${installdir}/ti-omtb
+    install ${S}/packages/ti/sdo/omtb/scripts/* ${D}/${installdir}/ti-omtb
 }
+
+FILES_${PN} = "${installdir}/ti-omtb/*"
+INSANE_SKIP_${PN} = True
