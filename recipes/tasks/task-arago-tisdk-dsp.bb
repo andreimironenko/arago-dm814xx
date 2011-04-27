@@ -15,8 +15,6 @@ DSP_EZSDK_COMMON = " \
     ti-c6accel-apps \
     ti-c6run-apps \
     ti-dsp-benchmark-apps \
-    ti-hdvpss-display-utils \
-    ti-hdvpss-display-utils-loader \
     ti-integra-demos \
     ti-uia \
 "
@@ -47,12 +45,30 @@ DSP_COMPONENTS_omap3 = "\
     ti-c6run-apps \
     "
 
-DSP_COMPONENTS_ti816x = "\
+DSP_COMPONENTS_c6a816x = "\
     ${DSP_EZSDK_COMMON} \
+    ti-hdvpss-display-utils \
+    ti-hdvpss-display-utils-loader \
     "
 
-DSP_COMPONENTS_ti814x = "\
+DSP_COMPONENTS_dm816x = "\
     ${DSP_EZSDK_COMMON} \
+    ti-media-controller-utils \
+    ti-media-controller-hdvpss-loader \
+    ti-media-controller-hdvicp2-loader \
+    "
+
+DSP_COMPONENTS_c6a814x = "\
+    ${DSP_EZSDK_COMMON} \
+    ti-hdvpss-display-utils \
+    ti-hdvpss-display-utils-loader \
+    "
+
+DSP_COMPONENTS_dm814x = "\
+    ${DSP_EZSDK_COMMON} \
+    ti-media-controller-utils \
+    ti-media-controller-hdvpss-loader \
+    ti-media-controller-hdvicp2-loader \
     "
 
 DSP_COMPONENTS_am37x-evm = ""
