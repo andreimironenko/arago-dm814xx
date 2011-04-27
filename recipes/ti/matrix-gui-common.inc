@@ -29,6 +29,7 @@ SRC_URI = "svn://gforge.ti.com/svn/matrix_gui/;module=trunk;proto=https;user=ano
            file://TI816X_Adjust_DSP_Menu.patch \
            file://video-conference-icon.png \
            file://menu_main.html \
+           file://runOMTB \
            file://menu_multimedia.html \
 "
 
@@ -38,6 +39,7 @@ PACKAGE_ARCH = ${MACHINE_ARCH}
 
 do_prepsources() {
     cp ${WORKDIR}/menu_main.html ${S}/ti816x/html
+    cp ${WORKDIR}/runOMTB ${S}/ti816x/bin
     cp ${WORKDIR}/menu_multimedia.html ${S}/ti816x/html
     cp ${WORKDIR}/video-conference-icon.png ${S}/images
 }

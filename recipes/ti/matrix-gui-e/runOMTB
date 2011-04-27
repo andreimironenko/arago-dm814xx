@@ -1,0 +1,15 @@
+#!/bin/sh
+
+cd /usr/share/ti/ti-omtb
+
+if [ -e /tmp/OMTB.lock ]
+then 
+   touch /tmp/OMTB.lock
+   ./omtb_dm816xbm_a8host.xv5T dual_display_encode_decode.oms &
+
+   sleep 10
+else
+   ./unpause_omx.xv5T test_pipe U
+
+   sleep 10
+fi
