@@ -9,7 +9,9 @@ PR = "r2"
 
 S = "${WORKDIR}/omtb_${PV}${PVExtra}"
 
-SRC_URI = "http://install.source.dir.local/omtb_${PV}${PVExtra}.tar.gz;name=omtb"
+SRC_URI = "http://install.source.dir.local/omtb_${PV}${PVExtra}.tar.gz;name=omtb \
+           file://unpause_omx.c \
+"
 
 DEPENDS_dm816x-custom = "ti-omx"
 DEPENDS_dm814x-custom = "ti-omx"
@@ -35,11 +37,15 @@ EXTRA_OEMAKE = "ROOTDIR=${S} \
 do_compile() {
     oe_runmake DEST_ROOT=${S}/pre-built \
                dm816xbm
+  
+    cp ${WORKDIR}/unpause_omx.c ${S}
+    ${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}gcc -o unpause_omx.xv5T unpause_omx.c
 }
 
 do_install() {
     install -d ${D}/${installdir}/ti-omtb
     install ${S}/pre-built/dm816xbm/bin/ti816x-evm/* ${D}/${installdir}/ti-omtb
+    install ${S}/unpause_omx.xv5T ${D}/${installdir}/ti-omtb
     install ${S}/packages/ti/sdo/omtb/scripts/* ${D}/${installdir}/ti-omtb
 }
 
