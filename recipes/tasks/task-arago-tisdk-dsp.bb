@@ -18,6 +18,7 @@ DSP_EZSDK_COMMON = " \
     ti-hdvpss-display-utils \
     ti-hdvpss-display-utils-loader \
     ti-integra-demos \
+    ti-uia \
 "
 
 DSP_COMPONENTS_dm6446 = "\
