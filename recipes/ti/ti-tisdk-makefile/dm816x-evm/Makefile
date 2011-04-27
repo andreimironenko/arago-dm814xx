@@ -21,17 +21,17 @@ components_clean: linux_clean syslink_clean cmem_clean c6accel_clean c6run_clean
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-all: components u-boot opengldemos sademo matrix c6run_examples omx
+all: components u-boot opengldemos sademo matrix c6run_examples omx omtb
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install syslink_install u-boot_install c6accel_install opengldemos_install sademo_install matrix_install c6run_install omx_install
+install: linux_install cmem_install syslink_install u-boot_install c6accel_install opengldemos_install sademo_install matrix_install c6run_install omx_install omtb_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clean: components_clean u-boot_clean opengldemos_clean sademo_clean matrix_clean c6run_clean omx_clean
+clean: components_clean u-boot_clean opengldemos_clean sademo_clean matrix_clean c6run_clean omx_clean omtb_clean
 
 #==============================================================================
 # A help message target.
@@ -89,6 +89,10 @@ help:
 	@echo "    omx                          : Build OMX and OMX IL Clients"
 	@echo "    omx_clean                    : Remove OMX generated files"
 	@echo "    omx_install                  : Install OMX IL Clients"
+	@echo
+	@echo "    omtb                         : Build OMTB IL Clients"
+	@echo "    omtb_clean                   : Remove OMTB generated files"
+	@echo "    omtb_install                 : Install OMTB IL Clients"
 	@echo
 	@echo "    all                          : Rebuild everything"
 	@echo "    clean                        : Remove all generated files"
@@ -496,3 +500,45 @@ omx_clean:
 omx_install:
 	install -d $(EXEC_DIR)/omx
 	install -m 0755 $(OMX_INSTALL_DIR)/rebuilt-binaries/* $(EXEC_DIR)/omx
+
+################################################################################
+# Build OMTB IL Client Applications 
+################################################################################
+
+omtb: linux syslink 
+	make -C $(OMTB_INSTALL_DIR) dm816xbm \
+		ROOTDIR=$(OMTB_INSTALL_DIR) \
+		OMTB_ROOT=$(OMTB_INSTALL_DIR) \
+		EZSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) \
+		DEST_ROOT=$(OMTB_INSTALL_DIR)/rebuilt-binaries \
+		OMX_INSTALL_DIR=$(OMX_INSTALL_DIR) \
+		fc_PATH=$(FC_INSTALL_DIR) \
+		ce_PATH=$(CE_INSTALL_DIR) \
+		osal_PATH=$(OSAL_INSTALL_DIR) \
+		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
+		ipc_PATH=$(IPC_INSTALL_DIR) \
+		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
+		xdc_PATH=$(XDC_INSTALL_DIR) \
+		lindevkit_PATH=$(STAGING_DIR_TARGET)/usr \
+		CODEGEN_PATH_A8=$(TOOLCHAIN_PATH)
+
+omtb_clean:
+	make -C $(OMTB_INSTALL_DIR) cleanall \
+		ROOTDIR=$(OMTB_INSTALL_DIR) \
+		OMTB_ROOT=$(OMTB_INSTALL_DIR) \
+		EZSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) \
+		DEST_ROOT=$(OMTB_INSTALL_DIR)/rebuilt-binaries \
+		OMX_INSTALL_DIR=$(OMX_INSTALL_DIR) \
+		fc_PATH=$(FC_INSTALL_DIR) \
+		ce_PATH=$(CE_INSTALL_DIR) \
+		osal_PATH=$(OSAL_INSTALL_DIR) \
+		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
+		ipc_PATH=$(IPC_INSTALL_DIR) \
+		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
+		xdc_PATH=$(XDC_INSTALL_DIR) \
+		lindevkit_PATH=$(STAGING_DIR_TARGET)/usr \
+		CODEGEN_PATH_A8=$(TOOLCHAIN_PATH)
+
+omtb_install:
+	install -d $(EXEC_DIR)/omtb
+	install -m 0755 $(OMTB_INSTALL_DIR)/rebuilt-binaries/* $(EXEC_DIR)/omtb
