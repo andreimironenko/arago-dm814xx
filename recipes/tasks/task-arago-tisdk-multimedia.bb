@@ -20,6 +20,9 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-codec-engine-examples \
     ti-omtb \
     ti-uia \
+    ti-media-controller-utils \
+    ti-media-controller-hdvpss-loader \
+    ti-media-controller-hdvicp2-loader \
 "
 
 MULTIMEDIA_dm365 = " \
