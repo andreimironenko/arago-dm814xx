@@ -15,14 +15,13 @@ PLATFORM_ti816x = "ti816x"
 PLATFORM ?= "<UNDEFINED-PLATFORM>"
 
 EXTRA_OEMAKE = "SYSLINK_INSTALL_DIR=${SYSLINK_INSTALL_DIR} \
-                CSTOOL_PREFIX=${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX} \
                 FIRMWARE=${OMX_INSTALL_DIR}/firmware/dm816xbm/bin/ti816x-evm \
+                PLATFORM=${PLATFORM} \
 "
 
 do_install() {
     cd ${S}
-    oe_runmake EXEC_DIR=${D}/${installdir}/ti-media-controller-utils install
+    oe_runmake DESTDIR=${D} prefix=${prefix} install
 }
 
-FILES_${PN} = "${installdir}/ti-media-controller-utils/*"
-INSANE_SKIP_${PN} = True
+FILES_${PN} = "${bindir}/* ${installdir}/ti-media-controller-utils/*"
