@@ -16,8 +16,8 @@ DEPENDS = "ti-syslink ti-ipc"
 
 EXTRA_OEMAKE = "SYSLINK=${SYSLINK_INSTALL_DIR} \
         IPC=${IPC_INSTALL_DIR}/packages \
-        CC=${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}gcc \
-        RANLIB=${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}ranlib \
+        CC='${CC}' \
+        RANLIB='${RANLIB}' \
 "
 
 UIAPLATFORM_ti816x = "evmti816x"
