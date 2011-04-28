@@ -10,7 +10,7 @@ require ti-staging.inc
 PR = "r1"
 PVExtra = ""
 
-S = "${WORKDIR}/osal_${PV}${PVextra}"
+S = "${WORKDIR}/osal_${PV}${PVExtra}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/osal/${PV}/exports/osal_${PV}.tar.gz;name=osaltarball"
 
