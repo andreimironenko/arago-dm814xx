@@ -31,6 +31,8 @@ SRC_URI = "svn://gforge.ti.com/svn/matrix_gui/;module=trunk;proto=https;user=ano
            file://menu_main.html \
            file://runOMTB \
            file://menu_multimedia.html \
+           file://target.html \
+           file://top_ti816x_evm.png \
 "
 
 S = "${WORKDIR}/trunk"
@@ -41,7 +43,9 @@ do_prepsources() {
     cp ${WORKDIR}/menu_main.html ${S}/ti816x/html
     cp ${WORKDIR}/runOMTB ${S}/ti816x/bin
     cp ${WORKDIR}/menu_multimedia.html ${S}/ti816x/html
+    cp ${WORKDIR}/target.html ${S}/ti816x/html
     cp ${WORKDIR}/video-conference-icon.png ${S}/images
+    cp ${WORKDIR}/top_ti816x_evm.png ${S}/images
 }
 
 addtask prepsources after do_patch before do_configure
