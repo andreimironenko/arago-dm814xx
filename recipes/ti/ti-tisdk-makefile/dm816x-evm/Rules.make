@@ -36,6 +36,9 @@ FC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__framework-components__>
 LINUXUTILS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__linuxutils__>
 CMEM_INSTALL_DIR=$(LINUXUTILS_INSTALL_DIR)
 
+# Where the XDAIS package is installed.
+XDAIS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__xdais__>
+
 # Where the RTSC tools package is installed.
 XDC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__xdctools__>
 
@@ -54,6 +57,9 @@ LINUX_DEVKIT_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit
 
 # Where c6accel package is installed.
 C6ACCEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__c6accel__>
+
+# Where c6run package is installed.
+C6RUN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__c6run__>
 
 # Where opengl graphics package is installed.
 GRAPHICS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/<__libgles-omap3__>
