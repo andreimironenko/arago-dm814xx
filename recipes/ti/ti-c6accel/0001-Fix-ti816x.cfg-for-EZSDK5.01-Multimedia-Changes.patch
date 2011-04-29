@@ -1,0 +1,29 @@
+From 8843f71ade8795980c034361ce836ada2c71e10f Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Fri, 29 Apr 2011 17:11:05 +0530
+Subject: [PATCH] Fix ti816x.cfg for EZSDK5.01 Multimedia Changes
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ .../ti/c6accel_unitservers/TI816X/ti816x.cfg       |    4 ----
+ 1 files changed, 0 insertions(+), 4 deletions(-)
+
+diff --git a/soc/packages/ti/c6accel_unitservers/TI816X/ti816x.cfg b/soc/packages/ti/c6accel_unitservers/TI816X/ti816x.cfg
+index 0ab3d0d..54b15d3 100755
+--- a/soc/packages/ti/c6accel_unitservers/TI816X/ti816x.cfg
++++ b/soc/packages/ti/c6accel_unitservers/TI816X/ti816x.cfg
+@@ -189,10 +189,6 @@ SharedRegion.setEntryMeta(0,
+     entry2.cacheEnable = true;
+     entry2.name = "IpcShared";
+ 
+-    SharedRegion.setEntryMeta(
+-            common.SharedRegion_map["Ipc"],  /* index */
+-            entry2
+-    );
+ }
+ 
+ /* TODO:L need to add UIA Log collection support */
+-- 
+1.7.0.4
+
