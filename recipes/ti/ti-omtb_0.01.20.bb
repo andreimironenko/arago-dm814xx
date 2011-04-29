@@ -3,5 +3,5 @@ require ti-omtb.inc
 PV = "00_01_20"
 PVExtra = ""
 
-SRC_URI[omtb.md5sum] = "6bcafcd90035d86d1c286c5210c13e34"
-SRC_URI[omtb.sha256sum] = "d336ed1ae7cb590fd1a940d0fbe888cb95603c7d4e5f3a1d68949968236b6f63"
+SRC_URI[omtb.md5sum] = "1d2aef000a474065cf5bdd351c5313da"
+SRC_URI[omtb.sha256sum] = "8eebf20252a71b26453cd6b6d5b7c35794d0d79ff6b20739cca8c82ef486ae72"
