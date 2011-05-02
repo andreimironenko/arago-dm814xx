@@ -3,8 +3,6 @@ LICENSE = "CC-BY-SA"
 
 require ti-paths.inc
 
-DEPENDS = "ti-post-process-wiki-native"
-
 PR = "r4"
 
 COMPATIBLE_MACHINE = "(dm365-evm|da850-omapl138-evm|dm37x-evm|omap3evm|ti816x|ti814x)"
@@ -24,18 +22,22 @@ TOPIC_dm814x-custom = "DM814x_C6A814x_AM387x_EZ_Software_Developers_Guide"
 TOPICFILE = "${@bb.data.getVar('TOPIC', d, 1).replace('/','_')}"
 TOPICURL = "http://ap-fpdsp-swapps.dal.design.ti.com/index.php/${TOPIC}"
 
-do_fetch () {
+SRC_URI = "file://post-process-tiwiki.pl"
+
+do_fetchwiki () {
     mkdir -p ${WORKDIR}/${P}
     cd ${WORKDIR}/${P}
 
     wget --directory-prefix=${WORKDIR}/${P}/${TOPICFILE} --html-extension --convert-links --page-requisites --no-host-directories ${TOPICURL}
 }
 
+addtask fetchwiki after do_fetch before do_install
+
 do_install () {
     install -d ${D}/${installdir}/ti-docs-tree
 
     htmlfiles=`ls ${WORKDIR}/${P}/${TOPICFILE}/index.php/*.html`
-    post-process-tiwiki.pl ${TOPICURL} $htmlfiles
+    ${WORKDIR}/post-process-tiwiki.pl ${TOPICURL} $htmlfiles
     htmldoc --webpage -f ${D}/${installdir}/ti-docs-tree/${TOPICFILE}.pdf $htmlfiles
 }
 
