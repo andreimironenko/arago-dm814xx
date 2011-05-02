@@ -3,8 +3,6 @@ LICENSE = "CC-BY-SA"
 
 PR="r5"
 
-DEPENDS = "ti-post-process-wiki-native"
-
 RELNOTESTOPIC_dm365 = "TMS320DM365_DVSDK_4.00_Release_Notes"
 RELNOTESTOPIC_dm368-evm = "TMS320DM368_DVSDK_4.00_Release_Notes"
 RELNOTESTOPIC_omapl138 = "OMAPL138_DVSDK_4.00_Release_Notes"
@@ -29,12 +27,16 @@ SDK_SHORT_PLATFORM_ti814x = "c6a814x-am387x"
 
 require ti-paths.inc
 
-do_fetch () {
+SRC_URI = "file://post-process-tiwiki.pl"
+
+do_fetchwiki () {
     mkdir -p ${WORKDIR}/${P}
     cd ${WORKDIR}/${P}
 
     wget --directory-prefix=${WORKDIR}/${P}/${RELNOTESTOPIC} --html-extension --convert-links --page-requisites --no-host-directories ${RELNOTESURL}
 }
+
+addtask fetchwiki after do_fetch before do_install
 
 do_install () {
     if [ ! -n "${SDK_VERSION}" ]; then
@@ -43,7 +45,7 @@ do_install () {
 
     install -d ${D}/${installdir}
     htmlfiles=`ls ${WORKDIR}/${P}/${RELNOTESTOPIC}/index.php/*.html`
-    post-process-tiwiki.pl ${RELNOTESURL} $htmlfiles
+    ${WORKDIR}/post-process-tiwiki.pl ${RELNOTESURL} $htmlfiles
 
     TODAYS_DATE=`date | cut -d ' ' -f 2-3,6`
 
