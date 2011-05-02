@@ -472,7 +472,19 @@ matrix_install:
 # Build OMX and IL Client Applications 
 ################################################################################
 
-omx: linux syslink 
+omx:
+	make -C $(OMX_INSTALL_DIR)/packages libs \
+		ROOTDIR=$(OMX_INSTALL_DIR)/packages \
+		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR) \
+		INTERNAL_SW_ROOT=$(OMX_INSTALL_DIR)/packages \
+		fc_PATH=$(FC_INSTALL_DIR) \
+		osal_PATH=$(OSAL_INSTALL_DIR) \
+		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
+		ipc_PATH=$(IPC_INSTALL_DIR) \
+		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
+		xdc_PATH=$(XDC_INSTALL_DIR) \
+		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
+		DEST_ROOT=$(OMX_INSTALL_DIR)/rebuilt-binaries
 
 omx_clean:
 	make -C $(OMX_INSTALL_DIR)/packages cleanall \
@@ -505,7 +517,7 @@ omx_install:
 # Build OMTB IL Client Applications 
 ################################################################################
 
-omtb: linux syslink 
+omtb:
 	make -C $(OMTB_INSTALL_DIR) dm816xbm \
 		ROOTDIR=$(OMTB_INSTALL_DIR) \
 		OMTB_ROOT=$(OMTB_INSTALL_DIR) \
