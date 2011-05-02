@@ -4,6 +4,7 @@ PV = "2_01_00_08"
 
 SRC_URI = "https://gforge01.dal.design.ti.com/gf/download/frsrelease/540/4656/c6accel_${PV}_Linux-x86_Setup.bin;name=c6accelbin \
            file://0001-Fix-ti816x.cfg-for-EZSDK5.01-Multimedia-Changes.patch \
+           file://0001-C6Accel-app-Change-Memory-Configuration-for-Shared-R.patch \
 "
 
 SRC_URI[c6accelbin.md5sum] = "7cdb50147e9c7e92b04a3286dd85e902"

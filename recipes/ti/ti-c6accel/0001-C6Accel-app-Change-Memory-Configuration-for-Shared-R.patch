@@ -1,0 +1,32 @@
+From 655a8f50fafab2eca5eba7719b887db246bfa887 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Mon, 2 May 2011 12:59:48 +0530
+Subject: [PATCH] C6Accel app: Change Memory Configuration for Shared Regions
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ soc/app/TI816X/c6accel_app.cfg |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
+
+diff --git a/soc/app/TI816X/c6accel_app.cfg b/soc/app/TI816X/c6accel_app.cfg
+index b3e2547..d333365 100755
+--- a/soc/app/TI816X/c6accel_app.cfg
++++ b/soc/app/TI816X/c6accel_app.cfg
+@@ -31,6 +31,13 @@ ipcSettings.ipc = dsplinkIpc;
+ var C6ACCEL = xdc.useModule('ti.c6accel.ce.C6ACCEL');
+ C6ACCEL.alg.FLOAT=true;
+ 
++var Processor = xdc.useModule('ti.sdo.ce.ipc.dsplink.Processor');
++
++/* System-wide heapId - used as the id in MessageQ_registerHeap() call */
++Processor.heapId = 3;   /* or something unique to your system */
++
++/* Which shared region do you want to use */
++Processor.sharedRegionId = 0;  /* use SR3 */
+ 
+ /*
+  *  ======== Engine Configuration ========
+-- 
+1.7.0.4
+
