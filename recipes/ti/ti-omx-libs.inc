@@ -61,10 +61,11 @@ do_compile() {
     cd ${S}/packages
 
     # oe_runmake CORE=a8host domx omxcore timmosal 
-    oe_runmake CORE=a8host DEST_ROOT=${S}/lib domx omxcore memcfg
+    oe_runmake CORE=a8host DEST_ROOT=${S}/lib domx omxcore memcfg timmosal
 
     oe_runmake DEST_ROOT=${S}/firmware \
-               PROFILE_m3video=debug PROFILE_m3vpss=debug \
+               PROFILE_m3video=whole_program_debug \
+               PROFILE_m3vpss=whole_program_debug \
                dm816xbmducati
 }
 
@@ -77,12 +78,21 @@ do_install() {
           ${S}/packages/ti/omx/scripts/filelist.txt \
           ${S} ${D}/omx_${PV}
 
+    # Copy the right make files
+    # cp -f ${S}/packages/component.mk.bm ${D}/omx_${PV}/packages
+    # cp -f ${S}/packages/makefile.bm ${D}/omx_${PV}/packages
+
     install -d ${D}/omx_${PV}/lib
     cp ${S}/lib/ti/omx/domx/lib/a8host/debug/domx.av5T ${D}/omx_${PV}/lib
+    cp ${S}/lib/ti/omx/domx/delegates/shmem/lib/a8host/debug/domx_delegates_shmem.av5T ${D}/omx_${PV}/lib
     cp ${S}/lib/ti/omx/omxcore/lib/a8host/debug/omxcore.av5T ${D}/omx_${PV}/lib
+    cp ${S}/lib/ti/omx/memcfg/lib/a8host/debug/memcfg.av5T ${D}/omx_${PV}/lib
+    cp ${S}/lib/ti/timmosal/lib/a8host/debug/timmosal.av5T ${D}/omx_${PV}/lib
 
     install -d ${D}/omx_${PV}/firmware
     cp ${S}/firmware/dm816xbm/bin/ti816x-evm/*.xem3 ${D}/omx_${PV}/firmware
+    mv ${D}/omx_${PV}/firmware/dm816xbm_m3video_*.xem3 ${D}/omx_${PV}/firmware/dm816xbm_m3video.xem3
+    mv ${D}/omx_${PV}/firmware/dm816xbm_m3vpss_*.xem3 ${D}/omx_${PV}/firmware/dm816xbm_m3vpss.xem3
 
     cp -r ${S}/packages/ti/omx/docs ${D}/omx_${PV}
 
