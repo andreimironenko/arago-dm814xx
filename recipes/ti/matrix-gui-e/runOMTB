@@ -10,12 +10,12 @@ if [ -e /tmp/OMTB.lock ]
 then 
    ./unpause_omx.xv5T test_pipe U
 
-   sleep 30
+   sleep 60
 else
    touch /tmp/OMTB.lock
    ./omtb_dm816xbm_a8host.xv5T dual_display_encode_decode.oms &
 
-   sleep 30
+   sleep 60
 fi
 
 # Enable Graphics again.
