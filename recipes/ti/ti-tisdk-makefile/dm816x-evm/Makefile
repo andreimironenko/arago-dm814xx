@@ -16,7 +16,7 @@ components: linux cmem syslink c6accel c6run
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-components_clean: linux_clean syslink_clean cmem_clean c6accel_clean c6run_cleanc6accel_clean c6run_cleanc6accel_clean c6run_cleanc6accel_clean c6run_clean
+components_clean: linux_clean syslink_clean cmem_clean c6accel_clean c6run_clean
 
 #==============================================================================
 # Build everything rebuildable.
