@@ -61,7 +61,7 @@ do_compile() {
     cd ${S}/packages
 
     # oe_runmake CORE=a8host domx omxcore timmosal 
-    oe_runmake CORE=a8host DEST_ROOT=${S}/lib domx omxcore memcfg timmosal
+    oe_runmake CORE=a8host DEST_ROOT=${S}/lib domx domx_delegates_shmem omxcore memcfg timmosal
 
     oe_runmake DEST_ROOT=${S}/firmware \
                PROFILE_m3video=whole_program_debug \
