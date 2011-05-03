@@ -55,7 +55,6 @@ DSP_COMPONENTS_dm816x-evm = "\
     ${DSP_EZSDK_COMMON} \
     ti-media-controller-utils \
     ti-media-controller-hdvpss-loader \
-    ti-media-controller-hdvicp2-loader \
     "
 
 DSP_COMPONENTS_c6a814x-evm = "\
@@ -68,7 +67,6 @@ DSP_COMPONENTS_dm814x-evm = "\
     ${DSP_EZSDK_COMMON} \
     ti-media-controller-utils \
     ti-media-controller-hdvpss-loader \
-    ti-media-controller-hdvicp2-loader \
     "
 
 DSP_COMPONENTS_am37x-evm = ""
