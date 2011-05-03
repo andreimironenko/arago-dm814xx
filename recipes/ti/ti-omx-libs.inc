@@ -79,8 +79,8 @@ do_install() {
           ${S} ${D}/omx_${PV}
 
     # Copy the right make files
-    # cp -f ${S}/packages/component.mk.bm ${D}/omx_${PV}/packages
-    # cp -f ${S}/packages/makefile.bm ${D}/omx_${PV}/packages
+    cp -f ${S}/packages/component.mk.bm ${D}/omx_${PV}/packages
+    cp -f ${S}/packages/makefile.bm ${D}/omx_${PV}/packages
 
     install -d ${D}/omx_${PV}/lib
     cp ${S}/lib/ti/omx/domx/lib/a8host/debug/domx.av5T ${D}/omx_${PV}/lib
