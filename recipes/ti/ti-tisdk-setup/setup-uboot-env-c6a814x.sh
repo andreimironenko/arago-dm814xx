@@ -34,7 +34,7 @@ fi
 uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyO0,115200n8 rw mem=166M earlyprintk"
+baseargs="console=ttyO0,115200n8 rootwait rw mem=166M earlyprintk"
 videoargs1="vram=50M"
 videoargs2="ti814xfb.vram=0:16M,1:16M,2:6M"
 videoargs="$videoargs1 $videoargs2"
