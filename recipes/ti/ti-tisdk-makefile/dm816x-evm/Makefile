@@ -540,7 +540,7 @@ omtb_clean:
 		OMTB_ROOT=$(OMTB_INSTALL_DIR) \
 		EZSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) \
 		DEST_ROOT=$(OMTB_INSTALL_DIR)/rebuilt-binaries \
-		OMX_INSTALL_DIR=$(OMX_INSTALL_DIR) \
+		OMX_INSTALL_DIR=$(OMX_INSTALL_DIR)/packages \
 		fc_PATH=$(FC_INSTALL_DIR) \
 		ce_PATH=$(CE_INSTALL_DIR) \
 		osal_PATH=$(OSAL_INSTALL_DIR) \
@@ -548,7 +548,7 @@ omtb_clean:
 		ipc_PATH=$(IPC_INSTALL_DIR) \
 		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
 		xdc_PATH=$(XDC_INSTALL_DIR) \
-		lindevkit_PATH=$(STAGING_DIR_TARGET)/usr \
+		lindevkit_PATH==$(LINUX_DEVKIT_DIR)/arm-none-linux-gnueabi/usr \
 		CODEGEN_PATH_A8=$(TOOLCHAIN_PATH)
 
 omtb_install:
