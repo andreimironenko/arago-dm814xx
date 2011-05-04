@@ -15,7 +15,7 @@ PLATFORM_ti816x = "ti816x"
 PLATFORM ?= "<UNDEFINED-PLATFORM>"
 
 EXTRA_OEMAKE = "SYSLINK_INSTALL_DIR=${SYSLINK_INSTALL_DIR} \
-                FIRMWARE=${OMX_INSTALL_DIR}/firmware/dm816xbm/bin/ti816x-evm \
+                FIRMWARE=${OMX_INSTALL_DIR}/firmware \
                 PLATFORM=${PLATFORM} \
 "
 

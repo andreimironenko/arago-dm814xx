@@ -67,6 +67,9 @@ do_compile() {
                PROFILE_m3video=whole_program_debug \
                PROFILE_m3vpss=whole_program_debug \
                dm816xbmducati
+
+    cp ${S}/firmware/dm816xbm/bin/ti816x-evm/dm816xbm_m3video_*.xem3 ${S}/firmware/dm816xbm_m3video.xem3
+    cp ${S}/firmware/dm816xbm/bin/ti816x-evm/dm816xbm_m3vpss_*.xem3 ${S}/firmware/dm816xbm_m3vpss.xem3
 }
 
 do_install() {
@@ -90,9 +93,7 @@ do_install() {
     cp ${S}/lib/ti/timmosal/lib/a8host/debug/timmosal.av5T ${D}/omx_${PV}/lib
 
     install -d ${D}/omx_${PV}/firmware
-    cp ${S}/firmware/dm816xbm/bin/ti816x-evm/*.xem3 ${D}/omx_${PV}/firmware
-    mv ${D}/omx_${PV}/firmware/dm816xbm_m3video_*.xem3 ${D}/omx_${PV}/firmware/dm816xbm_m3video.xem3
-    mv ${D}/omx_${PV}/firmware/dm816xbm_m3vpss_*.xem3 ${D}/omx_${PV}/firmware/dm816xbm_m3vpss.xem3
+    cp ${S}/firmware/*.xem3 ${D}/omx_${PV}/firmware
 
     cp -r ${S}/packages/ti/omx/docs ${D}/omx_${PV}
 
