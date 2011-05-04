@@ -82,6 +82,7 @@ do_install() {
           ${S} ${D}/omx_${PV}
 
     # Copy the right make files
+    cp -f ${S}/packages/makerules/env.mk.bm ${D}/omx_${PV}/packages/makerules/env.mk
     cp -f ${S}/packages/component.mk.bm ${D}/omx_${PV}/packages/component.mk
     cp -f ${S}/packages/makefile.bm ${D}/omx_${PV}/packages/makefile
 
