@@ -40,6 +40,7 @@ addtask fetchwiki after do_fetch before do_install
 
 do_install () {
     if [ ! -n "${SDK_VERSION}" ]; then
+        oenote "Setting SDK_VERSION to default"
         export SDK_VERSION="test_build"
     fi
 
