@@ -13,7 +13,7 @@ TOPIC_ti816x = "EZ_SDK_FAQ"
 TOPIC_ti814x = "EZ_SDK_FAQ"
 
 TOPICFILE = "${@bb.data.getVar('TOPIC', d, 1).replace('/','_')}"
-TOPICURL = "http://processors.wiki.ti.com/index.php/${TOPIC}"
+TOPICURL = "http://ap-fpdsp-swapps.dal.design.ti.com/index.php/${TOPIC}"
 
 do_fetch () {
     mkdir -p ${WORKDIR}/${P}
