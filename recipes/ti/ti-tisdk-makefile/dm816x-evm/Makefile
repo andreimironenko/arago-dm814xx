@@ -487,7 +487,7 @@ omx:
 		DEST_ROOT=$(OMX_INSTALL_DIR)/rebuilt-binaries
 
 omx_clean:
-	rm -rf $(OMX_INSTALL_DIR)/rebuild-binaries/
+	rm -rf $(OMX_INSTALL_DIR)/rebuilt-binaries/
 
 omx_install:
 
