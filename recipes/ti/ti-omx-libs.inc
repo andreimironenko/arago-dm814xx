@@ -96,7 +96,8 @@ do_install() {
     install -d ${D}/omx_${PV}/firmware
     cp ${S}/firmware/*.xem3 ${D}/omx_${PV}/firmware
 
-    cp -r ${D}/packages/ti/omx/docs ${D}/omx_${PV}
+    cd ${D}/omx_${PV}
+    ln -s packages/ti/omx/docs
 
     install -d ${D}/omx_${PV}/include
     cd ${D}/omx_${PV}/include
