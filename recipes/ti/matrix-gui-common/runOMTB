@@ -10,6 +10,8 @@ then
     
     if [ -e /tmp/OMTB.lock ]
     then 
+       ./unpause_omx.xv5T test_pipe U
+
        sleep 60
     else
        touch /tmp/OMTB.lock
