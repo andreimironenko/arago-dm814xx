@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install crypto dev packages in SDK"
-PR = "r2"
+PR = "r3"
 LICENSE = "MIT"
 
 inherit task
@@ -12,7 +12,8 @@ PACKAGE_ARCH = ${MACHINE_ARCH}
 CRYPTO_SUPPORT_TSU = "\
     openssl-dev \
     wpa-supplicant-dev \
-    ocf-linux-dev \
+# Comment out OCF until we have an implementation for 2.6.37
+#    ocf-linux-dev \
     "
 ################################################################################
 

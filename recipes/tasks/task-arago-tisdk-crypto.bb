@@ -2,7 +2,7 @@
 #       that require filing for a TSU exemption or applications
 #       that depend on TSU exempt code.
 DESCRIPTION = "Task to install crypto packages into target FS"
-PR = "r5"
+PR = "r6"
 LICENSE = "MIT"
 
 inherit task
@@ -33,7 +33,9 @@ CRYPTO_SUPPORT_TSU = "\
 # Name: 0001-linux-omap3-PSP-3.0.1.6-kernel-with-OCF-Linux.patch
 # md5sum: 00bb20f2f33a37489d8c52212933368d
 # sha256sum: 1fea8323d12cf1ee4f743f0f1c82d7f3821a7d9b7996c44b17d7761579bb090d
-CRYPTO_SUPPORT_TSU_append_am37x-evm = " ti-ocf-crypto-module"
+# Comment out the OCF crypto support until the new version can be implemented
+# based on the 2.6.37 kernel.
+# CRYPTO_SUPPORT_TSU_append_am37x-evm = " ti-ocf-crypto-module"
 ################################################################################
 
 
