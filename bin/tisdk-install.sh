@@ -245,6 +245,7 @@ echo "
     case "$package" in
       task-*) continue ;;
       libgles-omap3-src)
+            package="$package (SGX GLES1.1 drivers and GLES2.0 drivers)"
             delivered_as="Binary"
             modified="Yes"
             license="TI Proprietary"            
@@ -269,9 +270,13 @@ echo "
       ti-*) delivered_as="Source and Binary"
             location="$2"
             modified="Yes" ;; 
-      *blitrix*) license="Draw Elements"
+      *blitrix*) 
+            package="$package (Computer software for performing 2D graphics operations)"
+            license="Draw Elements"
             source="http://www.drawelements.com" ;; 
-      *libticpublt*) license="Draw Elements"
+      *libticpublt*) 
+            package="$package (Computer software for performing 2D graphics operations)"
+            license="Draw Elements"
             source="http://www.drawelements.com" ;; 
       *)    delivered_as="Binary"
             location="$2"
