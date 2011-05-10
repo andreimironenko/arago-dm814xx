@@ -34,7 +34,6 @@ DSP_EZSDK_COMMON = " \
     ti-signal-analyzer-demo-src \
     ti-signal-analyzer-demo-doc \
     ti-docs-faqs \
-    ti-uia-src \
 "
 
 DSP_SOURCETREE_dm6446 = "\
@@ -75,12 +74,12 @@ DSP_SOURCETREE_omap3 = "\
 
 DSP_SOURCETREE_ti816x = "\
     ${DSP_EZSDK_COMMON} \
+    ti-uia-src \
     ti-media-controller-utils-src \
     "
 
 DSP_SOURCETREE_ti814x = "\
     ${DSP_EZSDK_COMMON} \
-    ti-media-controller-utils-src \
     "
 
 DSP_SOURCETREE = " "
