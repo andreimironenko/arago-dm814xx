@@ -29,8 +29,6 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-syslink-src \
     ti-syslink-dev \
     ti-codec-engine-src \
-    ti-omtb-src \
-    ti-uia-src \
  "
 
 MULTIMEDIA_SOURCETREE_am37x-evm = ""
@@ -82,12 +80,15 @@ MULTIMEDIA_SOURCETREE_omapl138 = " \
 
 MULTIMEDIA_SOURCETREE_dm816x-evm = " \
     ${MULTIMEDIA_EZSDK_COMMON} \
+    ti-uia-src \
     ti-omx-libs-sourcetree \
     ti-media-controller-utils-src \
+    ti-omtb-src \
 "
 
 MULTIMEDIA_SOURCETREE_dm816x-custom = " \
     ${MULTIMEDIA_EZSDK_COMMON} \
+    ti-uia-src \
     ti-cgt470-src \
     ti-codecs-dm816x-src \
     ti-ivahd-hdvicp20api-src \
@@ -99,7 +100,6 @@ MULTIMEDIA_SOURCETREE_dm816x-custom = " \
 MULTIMEDIA_SOURCETREE_dm814x-evm = " \
     ${MULTIMEDIA_EZSDK_COMMON} \
     ti-omx-libs-sourcetree \
-    ti-media-controller-utils-src \
 "
 
 MULTIMEDIA_SOURCETREE_dm814x-custom = " \
