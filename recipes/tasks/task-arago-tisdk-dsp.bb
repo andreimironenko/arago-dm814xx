@@ -16,7 +16,6 @@ DSP_EZSDK_COMMON = " \
     ti-c6run-apps \
     ti-dsp-benchmark-apps \
     ti-integra-demos \
-    ti-uia \
 "
 
 DSP_COMPONENTS_dm6446 = "\
@@ -47,12 +46,14 @@ DSP_COMPONENTS_omap3 = "\
 
 DSP_COMPONENTS_c6a816x-evm = "\
     ${DSP_EZSDK_COMMON} \
+    ti-uia \
     ti-hdvpss-display-utils \
     ti-hdvpss-display-utils-loader \
     "
 
 DSP_COMPONENTS_dm816x-evm = "\
     ${DSP_EZSDK_COMMON} \
+    ti-uia \
     ti-media-controller-utils \
     ti-media-controller-hdvpss-loader \
     "
