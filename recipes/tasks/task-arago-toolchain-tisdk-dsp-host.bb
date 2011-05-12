@@ -72,10 +72,18 @@ DSP_SOURCETREE_omap3 = "\
     ti-c6run-src \
     "
 
-DSP_SOURCETREE_ti816x = "\
+DSP_SOURCETREE_c6a816x-evm = "\
+    ${DSP_EZSDK_COMMON} \
+    "
+
+DSP_SOURCETREE_dm816x-evm = "\
     ${DSP_EZSDK_COMMON} \
     ti-uia-src \
     ti-media-controller-utils-src \
+    "
+
+DSP_SOURCETREE_dm816x-custom = "\
+    ${DSP_EZSDK_COMMON} \
     "
 
 DSP_SOURCETREE_ti814x = "\
