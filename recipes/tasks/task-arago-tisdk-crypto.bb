@@ -2,7 +2,7 @@
 #       that require filing for a TSU exemption or applications
 #       that depend on TSU exempt code.
 DESCRIPTION = "Task to install crypto packages into target FS"
-PR = "r7"
+PR = "r8"
 LICENSE = "MIT"
 
 inherit task
@@ -50,7 +50,7 @@ CRYPTO_SUPPORT = "\
 
 # Add support for graphical configuration of wpa-supplicant
 # used by WLAN drivers.
-CRYPTO_SUPPORT_append_am180x-evm = " wpa-gui-e"
+#CRYPTO_SUPPORT_append_am180x-evm = " wpa-gui-e"
 
 # WLAN support packages.  These are added here because they depend on
 # crypto packages and are grouped with the crypto task to avoid confusion.
