@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support Package sources (or development header) packages on host"
-PR = "r36"
+PR = "r37"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -88,7 +88,7 @@ BSP_COMPONENTS_append_am389x-evm = "\
 BSP_COMPONENTS_omapl138 = "\
     ti-tisdk-setup \
     ti-tisdk-mksdboot \
-    linux-omapl1-src \
+    linux-davinci-src \
     pinmux-utility \
     "
 
