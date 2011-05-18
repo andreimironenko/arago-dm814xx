@@ -1,6 +1,6 @@
 DESCRIPTION = "Task to add base gstreamer and TI plugins"
 LICENSE = "MIT"
-PR = "r20"
+PR = "r21"
 
 inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
@@ -16,7 +16,6 @@ GST_TI_PLUGIN_omapl138 = "gstreamer-ti"
 GST_TI_PLUGIN_am180x-evm = ""
 GST_TI_PLUGIN_am181x-evm = ""
 GST_TI_PLUGIN_dm37x-evm = "gstreamer-ti"
-GST_TI_PLUGIN_beagleboard = "gstreamer-ti"
 GST_TI_PLUGIN_omap3evm = "gstreamer-ti"
 
 RDEPENDS_${PN} = " \

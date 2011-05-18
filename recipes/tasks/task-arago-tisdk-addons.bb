@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install additional utilities/demos for SDKs"
-PR = "r11"
+PR = "r12"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -28,6 +28,7 @@ UTILS_append_dm365 = " am-benchmarks"
 
 # Add matrix-tui for AM devices
 UTILS_append_am37x-evm = " matrix-tui"
+UTILS_append_beagleboard = " matrix-tui"
 UTILS_append_am180x-evm = " matrix-tui"
 UTILS_append_am181x-evm = " matrix-tui"
 UTILS_append_am3517-evm = " matrix-tui"
