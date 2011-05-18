@@ -19,4 +19,5 @@ SRC_URI += " \
     file://0004-mmc-sdio-don-t-reinitialize-nonremovable-powered-res.patch \
     file://0005-mmc-sdio-don-t-power-up-cards-on-system-suspend.patch \
     file://0006-wl12xx-Backport-wl12xx-platform-data.patch \
+    file://0007-activate-wireless-extensions.patch \
 "
