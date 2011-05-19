@@ -39,7 +39,7 @@ CEEXAMPLESDEVICES_dm365      = "DM365"
 CEEXAMPLESDEVICES_omapl137   = "OMAPL137"
 CEEXAMPLESDEVICES_omapl138   = "OMAPL138"
 CEEXAMPLESDEVICES_ti816x   = "TI816X"
-CEEXAMPLESDEVICES_ti814x   = "TI816X"
+CEEXAMPLESDEVICES_ti814x   = "TI814X"
 CEEXAMPLESDEVICES           ?= "<UNDEFINED_CEEXAMPLESDEVICES>"
 
 # Define GPPOS variable
@@ -137,8 +137,8 @@ do_compile () {
 do_install() {
 
 	install -d ${D}/${installdir}/ti-codec-engine-examples
-	if [ -e ${S}/examples/apps/system_files/${CEEXAMPLESDEVICES}/loadmodules.sh ]; then
-		cp ${S}/examples/apps/system_files/${CEEXAMPLESDEVICES}/loadmodules.sh ${D}/${installdir}/ti-codec-engine-examples
+	if [ -e ${S}/examples/apps/system_files/evm${CEEXAMPLESDEVICES}/loadmodules.sh ]; then
+		cp ${S}/examples/apps/system_files/evm${CEEXAMPLESDEVICES}/loadmodules.sh ${D}/${installdir}/ti-codec-engine-examples
 	elif [ -e ${WORKDIR}/loadmodules.sh ]; then
 		cp ${WORKDIR}/loadmodules.sh ${D}/${installdir}/ti-codec-engine-examples
 	fi
@@ -161,8 +161,9 @@ do_install() {
 	done
 
 	for i in $(find . -name "*.dat"); do
-		install -d ${D}/${installdir}/ti-codec-engine-examples/`dirname ${i} | cut -f3 -d /`
-		install ${i} ${D}/${installdir}/ti-codec-engine-examples/`dirname ${i} | cut -f3 -d /`
+                if [ -e ${D}/${installdir}/ti-codec-engine-examples/`dirname ${i} | cut -f3 -d /` ]; then
+	                install ${i} ${D}/${installdir}/ti-codec-engine-examples/`dirname ${i} | cut -f3 -d /`
+                fi
         done
 
 	# For each directory, softlink to the app server, except special cases
@@ -176,7 +177,7 @@ do_install() {
 		elif [ $(basename $i) == "server_api_example" ] ; then
 			ln -s ../servers/server_api_example/audio_copy.${DSPSUFFIX}
                 elif [ $(basename $i) != "." ] ; then
-			ln -s ../servers/all_codecs/all.${DSPSUFFIX}
+			ln -s ../servers/all_codecs/all_DSP.${DSPSUFFIX}
 		else
 			echo Skipping $i
 		fi
