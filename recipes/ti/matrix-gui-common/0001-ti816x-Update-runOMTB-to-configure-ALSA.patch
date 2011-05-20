@@ -1,0 +1,49 @@
+From e7e991f3b101070be5fdbd6213f827f634145623 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Fri, 20 May 2011 17:57:24 +0530
+Subject: [PATCH] ti816x: Update runOMTB to configure ALSA
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ trunk/ti816x/bin/runOMTB |   15 +++++++++++++++
+ 1 files changed, 15 insertions(+), 0 deletions(-)
+
+diff --git a/trunk/ti816x/bin/runOMTB b/trunk/ti816x/bin/runOMTB
+index 3d05077..6722338 100755
+--- a/trunk/ti816x/bin/runOMTB
++++ b/trunk/ti816x/bin/runOMTB
+@@ -1,5 +1,16 @@
+ #!/bin/sh
+ 
++configure_alsa_mixer()
++{
++   amixer sset 'Left PGA Mixer Mic3L' on
++   amixer sset 'Left PGA Mixer Mic3R' on
++   amixer sset 'Right PGA Mixer Mic3L' on
++   amixer sset 'Right PGA Mixer Mic3R' on
++
++   amixer cset name='PCM Playback Volume' 75%,75%
++   amixer cset name='PGA Capture Volume' 75%,75%
++}
++
+ if [ -e /usr/share/ti/ti-omtb ] 
+ then
+     # Disable Graphics Plane so that Video can be seen.
+@@ -14,9 +25,13 @@ then
+ 
+        sleep 60
+     else
++       configure_alsa_mixer
+        touch /tmp/OMTB.lock
+        ./omtb_dm816xbm_a8host.xv5T dual_display_encode_decode.oms &
+     
++       sleep 5
++       ./unpause_omx.xv5T test_pipe U
++
+        sleep 60
+     fi
+     
+-- 
+1.7.0.4
+
