@@ -1,0 +1,129 @@
+diff -Naur a/arch/arm/mach-omap2/board-ti8168evm.c b/arch/arm/mach-omap2/board-ti8168evm.c
+--- a/arch/arm/mach-omap2/board-ti8168evm.c	2011-05-19 15:49:58.000000000 +0530
++++ b/arch/arm/mach-omap2/board-ti8168evm.c	2011-05-19 15:54:10.000000000 +0530
+@@ -491,7 +491,7 @@
+ 
+ static void __init ti816x_vpss_init(void)
+ {
+-	i2c_add_driver(&pcf8575_driver);
++	//i2c_add_driver(&pcf8575_driver);
+ 
+ 	if (platform_device_register(&vpss_device))
+ 		printk(KERN_ERR "failed to register ti816x_vpss device\n");
+diff -Naur a/drivers/video/ti81xx/vpss/core.c b/drivers/video/ti81xx/vpss/core.c
+--- a/drivers/video/ti81xx/vpss/core.c	2011-05-19 15:52:27.000000000 +0530
++++ b/drivers/video/ti81xx/vpss/core.c	2011-05-19 15:54:10.000000000 +0530
+@@ -87,11 +87,13 @@
+ 		goto exit3;
+ 
+ 	}
++#if 0
+ 	r = vps_video_init(pdev);
+ 	if (r) {
+ 		VPSSERR("failed to int video.\n");
+ 		goto exit4;
+ 	}
++#endif
+ 	return 0;
+ 
+ exit4:
+@@ -111,9 +113,9 @@
+ static int vps_remove(struct platform_device *pdev)
+ {
+ 	int r;
+-
++#if 0
+ 	vps_video_deinit(pdev);
+-
++#endif
+ 	vps_grpx_deinit(pdev);
+ 	r = vps_dc_deinit(pdev);
+ 	if (r) {
+diff -Naur a/drivers/video/ti81xx/vpss/dctrl.c b/drivers/video/ti81xx/vpss/dctrl.c
+--- a/drivers/video/ti81xx/vpss/dctrl.c	2011-05-19 15:52:27.000000000 +0530
++++ b/drivers/video/ti81xx/vpss/dctrl.c	2011-05-19 15:54:25.000000000 +0530
+@@ -21,7 +21,7 @@
+  * 59 Temple Place - Suite 330, Boston, MA	02111-1307, USA.
+  */
+ #define VPSS_SUBMODULE_NAME   "DCTRL"
+-
++#include <linux/delay.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/device.h>
+@@ -832,11 +832,24 @@
+ 					vi.modeinfo[i].vencid);
+ 
+ 		} else {
+-			memcpy(&disp_ctrl->vinfo->modeinfo \
+-					[disp_ctrl->vinfo->numvencs++],
++			 disp_ctrl->vinfo->numvencs = 1;
++		         memcpy(&disp_ctrl->vinfo->modeinfo[0],
+ 			       &vinfo->modeinfo[i],
+ 			       sizeof(struct vps_dcmodeinfo));
+-			vencs |= vinfo->modeinfo[i].vencid;
++			vencs |= vinfo->modeinfo[0].vencid; 
++			if (disp_ctrl->vinfo->numvencs) {
++				/*set the VENC Mode*/
++                                mdelay(10);
++				r = vps_fvid2_control(disp_ctrl->fvid2_handle,
++						IOCTL_VPS_DCTRL_SET_VENC_MODE,
++						(void *)disp_ctrl->vinfo_phy,
++						NULL);
++				if (r) {
++					VPSSERR("failed to set venc mdoe.\n");
++					goto exit;
++				}
++				disp_ctrl->enabled_venc_ids |= vencs;
++                       }
+ 		}
+ 	}
+ 	if (vinfo->tiedvencs) {
+@@ -848,6 +861,7 @@
+ 			disp_ctrl->vinfo->tiedvencs = vinfo->tiedvencs;
+ 	}
+ 
++#if 0
+ 	if (disp_ctrl->vinfo->numvencs) {
+ 
+ 		/*set the VENC Mode*/
+@@ -861,6 +875,7 @@
+ 		}
+ 		disp_ctrl->enabled_venc_ids |= vencs;
+ 	}
++#endif
+ exit:
+ 	return r;
+ 
+@@ -1303,6 +1318,7 @@
+ #ifdef CONFIG_ARCH_TI816X
+ 	if (cpu_is_ti816x()) {
+ 		if ((binfo->idx == HDCOMP) && (binfo->isdeviceon == true)) {
++                        #if 0
+ 			if ((mid == FVID2_STD_1080P_60) ||
+ 			    (mid == FVID2_STD_1080P_50))
+ 				r = pcf8575_ths7360_hd_enable(
+@@ -1314,6 +1330,7 @@
+ 				VPSSERR("failed to set THS filter\n");
+ 				goto exit;
+ 			}
++                        #endif
+ 
+ 		}
+ 	}
+@@ -2541,6 +2558,7 @@
+ 	if setup is failed*/
+ #ifdef CONFIG_ARCH_TI816X
+ 	if (cpu_is_ti816x()) {
++                #if 0
+ 		r = pcf8575_ths7375_enable(TI816X_THSFILTER_ENABLE_MODULE);
+ 		if ((venc_info.modeinfo[HDCOMP].minfo.standard ==
+ 		    FVID2_STD_1080P_60)  ||
+@@ -2562,6 +2580,7 @@
+ 			disp_ctrl->blenders[SDVENC].isdeviceon = false;
+ 
+ 		}
++                #endif
+ 	}
+ #endif
+ 	return 0;
