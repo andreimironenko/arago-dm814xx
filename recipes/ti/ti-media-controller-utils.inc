@@ -5,11 +5,13 @@ LICENSE = "BSD"
 require ti-paths.inc
 require ti-staging.inc
 
-SRC_URI = "http://install.source.dir.local/media_controller_utils_${PV}.tar.gz"
-
 DEPENDS = "ti-omx-libs ti-syslink"
 
-S = "${WORKDIR}/media_controller_utils_${PV}"
+INC_PR = "r0"
+
+SRC_URI = "svn://gforge.ti.com/svn/m_c_utils/;module=trunk;proto=https;user=anonymous;pswd='' "
+
+S = "${WORKDIR}/trunk/media_controller_utils"
 
 PLATFORM_ti816x = "ti816x"
 PLATFORM ?= "<UNDEFINED-PLATFORM>"

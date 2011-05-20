@@ -4,9 +4,7 @@ LICENSE = "BSD"
 
 inherit update-rc.d
 
-PR = "r1"
-
-SRC_URI = "http://install.source.dir.local/media_controller_utils_${PV}.tar.gz"
+INC_PR = "r0"
 
 DEPENDS = "ti-media-controller-utils"
 
@@ -16,7 +14,9 @@ INITSCRIPT_PARAMS = "defaults 10"
 PLATFORM_ti816x = "ti816x"
 PLATFORM ?= "<UNDEFINED-PLATFORM>"
 
-S = "${WORKDIR}/media_controller_utils_${PV}/${PLATFORM}"
+SRC_URI = "svn://gforge.ti.com/svn/m_c_utils/;module=trunk;proto=https;user=anonymous;pswd='' "
+
+S = "${WORKDIR}/trunk/media_controller_utils/${PLATFORM}"
 
 do_install() {
     # Install the init script
