@@ -68,6 +68,8 @@ do_compile() {
                PROFILE_m3vpss=whole_program_debug \
                dm816xbmducati
 
+    oe_runmake DEST_ROOT=${S}/prebuilt-binaries decode
+
     cp ${S}/firmware/dm816xbm/bin/ti816x-evm/dm816xbm_m3video_*.xem3 ${S}/firmware/dm816xbm_m3video.xem3
     cp ${S}/firmware/dm816xbm/bin/ti816x-evm/dm816xbm_m3vpss_*.xem3 ${S}/firmware/dm816xbm_m3vpss.xem3
 }
@@ -95,6 +97,8 @@ do_install() {
 
     install -d ${D}/omx_${PV}/firmware
     cp ${S}/firmware/*.xem3 ${D}/omx_${PV}/firmware
+
+    cp -r ${S}/prebuilt-binaries ${D}/omx_${PV}/
 
     cd ${D}/omx_${PV}
     ln -s packages/ti/omx/docs
