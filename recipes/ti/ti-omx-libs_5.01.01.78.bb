@@ -19,3 +19,5 @@ SRC_URI += "http://bangsdowebsvr01.india.ti.com:8060/SysLink_int/${SYSLINKPV}${S
 
 SYSLINK_ROOT = "${WORKDIR}/syslink_${SYSLINKPV}${SYSLINKPVextra}"
 export SYSLINK_ROOT
+
+INSANE_SKIP_ti-omx-libs-sourcetree = True
