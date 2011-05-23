@@ -2,7 +2,7 @@
 #       that require filing for a TSU exemption or applications
 #       that depend on TSU exempt code.
 DESCRIPTION = "Task to install crypto packages into target FS"
-PR = "r8"
+PR = "r9"
 LICENSE = "MIT"
 
 inherit task
@@ -55,8 +55,21 @@ CRYPTO_SUPPORT = "\
 # WLAN support packages.  These are added here because they depend on
 # crypto packages and are grouped with the crypto task to avoid confusion.
 
+WLAN_WL1271 = "hostap-daemon \
+               ti-wifi-utils \
+               wireless-tools \
+               ti-compat-wireless-wl12xx \
+               wl1271-bluetooth \
+               htop \
+               netperf \
+               iw \
+               linux-firmware-wl12xx \
+              "
+
 # Base WLAN value is blank set
 WLAN = ""
+WLAN_am180x-evm = "${WLAN_WL1271}"
+WLAN_am37x-evm = "${WLAN_WL1271}"
 
 RDEPENDS_${PN} = "\
     ${CRYPTO_SUPPORT} \
