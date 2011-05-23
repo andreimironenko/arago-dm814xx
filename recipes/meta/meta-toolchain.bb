@@ -17,9 +17,11 @@ TOOLCHAIN_TARGET_TASK ?= "task-sdk-bare"
 TOOLCHAIN_TARGET_EXCLUDE ?= ""
 FEED_ARCH ?= "${TARGET_ARCH}"
 SDK_SUFFIX = "toolchain"
-TOOLCHAIN_OUTPUTNAME ?= "${DISTRO}-${DISTRO_VERSION}-${FEED_ARCH}-${TARGET_OS}-${SDK_SUFFIX}"
+TOOLCHAIN_OUTPUTNAME ?= "${DISTRO}-${DISTRO_VERSION}-${SDK_SYS}-${FEED_ARCH}-${TARGET_OS}-${SDK_SUFFIX}"
 
-RDEPENDS = "${TOOLCHAIN_TARGET_TASK} ${TOOLCHAIN_HOST_TASK}"
+DISTRO_FEED_CONFIGS ?= " "
+
+RDEPENDS_${PN} = "${DISTRO_FEED_CONFIGS} ${TOOLCHAIN_TARGET_TASK} ${TOOLCHAIN_HOST_TASK}"
 
 TOOLCHAIN_FEED_URI ?= "${DISTRO_FEED_URI}"
 
@@ -30,13 +32,21 @@ modify_opkg_conf () {
         rm -f ${OUTPUT_OPKGCONF_TARGET}
         rm -f ${OUTPUT_OPKGCONF_HOST}
         rm -f ${OUTPUT_OPKGCONF_SDK}
-        opkgarchs="${PACKAGE_ARCHS}"
-        priority=1
-        for arch in ${opkgarchs}; do
-                echo "arch ${arch} ${priority}" >> ${OUTPUT_OPKGCONF_TARGET};
-                echo "src/gz ${arch} ${TOOLCHAIN_FEED_URI}/${arch}" >> ${OUTPUT_OPKGCONF_TARGET};
-                priority=$(expr ${priority} + 5);
-        done
+
+        if [ -e ${SDK_OUTPUT}/${SDKPATH}/${TARGET_SYS}/${sysconfdir}/opkg/arch.conf ] ; then
+            echo "Creating empty opkg.conf since arch.conf is already present"
+            echo > ${OUTPUT_OPKGCONF_TARGET} 
+        else
+            opkgarchs="${PACKAGE_ARCHS}"
+            priority=1
+            for arch in ${opkgarchs}; do
+                    echo "arch ${arch} ${priority}" >> ${OUTPUT_OPKGCONF_TARGET};
+                    if [ -n "${TOOLCHAIN_FEED_URI}" ] ; then
+                        echo "src/gz ${arch} ${TOOLCHAIN_FEED_URI}/${arch}" >> ${OUTPUT_OPKGCONF_TARGET};
+                    fi
+                    priority=$(expr ${priority} + 5);
+            done
+        fi
 }
 
 do_populate_sdk() {
@@ -55,19 +65,19 @@ do_populate_sdk() {
 	${IPKG_HOST} -force-depends install ${TOOLCHAIN_HOST_TASK}
 
 	${IPKG_TARGET} update
-	${IPKG_TARGET} install ${TOOLCHAIN_TARGET_TASK}
+	${IPKG_TARGET} install ${TOOLCHAIN_TARGET_TASK} ${DISTRO_FEED_CONFIGS}
 
 	# Remove packages in the exclude list which were installed by dependencies
 	if [ ! -z "${TOOLCHAIN_TARGET_EXCLUDE}" ]; then
 		${IPKG_TARGET} remove -force-depends ${TOOLCHAIN_TARGET_EXCLUDE}
 	fi
 
-	install -d ${SDK_OUTPUT}/${SDKPATH}/usr/lib/opkg
-	mv ${SDK_OUTPUT}/usr/lib/opkg/* ${SDK_OUTPUT}/${SDKPATH}/usr/lib/opkg/
-	rm -Rf ${SDK_OUTPUT}/usr/lib
+	install -d ${SDK_OUTPUT}/${SDKPATH}${libdir}/opkg
+	mv ${SDK_OUTPUT}${libdir}/opkg/* ${SDK_OUTPUT}/${SDKPATH}${libdir}/opkg/
+	rm -Rf ${SDK_OUTPUT}${libdir}
 
 	# Clean up empty directories from excluded packages
-	find ${SDK_OUTPUT} -depth -type d -empty -print0 | xargs -0 /bin/rmdir
+	find ${SDK_OUTPUT} -depth -type d -empty -print0 | xargs -r0 /bin/rmdir
 
 	install -d ${SDK_OUTPUT}/${SDKPATH}/${TARGET_SYS}/${sysconfdir}
 	install -m 0644 ${IPKGCONF_TARGET} ${IPKGCONF_SDK} ${SDK_OUTPUT}/${SDKPATH}/${TARGET_SYS}/${sysconfdir}/
@@ -76,7 +86,7 @@ do_populate_sdk() {
 	install -m 0644 ${IPKGCONF_SDK} ${SDK_OUTPUT}/${SDKPATH}/${sysconfdir}/
 
 	# extract and store ipks, pkgdata and shlibs data
-	target_pkgs=`cat ${SDK_OUTPUT}/${SDKPATH}/${TARGET_SYS}/usr/lib/opkg/status | grep Package: | cut -f 2 -d ' '`
+	target_pkgs=`cat ${SDK_OUTPUT}/${SDKPATH}/${TARGET_SYS}${libdir}/opkg/status | grep Package: | cut -f 2 -d ' '`
 	mkdir -p ${SDK_OUTPUT2}/${SDKPATH}/ipk/
 	mkdir -p ${SDK_OUTPUT2}/${SDKPATH}/pkgdata/runtime/
 	mkdir -p ${SDK_OUTPUT2}/${SDKPATH}/${TARGET_SYS}/shlibs/
@@ -113,9 +123,11 @@ do_populate_sdk() {
 
 	# With sysroot support, gcc expects the default C++ headers to be
 	# in a specific place.
-	#install -d ${SDK_OUTPUT}/${SDKPATH}/${TARGET_SYS}/include
-	#mv ${SDK_OUTPUT}/${SDKPATH}/${TARGET_SYS}/usr/include/c++ \
-	#	${SDK_OUTPUT}/${SDKPATH}/${TARGET_SYS}/include/
+	if [ "${base_prefix}" != "${prefix}" ]; then
+		install -d ${SDK_OUTPUT}/${SDKPATH}/${TARGET_SYS}/include
+		mv ${SDK_OUTPUT}/${SDKPATH}/${TARGET_SYS}/usr/include/c++ \
+			${SDK_OUTPUT}/${SDKPATH}/${TARGET_SYS}/include/
+	fi
 
 	# Fix or remove broken .la files
 	for i in `find ${SDK_OUTPUT}/${SDKPATH}/${TARGET_SYS} -name \*.la`; do
@@ -163,11 +175,14 @@ do_populate_sdk() {
 	# Package it up
 	mkdir -p ${SDK_DEPLOY}
 	cd ${SDK_OUTPUT}
-	fakeroot tar cfz ${SDK_DEPLOY}/${TOOLCHAIN_OUTPUTNAME}.tar.gz .
+	chmod -R go-w ${SDK_OUTPUT}
+	fakeroot tar cfj ${SDK_DEPLOY}/${TOOLCHAIN_OUTPUTNAME}.tar.bz2 .
 	cd ${SDK_OUTPUT2}
-	fakeroot tar cfz ${SDK_DEPLOY}/${TOOLCHAIN_OUTPUTNAME}-extras.tar.gz .
+	chmod -R go-w ${SDK_OUTPUT2}
+	fakeroot tar cfj ${SDK_DEPLOY}/${TOOLCHAIN_OUTPUTNAME}-extras.tar.bz2 .
 }
 
 do_populate_sdk[nostamp] = "1"
+do_populate_sdk[lockfiles] = "${DEPLOY_DIR_IPK}.lock"
 addtask package_update_index_ipk before do_populate_sdk
 addtask populate_sdk before do_build after do_install
