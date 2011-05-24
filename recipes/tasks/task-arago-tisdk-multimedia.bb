@@ -85,6 +85,7 @@ MULTIMEDIA_ti816x = " \
     ti-media-controller-hdvpss-loader \
     ti-media-controller-hdvicp2-loader \
     ti-data \
+    ti-omx-libs-examples \
     "
 
 MULTIMEDIA_ti814x = " \
