@@ -23,7 +23,7 @@ DEPENDS += "ti-ivahd-hdvicp20api ti-codecs-dm816x"
 DEPENDS += "ti-xdais ti-codec-engine ti-framework-components"
 DEPENDS += "ti-hdvpss ti-uia"
 
-PROVIDES = "ti-omx-libs-sourcetree"
+PROVIDES = "ti-omx-libs-sourcetree ti-omx-libs-examples"
 
 EXTRA_OEMAKE = "ROOTDIR=${S}/packages \
         INTERNAL_SW_ROOT=${S}/packages \
@@ -98,7 +98,9 @@ do_install() {
     install -d ${D}/omx_${PV}/firmware
     cp ${S}/firmware/*.xem3 ${D}/omx_${PV}/firmware
 
+    install -d ${D}/${installdir}/ti-omx
     cp -r ${S}/prebuilt-binaries ${D}/omx_${PV}/
+    cp -r ${S}/prebuilt-binaries/decode/bin/ti816x-evm/*.xv5T ${D}/${installdir}/ti-omx
 
     cd ${D}/omx_${PV}
     ln -s packages/ti/omx/docs
@@ -119,5 +121,8 @@ do_install() {
 
 PACKAGES += "ti-omx-libs-sourcetree"
 FILES_ti-omx-libs-sourcetree = "omx_${PV}"
+
+PACKAGES += "ti-omx-libs-examples"
+FILES_ti-omx-libs-examples = "${installdir}/ti-omx"
 
 FILES_ti-omx-libs-dev = "${libdir}/*"
