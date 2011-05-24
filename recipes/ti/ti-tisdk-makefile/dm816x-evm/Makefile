@@ -473,7 +473,7 @@ matrix_install:
 ################################################################################
 
 omx:
-	make -C $(OMX_INSTALL_DIR)/packages libs \
+	make -C $(OMX_INSTALL_DIR)/packages libs decode \
 		ROOTDIR=$(OMX_INSTALL_DIR)/packages \
 		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR) \
 		INTERNAL_SW_ROOT=$(OMX_INSTALL_DIR)/packages \
