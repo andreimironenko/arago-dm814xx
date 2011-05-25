@@ -21,3 +21,4 @@ SYSLINK_ROOT = "${WORKDIR}/syslink_${SYSLINKPV}${SYSLINKPVextra}"
 export SYSLINK_ROOT
 
 INSANE_SKIP_ti-omx-libs-sourcetree = True
+INSANE_SKIP_ti-omx-libs-examples = True
