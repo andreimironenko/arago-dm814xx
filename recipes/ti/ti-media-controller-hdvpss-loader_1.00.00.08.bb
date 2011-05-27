@@ -1,4 +1,4 @@
 require ti-media-controller-hdvpss-loader.inc
 
-SRCREV = "8"
+SRCREV = "10"
 PR = "${INC_PR}.8"
