@@ -490,6 +490,8 @@ omx_clean:
 	rm -rf $(OMX_INSTALL_DIR)/rebuilt-binaries/
 
 omx_install:
+	install -d $(EXEC_DIR)/omx
+	install $(OMX_INSTALL_DIR)/rebuilt-binaries/decode/bin/ti816x-evm/decode_a8host_debug.xv5T $(EXEC_DIR)/omx
 
 ################################################################################
 # Build OMTB IL Client Applications 
