@@ -41,7 +41,7 @@ addtask fetchwiki after do_fetch before do_install
 do_install () {
     if [ ! -n "${SDK_VERSION}" ]; then
         oenote "Setting SDK_VERSION to default"
-        export SDK_VERSION="test_build"
+        export SDK_VERSION="5_01_01_79"
     fi
 
     install -d ${D}/${installdir}
