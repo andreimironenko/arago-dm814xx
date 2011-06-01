@@ -1,21 +1,7 @@
-PR = "r11"
-
-SDK_DISTRO = "arago"
-TOOLCHAIN_OUTPUTNAME = "${SDK_DISTRO}-${DISTRO_VERSION}-${FEED_ARCH}-${TARGET_OS}-${SDK_SUFFIX}"
+PR = "r12"
 
 TOOLCHAIN_HOST_TASK ?= "task-arago-toolchain-host"
 TOOLCHAIN_TARGET_TASK ?= "task-arago-toolchain-target"
-
-# External CSL toolchain/glibc
-TOOLCHAIN_TARGET_EXCLUDE += "\
-    libc6 \
-    libc6-dev \
-    glibc-extra-nss \
-    libgcc1 \
-    linux-libc-headers-dev \
-    libthread-db1 \
-    sln \
-    "
 
 # X11 dependencies
 TOOLCHAIN_TARGET_EXCLUDE += "\
@@ -132,4 +118,3 @@ TOOLCHAIN_TARGET_EXCLUDE += "\
     "
 
 require meta-toolchain.bb
-SDK_SUFFIX = "sdk"
