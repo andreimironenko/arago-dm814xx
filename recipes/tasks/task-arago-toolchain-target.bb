@@ -1,6 +1,6 @@
 DESCRIPTION = "Target packages for a standalone Arago SDK or external toolchain"
 ALLOW_EMPTY = "1"
-PR = "r6"
+PR = "r7"
 
 PACKAGES = "${PN}"
 
@@ -10,6 +10,7 @@ PACKAGES = "${PN}"
 # Also feel free to remove stuff that's silly.
 
 RDEPENDS_${PN} = "\
+    libstdc++-dev \
     alsa-dev \
     alsa-lib-dev \
     alsa-utils-dev \
