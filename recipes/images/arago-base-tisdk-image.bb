@@ -13,7 +13,3 @@ IMAGE_INSTALL += "\
 
 export IMAGE_BASENAME = "arago-base-tisdk-image"
 
-# NLCP supports both station and AP modes. 
-# don't start hostapd automatically when the system boot up.
-ROOTFS_POSTPROCESS_COMMAND += "find ${IMAGE_ROOTFS}/etc/rc* -name *hostapd* | xargs -r rm"
-
