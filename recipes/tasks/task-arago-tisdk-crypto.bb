@@ -2,7 +2,7 @@
 #       that require filing for a TSU exemption or applications
 #       that depend on TSU exempt code.
 DESCRIPTION = "Task to install crypto packages into target FS"
-PR = "r10"
+PR = "r11"
 LICENSE = "MIT"
 
 inherit task
@@ -71,6 +71,7 @@ WLAN_WL1271 = "hostap-daemon \
 WLAN = ""
 WLAN_am180x-evm = "${WLAN_WL1271}"
 WLAN_am37x-evm = "${WLAN_WL1271}"
+WLAN_beagleboard = "${WLAN_WL1271}"
 
 RDEPENDS_${PN} = "\
     ${CRYPTO_SUPPORT} \
