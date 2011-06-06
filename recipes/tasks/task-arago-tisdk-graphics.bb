@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r11"
+PR = "r12"
 LICENSE = "MIT"
 
 inherit task

@@ -34,7 +34,7 @@ fi
 uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyS0,115200n8 rw noinitrd mpurate=1000"
+baseargs="console=ttyO0,115200n8 rw noinitrd mpurate=1000"
 videoargs=""
 fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3 rootwait"
 fsnfsargs1="root=/dev/nfs nfsroot="

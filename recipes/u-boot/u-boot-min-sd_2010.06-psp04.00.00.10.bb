@@ -1,43 +1,17 @@
-require u-boot-omap3.inc
+require u-boot_${PV}.inc
 
-COMPATIBLE_MACHINE = "ti816x"
+PR = "${INC_PR}.1"
 
-BRANCH = "ti81xx-master"
-
-# Use literal tags in SRCREV, when available, instead of commit IDs
-SRCREV = "v2010.06_TI816XPSP_04.00.00.10"
-
-SRC_URI =+ "file://0001-TI816x-Add-default-support-for-800Mhz.patch;apply=yes \
-"
-
-UVER = "2010.06"
-PSPREL = "04.00.00.10"
-
-PR = "r1"
-
-UBOOT_MACHINE = "ti8168_evm_min_sd"
-TI_UBOOT_BINARY ?= "u-boot.min.sd"
-UBOOT_MLO_SYMLINK ?= "MLO"
-UBOOT_MLO_IMAGE ?= "MLO-${MACHINE}-${PV}-${PR}"
-UBOOT_MAKE_TARGET = "u-boot.ti"
-
+# Set PROVIDES so that we don't define virtual/bootloader for this recipe.
+# This causes a non-critical parsing error about multiple providers which
+# makes the build return a non-zero status.  This leads to the build
+# being marked as a failure even though it shows a successful build.
 PROVIDES = "u-boot-min-sd"
 
-do_install() {
-    cp ${S}/${TI_UBOOT_BINARY} ${S}/${UBOOT_MLO_IMAGE}
-    install -d ${D}/boot
-    install ${S}/${UBOOT_MLO_IMAGE} ${D}/boot/${UBOOT_MLO_IMAGE}
-    ln -sf ${UBOOT_MLO_IMAGE} ${D}/boot/${UBOOT_MLO_SYMLINK}
-} 
+UBOOT_MACHINE = "ti8168_evm_min_sd"
+UBOOT_BINARY = "u-boot.min.sd"
+UBOOT_SYMLINK = "MLO"
+UBOOT_IMAGE = "MLO-${MACHINE}-${PV}-${PR}"
 
-do_deploy() {
-    cp ${S}/${TI_UBOOT_BINARY} ${S}/${UBOOT_MLO_IMAGE}
-    install -d ${DEPLOY_DIR_IMAGE}
-    install ${S}/${UBOOT_MLO_IMAGE} ${DEPLOY_DIR_IMAGE}/${UBOOT_MLO_IMAGE}
-    package_stagefile_shell ${DEPLOY_DIR_IMAGE}/${UBOOT_MLO_IMAGE}
-
-    cd ${DEPLOY_DIR_IMAGE}
-    rm -f ${UBOOT_MLO_SYMLINK}
-    ln -sf ${UBOOT_MLO_IMAGE} ${UBOOT_MLO_SYMLINK}
-    package_stagefile_shell ${DEPLOY_DIR_IMAGE}/${UBOOT_MLO_SYMLINK}
-}
+# Look to the base recipes directory to find files as well.
+FILESDIR = "${@os.path.dirname(bb.data.getVar('FILE',d,1))}/u-boot-${PV}"

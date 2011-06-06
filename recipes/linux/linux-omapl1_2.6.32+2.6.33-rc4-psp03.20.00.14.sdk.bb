@@ -32,6 +32,7 @@ WILINK_PATCHES = " \
 	file://0003-Added-wilink-driver-for-WL1271-on-AM1808-EVM.patch \
 	file://0004-Supported-AFE-for-UART1-on-AM1808-platform.patch \
 	file://0005-Modified-defconfig-for-WL1271-DC-support-on-AM1808.patch\
+	file://0001-AM18x-Fix-WLAN-crash-without-WL1271-DC-connrcted-to-.patch\
 	"
 
 # Apply the patch to disable BT on OMAPL138 only

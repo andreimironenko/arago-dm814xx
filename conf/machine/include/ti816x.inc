@@ -7,7 +7,7 @@ PREFERRED_PROVIDER_virtual/kernel = "linux-omap3"
 PREFERRED_PROVIDER_virtual/bootloader = "u-boot"
 
 # Increase this everytime you change something in the kernel
-MACHINE_KERNEL_PR = "r3"
+MACHINE_KERNEL_PR = "r4"
 
 KERNEL_IMAGETYPE = "uImage"
 
@@ -21,6 +21,6 @@ EXTRA_IMAGEDEPENDS += "u-boot"
 
 # Ship all kernel modules
 IMAGE_FSTYPES ?= "jffs2 tar.bz2"
-EXTRA_IMAGECMD_jffs2 = "-lnp -e 128"
+EXTRA_IMAGECMD_jffs2 = "-lqn -e 128"
 SERIAL_CONSOLE = "115200 ttyO2"
 MACHINE_FEATURES = "kernel26 apm usbgadget usbhost vfat ext2 ethernet"

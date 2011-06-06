@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install dsp binaries on ${MACHINE}"
-PR = "r14"
+PR = "r16"
 LICENSE="MIT"
 ALLOW_EMPTY = "1"
 
@@ -69,8 +69,15 @@ DSP_COMPONENTS_dm814x-evm = "\
     ti-media-controller-utils \
     ti-media-controller-hdvpss-loader \
     "
-
+# For AM devices with no DSP we want to not build any DSP packages
+# if this task is built.
+DSP_COMPONENTS_am180x-evm = ""
+DSP_COMPONENTS_am181x-evm = ""
 DSP_COMPONENTS_am37x-evm = ""
+DSP_COMPONENTS_am3517-evm = ""
+DSP_COMPONENTS_am389x-evm = ""
+DSP_COMPONENTS_am387x-evm = ""
+DSP_COMPONENTS_am45x-evm = ""
 
 DSP_COMPONENTS = ""
 

@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install source (or development) packages on host"
-PR = "r14"
+PR = "r15"
 LICENSE="MIT"
 
 inherit task
@@ -91,6 +91,16 @@ DSP_SOURCETREE_ti814x = "\
     "
 
 DSP_SOURCETREE = " "
+
+# For AM devices with no DSP we want to not build any DSP packages
+# if this task is built.
+DSP_SOURCETREE_am180x-evm = ""
+DSP_SOURCETREE_am181x-evm = ""
+DSP_SOURCETREE_am37x-evm = ""
+DSP_SOURCETREE_am3517-evm = ""
+DSP_SOURCETREE_am389x-evm = ""
+DSP_SOURCETREE_am387x-evm = ""
+DSP_SOURCETREE_am45x-evm = ""
 
 RRECOMMENDS_${PN} = "\
     ${DSP_SOURCETREE} \

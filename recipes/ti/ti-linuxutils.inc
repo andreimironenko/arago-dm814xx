@@ -5,6 +5,8 @@ LICENSE = "GPLv2,BSD"
 BASE_SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/linuxutils/${PV}/exports"
 SRC_URI = "${BASE_SRC_URI}/linuxutils_${PV}.tar.gz "
 
+PVExtra = ""
+
 S = "${WORKDIR}/linuxutils_${PV}${PVExtra}"
 
 require ti-paths.inc

@@ -3,7 +3,7 @@
 
 require arago-image.inc
 
-COMPATIBLE_MACHINE = "dm37x-evm|am37x-evm|omap3evm|dm365-evm|da850-omapl138-evm|ti816x|ti814x"
+COMPATIBLE_MACHINE = "omap3|ti816x|dm365|omapl138|ti814x|omap4"
 
 IMAGE_INSTALL += "\
     task-arago-base \
@@ -12,3 +12,8 @@ IMAGE_INSTALL += "\
     "
 
 export IMAGE_BASENAME = "arago-base-tisdk-image"
+
+# NLCP supports both station and AP modes. 
+# don't start hostapd automatically when the system boot up.
+ROOTFS_POSTPROCESS_COMMAND += "find ${IMAGE_ROOTFS}/etc/rc* -name *hostapd* | xargs -r rm"
+
