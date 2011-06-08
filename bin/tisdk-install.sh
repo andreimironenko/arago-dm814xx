@@ -95,24 +95,44 @@ update_rules_make()
     # remove -src from the end
     name="`echo $name | sed -e 's/-src$//g' -e 's/-sourcetree$//g'`"
 
+    # Get the real name of the package
+    case $name in
+      "libgles-omap3")
+        real_name="graphics-sdk"
+        ;;
+      "signal-analyzer-demo")
+        real_name="example-applications/signal-analyzer"
+        ;;
+      "omx-libs")
+        real_name="omx_*"
+        ;;
+      "omtb")
+        real_name="example-applications/omtb"
+        ;;
+      *)
+        real_name=$name
+        ;;
+    esac
+
+
     # get the directory name
-    dirname="`basename $install_dir/${name}_*`"
+    dirname="`basename $install_dir/${real_name}_*`"
 
-    if [ "$name" = "libgles-omap3" ]; then
-       dirname="`basename $install_dir/graphics-sdk_*`"
-    fi
-
-    if [ "$name" = "signal-analyzer-demo" ]; then
-       dirname="`basename $install_dir/example-applications/signal-analyzer*`"
-    fi
-
-    if [ "$name" = "omx-libs" ]; then
-       dirname="`basename $install_dir/omx_*`"
-    fi
-
-    if [ "$name" = "omtb" ]; then
-       dirname="`basename $install_dir/example-applications/omtb_*`"
-    fi
+#    if [ "$name" = "libgles-omap3" ]; then
+#       dirname="`basename $install_dir/graphics-sdk_*`"
+#    fi
+#
+#    if [ "$name" = "signal-analyzer-demo" ]; then
+#       dirname="`basename $install_dir/example-applications/signal-analyzer*`"
+#    fi
+#
+#    if [ "$name" = "omx-libs" ]; then
+#       dirname="`basename $install_dir/omx_*`"
+#    fi
+#
+#    if [ "$name" = "omtb" ]; then
+#       dirname="`basename $install_dir/example-applications/omtb_*`"
+#    fi
 
     # update rules.make
     sed -i -e s/\<__${name}__\>/${dirname}/g \
