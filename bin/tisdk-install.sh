@@ -109,30 +109,22 @@ update_rules_make()
       "omtb")
         real_name="example-applications/omtb"
         ;;
+      "sysbios")
+        real_name="bios"
+        ;;
+      "codec-engine")
+        real_name="codec_engine"
+        ;;
+      "framework-components")
+        real_name="framework_components"
+        ;;
       *)
         real_name=$name
         ;;
     esac
 
-
     # get the directory name
     dirname="`basename $install_dir/${real_name}_*`"
-
-#    if [ "$name" = "libgles-omap3" ]; then
-#       dirname="`basename $install_dir/graphics-sdk_*`"
-#    fi
-#
-#    if [ "$name" = "signal-analyzer-demo" ]; then
-#       dirname="`basename $install_dir/example-applications/signal-analyzer*`"
-#    fi
-#
-#    if [ "$name" = "omx-libs" ]; then
-#       dirname="`basename $install_dir/omx_*`"
-#    fi
-#
-#    if [ "$name" = "omtb" ]; then
-#       dirname="`basename $install_dir/example-applications/omtb_*`"
-#    fi
 
     # update rules.make
     sed -i -e s/\<__${name}__\>/${dirname}/g \
