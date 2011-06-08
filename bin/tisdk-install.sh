@@ -262,10 +262,11 @@ echo "
         source="$source"`print_arago_entries`
     fi
 
+    package_name=$package
     case "$package" in
       task-*) continue ;;
       libgles-omap3-src)
-            package="$package (SGX GLES1.1 drivers and GLES2.0 drivers)"
+            package_name="$package (SGX GLES1.1 drivers and GLES2.0 drivers)"
             delivered_as="Binary"
             modified="Yes"
             license="TI Proprietary"            
@@ -291,11 +292,11 @@ echo "
             location="$2"
             modified="Yes" ;; 
       *blitrix*) 
-            package="$package (Computer software for performing 2D graphics operations)"
+            package_name="$package (Computer software for performing 2D graphics operations)"
             license="Draw Elements"
             source="http://www.drawelements.com" ;; 
       *libticpublt*) 
-            package="$package (Computer software for performing 2D graphics operations)"
+            package_name="$package (Computer software for performing 2D graphics operations)"
             license="Draw Elements"
             source="http://www.drawelements.com" ;; 
       *)    delivered_as="Binary"
@@ -316,7 +317,7 @@ echo "
     fi
     
     echo "
-<tr><td>${package} </td><td>${version}</td> <td $highlight> ${license} </td><td>$location</td><td>$delivered_as</td><td>$modified</td> <td>$source</td></tr>
+<tr><td>${package_name} </td><td>${version}</td> <td $highlight> ${license} </td><td>$location</td><td>$delivered_as</td><td>$modified</td> <td>$source</td></tr>
 "
   done
 echo "</table><br><br>"
