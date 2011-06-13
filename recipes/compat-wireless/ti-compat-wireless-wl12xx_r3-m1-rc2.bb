@@ -18,11 +18,16 @@
 
 include ti-compat-wireless.inc
 
-PR = "r0"
+PR = "r1"
 COMPAT_WIRELESS_VERSION = "2011-05-17-r3-m1-rc2"
 
 SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/555/4629/ti-compat-wireless-wl12xx-${COMPAT_WIRELESS_VERSION}.tgz \
 	"
+
+SRC_URI += " \
+    file://0001-wl12xx_sdio-enable-wowlan-only-if-enable_irq_wake-su.patch \
+    file://0002-ti-compat-wireless-enable-uapsd-configuration.patch \
+"
 
 SRC_URI[md5sum] = "7c6e4718f0f4c2e018c245d73e111cd0"
 SRC_URI[sha256sum] = "7dca98d4d431183a3daaf03499612e8e560387feaaaecc815159e62816873250"
