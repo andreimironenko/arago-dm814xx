@@ -1,6 +1,6 @@
 DESCRIPTION = "Target packages for a standalone Arago SDK or external toolchain"
 ALLOW_EMPTY = "1"
-PR = "r8"
+PR = "r9"
 
 PACKAGES = "${PN}"
 
@@ -37,7 +37,6 @@ RDEPENDS_${PN} = "\
     libusb1-dev \
     libvolume-id-dev \
     zlib-dev \
-    mtd-utils-dev \
     ncurses-dev \
     opkg-dev \
 #    sysvinit-dev \
