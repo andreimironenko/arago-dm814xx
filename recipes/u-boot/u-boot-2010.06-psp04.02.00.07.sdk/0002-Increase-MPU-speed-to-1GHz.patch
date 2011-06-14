@@ -1,0 +1,32 @@
+From ce74a3c8e6fcb9b5c1ca8a7168e32b04cee08071 Mon Sep 17 00:00:00 2001
+From: Steve Kipisz <s-kipisz2@ti.com>
+Date: Tue, 14 Jun 2011 12:14:49 -0500
+Subject: [PATCH 2/2] Increase MPU speed to 1GHz.
+
+Signed-off-by: Steve Kipisz <s-kipisz2@ti.com>
+---
+ arch/arm/cpu/arm_cortexa8/omap3/lowlevel_init.S |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/cpu/arm_cortexa8/omap3/lowlevel_init.S b/arch/arm/cpu/arm_cortexa8/omap3/lowlevel_init.S
+index bcdda06..7b79dce 100644
+--- a/arch/arm/cpu/arm_cortexa8/omap3/lowlevel_init.S
++++ b/arch/arm/cpu/arm_cortexa8/omap3/lowlevel_init.S
+@@ -365,10 +365,10 @@ get_per_dpll_param:
+  * Tables for 36x/37x devices
+  */
+ mpu_36x_dpll_param:
+-.word 300,  5, 0, 1
+-.word 600, 12, 0, 1
+-.word 125,  3, 0, 1
+-.word 300, 12, 0, 1
++.word  250,  2, 0, 1
++.word 1000, 12, 0, 1
++.word 1875, 35, 0, 1
++.word  500, 12, 0, 1
+ 
+ iva_36x_dpll_param:
+ .word 130,  2, 0, 1
+-- 
+1.7.2.3
+
