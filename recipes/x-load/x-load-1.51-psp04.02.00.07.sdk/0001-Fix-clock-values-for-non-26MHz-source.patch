@@ -1,0 +1,64 @@
+From 56f5976083a4e060a10f9b25800ad673dd058d3c Mon Sep 17 00:00:00 2001
+From: Steve Kipisz <s-kipisz2@ti.com>
+Date: Tue, 14 Jun 2011 07:13:06 -0500
+Subject: [PATCH 1/2] Fix clock values for non-26MHz source.
+
+Signed-off-by: Steve Kipisz <s-kipisz2@ti.com>
+---
+ board/omap3evm/platform.S |   30 ++++++++++++++----------------
+ 1 files changed, 14 insertions(+), 16 deletions(-)
+
+diff --git a/board/omap3evm/platform.S b/board/omap3evm/platform.S
+index 1c85273..1453307 100644
+--- a/board/omap3evm/platform.S
++++ b/board/omap3evm/platform.S
+@@ -435,32 +435,30 @@ get_per_dpll_param:
+ 
+ /*
+  * Tables for 36x/37x devices
+- *
+- * (Populated for 13MHz only)
+  */
+ mpu_36x_dpll_param:
+-.word 300, 12, 0, 1
+-.word 300, 12, 0, 1
+-.word 300, 12, 0, 1
+-.word 300, 12, 0, 1
++.word 300,  5, 0, 1	// 12MHz
++.word 600, 12, 0, 1	// 13MHz
++.word 125,  3, 0, 1	// 19.2MHz
++.word 300, 12, 0, 1	// 26MHz
+ 
+ iva_36x_dpll_param:
+-.word 10, 0, 0, 1
+-.word 10, 0, 0, 1
+-.word 10, 0, 0, 1
+-.word 10, 0, 0, 1
++.word 130,  2, 0, 1
++.word  20,  0, 0, 1
++.word 325, 11, 0, 1
++.word  10,  0, 0, 1
+ 
+ core_36x_dpll_param:
+-.word 200, 12, 0, 1
+-.word 200, 12, 0, 1
+-.word 200, 12, 0, 1
++.word 100,  2, 0, 1
++.word 400, 12, 0, 1
++.word 375, 17, 0, 1
+ .word 200, 12, 0, 1
+ 
+ per_36x_dpll_param:
+ /*    SYSCLK     M      N      M2      M3      M4     M5      M6      m2DIV */
+-.word 26000,    432,   12,     9,      16,     9,     4,      3,      1
+-.word 26000,    432,   12,     9,      16,     9,     4,      3,      1
+-.word 26000,    432,   12,     9,      16,     9,     4,      3,      1
++.word 12000,    360,    4,     9,      16,     9,     4,      3,      1
++.word 13000,    864,   12,     9,      16,     9,     4,      3,      1
++.word 19200,    360,    7,     9,      16,     9,     4,      3,      1
+ .word 26000,    432,   12,     9,      16,     9,     4,      3,      1
+ 
+ .globl get_36x_mpu_dpll_param
+-- 
+1.7.2.3
+
