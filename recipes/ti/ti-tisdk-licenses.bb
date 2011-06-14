@@ -1,7 +1,7 @@
 DESCRIPTION = "Package containing license text for Licenses found in SDK manifests"
 LICENSE = "TI"
 
-PR = "r2"
+PR = "r3"
 
 # Generic license files.  Will be packaged in source ipk.
 # Licenses specific to a package are handled by the license.bbclass
@@ -19,6 +19,7 @@ SRC_URI = "\
     file://ti-tisdk-licenses/creativecommons.txt \
     file://ti-tisdk-licenses/openssl.txt \
     file://ti-tisdk-licenses/CC-BY-NC-ND-3.0.txt \
+    file://ti-tisdk-licenses/lmbench.txt \
 "
 
 # Make an empty do_patch function so that the "patches" directory is not
