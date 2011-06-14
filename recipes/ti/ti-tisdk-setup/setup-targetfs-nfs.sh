@@ -23,10 +23,10 @@ echo "This step will extract the target filesystem to $dst"
 echo
 echo "Note! This command requires you to have administrator priviliges (sudo access) "
 echo "on your host."
-read -p "Press return to continue"
+read -p "Press return to continue" REPLY
 
 extract_fs() {
-    fstar=`ls -1 $cwd/../filesystem/*rootfs.tar.gz`
+    fstar=`ls -1 $cwd/../filesystem/??sdk*rootfs*.tar.gz`
     me=`whoami`
     sudo mkdir -p $1
     check_status
@@ -69,6 +69,7 @@ else
     extract_fs $dst
 fi
 echo $dst > $cwd/../.targetfs
+echo "set sysroot $dst" > $cwd/../.gdbinit
 echo "--------------------------------------------------------------------------------"
 
 platform=`grep PLATFORM= $cwd/../Rules.make | cut -d= -f2`
@@ -82,7 +83,7 @@ echo
 echo "This setting can be changed later by editing Rules.make and changing the"
 echo "EXEC_DIR variable."
 echo
-read -p "Press return to continue"
+read -p "Press return to continue" REPLY
 
 sed -i "s=EXEC_DIR\=.*$=EXEC_DIR\=$dst/home/root/$platform=g" $cwd/../Rules.make
 check_status
@@ -99,7 +100,7 @@ echo "This step will export your target filesystem for NFS access."
 echo
 echo "Note! This command requires you to have administrator priviliges (sudo access) "
 echo "on your host."
-read -p "Press return to continue"
+read -p "Press return to continue" REPLY
 
 grep $dst /etc/exports > /dev/null
 if [ "$?" -eq "0" ]; then
