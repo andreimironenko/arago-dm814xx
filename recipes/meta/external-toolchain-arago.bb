@@ -1,6 +1,6 @@
 require external-toolchain-arago.inc
 
-PR = "r3"
+PR = "r4"
 
 INHIBIT_DEFAULT_DEPS = "1"
 
@@ -112,6 +112,7 @@ FILES_libstdc++-dev = "\
 
 FILES_linux-libc-headers-dev = "\
 	${includedir}/asm* \
+	${includedir}/drm \
 	${includedir}/linux \
 	${includedir}/mtd \
 	${includedir}/rdma \
