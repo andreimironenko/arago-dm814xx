@@ -70,6 +70,7 @@ MULTIMEDIA_omap3evm = " \
 MULTIMEDIA_am37x-evm = " \
     task-arago-gst \
     gst-ffmpeg \
+    amsdk-av-files \
     "
 
 MULTIMEDIA_beagleboard = " \
