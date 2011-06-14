@@ -1,6 +1,6 @@
 require external-toolchain-arago.inc
 
-PR = "r2"
+PR = "r3"
 
 INHIBIT_DEFAULT_DEPS = "1"
 
@@ -27,7 +27,7 @@ PROVIDES = "\
 	virtual/libintl \
 	virtual/libiconv \
 	glibc-thread-db \
-	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', 'linux-libc-headers', '', d)} \
+	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', 'linux-libc-headers-dev', '', d)} \
 	${@base_conditional('PREFERRED_PROVIDER_gdbserver', 'external-toolchain-arago', 'gdbserver', '', d)} \
 "
 
@@ -43,7 +43,7 @@ PACKAGES = "\
 	libgcc-dev \
 	libstdc++ \
 	libstdc++-dev \
-	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', 'linux-libc-headers', '', d)} \
+	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', 'linux-libc-headers-dev', '', d)} \
 	${@base_conditional('PREFERRED_PROVIDER_gdbserver', 'external-toolchain-arago', 'gdbserver', '', d)} \
 	glibc-dbg \
 	glibc \
@@ -110,7 +110,7 @@ FILES_libstdc++-dev = "\
 	${libdir}/libsupc++.a \
 "
 
-FILES_linux-libc-headers = "\
+FILES_linux-libc-headers-dev = "\
 	${includedir}/asm* \
 	${includedir}/linux \
 	${includedir}/mtd \
@@ -168,7 +168,7 @@ PKGV_nscd = "${ARG_VER_LIBC}"
 PKGV_ldd = "${ARG_VER_LIBC}"
 PKGV_localedef = "${ARG_VER_LIBC}"
 PKGV_libsegfault = "${ARG_VER_LIBC}"
-PKGV_linux-libc-headers = "${ARG_VER_KERNEL}"
+PKGV_linux-libc-headers-dev = "${ARG_VER_KERNEL}"
 PKGV_gdbserver = "${ARG_VER_GDB}"
 
 do_install() {
