@@ -1,4 +1,4 @@
-PR = "r11"
+PR = "r12"
 
 INHIBIT_DEFAULT_DEPS = "1"
 
@@ -22,7 +22,7 @@ PROVIDES = "\
 	virtual/libintl \
 	virtual/libiconv \
 	glibc-thread-db \
-	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-csl', 'linux-libc-headers', '', d)} \
+	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-csl', 'linux-libc-headers linux-libc-headers-dev', '', d)} \
 	${@base_conditional('PREFERRED_PROVIDER_gdbserver', 'external-toolchain-csl', 'gdbserver', '', d)} \
 "
 
@@ -38,7 +38,7 @@ PACKAGES = "\
 	libgcc-dev \
 	libstdc++ \
 	libstdc++-dev \
-	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-csl', 'linux-libc-headers', '', d)} \
+	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-csl', 'linux-libc-headers-dev', '', d)} \
 	${@base_conditional('PREFERRED_PROVIDER_gdbserver', 'external-toolchain-csl', 'gdbserver', '', d)} \
 	glibc-dbg \
 	glibc \
@@ -105,8 +105,9 @@ FILES_libstdc++-dev = "\
 	${libdir}/libsupc++.a \
 "
 
-FILES_linux-libc-headers = "\
+FILES_linux-libc-headers-dev = "\
 	${includedir}/asm* \
+	${includedir}/drm \
 	${includedir}/linux \
 	${includedir}/mtd \
 	${includedir}/rdma \
@@ -224,7 +225,7 @@ PKGV_nscd = "${CSL_VER_LIBC}"
 PKGV_ldd = "${CSL_VER_LIBC}"
 PKGV_localedef = "${CSL_VER_LIBC}"
 PKGV_libsegfault = "${CSL_VER_LIBC}"
-PKGV_linux-libc-headers = "${CSL_VER_KERNEL}"
+PKGV_linux-libc-headers-dev = "${CSL_VER_KERNEL}"
 PKGV_gdbserver = "${CSL_VER_GDBSERVER}"
 
 do_install() {
