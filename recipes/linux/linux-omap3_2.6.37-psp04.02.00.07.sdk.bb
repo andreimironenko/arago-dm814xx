@@ -13,6 +13,7 @@ COMPATIBLE_MACHINE = "am37x-evm"
 # which is needed for building against a compat-wireless package
 
 SRC_URI += " \
+    file://0001-linux-omap3-Add-OCF-support-to-2.6.37-kernel.patch \
     file://0001-omap3evm-add-support-for-the-WL12xx-WLAN-module.patch \
     file://0002-allow-selecting-WL12XX_PLATFROM_DATA-independently.patch \
     file://0003-mmc-skip-detection-of-nonremovable-cards-on-rescan.patch \
