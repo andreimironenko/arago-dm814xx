@@ -16,3 +16,6 @@ SRC_URI += " \
 	file://0005-Davinci-da850-Add-Mistral-WL12XX-config-support-to.patch \
 	"
 
+SRC_URI_append_am180x-evm = " file://uio_pruss.patch"
+
+SRC_URI_append_da850-omapl138-evm = " file://uio_pruss.patch"
