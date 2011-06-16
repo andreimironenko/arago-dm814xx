@@ -9,7 +9,7 @@ DESTDIR=__DESTDIR__
 export LINUX_DEVKIT_PATH=$(TI_SDK_PATH)/linux-devkit
 
 #Cross compiler prefix
-export CROSS_COMPILE=__CROSS_COMPILE__
+export CROSS_COMPILE=$(LINUX_DEVKIT_PATH)/bin/arm-arago-linux-gnueabi-
 
 #Location of environment-setup file
 export ENV_SETUP=$(LINUX_DEVKIT_PATH)/environment-setup
