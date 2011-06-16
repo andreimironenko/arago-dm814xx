@@ -2,7 +2,7 @@
 #       that require filing for a TSU exemption or applications
 #       that depend on TSU exempt code.
 DESCRIPTION = "Task to install crypto packages into target FS"
-PR = "r12"
+PR = "r13"
 LICENSE = "MIT"
 
 inherit task
@@ -55,11 +55,10 @@ CRYPTO_SUPPORT = "\
 # WLAN support packages.  These are added here because they depend on
 # crypto packages and are grouped with the crypto task to avoid confusion.
 
-WLAN_WL1271 = "hostap-daemon \
+# These are the packages that all platforms use for WLAN support
+WLAN_COMMON = "hostap-daemon \
                ti-wifi-utils \
                wireless-tools \
-               ti-compat-wireless-wl12xx \
-               wl1271-bluetooth \
                htop \
                netperf \
                iw \
@@ -68,11 +67,17 @@ WLAN_WL1271 = "hostap-daemon \
                crda \
               "
 
+# These are the WLAN packages that are used for compatibility with the
+# 2.6.37 kernel used by some devices
+WLAN_COMPAT = "ti-compat-wireless-wl12xx \
+               wl1271-bluetooth \
+              "
+
 # Base WLAN value is blank set
 WLAN = ""
-WLAN_am180x-evm = "${WLAN_WL1271}"
-WLAN_am37x-evm = "${WLAN_WL1271}"
-WLAN_beagleboard = "${WLAN_WL1271}"
+WLAN_am180x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
+WLAN_am37x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
+WLAN_beagleboard = "${WLAN_COMMON}"
 
 RDEPENDS_${PN} = "\
     ${CRYPTO_SUPPORT} \
