@@ -1,5 +1,8 @@
 #platform used Builds and Setup
-PLATFORM=am181x
+PLATFORM=am181x-evm
+
+#Architecture
+ARCH=armv5te
 
 #Points to the root of the TI SDK
 export TI_SDK_PATH=__SDK__INSTALL_DIR__
@@ -16,4 +19,7 @@ export CROSS_COMPILE=$(LINUX_DEVKIT_PATH)/bin/arm-arago-linux-gnueabi-
 
 #Location of environment-setup file
 export ENV_SETUP=$(LINUX_DEVKIT_PATH)/environment-setup
+
+#The directory that points to the SDK kernel source tree
+LINUXKERNEL_INSTALL_DIR=$(TI_SDK_PATH)/psp/__KERNEL_NAME__
 
