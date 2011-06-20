@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install additional utilities/demos for SDKs"
-PR = "r12"
+PR = "r13"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -26,12 +26,19 @@ UTILS_append_dm365 = " am-benchmarks"
 # Add Profibus software for am181x-evm devices
 #UTILS_append_am181x-evm = " ti-profibus-slave-sw-app"
 
+AM_ADDONS = " \
+    matrix-tui \
+    oprofile \
+    dt \
+    task-arago-test \
+    "
+
 # Add matrix-tui for AM devices
-UTILS_append_am37x-evm = " matrix-tui"
-UTILS_append_beagleboard = " matrix-tui"
-UTILS_append_am180x-evm = " matrix-tui"
-UTILS_append_am181x-evm = " matrix-tui"
-UTILS_append_am3517-evm = " matrix-tui"
+UTILS_append_am37x-evm = " ${AM_ADDONS}"
+UTILS_append_beagleboard = " ${AM_ADDONS}"
+UTILS_append_am180x-evm = " ${AM_ADDONS}"
+UTILS_append_am181x-evm = " ${AM_ADDONS}"
+UTILS_append_am3517-evm = " ${AM_ADDONS}"
 
 RDEPENDS_${PN} = "\
     ${UTILS} \
