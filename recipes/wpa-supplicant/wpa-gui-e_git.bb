@@ -9,13 +9,14 @@ RDEPENDS_${PN} = "wpa-supplicant"
 RRECOMMENDS_${PN} = "glibc-gconv-utf-16"
 
 SRCREV = "b8fb017272ed4794339978c9fbc0e74571a44728"
-PR = "r0"
+PR = "r1"
 PV = "0.7.3+0.8.0-rc"
 PR_append = "+gitr${SRCPV}"
 
 DEFAULT_PREFERENCE = "-1"
 
-SRC_URI = "git://w1.fi/srv/git/hostap.git;protocol=git"
+SRC_URI = "git://w1.fi/srv/git/hostap.git;protocol=git \
+          file://0001-wpa_gui-make-the-networkconfig-dialog-scrollable.patch"
 
 S = "${WORKDIR}/git/wpa_supplicant/wpa_gui-qt4"
 
