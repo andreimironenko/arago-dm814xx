@@ -22,3 +22,10 @@ SRC_URI += " \
     file://0006-wl12xx-Backport-wl12xx-platform-data.patch \
     file://0007-activate-wireless-extensions.patch \
 "
+
+# Update the kernel so support suspend/resume when the file system is located
+# on the SD card.  This is also being submitted to the PSP team for inclusion
+# in future releases.
+SRC_URI += " \
+    file://0001-Fix-matrix-suspend.patch \
+"
