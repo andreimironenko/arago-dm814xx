@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install sources for additional utilities/demos for SDKs"
-PR = "r11"
+PR = "r12"
 LICENSE = "MIT"
 
 inherit task
@@ -19,11 +19,9 @@ UTILS_append_dm365 = " am-benchmarks-src"
 
 
 # Add pru and profibus sources for omapl138 devices
-# Comment out PRU and Profibus support until the code is migrated
-# to 2.6.37 kernel.
-#UTILS_omapl138 = " \
-#    ti-pru-sw-examples-src \
-#    "
+UTILS_omapl138 = " \
+    ti-pru-sw-examples-src \
+    "
 
 # Add matrix-tui sources for AM devices
 UTILS_append_am37x-evm = " matrix-tui-src"
