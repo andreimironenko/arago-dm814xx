@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install Board Support Package binaries on ${MACHINE}"
-PR = "r19"
+PR = "r20"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -22,6 +22,14 @@ BSP_COMPONENTS_dm6446 = "\
 
 BSP_COMPONENTS_dm6467 = "\
     ti-linux-driver-examples \
+    "
+
+BSP_COMPONENTS_am37x-evm = "\
+    av-examples \
+    "
+
+BSP_COMPONENTS_am3517-evm = "\
+    av-examples \
     "
 
 BSP_COMPONENTS_omap3 = "\
