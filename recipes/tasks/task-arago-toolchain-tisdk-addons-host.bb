@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install sources for additional utilities/demos for SDKs"
-PR = "r12"
+PR = "r13"
 LICENSE = "MIT"
 
 inherit task
@@ -19,7 +19,7 @@ UTILS_append_dm365 = " am-benchmarks-src"
 
 
 # Add pru and profibus sources for omapl138 devices
-UTILS_omapl138 = " \
+UTILS_append_omapl138 = " \
     ti-pru-sw-examples-src \
     "
 
