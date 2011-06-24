@@ -1,7 +1,6 @@
 -include Rules.make
 
-all: matrix_gui matrix_tui am_benchmarks am_sysinfo
-
+all: matrix_gui matrix_tui am_benchmarks am_sysinfo av_examples
 
 matrix_gui:
 	@echo =============================
@@ -33,6 +32,12 @@ am_sysinfo:
 	@echo =============================
 	@cd example-applications; cd `find . -name "*am-sysinfo*"`; make
 
+av_examples:
+	@echo =============================
+	@echo    Building AV Examples
+	@echo =============================
+	@cd example-applications; cd `find . -name "*av-examples*"`; make
+
 matrix_gui_clean:
 	@echo =============================
 	@echo      Cleaning Matrix GUI
@@ -59,7 +64,13 @@ am_sysinfo_clean:
 	@echo =============================
 	@cd example-applications; cd `find . -name "*am-sysinfo*"`; make clean
 
-clean: matrix_gui_clean matrix_tui_clean am_benchmarks_clean am_sysinfo_clean
+av_examples_clean:
+	@echo =============================
+	@echo    Cleaning AV Examples
+	@echo =============================
+	@cd example-applications; cd `find . -name "*av-examples*"`; make clean
+
+clean: matrix_gui_clean matrix_tui_clean am_benchmarks_clean am_sysinfo_clean av_examples_clean
 
 matrix_gui_install:
 	@echo =============================
@@ -109,6 +120,18 @@ am_sysinfo_install_debug:
 	@echo =============================
 	@cd example-applications; cd `find . -name "*am-sysinfo*"`; make install_debug
 
-install: matrix_gui_install matrix_tui_install am_benchmarks_install am_sysinfo_install
-install_debug: matrix_gui_install_debug matrix_tui_install_debug am_benchmarks_install_debug am_sysinfo_install_debug
+av_examples_install:
+	@echo =============================
+	@echo Installing AV Examples - Release version
+	@echo =============================
+	@cd example-applications; cd `find . -name "*av-examples*"`; make install
+
+av_examples_install_debug:
+	@echo =============================
+	@echo     Installing AV Examples - Debug version
+	@echo =============================
+	@cd example-applications; cd `find . -name "*av-examples*"`; make install_debug
+
+install: matrix_gui_install matrix_tui_install am_benchmarks_install am_sysinfo_install av_examples_install
+install_debug: matrix_gui_install_debug matrix_tui_install_debug am_benchmarks_install_debug am_sysinfo_install_debug av_examples_install_debug
 
