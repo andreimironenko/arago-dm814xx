@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support Package sources (or development header) packages on host"
-PR = "r40"
+PR = "r41"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -88,13 +88,13 @@ BSP_COMPONENTS_append_am3517-evm = "\
     ti-tisdk-setup \
     flash-utility \
     pinmux-utility \
+    av-examples-src \
     "
 
 BSP_COMPONENTS_append_am389x-evm = "\
     ti-tisdk-setup \
     flash-utility \
     pinmux-utility \
-    av-examples-src \
     "
 
 BSP_COMPONENTS_omapl138 = "\
