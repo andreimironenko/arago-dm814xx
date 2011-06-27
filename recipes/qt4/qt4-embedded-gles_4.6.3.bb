@@ -1,5 +1,5 @@
 require recipes/qt4/qt4-embedded.inc
-PR = "${INC_PR}.8"
+PR = "${INC_PR}.9"
 PR_append = "-arago1"
 
 PROVIDES += "qt4-embedded"
@@ -10,7 +10,9 @@ QT_GLFLAGS = "-opengl es2 -depths 16,24,32  -plugin-gfx-powervr"
 
 require recipes/qt4/qt-${PV}.inc
 
-SRC_URI += "file://cursor-hack.diff"
+SRC_URI += "file://cursor-hack.diff \
+            file://qt-embedded-linux-backingstore-subsurfaces.patch \
+            "
 
 FILESPATHBASE .= ":${OEBASE}/arago-oe-dev/recipes/qt4"
 FILESPATHPKG .= ":qt4-embedded-${PV}:qt4-embedded"
