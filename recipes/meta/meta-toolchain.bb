@@ -131,12 +131,7 @@ do_populate_sdk() {
 
 	# Fix or remove broken .la files
 	for i in `find ${SDK_OUTPUT}/${SDKPATH}/${TARGET_SYS} -name \*.la`; do
-		sed -i 	-e "/^dependency_libs=/s,\([[:space:]']\)${base_libdir},\1\$SDK_PATH/\$TARGET_SYS${base_libdir},g" \
-			-e "/^dependency_libs=/s,\([[:space:]']\)${libdir},\1\$SDK_PATH/\$TARGET_SYS${libdir},g" \
-			-e "/^dependency_libs=/s,\-\([LR]\)${base_libdir},-\1\$SDK_PATH/\$TARGET_SYS${base_libdir},g" \
-			-e "/^dependency_libs=/s,\-\([LR]\)${libdir},-\1\$SDK_PATH/\$TARGET_SYS${libdir},g" \
-			-e "/^dependency_libs=/s,${TOOLCHAIN_SYSPATH},\$TOOLCHAIN_PATH/\$TARGET_SYS,g" \
-			-e 's/^installed=yes$/installed=no/' $i
+		rm -f $i
 	done
 	rm -f ${SDK_OUTPUT}/${SDKPATH}/lib/*.la
 
