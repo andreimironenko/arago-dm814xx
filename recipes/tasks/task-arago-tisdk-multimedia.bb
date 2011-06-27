@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r35"
+PR = "r36"
 LICENSE = "MIT"
 
 inherit task
@@ -70,16 +70,19 @@ MULTIMEDIA_omap3evm = " \
 MULTIMEDIA_am37x-evm = " \
     task-arago-gst \
     gst-ffmpeg \
+    amsdk-av-files \
     "
 
 MULTIMEDIA_am3517-evm = " \
     task-arago-gst \
     gst-ffmpeg \
+    amsdk-av-files \
     "
 
 MULTIMEDIA_beagleboard = " \
     task-arago-gst \
     gst-ffmpeg \
+    amsdk-av-files \
     "
 
 MULTIMEDIA_am45x-evm = " \
