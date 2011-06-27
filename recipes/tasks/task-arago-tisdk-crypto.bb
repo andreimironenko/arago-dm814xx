@@ -2,7 +2,7 @@
 #       that require filing for a TSU exemption or applications
 #       that depend on TSU exempt code.
 DESCRIPTION = "Task to install crypto packages into target FS"
-PR = "r14"
+PR = "r15"
 LICENSE = "MIT"
 
 inherit task
@@ -63,6 +63,7 @@ WLAN_COMMON = "hostap-daemon \
                linux-firmware-wl12xx \
                wpa-gui-e \
                crda \
+               softap-udhcpd-config \
               "
 
 # These are the WLAN packages that are used for compatibility with the
