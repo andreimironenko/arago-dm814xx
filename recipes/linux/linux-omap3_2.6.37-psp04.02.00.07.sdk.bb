@@ -29,3 +29,12 @@ SRC_URI += " \
 SRC_URI += " \
     file://0001-Fix-matrix-suspend.patch \
 "
+
+# Update the OCF kernel patch to remove non-existing components for
+# non-TI hardware.  This allows the make clean target to work.
+# Update the defconfig for omap3 to enable OCF and WLAN by default
+SRC_URI += " \
+    file://0001-OCF-support-remove-support-for-non-TI-hardware.patch \
+    file://0002-omap3_evm_defconfig-add-OCF-driver-support.patch \
+    file://0003-omap3_evm_defconfig-add-WLAN-config-options.patch \
+"
