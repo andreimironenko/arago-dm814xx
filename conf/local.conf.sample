@@ -28,6 +28,9 @@ MACHINE ?= "arago"
 # reuse Angstrom, but set the name to Arago
 DISTRO = "arago"
 
+# What toolchain to use (csl, arago, angstrom etc.)
+TOOLCHAIN_BRAND ?= "csl"
+
 # So far, angstrom.conf sets ENABLE_BINARY_LOCALE_GENERATION
 # to generate binary locale packages at build time using qemu-native and
 # thereby guarantee i18n support on all devices. If your build breaks on 

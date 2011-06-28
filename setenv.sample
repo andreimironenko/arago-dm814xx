@@ -11,5 +11,5 @@ export BBPATH=$OEBASE/arago:$OEBASE/arago-oe-dev
 export PATH=$OEBASE/arago-bitbake/bin/:$OEBASE/arago-utils/:$PATH
 
 # Preserve important/all environment variables
-export BB_ENV_EXTRAWHITE="OEBASE MACHINE META_SDK_PATH http_proxy https_proxy ftp_proxy no_proxy GIT_PROXY_COMMAND"
+export BB_ENV_EXTRAWHITE="OEBASE MACHINE META_SDK_PATH TOOLCHAIN_TYPE TOOLCHAIN_BRAND http_proxy https_proxy ftp_proxy no_proxy GIT_PROXY_COMMAND"
 # export BB_PRESERVE_ENV=1
