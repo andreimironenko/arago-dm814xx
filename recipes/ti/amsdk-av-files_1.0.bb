@@ -4,7 +4,7 @@ LICENSE = "CC-BY-NC-ND-3.0"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-PR = "r1"
+PR = "r2"
 
 COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|am3517-evm|am389x-evm|beagleboard)"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
