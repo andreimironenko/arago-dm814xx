@@ -41,7 +41,7 @@ echo "This step will set up the tftp server in the $tftproot directory."
 echo
 echo "Note! This command requires you to have administrator priviliges (sudo access) "
 echo "on your host."
-read -p "Press return to continue"
+read -p "Press return to continue" REPLY
 
 if [ -d $tftproot ]; then
     echo
@@ -93,8 +93,9 @@ echo
 if [ -f $tftpcfg ]; then
     echo "$tftpcfg already exists.."
 
+    #Use = instead of == for POSIX and dash shell compliance
     if [ "`cat $tftpcfg | grep server_args | cut -d= -f2 | sed 's/^[ ]*//'`" \
-          == "$tftproot" ]; then
+          = "$tftproot" ]; then
         echo "$tftproot already exported for TFTP, skipping.."
     else
         echo "Copying old $tftpcfg to $tftpcfg.old"

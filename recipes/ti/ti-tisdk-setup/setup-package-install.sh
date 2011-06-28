@@ -9,8 +9,7 @@ echo "using the following command: $cmd"
 echo
 echo "Note! This command requires you to have administrator priviliges (sudo access) "
 echo "on your host."
-echo -n "Press return to continue"
-read
+read -p "Press return to continue" REPLY
 
 echo
 $cmd
