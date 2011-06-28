@@ -145,7 +145,18 @@ do_populate_sdk() {
 	# Create environment setup script
 	script=${SDK_OUTPUT}/${SDKPATH}/environment-setup
 	touch $script
-	echo 'export SDK_PATH=${SDKPATH}' >> $script
+	echo 'if [ -z "$ZSH_NAME" ] && [ "x$0" = "x./environment-setup" ]; then' >> $script
+	echo '    echo "Error: This script needs to be sourced. Please run as \". ./environment-setup\""' >> $script
+	echo '    exit 1' >> $script
+	echo 'else' >> $script
+	echo '    if [ -n "$BASH_SOURCE" ]; then' >> $script
+	echo '        SDK_PATH="`dirname $BASH_SOURCE`"' >> $script
+	echo '    else' >> $script
+	echo '        SDK_PATH="`pwd`"' >> $script
+	echo '    fi' >> $script
+	echo '    SDK_PATH=`readlink -f "$SDK_PATH"`' >> $script
+	echo '    export SDK_PATH' >> $script
+	echo 'fi' >> $script
 	echo 'export TOOLCHAIN_PATH=${TOOLCHAIN_PATH}' >> $script
 	echo 'export TARGET_SYS=${TARGET_SYS}' >> $script
 	echo 'export PATH=$SDK_PATH/bin:$TOOLCHAIN_PATH/bin:$PATH' >> $script
@@ -164,6 +175,15 @@ do_populate_sdk() {
 	echo 'Distro Version: ${DISTRO_VERSION}' >> $versionfile
 	echo 'Metadata Revision: ${METADATA_REVISION}' >> $versionfile
 	echo 'Timestamp: ${DATETIME}' >> $versionfile
+
+	# Add README file
+	readmefile=${SDK_OUTPUT}/${SDKPATH}/README
+	touch $readmefile
+	echo 'For best results in using this cross-compilation toolchain,' >> $readmefile
+	echo 'please source the "environment-setup" script as follows:' >> $readmefile
+	echo '  $ . ./environment-setup' >> $readmefile
+	echo 'or:' >> $readmefile
+	echo '  $ . /installed/path/environment-setup' >> $readmefile
 
 	modify_opkg_conf
 
