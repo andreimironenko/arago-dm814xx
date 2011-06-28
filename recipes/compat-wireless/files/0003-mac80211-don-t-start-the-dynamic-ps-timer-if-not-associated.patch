@@ -1,0 +1,48 @@
+From patchwork Tue May  3 18:40:08 2011
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: mac80211: don't start the dynamic ps timer if not associated
+Date: Tue, 03 May 2011 18:40:08 -0000
+From: Luciano Coelho <coelho@ti.com>
+X-Patchwork-Id: 751092
+Message-Id: <1304448008-7816-1-git-send-email-coelho@ti.com>
+To: linville@tuxdriver.com
+Cc: johannes@sipsolutions.net, linux-wireless@vger.kernel.org, ido@wizery.com
+
+When we are disconnecting, we set PS off, but this happens before we
+send the deauth/disassoc request.  When the deauth/disassoc frames are
+sent, we trigger the dynamic ps timer, which then times out and turns
+PS back on.  Thus, PS remains on after disconnecting, causing problems
+when associating again.
+
+This can be fixed by preventing the timer to start when we're not
+associated anymore.
+
+Signed-off-by: Luciano Coelho <coelho@ti.com>
+
+  The patch was imported from the git Linux wireless wl12xx server (http://wireless.kernel.org/en/users/Drivers/wl12xx)
+  (git://git.kernel.org/pub/scm/linux/kernel/git/luca/wl12xx.git) as of commit id
+  5db1c07ced19b2eec3a149a3c624d88e02e246ae.
+Upstream-Status: Accepted - Accepted in upstream.
+
+---
+net/mac80211/tx.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
+index e3e3aa1..21accf8 100644
+--- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@ -237,6 +237,10 @@ ieee80211_tx_h_dynamic_ps(struct ieee80211_tx_data *tx)
+ 				     &local->dynamic_ps_disable_work);
+ 	}
+ 
++	/* Don't restart the timer if we're not disassociated */
++	if (!ifmgd->associated)
++		return TX_CONTINUE;
++
+ 	mod_timer(&local->dynamic_ps_timer, jiffies +
+ 		  msecs_to_jiffies(local->hw.conf.dynamic_ps_timeout));
+ 
+
