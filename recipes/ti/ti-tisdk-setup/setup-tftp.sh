@@ -59,7 +59,7 @@ uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*`
 uimage=`basename $uimagesrc`
 if [ -f $tftproot/$uimage ]; then
     echo
-    echo "$tftproot/$uimage already exists. The new installed file can be renamed and saved under the new name."
+    echo "$tftproot/$uimage already exists. The existing installed file can be renamed and saved under the new name."
     echo "(r) rename (o) overwrite (s) skip copy "
     read -p "[r] " exists
     case "$exists" in
@@ -71,12 +71,14 @@ if [ -f $tftproot/$uimage ]; then
          echo "Successfully overwritten $uimage in tftp root directory $tftproot"
          ;;
       *) dte="`date +%m%d%Y`_`date +%H`.`date +%M`"
-         echo "Name of new uimage: "
+         echo "New name for existing uImage: "
          read -p "[ $uimage.$dte ]" newname
          if [ ! -n "$newname" ]; then
              newname="$uimage.$dte"
          fi
-         sudo cp $uimagesrc $tftproot/$newname 
+         sudo mv "$tftproot/$uimage" "$tftproot/$newname"
+         check_status
+         sudo cp $uimagesrc $tftproot 
          check_status
          echo
          echo "Successfully copied $uimage to tftp root directory $tftproot as $newname"
