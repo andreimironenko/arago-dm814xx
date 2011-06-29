@@ -1,6 +1,6 @@
 require external-toolchain-arago.inc
 
-PR = "r5"
+PR = "r6"
 
 INHIBIT_DEFAULT_DEPS = "1"
 
@@ -191,6 +191,7 @@ do_install() {
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${libdir}/{?crt1.o,crt?.o,libBrokenLocale*,libanl*,libc.*,libc_*,libcrypt.*,libcidn.*,libdl.*,libg.*,libieee.*,libm.*,libmcheck.*,libnsl*,libnss*,libpthread*,libresolv*,librt*,libstdc*,libthread*,libutil*} ${D}${libdir}
 	rm -rf ${D}${base_libdir}/*.la
 	rm -rf ${D}${libdir}/*.la
+	rm -rf ${D}${includedir}/{zconf,zlib}.h
 
 	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', '', 'rm -rf ${D}/usr/include/linux', d)}
 
