@@ -8,14 +8,21 @@ LICENSE = "BSD"
 SECTION = "system"
 PRIORITY = "optional"
 
-SRCREV = "65"
+SRCREV = "66"
 PR = "r2+svnr${SRCPV}"
-
-INSANE_SKIP_${PN} = "True"
 
 SRC_URI = "svn://gforge.ti.com/svn/am_benchmarks/;module=trunk;proto=https;user=anonymous;pswd=''"
 
 S = "${WORKDIR}/trunk"
+
+do_configure() {
+    # Find all the objects.mk files for the Release target
+    files=`find ${BASE_PACKAGE_ARCH} -name "objects.mk" | grep Release`
+    for f in $files
+    do
+        sed -i -e 's|LIBS :=|LIBS := ${LDFLAGS} |' $f
+    done
+}
 
 do_compile() {
 	# don't build debug version
