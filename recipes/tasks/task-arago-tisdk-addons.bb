@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install additional utilities/demos for SDKs"
-PR = "r14"
+PR = "r15"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -26,7 +26,6 @@ UTILS_append_am180x-evm = " ti-pru-sw-examples"
 
 AM_ADDONS = " \
     matrix-tui \
-    oprofile \
     dt \
     task-arago-test \
     "
