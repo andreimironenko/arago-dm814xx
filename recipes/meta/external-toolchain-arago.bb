@@ -1,6 +1,6 @@
 require external-toolchain-arago.inc
 
-PR = "r6"
+PR = "r7"
 
 INHIBIT_DEFAULT_DEPS = "1"
 
@@ -11,7 +11,7 @@ INSANE_SKIP_libgcc = "True"
 INSANE_SKIP_libstdc++ = "True"
 INSANE_SKIP_glibc-utils = "True"
 INSANE_SKIP_glibc-dev = "True"
-#INSANE_SKIP_gdbserver = "True"
+INSANE_SKIP_gdbserver = "True"
 
 SRC_URI = "file://SUPPORTED"
 
@@ -185,7 +185,7 @@ do_install() {
 
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${base_libdir}/{lib*,ld*} ${D}${base_libdir}
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${base_sbindir}/ldconfig ${D}${base_sbindir}
-	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${bindir}/{gencat,getconf,getent,iconv,locale,mtrace,pcprofiledump,rpcgen,sprof,tzselect,xtrace} ${D}${bindir}
+	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${bindir}/{gdbserver,gencat,getconf,getent,iconv,locale,mtrace,pcprofiledump,rpcgen,sprof,tzselect,xtrace} ${D}${bindir}
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${sbindir}/{iconvconfig,rpcinfo,zdump,zic} ${D}${sbindir}
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${includedir}/{arpa,asm*,bits,drm,gnu,linux,mtd,net*,nfs,protocols,rdma,rpc*,scsi,sound,sys*,video,*.h} ${D}${includedir}
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${libdir}/{?crt1.o,crt?.o,libBrokenLocale*,libanl*,libc.*,libc_*,libcrypt.*,libcidn.*,libdl.*,libg.*,libieee.*,libm.*,libmcheck.*,libnsl*,libnss*,libpthread*,libresolv*,librt*,libstdc*,libthread*,libutil*} ${D}${libdir}
@@ -193,10 +193,10 @@ do_install() {
 	rm -rf ${D}${libdir}/*.la
 	rm -rf ${D}${includedir}/{zconf,zlib}.h
 
-	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', '', 'rm -rf ${D}/usr/include/linux', d)}
+	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', '', 'rm -rf ${D}${includedir}/linux', d)}
 
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}/include/* ${D}${includedir}
-	${@base_conditional('PREFERRED_PROVIDER_gdbserver', 'external-toolchain-arago', '', 'rm -rf ${D}/usr/bin/gdbserver', d)}
+	${@base_conditional('PREFERRED_PROVIDER_gdbserver', 'external-toolchain-arago', '', 'rm -rf ${D}${bindir}/gdbserver', d)}
 
 	sed -e "s# /lib# ../../lib#g" -e "s# /usr/lib# .#g" ${D}${libdir}/libc.so > ${D}${libdir}/temp
 	mv ${D}${libdir}/temp ${D}${libdir}/libc.so
