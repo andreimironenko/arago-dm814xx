@@ -14,6 +14,7 @@ SRC_URI += " \
 	file://0003-AM18xx-WL1271-Enable-BT.patch \
 	file://0004-PSP03.21.00.04.sdk-activate-wireless-extensions.patch \
 	file://0005-Davinci-da850-Add-Mistral-WL12XX-config-support-to.patch \
+	file://0006-Add-wlan-and-BT-config-switches.patch \
 	"
 
 SRC_URI_append_am180x-evm = " file://uio_pruss.patch"
