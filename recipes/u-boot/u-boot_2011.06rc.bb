@@ -1,5 +1,7 @@
 require recipes/u-boot/u-boot.inc
 
+PR = "r1"
+
 PACKAGE_STRIP = "no"
 
 # No patches for other machines yet
@@ -36,6 +38,7 @@ SRC_URI = "git://www.denx.de/git/u-boot.git;protocol=git \
            file://2011.06/0028-BeagleBoard-config-make-mtest-run.patch \
            file://2011.06/0029-BeagleBoard-config-increase-command-line-functionali.patch \
            file://2011.06/0030-BeagleBoard-config-add-optargs-buddy-camera.patch \
+           file://2011.06/0001-BB-xM-Default-to-1GHz.patch \
            file://2011.06/fw_env.config \
           "
 
