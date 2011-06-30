@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install multimedia source (or development header) packages on host"
-PR = "r24"
+PR = "r25"
 LICENSE = "MIT"
 
 inherit task
@@ -60,12 +60,12 @@ MULTIMEDIA_SOURCETREE_omapl138 = " \
     "
 
 # Do not pull DSP sources into AMSDK builds
-MULTIMEDIA_SOURCETREE_am37x-evm = " amsdk-av-files-src"
-MULTIMEDIA_SOURCETREE_beagleboard = " amsdk-av-files-src"
+MULTIMEDIA_SOURCETREE_am37x-evm = ""
+MULTIMEDIA_SOURCETREE_beagleboard = ""
 MULTIMEDIA_SOURCETREE_am180x-evm = ""
 MULTIMEDIA_SOURCETREE_am181x-evm = ""
 MULTIMEDIA_SOURCETREE_am389x-evm = ""
-MULTIMEDIA_SOURCETREE_am3517-evm = " amsdk-av-files-src"
+MULTIMEDIA_SOURCETREE_am3517-evm = ""
 MULTIMEDIA_SOURCETREE_am387x-evm = ""
 MULTIMEDIA_SOURCETREE_am45x-evm = ""
 
