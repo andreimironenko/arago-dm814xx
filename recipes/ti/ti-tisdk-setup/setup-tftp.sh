@@ -55,8 +55,9 @@ else
     check_status
 fi
 
-uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*`
-uimage=`basename $uimagesrc`
+platform=`cat $cwd/../Rules.make | grep -e "^PLATFORM=" | cut -d= -f2`
+uimage="uImage-""$platform"".bin"
+uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/$uimage`
 if [ -f $tftproot/$uimage ]; then
     echo
     echo "$tftproot/$uimage already exists. The existing installed file can be renamed and saved under the new name."
