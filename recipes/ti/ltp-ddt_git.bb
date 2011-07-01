@@ -3,7 +3,9 @@ HOMEPAGE = "http://arago-project.org/git/projects/test-automation/ltp-ddt.git"
 LICENSE = "GPLv2"
 SECTION = "console/utils"
 DEPENDS += "zip-native virtual/kernel alsa-lib"
-PR = "r0"
+PV = "0.0.2"
+PR = "r1"
+PR_append = "+gitr${SRCPV}"
 
 PROVIDES += "ltp"
 
@@ -11,9 +13,8 @@ inherit autotools
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-SRCREV = ${AUTOREV}
-PV = "0.0.2+gitr${SRCPV}"
-BRANCH ?= "next"
+SRCREV = "${AUTOREV}"
+BRANCH ?= "master"
 
 SRC_URI = "git://arago-project.org/git/projects/test-automation/ltp-ddt.git;protocol=git;branch=${BRANCH}"
 
