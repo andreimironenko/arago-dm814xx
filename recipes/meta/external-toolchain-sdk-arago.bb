@@ -2,7 +2,7 @@ inherit sdk
 
 require external-toolchain-arago.inc
 
-PR = "r1"
+PR = "r2"
 
 PACKAGE_STRIP = "no"
 
@@ -30,7 +30,6 @@ FILES_gcc-cross-sdk = "\
 	${prefix}/${TARGET_SYS}/bin/gcc \
 	${prefix}/${TARGET_SYS}/lib/libstdc++.* \
 	${prefix}/${TARGET_SYS}/lib/libssp* \
-	${prefix}/${TARGET_SYS}/lib/libobjc.* \
 	${prefix}/${TARGET_SYS}/lib/libgcc_s.* \
 	${prefix}/${TARGET_SYS}/lib/libsupc++.* \
 	${gcclibdir}/${TARGET_SYS}/${ARG_VER_GCC}/* \
@@ -100,7 +99,7 @@ do_install() {
 	install -d ${D}${prefix}/${HOST_SYS}
 
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}/bin/{cpp,cc,gccbug,g++,gcov,gcc} ${D}${prefix}/${TARGET_SYS}/bin
-	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}/lib/{libstdc++.*,libssp*,libobjc.*,libgcc_s.*,libsupc++.*} ${D}${prefix}/${TARGET_SYS}/lib
+	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}/lib/{libstdc++.*,libssp*,libgcc_s.*,libsupc++.*} ${D}${prefix}/${TARGET_SYS}/lib
 	cp -a ${TOOLCHAIN_PATH}/lib/gcc/${TARGET_SYS}/${ARG_VER_GCC}/* ${D}${gcclibdir}/${TARGET_SYS}/${ARG_VER_GCC}
 	cp -a ${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}{gcov,gccbug,gcc,g++,cpp} ${D}${bindir}
 	cp -a ${TOOLCHAIN_PATH}/libexec/* ${D}${libexecdir}
