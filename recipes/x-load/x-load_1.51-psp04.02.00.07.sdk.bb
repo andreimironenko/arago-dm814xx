@@ -7,11 +7,10 @@ COMPATIBLE_MACHINE = "am37x-evm"
 
 SRCREV = "v1.51_OMAPPSP_04.02.00.07"
 
-PR = "r0"
+PR = "r1"
 
 SRC_URI = "git://arago-project.org/git/projects/x-load-omap3.git;protocol=git \
 	   file://0001-Fix-clock-values-for-non-26MHz-source.patch \
-	   file://0002-Increase-MPU-clock-to-1GHz.patch \
 	  "
 
 XVER = "1.51"
