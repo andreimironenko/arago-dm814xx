@@ -26,7 +26,7 @@ SRC_URI = "\
     file://${UBOOT_ENV} \
 "
 
-PR = "r32"
+PR = "r33"
 
 do_install () {
     install -m 0755 ${WORKDIR}/setup.sh ${D}/
