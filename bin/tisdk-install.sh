@@ -132,7 +132,7 @@ update_rules_make()
   done
   
   # update LINUX KERNEL INSTALL DIR
-  linuxversion="`basename $install_dir/psp/linux-*`"
+  linuxversion="`basename $install_dir/board-support/linux-*`"
   sed -i -e s/\<__kernel__\>/${linuxversion}/g \
           $install_dir/usr/share/ti/Rules.make
   sed -i -e s=\<__SDK__INSTALL_DIR__\>=${install_dir}= \
@@ -150,15 +150,15 @@ move_to_install_dir()
 {
   echo "Moving sourcetree"
   if [ -d ${install_dir}/usr/share/ti/ti-psp-tree ]; then
-    echo " from ti-psp-tree => psp"
-    mv ${install_dir}/usr/share/ti/ti-psp-tree/* ${install_dir}/psp/
+    echo " from ti-psp-tree => board-support"
+    mv ${install_dir}/usr/share/ti/ti-psp-tree/* ${install_dir}/board-support/
 
     rm -rf ${install_dir}/usr/share/ti/ti-psp-tree
   fi
 
   # copy prebuilt kernel image and uboot in psp/prebuilt directory
-  mkdir -p ${install_dir}/psp/prebuilt-images/
-  cp deploy/images/$machine/*.bin ${install_dir}/psp/prebuilt-images/
+  mkdir -p ${install_dir}/board-support/prebuilt-images/
+  cp deploy/images/$machine/*.bin ${install_dir}/board-support/prebuilt-images/
 
   if [ -d ${install_dir}/usr/share/ti/ti-docs-tree ]; then
     echo " from ti-docs-tree => docs"
