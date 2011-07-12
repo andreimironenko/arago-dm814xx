@@ -451,9 +451,20 @@ sub copy_output
     }
 
     # if MLO (x-load exists) copy it.
-    if (-e "$arago_images_output_dir/$machine/MLO-$machine") {
+    if (-e "$arago_images_output_dir/$machine/MLO") {
         print "\nCopying MLO binary...";
-        $cmd = "cp $arago_images_output_dir/$machine/MLO-$machine $sdkpath/deploy/images/$machine";
+        $cmd = "cp $arago_images_output_dir/$machine/MLO $sdkpath/deploy/images/$machine";
+        $result = system($cmd);
+
+        if ($result) {
+            print "\n ERROR: failed to execute $cmd";
+        }
+    }
+   
+    # copy pre-built .ko tarball.
+    if (-e "$arago_images_output_dir/$machine/modules-*-$machine.tgz") {
+        print "\nCopying pre-built modules..."
+        $cmd = "cp $arago_images_output_dir/$machine/modules-*-$machine.tgz $sdkpath/deploy/images/$machine";
         $result = system($cmd);
 
         if ($result) {

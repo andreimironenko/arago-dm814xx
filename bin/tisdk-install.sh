@@ -156,9 +156,19 @@ move_to_install_dir()
     rm -rf ${install_dir}/usr/share/ti/ti-psp-tree
   fi
 
-  # copy prebuilt kernel image and uboot in psp/prebuilt directory
+  # copy prebuilt kernel image and uboot in board-support/prebuilt directory
   mkdir -p ${install_dir}/board-support/prebuilt-images/
   cp deploy/images/$machine/*.bin ${install_dir}/board-support/prebuilt-images/
+ 
+  # copy prebuilt MLO to board-support/prebuilt directory
+  if [ -e deploy/images/$machine/MLO ]; then
+    cp deploy/images/MLO ${install_dir}/board-support/prebuilt-images/
+  fi
+
+  # copy prebuilt kernel modules to board-support/prebuilt directory
+  if [ -e deploy/images/$machine/modules-*-$machine.tgz ]; then
+    cp deploy/images/modules-*-$machine.tgz ${install_dir}/board-support/prebuilt-images/
+  fi
 
   if [ -d ${install_dir}/usr/share/ti/ti-docs-tree ]; then
     echo " from ti-docs-tree => docs"
