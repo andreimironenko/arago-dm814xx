@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install source (or development) packages on host"
-PR = "r16"
+PR = "r17"
 LICENSE="MIT"
 
 inherit task
@@ -58,6 +58,7 @@ DSP_SOURCETREE_am3517-evm = ""
 DSP_SOURCETREE_am389x-evm = ""
 DSP_SOURCETREE_am387x-evm = ""
 DSP_SOURCETREE_am45x-evm = ""
+DSP_SOURCETREE_am335x-evm = ""
 
 RRECOMMENDS_${PN} = "\
     ${DSP_SOURCETREE} \

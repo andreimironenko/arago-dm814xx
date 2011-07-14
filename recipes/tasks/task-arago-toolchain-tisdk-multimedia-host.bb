@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install multimedia source (or development header) packages on host"
-PR = "r25"
+PR = "r26"
 LICENSE = "MIT"
 
 inherit task
@@ -68,6 +68,7 @@ MULTIMEDIA_SOURCETREE_am389x-evm = ""
 MULTIMEDIA_SOURCETREE_am3517-evm = ""
 MULTIMEDIA_SOURCETREE_am387x-evm = ""
 MULTIMEDIA_SOURCETREE_am45x-evm = ""
+MULTIMEDIA_SOURCETREE_am335x-evm = ""
 
 RRECOMMENDS_${PN} = "\
     ${MULTIMEDIA_SOURCETREE} \

@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r36"
+PR = "r37"
 LICENSE = "MIT"
 
 inherit task
@@ -96,6 +96,11 @@ MULTIMEDIA_ti816x = " \
     "
 
 MULTIMEDIA_ti814x = " \
+    task-arago-gst \
+    gst-ffmpeg \
+    "
+
+MULTIMEDIA_ti33x = " \
     task-arago-gst \
     gst-ffmpeg \
     "
