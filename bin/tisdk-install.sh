@@ -101,13 +101,13 @@ update_rules_make()
         real_name="graphics-sdk"
         ;;
       "signal-analyzer-demo")
-        real_name="example-applications/signal-analyzer"
+        real_name="signal-analyzer"
         ;;
       "omx-libs")
-        real_name="omx_*"
+        real_name="omx"
         ;;
       "omtb")
-        real_name="example-applications/omtb"
+        real_name="omtb"
         ;;
       "sysbios")
         real_name="bios"
@@ -124,7 +124,7 @@ update_rules_make()
     esac
 
     # get the directory name
-    dirname="`basename $install_dir/${real_name}_*`"
+    dirname="`find $install_dir -maxdepth 2 -name ${real_name}_* -type d | xargs basename`"
 
     # update rules.make
     sed -i -e s/\<__${name}__\>/${dirname}/g \
