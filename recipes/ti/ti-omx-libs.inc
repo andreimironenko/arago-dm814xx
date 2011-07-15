@@ -75,38 +75,38 @@ do_compile() {
 }
 
 do_install() {
-    install -d ${D}/omx_${PV}
+    install -d ${D}/component-sources/omx_${PV}
 
     # Run the script that copies only required directories and files
     ${S}/packages/ti/omx/scripts/install_script.sh  \
           ${S}/packages/ti/omx/scripts/dirlist.txt  \
           ${S}/packages/ti/omx/scripts/filelist.txt \
-          ${S} ${D}/omx_${PV}
+          ${S} ${D}/component-sources/omx_${PV}
 
     # Copy the right make files
-    cp -f ${S}/packages/makerules/env.mk.bm ${D}/omx_${PV}/packages/makerules/env.mk
-    cp -f ${S}/packages/component.mk.bm ${D}/omx_${PV}/packages/component.mk
-    cp -f ${S}/packages/makefile.bm ${D}/omx_${PV}/packages/makefile
+    cp -f ${S}/packages/makerules/env.mk.bm ${D}/component-sources/omx_${PV}/packages/makerules/env.mk
+    cp -f ${S}/packages/component.mk.bm ${D}/component-sources/omx_${PV}/packages/component.mk
+    cp -f ${S}/packages/makefile.bm ${D}/component-sources/omx_${PV}/packages/makefile
 
-    install -d ${D}/omx_${PV}/lib
-    cp ${S}/lib/ti/omx/domx/lib/a8host/debug/domx.av5T ${D}/omx_${PV}/lib
-    cp ${S}/lib/ti/omx/domx/delegates/shmem/lib/a8host/debug/domx_delegates_shmem.av5T ${D}/omx_${PV}/lib
-    cp ${S}/lib/ti/omx/omxcore/lib/a8host/debug/omxcore.av5T ${D}/omx_${PV}/lib
-    cp ${S}/lib/ti/omx/memcfg/lib/a8host/debug/memcfg.av5T ${D}/omx_${PV}/lib
-    cp ${S}/lib/ti/timmosal/lib/a8host/debug/timmosal.av5T ${D}/omx_${PV}/lib
+    install -d ${D}/component-sources/omx_${PV}/lib
+    cp ${S}/lib/ti/omx/domx/lib/a8host/debug/domx.av5T ${D}/component-sources/omx_${PV}/lib
+    cp ${S}/lib/ti/omx/domx/delegates/shmem/lib/a8host/debug/domx_delegates_shmem.av5T ${D}/component-sources/omx_${PV}/lib
+    cp ${S}/lib/ti/omx/omxcore/lib/a8host/debug/omxcore.av5T ${D}/component-sources/omx_${PV}/lib
+    cp ${S}/lib/ti/omx/memcfg/lib/a8host/debug/memcfg.av5T ${D}/component-sources/omx_${PV}/lib
+    cp ${S}/lib/ti/timmosal/lib/a8host/debug/timmosal.av5T ${D}/component-sources/omx_${PV}/lib
 
-    install -d ${D}/omx_${PV}/firmware
-    cp ${S}/firmware/*.xem3 ${D}/omx_${PV}/firmware
+    install -d ${D}/component-sources/omx_${PV}/firmware
+    cp ${S}/firmware/*.xem3 ${D}/component-sources/omx_${PV}/firmware
 
     install -d ${D}/${installdir}/ti-omx
-    cp -r ${S}/prebuilt-binaries ${D}/omx_${PV}/
+    cp -r ${S}/prebuilt-binaries ${D}/component-sources/omx_${PV}/
     cp -r ${S}/prebuilt-binaries/decode/bin/ti816x-evm/*.xv5T ${D}/${installdir}/ti-omx
 
-    cd ${D}/omx_${PV}
+    cd ${D}/component-sources/omx_${PV}
     ln -s packages/ti/omx/docs
 
-    install -d ${D}/omx_${PV}/include
-    cd ${D}/omx_${PV}/include
+    install -d ${D}/component-sources/omx_${PV}/include
+    cd ${D}/component-sources/omx_${PV}/include
     ln -s ../packages/ti/omx/interfaces/openMaxv11;
     for i in vdec venc vfpc vfcc vfdc; do
         ln -s ../packages/ti/omx/comp/$i/omx_$i.h;
@@ -120,7 +120,7 @@ do_install() {
 }
 
 PACKAGES += "ti-omx-libs-sourcetree"
-FILES_ti-omx-libs-sourcetree = "omx_${PV}"
+FILES_ti-omx-libs-sourcetree = "component-sources/omx_${PV}"
 
 PACKAGES += "ti-omx-libs-examples"
 FILES_ti-omx-libs-examples = "${installdir}/ti-omx"
