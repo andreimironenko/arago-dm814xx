@@ -7,7 +7,7 @@
 # Licensed under terms of GPLv2
 #
 
-VERSION="0.2"
+VERSION="0.3"
 
 execute ()
 {
@@ -157,10 +157,10 @@ execute "mkdir -p /tmp/sdk/$$"
 execute "mount ${device}1 /tmp/sdk/$$"
 execute "cp /tmp/sdk/boot.scr /tmp/sdk/$$/"
 execute "cp /tmp/sdk/boot.cmd /tmp/sdk/$$/"
-execute "cp $sdkdir/psp/prebuilt-images/uImage-*.bin /tmp/sdk/$$/uImage"
-execute "cp $sdkdir/psp/prebuilt-images/u-boot.bin /tmp/sdk/$$/"
-execute "cp $sdkdir/psp/prebuilt-images/u-boot.noxip.bin /tmp/sdk/$$/"
-execute "cp $sdkdir/psp/prebuilt-images/MLO /tmp/sdk/$$/"
+execute "cp $sdkdir/board-support/prebuilt-images/uImage-*.bin /tmp/sdk/$$/uImage"
+execute "cp $sdkdir/board-support/prebuilt-images/u-boot.bin /tmp/sdk/$$/"
+execute "cp $sdkdir/board-support/prebuilt-images/u-boot.noxip.bin /tmp/sdk/$$/"
+execute "cp $sdkdir/board-support/prebuilt-images/MLO /tmp/sdk/$$/"
 execute "cp $sdkdir/bin/top_ti816x_evm.png /tmp/sdk/$$/"
 execute "cp $sdkdir/bin/windows_users.htm /tmp/sdk/$$/"
 execute "cp $sdkdir/bin/README.boot.scr /tmp/sdk/$$/"
