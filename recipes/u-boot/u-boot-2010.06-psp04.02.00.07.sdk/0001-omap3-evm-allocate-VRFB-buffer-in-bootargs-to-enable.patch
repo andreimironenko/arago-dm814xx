@@ -1,0 +1,27 @@
+From a125b18c3e93617b8fb47c2303cbcd9c54304caf Mon Sep 17 00:00:00 2001
+From: Punya Prakash <pprakash@ti.com>
+Date: Wed, 6 Jul 2011 05:53:39 -0500
+Subject: [PATCH]  omap3-evm: allocate VRFB buffer in bootargs to enable rotation
+
+Upstream-Status: Pending
+
+Signed-off-by: Punya Prakash <pprakash@ti.com>
+---
+ include/configs/omap3_evm.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/include/configs/omap3_evm.h b/include/configs/omap3_evm.h
+index e239abb..87eb88b 100644
+--- a/include/configs/omap3_evm.h
++++ b/include/configs/omap3_evm.h
+@@ -206,7 +206,7 @@
+	"console=ttyO0,115200n8\0" \
+	"mmcargs=setenv bootargs console=${console} " \
+		"root=/dev/mmcblk0p2 rw " \
+-		"rootfstype=ext3 rootwait\0" \
++		"rootfstype=ext3 rootwait omap_vout.vid1_static_vrfb_alloc=y\0" \
+	"nandargs=setenv bootargs console=${console} " \
+		"root=/dev/mtdblock4 rw " \
+		"rootfstype=jffs2\0" \
+--
+1.7.0.4
