@@ -31,7 +31,7 @@ else
     echo
 fi
 
-uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
+uimagesrc=`ls -1 $cwd/../board-support/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
 baseargs="console=ttyO0,115200n8 rootwait rw mem=166M earlyprintk"
