@@ -4,6 +4,7 @@ LICENSE = "GPLv2"
 KERNEL_IMAGETYPE = "uImage"
 
 require recipes/linux/multi-kernel.inc
+require copy-defconfig.inc
 
 BRANCH ?= "master"
 

@@ -4,6 +4,7 @@ LICENSE = "GPLv2"
 KERNEL_IMAGETYPE = "uImage"
 
 inherit kernel
+require copy-defconfig.inc
 
 BRANCH ?= "master"
 
