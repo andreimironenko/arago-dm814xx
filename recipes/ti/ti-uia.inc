@@ -16,8 +16,8 @@ SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/UI
 
 DEPENDS = "ti-syslink ti-ipc"
 
-EXTRA_OEMAKE = "SYSLINK=${SYSLINK_INSTALL_DIR} \
-        IPC=${IPC_INSTALL_DIR}/packages \
+EXTRA_OEMAKE = "SYSLINK_INSTALL_DIR=${SYSLINK_INSTALL_DIR}/packages \
+        IPC_INSTALL_DIR=${IPC_INSTALL_DIR}/packages \
         CC='${CC}' \
         RANLIB='${RANLIB}' \
 "
