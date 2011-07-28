@@ -61,6 +61,7 @@ do_compile() {
          CGT_ARM_INSTALL_DIR="${TOOLCHAIN_PATH}" \
          CGT_ARM_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
          CGT_C674_ELF_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
+         USE_SYSLINK_NOTIFY=0 \
          syslink
 
     make DEVICE="${SYSLINKDEVICE}" \
@@ -74,6 +75,7 @@ do_compile() {
          CGT_ARM_INSTALL_DIR="${TOOLCHAIN_PATH}" \
          CGT_ARM_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
          CGT_C674_ELF_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
+         USE_SYSLINK_NOTIFY=0 \
          samples
 }
 
