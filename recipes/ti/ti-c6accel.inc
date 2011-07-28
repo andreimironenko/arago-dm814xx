@@ -69,7 +69,7 @@ do_install() {
     cp -pPrf ${S}/* ${D}${C6ACCEL_INSTALL_DIR_RECIPE}
 
     # update linker.cmd file to point to sysroot 
-    sed -i ${i} -e s=${S}=${C6ACCEL_INSTALL_DIR}=g ${D}${C6ACCEL_INSTALL_DIR_RECIPE}/soc/app/c6accel_app_config/linker.cmd
+    sed -i ${i} -e s=${S}=${C6ACCEL_INSTALL_DIR}=g ${D}${C6ACCEL_INSTALL_DIR_RECIPE}/soc/app/c6accel_dsplib_testapp/c6accel_dsplib_testapp_config/linker.cmd
 
     cd ${S} 
     make \
