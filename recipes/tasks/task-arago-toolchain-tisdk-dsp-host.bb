@@ -27,7 +27,6 @@ DSP_EZSDK_COMMON = " \
     ti-codec-engine-src \
     ti-c6accel-src \
     ti-c6run-src \
-    ti-dsp-benchmark-src \
     ti-dsplib-c674x-src \
     ti-imglib-c64plus-src \
     ti-mathlib-c67x-src \
@@ -35,6 +34,7 @@ DSP_EZSDK_COMMON = " \
     ti-signal-analyzer-demo-doc \
     ti-docs-faqs \
 "
+#    ti-dsp-benchmark-src \
 
 DSP_SOURCETREE_dm6446 = "\
     ${DSP_DVSDK_COMMON} \
@@ -78,8 +78,8 @@ DSP_SOURCETREE_c6a816x-evm = "\
 
 DSP_SOURCETREE_dm816x-evm = "\
     ${DSP_EZSDK_COMMON} \
-    ti-uia-src \
     ti-media-controller-utils-src \
+    ti-firmware-dm816x-src \
     "
 
 DSP_SOURCETREE_dm816x-custom = "\

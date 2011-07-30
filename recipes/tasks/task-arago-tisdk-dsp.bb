@@ -14,9 +14,9 @@ DSP_EZSDK_COMMON = " \
     ti-syslink-examples \
     ti-c6accel-apps \
     ti-c6run-apps \
-    ti-dsp-benchmark-apps \
     ti-integra-demos \
 "
+#    ti-dsp-benchmark-apps \
 
 DSP_COMPONENTS_dm6446 = "\
     ${DSP_DVSDK_COMMON} \
