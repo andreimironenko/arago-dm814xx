@@ -5,7 +5,7 @@ LICENSE = "BSD"
 require ti-paths.inc
 require ti-staging.inc
 
-DEPENDS = "ti-omx-libs ti-syslink"
+DEPENDS = "ti-syslink"
 
 INC_PR = "r0"
 
