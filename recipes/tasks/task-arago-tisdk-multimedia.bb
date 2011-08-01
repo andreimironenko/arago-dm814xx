@@ -85,12 +85,10 @@ MULTIMEDIA_am45x-evm = " \
 MULTIMEDIA_ti816x = " \
     ${MULTIMEDIA_EZSDK_COMMON} \
     ti-uia \
-    ti-omtb \
     ti-media-controller-utils \
     ti-media-controller-hdvpss-loader \
     ti-media-controller-hdvicp2-loader \
     ti-data \
-    ti-omx-libs-examples \
     "
 
 MULTIMEDIA_ti814x = " \

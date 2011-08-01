@@ -81,9 +81,7 @@ MULTIMEDIA_SOURCETREE_omapl138 = " \
 MULTIMEDIA_SOURCETREE_dm816x-evm = " \
     ${MULTIMEDIA_EZSDK_COMMON} \
     ti-uia-src \
-    ti-omx-libs-sourcetree \
     ti-media-controller-utils-src \
-    ti-omtb-src \
 "
 
 MULTIMEDIA_SOURCETREE_dm816x-custom = " \
