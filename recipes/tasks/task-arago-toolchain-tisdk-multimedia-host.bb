@@ -29,6 +29,7 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-syslink-src \
     ti-syslink-dev \
     ti-codec-engine-src \
+    ti-slog-src \
  "
 
 MULTIMEDIA_SOURCETREE_am37x-evm = ""

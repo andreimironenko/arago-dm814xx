@@ -12,7 +12,6 @@ EZSDK_MULTIMEDIA_COMMON = "\
 
 EZSDK_MULTIMEDIA_dm816x-evm = "\
     ${EZSDK_MULTIMEDIA_COMMON} \
-    ti-omx-libs-dev \
 "
 
 EZSDK_MULTIMEDIA_dm816x-custom = "\
