@@ -34,6 +34,8 @@ TI_BIN_UNPK_CMDS="Y:workdir"
 DEPENDS = "ti-codec-engine ti-xdais ti-syslink ti-sysbios ti-ipc ti-osal" 
 DEPENDS += "ti-edma3lld ti-cgt6x ti-xdctools ti-framework-components ti-linuxutils" 
 
+PARALLEL_MAKE = ""
+
 do_compile() {
     unset VERBOSE
     # Build C6Accel package
