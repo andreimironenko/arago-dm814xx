@@ -32,7 +32,7 @@ BINFILE="c6accel_${PV}_Linux-x86_Setup.bin"
 TI_BIN_UNPK_CMDS="Y:workdir"
 
 DEPENDS = "ti-codec-engine ti-xdais ti-syslink ti-sysbios ti-ipc ti-osal" 
-DEPENDS += "ti-edma3lld ti-cgt6x ti-xdctools ti-framework-components" 
+DEPENDS += "ti-edma3lld ti-cgt6x ti-xdctools ti-framework-components ti-linuxutils" 
 
 do_compile() {
     unset VERBOSE
