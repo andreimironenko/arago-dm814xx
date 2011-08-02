@@ -165,82 +165,42 @@ cmem_install:
 ###############################################################################
 # Build SYSLINK
 ###############################################################################
-SYSLINK_ROOT=${SYSLINK_INSTALL_DIR}
-SYSLINK_XDCPATH="${IPC_INSTALL_DIR}/packages;${SYSBIOS_INSTALL_DIR}/packages"
+syslink: 
+	${MAKE} -C ${SYSLINK_INSTALL_DIR} \
+	DEVICE="TI816X" \
+	GPPOS=Linux \
+	LOADER=ELF \
+	SDK=EZSDK \
+	IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
+	BIOS_INSTALL_DIR="${SYSBIOS_INSTALL_DIR}" \
+	XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
+	LINUXKERNEL="${KERNEL_INSTALL_DIR}" \
+	CGT_ARM_INSTALL_DIR="${CSTOOL_DIR}" \
+	CGT_ARM_PREFIX="${CSTOOL_PREFIX}" \
+	CGT_C674_ELF_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
+	USE_SYSLINK_NOTIFY=0 \
+	syslink
 
-syslink_cfg:
-	sed -i \
-        -e s:^C64.rootDir.*:C64.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
-        -e s:^C64P_COFF.rootDir.*:C64P_COFF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
-        -e s:^C64P_ELF.rootDir.*:C64P_ELF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
-        -e s:^C67P_ELF.rootDir.*:C67P_ELF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
-        -e s:^C674_ELF.rootDir.*:C674_ELF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
-        -e s:^C674_COFF.rootDir.*:C674_COFF.rootDir\ =\ \"${CODEGEN_INSTALL_DIR}\":g \
-        -e s:^Arm9.rootDir.*:Arm9.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
-        -e s:^M3_ELF.rootDir.*:M3_ELF.rootDir\ =\ \"${TMS470_CODEGEN_INSTALL_DIR}\":g \
-        -e s:C64P_COFF,://C64P_COFF:g \
-        -e s:C64P_ELF,://C64P_ELF:g \
-        -e s:M3_ELF,://M3_ELF:g \
-        -e s:A8_ELF$$://A8_ELF:g \
-        ${SYSLINK_INSTALL_DIR}/config.bld
-
-syslink_hlos: 
-	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/knl/Linux/ \
-		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
-		SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages;${SYSLINK_INSTALL_DIR}" \
-		ARCH=arm \
-		CROSS_COMPILE=${CSTOOL_PREFIX} \
-		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
-		SYSLINK_PLATFORM=TI81XX \
-		SYSLINK_VARIANT=TI816X \
-		KDIR=$(LINUXKERNEL_INSTALL_DIR)
-	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/usr/Linux/ \
-		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
-		SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages;${SYSLINK_INSTALL_DIR}" \
-		ARCH=arm \
-		CROSS_COMPILE=${CSTOOL_PREFIX} \
-		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
-		SYSLINK_PLATFORM=TI81XX \
-		SYSLINK_VARIANT=TI816X \
-		KDIR=$(LINUXKERNEL_INSTALL_DIR)
-
-syslink_hlos_clean: 
-	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/knl/Linux/ \
-		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
-		SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages;${SYSLINK_INSTALL_DIR}" \
-		ARCH=arm \
-		CROSS_COMPILE=${CSTOOL_PREFIX} \
-		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
-		SYSLINK_PLATFORM=TI81XX \
-		SYSLINK_VARIANT=TI816X \
-		KDIR=$(LINUXKERNEL_INSTALL_DIR) clean
-	${MAKE} -C ${SYSLINK_INSTALL_DIR}/ti/syslink/utils/hlos/usr/Linux/ \
-		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
-		SYSLINK_PKGPATH="${IPC_INSTALL_DIR}/packages;${SYSLINK_INSTALL_DIR}" \
-		ARCH=arm \
-		CROSS_COMPILE=${CSTOOL_PREFIX} \
-		TOOLCHAIN_PREFIX=${CSTOOL_PREFIX} \
-		SYSLINK_PLATFORM=TI81XX \
-		SYSLINK_VARIANT=TI816X \
-		KDIR=$(LINUXKERNEL_INSTALL_DIR) clean
-
-syslink_rtos: syslink_cfg
-	XDCPATH=${SYSLINK_XDCPATH} \
-		SYSLINK_ROOT=${SYSLINK_INSTALL_DIR} \
-		${XDC_INSTALL_DIR}/xdc -P \
-		`${XDC_INSTALL_DIR}/bin/xdcpkg ${SYSLINK_INSTALL_DIR}/ti/syslink | grep -v samples`
-
-syslink_rtos_clean: syslink_cfg
-	XDCPATH=${SYSLINK_XDCPATH} ${XDC_INSTALL_DIR}/xdc clean -PR ${SYSLINK_INSTALL_DIR}/ti/syslink/.
-
-syslink_clean: syslink_hlos_clean syslink_rtos_clean
-
-syslink: syslink_hlos syslink_rtos
+syslink_clean: 
+	${MAKE} -C ${SYSLINK_INSTALL_DIR} \
+	DEVICE="TI816X" \
+	GPPOS=Linux \
+	LOADER=ELF \
+	SDK=EZSDK \
+	IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
+	BIOS_INSTALL_DIR="${SYSBIOS_INSTALL_DIR}" \
+	XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
+	LINUXKERNEL="${KERNEL_INSTALL_DIR}" \
+	CGT_ARM_INSTALL_DIR="${CSTOOL_DIR}" \
+	CGT_ARM_PREFIX="${CSTOOL_PREFIX}" \
+	CGT_C674_ELF_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
+	USE_SYSLINK_NOTIFY=0 \
+	clean
 
 syslink_install:
 	install -d $(EXEC_DIR)/syslink
-	install ${SYSLINK_INSTALL_DIR}/ti/syslink/bin/TI816X/syslink.ko $(EXEC_DIR)/syslink
-	cp ${SYSLINK_INSTALL_DIR}/ti/syslink/lib/syslink.a* $(EXEC_DIR)/syslink
+	install ${SYSLINK_INSTALL_DIR}/packages/ti/syslink/bin/TI816X/syslink.ko $(EXEC_DIR)/syslink
+	cp ${SYSLINK_INSTALL_DIR}/packages/ti/syslink/lib/syslink.a* $(EXEC_DIR)/syslink
 
 ##############################################################################
 #  Build c6accel

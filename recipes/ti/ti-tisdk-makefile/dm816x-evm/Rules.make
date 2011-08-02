@@ -40,7 +40,7 @@ CMEM_INSTALL_DIR=$(LINUXUTILS_INSTALL_DIR)
 XDAIS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__xdais__>
 
 # Where the RTSC tools package is installed.
-XDC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__xdctools__>
+XDC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/dsp-devkit/<__xdctools__>
 
 # Where the Code Gen is installed.
 CODEGEN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/dsp-devkit/<__cgt6x__>
