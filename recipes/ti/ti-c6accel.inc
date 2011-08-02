@@ -31,8 +31,7 @@ SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/c6000/web/c6accel/lates
 BINFILE="c6accel_${PV}_Linux-x86_Setup.bin"
 TI_BIN_UNPK_CMDS="Y:workdir"
 
-DEPENDS = "ti-codec-engine ti-xdais ti-syslink ti-sysbios ti-ipc ti-osal" 
-DEPENDS += "ti-edma3lld ti-cgt6x ti-xdctools ti-framework-components ti-linuxutils" 
+DEPENDS = "ti-codec-engine ti-xdais ti-syslink ti-sysbios ti-ipc ti-osal ti-edma3lld ti-cgt6x ti-xdctools ti-framework-components ti-linuxutils" 
 
 PARALLEL_MAKE = ""
 
