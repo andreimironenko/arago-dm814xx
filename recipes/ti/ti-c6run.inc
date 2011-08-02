@@ -23,8 +23,8 @@ DEPENDS_append_omapl138  = "ti-dspbios ti-dsplink"
 DEPENDS_append_omap3evm  = "ti-dspbios ti-dsplink ti-local-power-manager"
 DEPENDS_append_dm37x-evm = "ti-dspbios ti-dsplink ti-local-power-manager"
 DEPENDS_append_hawkboard = "ti-dspbios ti-dsplink"
-DEPENDS_append_ti816x    = "ti-sysbios ti-syslink"
-DEPENDS_append_ti814x    = "ti-sysbios ti-syslink"
+DEPENDS_append_ti816x    = "ti-sysbios ti-syslink ti-c6accel"
+DEPENDS_append_ti814x    = "ti-sysbios ti-syslink ti-c6accel"
 
 # PLATFORM Definitions
 C6RUNPLATFORMS_omapl137      = "omapl137"
