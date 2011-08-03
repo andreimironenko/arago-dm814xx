@@ -53,7 +53,8 @@ do_compile() {
     # Build OMX Library Package
     cd ${S}/packages
 
-    oe_runmake CORE=a8host DEST_ROOT=${S}/lib libs examples
+    oe_runmake CORE=a8host DEST_ROOT=${S}/lib libs 
+    oe_runmake CORE=a8host DEST_ROOT=${S}/bin examples
 }
 
 do_install() {
