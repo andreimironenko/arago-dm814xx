@@ -111,7 +111,9 @@ echo  $install_dir
 update_rules_make
 update_linux_devkit
 
+# Delete this script
+rm -f $0
+
 echo "Installation completed!"
 
 exit 0
- 
