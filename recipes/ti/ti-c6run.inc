@@ -104,17 +104,6 @@ do_prepsources() {
 
     find ${S} -name .svn -type d | xargs rm -rf
     # Clean the DSP/GPP backend libraries
-    cd ${S}
-    make \
-    CODEGEN_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
-    BIOS_INSTALL_DIR="${C6RUNBIOSINSTALL}" \
-    XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
-    LINK_INSTALL_DIR="${C6RUNLINKINSTALL}" \
-    CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
-    LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
-    ARM_TOOLCHAIN_PATH="${TOOLCHAIN_PATH}" \
-    ARM_TOOLCHAIN_PREFIX="${TARGET_PREFIX}" \
-    clean
 }
 
 addtask prepsources after do_configure before do_compile
