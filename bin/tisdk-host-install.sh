@@ -106,7 +106,7 @@ test -z $machine && usage $0
 test -z $toolchain_dir && usage $0
 
 
-install_dir="$(cd "$(dirname "$0")" && pwd)"
+install_dir=$(cd $(dirname $0) && pwd)
 echo  $install_dir
 update_rules_make
 update_linux_devkit
