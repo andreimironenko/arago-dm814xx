@@ -1,0 +1,69 @@
+From 77a5759ecfe30c7723c5897eeb58358f212065a7 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Wed, 3 Aug 2011 15:42:48 +0530
+Subject: [PATCH] C6Accel: Update Memory Map for EZSDK 5.02
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ .../c6accel_unitservers/TI816X/serverplatforms.xs  |   20 ++++++++++----------
+ 1 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/soc/packages/ti/c6accel_unitservers/TI816X/serverplatforms.xs b/soc/packages/ti/c6accel_unitservers/TI816X/serverplatforms.xs
+index 8344ad7..9c93047 100755
+--- a/soc/packages/ti/c6accel_unitservers/TI816X/serverplatforms.xs
++++ b/soc/packages/ti/c6accel_unitservers/TI816X/serverplatforms.xs
+@@ -61,26 +61,26 @@ var TI816X_DSP_MemoryMap = [
+             ["DDR3_CMEM", {
+                 comment: "DDR3 Memory reserved for use by the C674/ARM for CMEM",
+                 name: "DDR3_CMEM",
+-                base: 0x94000000,
+-                len: 0x01400000       /* 20MB (CMEM region defined based on application requirement) */
++                base: 0x97600000,
++                len: 0x00A00000       /* 10MB (CMEM region defined based on application requirement) */
+             }],
+             ["DDR3_DSP", {
+                 comment: "DDR3 Memory reserved for use by the C674",
+                 name: "DDR3_DSP",
+-                base: 0x95400000,
+-                len:  0x01200000    /* 18 MB (Default memory reserved for c674x changed based on size of the DSP code)*/
++                base: 0x99500000,
++                len:  0x00C00000    /* 18 MB (Default memory reserved for c674x changed based on size of the DSP code)*/
+             }],
+ 	    ["DDRALGHEAP", {
+                 comment: "DDR3 Memory reserved for use by algorithms on the C674",
+                 name: "DDRALGHEAP",
+-                base: 0x96600000,
++                base: 0x98000000,
+                 len:  0x00400000    /* 4 MB (Region used by algs and codec engine for memory allocations)*/
+             }],
+             ["DDR3_SR1", {
+                 comment: "DDR3 Memory reserved for use by SharedRegion 1",
+                 name: "DDR3_SR1",
+-                base: 0x96A00000,
+-                len:  0x00C00000    /* 12 MB (Reserved)*/
++                base: 0x99400000,
++                len:  0x00100000    /* 1 MB (Reserved)*/
+             }],
+             ["DDR3_HDVPSS", {
+                 comment: "DDR3 Memory reserved for use by HDVPSS",
+@@ -97,13 +97,13 @@ var TI816X_DSP_MemoryMap = [
+             ["DDR3_SR0", {
+                 comment: "DDR3 Memory reserved for use by SharedRegion 0",
+                 name: "DDR3_SR0",
+-                base: 0x97600000,
+-                len:  0x01000000    /* 16 MB (Reserved)*/
++                base: 0x9F700000,
++                len:  0x00200000    /* 2 MB (Reserved)*/
+             }],
+             ["DDR3_REST", {
+                 comment: "DDR3 Memory reserved for use by the M3 core",
+                 name: "DDR3_REST",
+-                base: 0x90000000,
++                base: 0x98400000,
+                 len:  0x01000000    /* 16 MB */
+             }],	    
+ 
+-- 
+1.7.0.4
+
