@@ -7,7 +7,7 @@ DESCRIPTION = "u-boot bootloader for TI33x devices"
 
 COMPATIBLE_MACHINE = "ti33x"
 
-BRANCH = "int_am335x_u-boot"
+BRANCH = "int_am335xpsp_04.06.00.01"
 
 SRCREV = "${AUTOREV}"
 PV = "2010.06"
@@ -15,7 +15,7 @@ PR = "r0"
 PR_append = "+gitr${SRCPV}"
 
 UVER = "2010.06"
-PSPREL = "am335x-prerelease"
+PSPREL = "04.06.00.01"
 
 # NOTE: In order to use this recipe inside the TI firewall you need to add the
 #       following line to your ~/.gitconfig file as the first line in the "core"
