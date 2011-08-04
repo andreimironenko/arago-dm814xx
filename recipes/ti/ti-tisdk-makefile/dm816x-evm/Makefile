@@ -6,32 +6,32 @@ MIN_UBOOT_CONFIG=ti8168_evm_min_sd
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	components components_clean all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_clean c6accel_install syslink syslink_clean syslink_install opengldemos opengldemos_clean opengldemos_install sademo sademo_clean sademo_install matrix matrix_clean matrix_install c6run c6run_clean c6run_examples c6run_install
+.PHONY:	components components_clean all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_clean c6accel_install syslink syslink_clean syslink_install sademo sademo_clean sademo_install matrix matrix_clean matrix_install c6run c6run_clean c6run_examples c6run_install imglib imglib_clean dsplib dsplib_clean mathlib mathlib_clean osal osal_clean
 
 #==============================================================================
 # Build components to enable all other build targets. 
 #==============================================================================
-components: linux cmem syslink c6accel c6run
+components: linux cmem syslink c6accel c6run imglib dsplib mathlib osal
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-components_clean: linux_clean syslink_clean cmem_clean c6accel_clean c6run_clean
+components_clean: linux_clean syslink_clean cmem_clean c6accel_clean c6run_clean imglib_clean dsplib_clean mathlib_clean osal_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-all: components u-boot opengldemos sademo matrix c6run_examples omx omtb
+all: components u-boot sademo matrix c6run_examples omx omtb psp-examples
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install syslink_install u-boot_install c6accel_install opengldemos_install sademo_install matrix_install c6run_install omx_install omtb_install
+install: linux_install cmem_install syslink_install u-boot_install c6accel_install sademo_install matrix_install c6run_install omx_install omtb_install psp-examples_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clean: components_clean u-boot_clean opengldemos_clean sademo_clean matrix_clean c6run_clean omx_clean omtb_clean
+clean: components_clean u-boot_clean sademo_clean matrix_clean c6run_clean omx_clean omtb_clean psp-examples_clean
 
 #==============================================================================
 # A help message target.
@@ -56,7 +56,6 @@ help:
 	@echo 
 	@echo "    syslink_rtos                 : Configure and build SysLink for RTOS"
 	@echo "    syslink_rtos_clean           : Clean SysLink for RTOS"
-	@echo 
 	@echo
 	@echo "    linux                        : Build Linux kernel uImage and module"
 	@echo "    linux_clean                  : Remove generated Linux kernel files"
@@ -65,6 +64,22 @@ help:
 	@echo "    u-boot                       : Build the u-boot boot loader"
 	@echo "    u-boot_clean                 : Remove generated u-boot files"
 	@echo "    u-boot_install               : Install the u-boot image"
+	@echo
+	@echo "    psp-examples                 : Build the driver examples"
+	@echo "    psp-examples_clean		: Remove generated driver example files"
+	@echo "    psp-examples_install         : Install the psp examples"
+	@echo
+	@echo "    imglib                       : Build the DSP image library"
+	@echo "    imglib_clean                 : Remove generated imglib files"
+	@echo
+	@echo "    dsplib                       : Build the DSP library"
+	@echo "    dsplib_clean                 : Remove generated dsplib files"
+	@echo
+	@echo "    mathlib                      : Build the DSP math library"
+	@echo "    mathlib_clean                : Remove generated mathlib files"
+	@echo
+	@echo "    osal                         : Build the OSAL"
+	@echo "    osal_clean                   : Remove generated OSAL files"
 	@echo
 	@echo "    c6accel                      : Build c6accel package"
 	@echo "    c6accel_clean                : Remove generated c6accel files"
@@ -75,13 +90,10 @@ help:
 	@echo "    c6run_examples               : Build c6run examples & tests"
 	@echo "    c6run_install                : Install c6run examples & tests"
 	@echo 
-	@echo "    opengldemos                  : Build the OPENGL graphics SDK demos for $(PLATFORM)"
-	@echo "    opengldemos_clean            : Remove OPENGL graphics SDK demo files."
-	@echo "    opengldemos_install          : install OPENGL graphics SDK demo executables."
-	@echo
 	@echo "    sademo                       : Build the Signal Analyzer demo for $(PLATFORM)"
 	@echo "    sademo_clean                 : Remove Signal Analyzer demo files."
 	@echo "    sademo_install               : install Signal Analyzer demo executables."
+	@echo
 	@echo "    matrix                       : Build matrix application launcher"
 	@echo "    matrix_clean                 : Remove all matrix files"
 	@echo "    matrix_install               : Install matrix"
@@ -144,6 +156,74 @@ u-boot_install:
 	install $(PSP_INSTALL_DIR)/u-boot-*/u-boot.bin $(EXEC_DIR)/boot
 	install $(PSP_INSTALL_DIR)/u-boot-*/u-boot.map $(EXEC_DIR)/boot
 
+###############################################################################
+# Build the Linux device driver examples
+###############################################################################
+psp-examples:
+	mkdir -p $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio/bin
+	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio \
+		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
+		INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio \
+		EXE_DIR=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio/bin \
+		LIB_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit/arm-none-linux-gnueabi/usr/lib \
+		LIB_INC=$(DVSDK_INSTALL_DIR)/linux-devkit/arm-none-linux-gnueabi/usr/include \
+		CROSS_COMPILE=$(CSTOOL_PREFIX)
+	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/edma \
+		KDIR=$(LINUXKERNEL_INSTALL_DIR) \
+		PWD=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/edma \
+		ARCH=arm \
+		CROSS_COMPILE=$(CSTOOL_PREFIX)
+	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/pcie \
+		CC=$(CSTOOL_PREFIX)gcc \
+		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)
+	mkdir -p $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/video/bin
+#	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/video \
+#		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
+#		INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/video \
+#		EXE_DIR=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/video/bin \
+#		CROSS_COMPILE=$(CSTOOL_PREFIX)
+	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/watchdog \
+		CC=$(CSTOOL_PREFIX)gcc \
+		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)
+
+psp-examples_clean:
+	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio \
+		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
+		INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio \
+		EXE_DIR=$(EXEC_DIR)/psp-linux-driver-examples*/audio \
+		LIB_DIR=/home/user/ti-ezsdk_dm816x-evm_5_01_01_80.orig/linux-devkit/arm-none-linux-gnueabi/usr/lib \
+		LIB_INC=/home/user/ti-ezsdk_dm816x-evm_5_01_01_80.orig/linux-devkit/arm-none-linux-gnueabi/usr/include \
+		CROSS_COMPILE=$(CSTOOL_PREFIX) \
+		clean
+	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/edma \
+		KDIR=$(LINUXKERNEL_INSTALL_DIR) \
+		PWD=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/edma \
+		ARCH=arm \
+		CROSS_COMPILE=$(CSTOOL_PREFIX) \
+		clean
+	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/pcie \
+		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
+		CC=$(CSTOOL_PREFIX)gcc \
+		clean
+	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/video \
+		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
+		INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/video \
+		EXE_DIR=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/video \
+		CROSS_COMPILE=$(CSTOOL_PREFIX) \
+		clean
+	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/watchdog \
+		CC=$(CSTOOL_PREFIX)gcc \
+		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
+		clean
+
+psp-examples_install:
+	mkdir -p $(EXEC_DIR)/psp-examples
+	-cp $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio/bin/minimal_capture $(EXEC_DIR)/psp-examples
+	-cp $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio/bin/minimal_playback $(EXEC_DIR)/psp-examples
+	-cp $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/edma/edma_test.ko $(EXEC_DIR)/psp-examples
+	-cp $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/pcie/saBootApp $(EXEC_DIR)/psp-examples
+	-cp $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/watchdog/saWatchdog $(EXEC_DIR)/psp-examples
+
 #==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the
 # kernel_binaries directory is kept in sync. Also, an explicit cleanup target
@@ -161,6 +241,26 @@ cmem_install:
 	install -d $(EXEC_DIR)/cmem
 	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/cmem
 
+###############################################################################
+# Build the OSAL
+###############################################################################
+osal:
+	$(MAKE) -C $(OSAL_INSTALL_DIR)/packages/linuxdist/build \
+		CROSS_COMPILE=$(CSTOOL_PREFIX) \
+		OSAL_INSTALL_DIR=$(OSAL_INSTALL_DIR)
+	$(MAKE) -C $(OSAL_INSTALL_DIR)/packages/linuxdist/cstubs \
+		CROSS_COMPILE=$(CSTOOL_PREFIX) \
+		OSAL_INSTALL_DIR=$(OSAL_INSTALL_DIR)
+
+osal_clean:
+	$(MAKE) -C $(OSAL_INSTALL_DIR)/packages/linuxdist/build \
+		CROSS_COMPILE=$(CSTOOL_PREFIX) \
+		OSAL_INSTALL_DIR=$(OSAL_INSTALL_DIR) \
+		clean
+	$(MAKE) -C $(OSAL_INSTALL_DIR)/packages/linuxdist/cstubs \
+		CROSS_COMPILE=$(CSTOOL_PREFIX) \
+		OSAL_INSTALL_DIR=$(OSAL_INSTALL_DIR) \
+		clean
 
 ###############################################################################
 # Build SYSLINK
@@ -349,42 +449,6 @@ c6run_install:
 	install_programs
 
 ################################################################################
-# Build openGL demos
-################################################################################
-opengldemos:
-	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
-		BUILD=release \
-		OMAPES=6.x \
-		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
-		CSTOOL_DIR=${CSTOOL_DIR} \
-		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
-		all
-
-opengldemos_clean:
-	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
-		BUILD=release \
-		OMAPES=6.x \
-		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
-		CSTOOL_DIR=${CSTOOL_DIR} \
-		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
-		clean
-
-opengldemos_install:
-	mkdir -p ${EXEC_DIR}/opengl-demos/etc/init.d
-	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) \
-		BUILD=release \
-		OMAPES=6.x \
-		GRAPHICS_INSTALL_DIR=${GRAPHICS_INSTALL_DIR} \
-		CSTOOL_DIR=${CSTOOL_DIR} \
-		KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR} \
-		TARGETFS_INSTALL_DIR=$(EXEC_DIR)/opengl-demos \
-		install
-	for file in `find $(GRAPHICS_INSTALL_DIR)/gfx_rel_es3.x -name "*.ko"`; do \
-	    install $${file} $(EXEC_DIR)/opengl-demos; \
-	done
-
-
-################################################################################
 # Build Signal Analyzer demo
 ################################################################################
 
@@ -443,6 +507,7 @@ omx:
 		ipc_PATH=$(IPC_INSTALL_DIR) \
 		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
 		xdc_PATH=$(XDC_INSTALL_DIR) \
+		uia_PATH=$(UIA_INSTALL_DIR) \
 		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
 		DEST_ROOT=$(OMX_INSTALL_DIR)/rebuilt-binaries
 
@@ -494,3 +559,51 @@ omtb_clean:
 omtb_install:
 	install -d $(EXEC_DIR)/omtb
 	install $(OMTB_INSTALL_DIR)/rebuilt-binaries/dm816xbm/bin/ti816x-evm/omtb_dm816xbm_a8host.xv5T $(EXEC_DIR)/omtb
+
+################################################################################
+# Build the DSP image library
+################################################################################
+imglib:
+	make -C $(IMGLIB_INSTALL_DIR) \
+		IMGLIB_INSTALL_DIR=$(IMGLIB_INSTALL_DIR) \
+		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
+		BUILD_TYPE=Release_elf
+
+imglib_clean:
+	make -C $(IMGLIB_INSTALL_DIR) \
+		IMGLIB_INSTALL_DIR=$(IMGLIB_INSTALL_DIR) \
+		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
+		BUILD_TYPE=Release_elf \
+		clean
+
+################################################################################
+# Build the DSP library
+################################################################################
+dsplib:
+	make -C $(DSPLIB_INSTALL_DIR) \
+		DSPLIBC674x_INSTALL_DIR=$(DSPLIB_INSTALL_DIR) \
+		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
+		BUILD_TYPE=Release_elf
+
+dsplib_clean:
+	make -C $(DSPLIB_INSTALL_DIR) \
+		DSPLIBC674x_INSTALL_DIR=$(DSPLIB_INSTALL_DIR) \
+		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
+		BUILD_TYPE=Release_elf \
+		clean
+
+################################################################################
+# Build the DSP math library
+################################################################################
+mathlib:
+	make -C $(MATHLIB_INSTALL_DIR) \
+		MATHLIB_INSTALL_DIR=$(MATHLIB_INSTALL_DIR) \
+		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
+		BUILD_TYPE=C674x_elf
+
+mathlib_clean:
+	make -C $(MATHLIB_INSTALL_DIR) \
+		MATHLIB_INSTALL_DIR=$(MATHLIB_INSTALL_DIR) \
+		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
+		BUILD_TYPE=C674x_elf \
+		clean

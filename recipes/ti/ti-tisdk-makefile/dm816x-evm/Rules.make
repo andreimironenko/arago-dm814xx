@@ -55,6 +55,15 @@ KERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR)
 # Where the development headers and libs are installed.
 LINUX_DEVKIT_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit
 
+# Where the dsp image library is installed
+IMGLIB_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__imglib-c64plus__>
+
+# Where the dsp library is installed
+DSPLIB_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__dsplib-c674x__>
+
+# Where the dsp math library is installed
+MATHLIB_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__mathlib-c67x__>
+
 # Where c6accel package is installed.
 C6ACCEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__c6accel__>
 
@@ -66,6 +75,9 @@ GRAPHICS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__libgles-omap3__>
 
 # Where signal analyzer package is installed
 SADEMO_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/<__signal-analyzer-demo__>
+
+# Where the Unified Instrumentation Architecture is installed.
+UIA_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__uia__>
 
 # Where OMX package is installed
 OMX_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__omx__>
