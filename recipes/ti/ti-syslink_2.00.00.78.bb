@@ -23,7 +23,9 @@ PVExtra = ""
 
 S = "${WORKDIR}/syslink_${PV}${PVExtra}"
 
-SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/syslink/${PV}/exports/syslink_${PV}.tar.gz;name=syslinktarball"
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/syslink/${PV}/exports/syslink_${PV}.tar.gz;name=syslinktarball \
+           file://0001-Syslink-Update-Memory-Map-for-EZSDK-5.02.patch \
+"
 
 DEPENDS = "ti-sysbios ti-xdctools ti-cgt6x ti-ipc ti-cgt470"
 DEPENDS += "virtual/kernel" 
