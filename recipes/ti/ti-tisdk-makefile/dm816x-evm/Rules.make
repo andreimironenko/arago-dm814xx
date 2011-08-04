@@ -68,10 +68,13 @@ GRAPHICS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__libgles-omap3__>
 SADEMO_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/<__signal-analyzer-demo__>
 
 # Where OMX package is installed
-OMX_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__omx-libs__>
+OMX_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__omx__>
 
 # Where OMTB package is installed
 OMTB_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/<__omtb__>
+
+# Where SLOG package is installed
+SLOG_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__slog__>
 
 # The prefix to be added before the GNU compiler tools (optionally including # path), i.e. "arm_v5t_le-" or "/opt/bin/arm_v5t_le-".
 CSTOOL_DIR=<__CROSS_COMPILER_PATH__>
