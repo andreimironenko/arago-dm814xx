@@ -1,0 +1,70 @@
+From 5098c9e8ad7bb5f18d4ae3788e38461aad3f49a3 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Thu, 4 Aug 2011 15:15:41 +0530
+Subject: [PATCH] CE: Update memory map for EZSDK 5.02
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ .../apps/system_files/evmTI816X/loadmodules.sh     |    2 +-
+ .../examples/servers/all_codecs/serverplatforms.xs |   16 ++++++++--------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/examples/apps/system_files/evmTI816X/loadmodules.sh b/examples/apps/system_files/evmTI816X/loadmodules.sh
+index 5ef760c..beb39c0 100755
+--- a/examples/apps/system_files/evmTI816X/loadmodules.sh
++++ b/examples/apps/system_files/evmTI816X/loadmodules.sh
+@@ -59,7 +59,7 @@
+ # pool:  2048 KB, 2 x 1 MB buffers
+ # heap:  4784 KB, (~4.67 MB)
+ #
+-CMEM_MODPARAMS="phys_start=0xa0000000 phys_end=0xa07fffff pools=20x4096,10x131072,2x1048576"
++CMEM_MODPARAMS="phys_start=0x97600000 phys_end=0x98000000 pools=20x4096,10x131072,2x1048576"
+ 
+ # insert CMEM driver, using two blocks of memory
+ #
+diff --git a/examples/ti/sdo/ce/examples/servers/all_codecs/serverplatforms.xs b/examples/ti/sdo/ce/examples/servers/all_codecs/serverplatforms.xs
+index beca672..bfee16d 100644
+--- a/examples/ti/sdo/ce/examples/servers/all_codecs/serverplatforms.xs
++++ b/examples/ti/sdo/ce/examples/servers/all_codecs/serverplatforms.xs
+@@ -323,20 +323,20 @@ var TI816X_DSP_ExtMemMap = {
+             DDR3_DSP: {
+                 comment: "DDR3 Memory reserved for use by the C674",
+                 name: "DDR3_DSP",
+-                base: 0x8B000000,
+-                len:  0x01800000    /* 24 MB */
++                base: 0x99500000,
++                len:  0x00C00000    /* 12 MB */
+             },
+             DDRALGHEAP: {
+                 comment: "DDR3 Memory reserved for use by algorithms on the C674",
+                 name: "DDRALGHEAP",
+-                base: 0x8C800000,
+-                len:  0x00800000    /* 8 MB */
++                base: 0x98000000,
++                len:  0x01400000    /* 20 MB */
+             },
+             DDR3_SR1: {
+                 comment: "DDR3 Memory reserved for use by SharedRegion 1",
+                 name: "DDR3_SR1",
+-                base: 0x8D000000,
+-                len:  0x00C00000    /* 12 MB */
++                base: 0x9A100000,
++                len:  0x00100000    /* 1 MB */
+             },
+             DDR3_HDVPSS: {
+                 comment: "DDR3 Memory reserved for use by HDVPSS",
+@@ -353,8 +353,8 @@ var TI816X_DSP_ExtMemMap = {
+             DDR3_SR0: {
+                 comment: "DDR3 Memory reserved for use by SharedRegion 0",
+                 name: "DDR3_SR0",
+-                base: 0x8E000000,
+-                len:  0x01000000    /* 16 MB */
++                base: 0x9F700000,
++                len:  0x00200000    /* 2 MB */
+             },
+             DDR3_M3: {
+                 comment: "DDR3 Memory reserved for use by the M3 core",
+-- 
+1.7.0.4
+
