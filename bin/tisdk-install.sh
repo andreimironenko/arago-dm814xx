@@ -162,13 +162,11 @@ move_to_install_dir()
  
   # copy prebuilt MLO to board-support/prebuilt directory
   if [ -e deploy/images/$machine/MLO ]; then
-    cp deploy/images/MLO ${install_dir}/board-support/prebuilt-images/
+    cp deploy/images/$machine/MLO ${install_dir}/board-support/prebuilt-images/
   fi
 
   # copy prebuilt kernel modules to board-support/prebuilt directory
-  if [ -e deploy/images/$machine/modules-*-$machine.tgz ]; then
-    cp deploy/images/modules-*-$machine.tgz ${install_dir}/board-support/prebuilt-images/
-  fi
+  cp deploy/images/$machine/modules*$machine.tgz ${install_dir}/board-support/prebuilt-images/
 
   if [ -d ${install_dir}/usr/share/ti/ti-docs-tree ]; then
     echo " from ti-docs-tree => docs"

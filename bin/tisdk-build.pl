@@ -462,14 +462,12 @@ sub copy_output
     }
    
     # copy pre-built .ko tarball.
-    if (-e "$arago_images_output_dir/$machine/modules-*-$machine.tgz") {
-        print "\nCopying pre-built modules...";
-        $cmd = "cp $arago_images_output_dir/$machine/modules-*-$machine.tgz $sdkpath/deploy/images/$machine";
-        $result = system($cmd);
+    print "\nCopying pre-built modules...";
+    $cmd = "cp $arago_images_output_dir/$machine/modules-*-$machine.tgz $sdkpath/deploy/images/$machine";
+    $result = system($cmd);
 
-        if ($result) {
-            print "\n ERROR: failed to execute $cmd";
-        }
+    if ($result) {
+        print "\n ERROR: failed to execute $cmd";
     }
     
     # copy install script
