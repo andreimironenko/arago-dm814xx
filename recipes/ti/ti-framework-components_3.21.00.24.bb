@@ -8,6 +8,9 @@ SRC_URI = "http://www.sanb.design.ti.com/tisb_releases/Framework_Components/${PV
 SRC_URI[fctarball.md5sum] = "72ca0f79f4354587e3794b50de233527"
 SRC_URI[fctarball.sha256sum] = "b4157ae69c96eb174c852db737a87601ed92bc3e453177403b107d1c63b434a2"
 
+SRC_URI += "file://0001-Add-SDK-Config.bld-to-enable-out-of-the-box-builds.patch \
+"
+
 do_compile() {
     :
 }
