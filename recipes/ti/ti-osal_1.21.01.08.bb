@@ -8,3 +8,6 @@ SRC_URI = "http://www.sanb.design.ti.com/tisb_releases/OSAL/${PV}/exports/osal_$
 
 SRC_URI[osaltarball.md5sum] = "4c11bbb1f2bf093fededda69c8b39062"
 SRC_URI[osaltarball.sha256sum] = "59008cf7cd4eff6cf31fa27538d3926d48413682151f5f47b678871b3da60dd3"
+
+SRC_URI += "file://0001-Add-SDK-Config.bld-to-enable-out-of-the-box-builds.patch \
+"
