@@ -1,0 +1,81 @@
+From 87a34b7090f864c3776b8cb74a01eba8f30f7635 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Fri, 5 Aug 2011 17:38:30 +0530
+Subject: [PATCH] Add SDK Config.bld to enable out of the box builds
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ packages/config.bld |   60 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 60 insertions(+), 0 deletions(-)
+ create mode 100644 packages/config.bld
+
+diff --git a/packages/config.bld b/packages/config.bld
+new file mode 100644
+index 0000000..3fcc69f
+--- /dev/null
++++ b/packages/config.bld
+@@ -0,0 +1,60 @@
++/*
++ *  ======== config.bld ========
++ *  Build configuration script
++ */
++
++
++
++
++
++/* When calling XDC, we can pass CODEGEN_INSTALL_DIR in XDCARGS
++ * and it will be used to set the location of Codegen
++ */
++
++var codegen_rootdir;
++
++for (x = 0; x < arguments.length; x++) {
++    if (arguments[x].match(/^CODEGEN_INSTALL_DIR=/)) {
++        codegen_rootdir = arguments[x].split("=")[1];
++    }
++}
++
++
++
++
++/* ==== Setup for c674 elf target === */
++
++var C674 = xdc.useModule('ti.targets.elf.C674');
++C674.rootDir = codegen_rootdir;
++C674.ccOpts.suffix += " -mi10 -mo ";
++//set default platform and list of all interested platforms for c674
++C674.platforms = [
++                    "ti.platforms.evmTI816X",
++                 ];
++C674.platform = C674.platforms[0];
++
++
++
++
++/* ==== Setup for M3 elf target ==== */
++
++var M3 = xdc.useModule('ti.targets.arm.elf.M3');
++M3.rootDir = codegen_rootdir;
++M3.ccOpts.suffix += " -ms ";
++//set default platform and list of all interested platforms for M3
++M3.platforms = [
++                     "ti.platforms.evmTI816X",
++               ];
++M3.platform = M3.platforms[0];
++
++
++
++/* list interested targets in Build.targets array 
++ * By default, we keep this commented out. When calling XDC, we can
++ * set XDCTARGETS to build for that target.
++ */
++Build.targets = [
++                    //C674,
++                    //M3,
++                ];
++
+-- 
+1.7.0.4
+
