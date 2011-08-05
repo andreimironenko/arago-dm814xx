@@ -56,6 +56,7 @@ DSP_COMPONENTS_dm816x-evm = "\
     ti-uia \
     ti-media-controller-utils \
     ti-media-controller-hdvpss-loader \
+    ti-firmware \
     "
 
 DSP_COMPONENTS_c6a814x-evm = "\

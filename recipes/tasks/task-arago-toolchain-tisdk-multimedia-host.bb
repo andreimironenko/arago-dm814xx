@@ -84,6 +84,7 @@ MULTIMEDIA_SOURCETREE_omapl138 = " \
 
 MULTIMEDIA_SOURCETREE_dm816x-evm = " \
     ${MULTIMEDIA_EZSDK_COMMON} \
+    ti-firmware-dm816x-src \
 "
 
 MULTIMEDIA_SOURCETREE_dm816x-custom = " \

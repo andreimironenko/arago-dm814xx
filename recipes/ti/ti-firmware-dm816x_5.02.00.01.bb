@@ -18,9 +18,9 @@ SRC_URI[firmware.sha256sum] = "dff0f4d4f4e1a9bdcf271802b496645a4e0e0491da4b81003
 S = "${WORKDIR}/firmware-ti816x_05_02_00_01"
 
 do_install() {
-    install -d ${D}/${installdir}/ti-omx
-    install ${S}/*.xem3 ${D}/${installdir}/ti-omx
+    install -d ${D}/${installdir}/ti-media-controller-utils
+    install ${S}/*.xem3 ${D}/${installdir}/ti-media-controller-utils
 }
 
 PACKAGES += "ti-firmware"
-FILES_ti-firmware = "${installdir}/ti-omx"
+FILES_ti-firmware = "${installdir}/ti-media-controller-utils"
