@@ -24,6 +24,9 @@ EXTRA_OEMAKE = "SYSLINK_INSTALL_DIR=${SYSLINK_INSTALL_DIR} \
 do_install() {
     cd ${S}
     oe_runmake DESTDIR=${D} prefix=${prefix} install
+
+	install -d ${D}${sysconfdir}/modprobe.d/
+    install ${S}/src/linux/${PLATFORM}/modprobe.conf ${D}${sysconfdir}/modprobe.d/media-controller-utils.conf
 }
 
-FILES_${PN} = "${bindir}/* ${installdir}/ti-media-controller-utils/*"
+FILES_${PN} = "${bindir}/* ${installdir}/ti-media-controller-utils/* ${sysconfdir}/*"
