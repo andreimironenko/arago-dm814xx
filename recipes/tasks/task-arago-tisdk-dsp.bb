@@ -16,6 +16,9 @@ DSP_EZSDK_COMMON = " \
     ti-c6run-apps \
     ti-integra-demos \
     ti-dsp-benchmark-apps \
+    ti-uia \
+    ti-media-controller-utils \
+    ti-media-controller-hdvpss-loader \
 "
 
 DSP_COMPONENTS_dm6446 = "\
@@ -53,9 +56,6 @@ DSP_COMPONENTS_c6a816x-evm = "\
 
 DSP_COMPONENTS_dm816x-evm = "\
     ${DSP_EZSDK_COMMON} \
-    ti-uia \
-    ti-media-controller-utils \
-    ti-media-controller-hdvpss-loader \
     ti-firmware \
     "
 
@@ -67,9 +67,8 @@ DSP_COMPONENTS_c6a814x-evm = "\
 
 DSP_COMPONENTS_dm814x-evm = "\
     ${DSP_EZSDK_COMMON} \
-    ti-media-controller-utils \
-    ti-media-controller-hdvpss-loader \
     "
+
 # For AM devices with no DSP we want to not build any DSP packages
 # if this task is built.
 DSP_COMPONENTS_am180x-evm = ""

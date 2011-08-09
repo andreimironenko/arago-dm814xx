@@ -36,6 +36,10 @@ BSP_COMPONENTS_ti816x = "\
     u-boot-min-sd \
     "
 
+BSP_COMPONENTS_ti814x = "\
+    u-boot-min-sd \
+    "
+
 BLUETOOTH_STACK = "\
     bluez4 \
     bluez4-agent \

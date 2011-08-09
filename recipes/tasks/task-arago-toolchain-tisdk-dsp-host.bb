@@ -34,6 +34,7 @@ DSP_EZSDK_COMMON = " \
     ti-signal-analyzer-demo-doc \
     ti-docs-faqs \
     ti-dsp-benchmark-src \
+    ti-media-controller-utils-src \
 "
 
 DSP_SOURCETREE_dm6446 = "\
@@ -78,7 +79,6 @@ DSP_SOURCETREE_c6a816x-evm = "\
 
 DSP_SOURCETREE_dm816x-evm = "\
     ${DSP_EZSDK_COMMON} \
-    ti-media-controller-utils-src \
     ti-firmware-dm816x-src \
     "
 

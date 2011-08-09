@@ -18,6 +18,11 @@ MULTIMEDIA_DVSDK_COMMON = " \
 
 MULTIMEDIA_EZSDK_COMMON = " \
     ti-codec-engine-examples \
+    ti-uia \
+    ti-media-controller-utils \
+    ti-media-controller-hdvpss-loader \
+    ti-media-controller-hdvicp2-loader \
+    ti-data \
 "
 
 MULTIMEDIA_dm365 = " \
@@ -84,11 +89,6 @@ MULTIMEDIA_am45x-evm = " \
 
 MULTIMEDIA_ti816x = " \
     ${MULTIMEDIA_EZSDK_COMMON} \
-    ti-uia \
-    ti-media-controller-utils \
-    ti-media-controller-hdvpss-loader \
-    ti-media-controller-hdvicp2-loader \
-    ti-data \
     ti-firmware \
     "
 

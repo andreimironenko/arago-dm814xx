@@ -30,7 +30,6 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-syslink-dev \
     ti-codec-engine-src \
     ti-slog-src \
-    ti-omx-src \
     ti-uia-src \
     ti-media-controller-utils-src \
  "
@@ -85,6 +84,7 @@ MULTIMEDIA_SOURCETREE_omapl138 = " \
 MULTIMEDIA_SOURCETREE_dm816x-evm = " \
     ${MULTIMEDIA_EZSDK_COMMON} \
     ti-firmware-dm816x-src \
+    ti-omx-src \
 "
 
 MULTIMEDIA_SOURCETREE_dm816x-custom = " \
