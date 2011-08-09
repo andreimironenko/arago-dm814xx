@@ -12,6 +12,7 @@ INITSCRIPT_NAME = "load-hdvpss-firmware.sh"
 INITSCRIPT_PARAMS = "defaults 15"
 
 PLATFORM_ti816x = "ti816x"
+PLATFORM_ti814x = "ti814x"
 PLATFORM ?= "<UNDEFINED-PLATFORM>"
 
 SRC_URI = "svn://gforge.ti.com/svn/m_c_utils/;module=trunk;proto=https;user=anonymous;pswd='' "

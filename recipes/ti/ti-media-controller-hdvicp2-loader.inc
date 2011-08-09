@@ -12,6 +12,7 @@ INITSCRIPT_NAME = "load-hdvicp2-firmware.sh"
 INITSCRIPT_PARAMS = "defaults 10"
 
 PLATFORM_ti816x = "ti816x"
+PLATFORM_ti814x = "ti814x"
 PLATFORM ?= "<UNDEFINED-PLATFORM>"
 
 SRC_URI = "svn://gforge.ti.com/svn/m_c_utils/;module=trunk;proto=https;user=anonymous;pswd='' "

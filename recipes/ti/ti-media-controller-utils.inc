@@ -14,6 +14,7 @@ SRC_URI = "svn://gforge.ti.com/svn/m_c_utils/;module=trunk;proto=https;user=anon
 S = "${WORKDIR}/trunk/media_controller_utils"
 
 PLATFORM_ti816x = "ti816x"
+PLATFORM_ti814x = "ti814x"
 PLATFORM ?= "<UNDEFINED-PLATFORM>"
 
 EXTRA_OEMAKE = "SYSLINK_INSTALL_DIR=${SYSLINK_INSTALL_DIR} \
