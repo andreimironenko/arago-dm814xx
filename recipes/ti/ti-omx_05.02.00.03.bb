@@ -10,6 +10,8 @@ inherit pkgconfig
 PR = "r1"
 PV = "05_02_00_03"
 
+COMPATIBLE_MACHINE = "ti816x"
+
 S = "${WORKDIR}/omx-ti816x_${PV}"
 
 SRC_URI = "http://bangsdowebsvr01.india.ti.com:8090/OMX/${PV}/exports/omx-ti816x_${PV}.tar.gz;name=omx"
