@@ -5,7 +5,7 @@ LICENSE = "BSD"
 require ti-paths.inc
 require ti-staging.inc
 
-COMPATIBLE_MACHINE = "ti816x"
+COMPATIBLE_MACHINE = "(ti816x|ti814x)"
 
 PR = "r1"
 PVExtra = ""
@@ -23,6 +23,7 @@ EXTRA_OEMAKE = "SYSLINK_INSTALL_DIR=${SYSLINK_INSTALL_DIR}/packages \
 "
 
 UIAPLATFORM_ti816x = "evmti816x"
+UIAPLATFORM_ti814x = "evmti814x"
 UIAPLATFORM        = "<Undefined Platform>"
 
 do_compile() {
