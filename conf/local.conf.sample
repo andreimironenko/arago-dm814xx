@@ -16,6 +16,9 @@ DL_DIR = "${SCRATCH}/downloads"
 # Default TMPDIR is safe for multi-user environment
 TMPDIR = "${SCRATCH}/arago-tmp"
 
+# Use toolchain-unique TMPDIR when switching toolchain often
+#TMPDIR = "${SCRATCH}/arago-tmp-${TOOLCHAIN_BRAND}"
+
 # Select the machine platform to build for
 # The default value is "arago", which is a unified armv5te MACHINE
 # to build filesystem images for OMAP3 and DaVinci
