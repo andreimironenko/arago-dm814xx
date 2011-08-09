@@ -1,0 +1,28 @@
+From 3d1db6c5b0a9314d46920c19e80d7beae6aed4d2 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Tue, 9 Aug 2011 15:03:52 +0530
+Subject: [PATCH] Settings.xs: Add TI814x Device support
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ packages/ti/uia/family/Settings.xs |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/packages/ti/uia/family/Settings.xs b/packages/ti/uia/family/Settings.xs
+index cc8ed5c..4de53e7 100644
+--- a/packages/ti/uia/family/Settings.xs
++++ b/packages/ti/uia/family/Settings.xs
+@@ -82,6 +82,9 @@ var devices = {
+     "TMS320TCI6616": {
+         transport:       nyqSimTransport
+     },    
++    "TMS320DM814X": {
++        transport:       nullTransport
++    },
+ };
+  
+ /*
+-- 
+1.7.0.4
+

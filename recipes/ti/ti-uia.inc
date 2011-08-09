@@ -23,7 +23,7 @@ EXTRA_OEMAKE = "SYSLINK_INSTALL_DIR=${SYSLINK_INSTALL_DIR}/packages \
 "
 
 UIAPLATFORM_ti816x = "evmti816x"
-UIAPLATFORM_ti814x = "evmti814x"
+UIAPLATFORM_ti814x = "evmti816x"
 UIAPLATFORM        = "<Undefined Platform>"
 
 do_compile() {

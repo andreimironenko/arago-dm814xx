@@ -1,0 +1,35 @@
+From 02e12bcf595b0b7de197b9585349a558d58ce1ac Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Tue, 9 Aug 2011 15:16:30 +0530
+Subject: [PATCH] UIA: Increase buffer size
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ packages/ti/uia/examples/evmti816x/loggerSMDump.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/packages/ti/uia/examples/evmti816x/loggerSMDump.c b/packages/ti/uia/examples/evmti816x/loggerSMDump.c
+index c7217bb..ddf8bae 100644
+--- a/packages/ti/uia/examples/evmti816x/loggerSMDump.c
++++ b/packages/ti/uia/examples/evmti816x/loggerSMDump.c
+@@ -58,6 +58,7 @@ extern "C" {
+ #define DSP_PARTITION   0
+ #define VIDEO_PARTITION 1
+ #define VPSS_PARTITION  2
++#define LoggerSM_PARTITIONBUFFERSIZE 0x00100000
+ 
+ void printHelpAndExit(char *str)
+ {
+@@ -156,7 +157,7 @@ int main (int argc, char **argv)
+      *  ASCII. Instead it is binary data that can be decoded by DVT. Refer to
+      *  the LoggerSM.decode configuration parameter.
+      * */
+-    LoggerSM_run(remoteDebugShmPhysAddr, LoggerSM_DEFAULTPARTITIONBUFFERSIZE,
++    LoggerSM_run(remoteDebugShmPhysAddr, LoggerSM_PARTITIONBUFFERSIZE,
+                  NUMPARTITIONS, partitionMask, filename);
+ 
+     return (0);
+-- 
+1.7.0.4
+
