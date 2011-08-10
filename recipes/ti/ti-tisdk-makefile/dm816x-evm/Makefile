@@ -11,17 +11,17 @@ PATH := ${PATH}:${CSTOOL_PATH}
 #==============================================================================
 # Build components to enable all other build targets. 
 #==============================================================================
-components: linux cmem syslink c6accel c6run imglib dsplib mathlib osal
+components: linux cmem syslink c6accel c6run imglib dsplib mathlib osal omx
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-components_clean: linux_clean syslink_clean cmem_clean c6accel_clean c6run_clean imglib_clean dsplib_clean mathlib_clean osal_clean
+components_clean: linux_clean syslink_clean cmem_clean c6accel_clean c6run_clean imglib_clean dsplib_clean mathlib_clean osal_clean omx_clean
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-all: components u-boot sademo matrix c6run_examples omx omtb psp-examples
+all: components u-boot sademo matrix c6run_examples omtb psp-examples
 
 #==============================================================================
 # Install everything
@@ -31,7 +31,7 @@ install: linux_install cmem_install syslink_install u-boot_install c6accel_insta
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clean: components_clean u-boot_clean sademo_clean matrix_clean c6run_clean omx_clean omtb_clean psp-examples_clean
+clean: components_clean u-boot_clean sademo_clean matrix_clean c6run_clean omtb_clean psp-examples_clean
 
 #==============================================================================
 # A help message target.
