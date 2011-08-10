@@ -24,6 +24,7 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-media-controller-hdvicp2-loader \
     ti-data \
     ti-omtb \
+    ti-omx \
 "
 
 MULTIMEDIA_dm365 = " \
