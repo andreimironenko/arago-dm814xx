@@ -33,6 +33,7 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-uia-src \
     ti-media-controller-utils-src \
     ti-omx-src \
+    ti-omtb-src \
  "
 
 MULTIMEDIA_SOURCETREE_am37x-evm = ""
