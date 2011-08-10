@@ -145,19 +145,18 @@ do_populate_sdk() {
 	# Create environment setup script
 	script=${SDK_OUTPUT}/${SDKPATH}/environment-setup
 	touch $script
+	echo 'SDK_PATH="${SDKPATH}"' >> $script
 	echo 'if [ -z "$ZSH_NAME" ] && [ "x$0" = "x./environment-setup" ]; then' >> $script
 	echo '    echo "Error: This script needs to be sourced. Please run as \". ./environment-setup\""' >> $script
 	echo '    exit 1' >> $script
 	echo 'else' >> $script
 	echo '    if [ -n "$BASH_SOURCE" ]; then' >> $script
 	echo '        SDK_PATH="`dirname $BASH_SOURCE`"' >> $script
-	echo '    else' >> $script
-	echo '        SDK_PATH="`pwd`"' >> $script
 	echo '    fi' >> $script
 	echo '    SDK_PATH=`readlink -f "$SDK_PATH"`' >> $script
 	echo '    export SDK_PATH' >> $script
 	echo 'fi' >> $script
-	echo 'export TOOLCHAIN_PATH=${TOOLCHAIN_PATH}' >> $script
+	echo '${@base_conditional('TOOLCHAIN_INCLUDE_IN_SDK', '1', 'export TOOLCHAIN_PATH=$SDK_PATH', 'export TOOLCHAIN_PATH=${TOOLCHAIN_PATH}', d)}' >> $script
 	echo 'export TARGET_SYS=${TARGET_SYS}' >> $script
 	echo 'export PATH=$SDK_PATH/bin:$TOOLCHAIN_PATH/bin:$PATH' >> $script
 	echo 'export CPATH=$SDK_PATH/$TARGET_SYS/usr/include:$CPATH' >> $script
