@@ -1,0 +1,27 @@
+From 1fe93fc3bb6f05fec7448344416a493505dfc976 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Wed, 10 Aug 2011 19:25:51 +0530
+Subject: [PATCH] ti-omx: Remove c6xtest support from ti814x
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ packages/component.mk |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/packages/component.mk b/packages/component.mk
+index d6ecdec..b4fbbf6 100644
+--- a/packages/component.mk
++++ b/packages/component.mk
+@@ -46,7 +46,7 @@ EXT_COMP_LIST_m3video =
+ EXT_COMP_LIST_a8host = 
+ 
+ # List of examples/demos under OMX
+-omx_EXAMPLES_LIST = decode decode_display capture_encode c6xtest
++omx_EXAMPLES_LIST = decode decode_display capture_encode
+ 
+ #
+ # OMX Modules
+-- 
+1.7.0.4
+
