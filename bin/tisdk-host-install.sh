@@ -108,6 +108,15 @@ test -z $toolchain_dir && usage $0
 
 install_dir=$(cd $(dirname $0) && pwd)
 echo  $install_dir
+
+cd $install_dir
+for i in *.tar.gz
+do
+    echo "Extracting tarball $i"
+    tar -zxf $i
+    rm -rf $i
+done
+
 update_rules_make
 update_linux_devkit
 
