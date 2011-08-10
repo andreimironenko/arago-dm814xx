@@ -118,6 +118,15 @@ update_rules_make()
       "framework-components")
         real_name="framework_components"
         ;;
+      "imglib-c64plus")
+        real_name="c64plus-imglib"
+        ;;
+      "dsplib-c674x")
+        real_name="c674x-dsplib"
+        ;;
+      "mathlib-c67x")
+        real_name="c67xmathlib"
+        ;;
       *)
         real_name=$name
         ;;
