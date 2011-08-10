@@ -67,4 +67,14 @@ do_compile() {
 do_install() {
     install -d ${D}${OMX_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${OMX_INSTALL_DIR_RECIPE}
+ 
+    cd ${S}/bin
+    install -d ${D}/${installdir}/ti-omx
+    for i in `find . -name "*.xv5T"`
+    do
+        install $i ${D}/${installdir}/ti-omx
+    done
 }
+
+FILES_${PN} = "${installdir}/ti-omx/*"
+INSANE_SKIP_${PN} = True
