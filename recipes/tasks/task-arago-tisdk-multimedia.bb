@@ -96,11 +96,7 @@ MULTIMEDIA_ti816x = " \
 
 MULTIMEDIA_ti814x = " \
     ${MULTIMEDIA_EZSDK_COMMON} \
-    "
-
-MULTIMEDIA_ti814x = " \
-    task-arago-gst \
-    gst-ffmpeg \
+    ti-firmware \
     "
 
 RDEPENDS_${PN} = "\
