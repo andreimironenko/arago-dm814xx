@@ -502,41 +502,73 @@ omx:
 		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR)/component-sources \
 		INTERNAL_SW_ROOT=$(OMX_INSTALL_DIR)/packages \
         kernel_PATH=${KERNEL_INSTALL_DIR} \
+        bios_PATH=${SYSBIOS_INSTALL_DIR} \
 		fc_PATH=$(FC_INSTALL_DIR) \
 		osal_PATH=$(OSAL_INSTALL_DIR) \
+        xdais_PATH=${XDAIS_INSTALL_DIR} \
 		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
+        ce_PATH=${CE_INSTALL_DIR} \
 		ipc_PATH=$(IPC_INSTALL_DIR) \
 		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
 		xdc_PATH=$(XDC_INSTALL_DIR) \
 		uia_PATH=$(UIA_INSTALL_DIR) \
+        slog_PATH=${SLOG_INSTALL_DIR} \
+        lindevkit_PATH=${LINUX_DEVKIT_DIR}/arm-none-linux-gnueabi/usr \
+		PLATFORM=ti814x-evm \
 		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
-        CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR} \
-		DEST_ROOT=$(OMX_INSTALL_DIR)/rebuilt-binaries/lib
+        CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR}
 	make -C $(OMX_INSTALL_DIR)/packages examples \
 		ROOTDIR=$(OMX_INSTALL_DIR)/packages \
 		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR)/component-sources \
 		INTERNAL_SW_ROOT=$(OMX_INSTALL_DIR)/packages \
         kernel_PATH=${KERNEL_INSTALL_DIR} \
+        bios_PATH=${SYSBIOS_INSTALL_DIR} \
 		fc_PATH=$(FC_INSTALL_DIR) \
 		osal_PATH=$(OSAL_INSTALL_DIR) \
+        xdais_PATH=${XDAIS_INSTALL_DIR} \
 		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
+        ce_PATH=${CE_INSTALL_DIR} \
 		ipc_PATH=$(IPC_INSTALL_DIR) \
 		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
 		xdc_PATH=$(XDC_INSTALL_DIR) \
 		uia_PATH=$(UIA_INSTALL_DIR) \
+        slog_PATH=${SLOG_INSTALL_DIR} \
+        lindevkit_PATH=${LINUX_DEVKIT_DIR}/arm-none-linux-gnueabi/usr \
+		PLATFORM=ti814x-evm \
+		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
+        CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR} \
+        PLATFORM=ti814x-evm \
+        EXAMPLES_ROOT=${OMX_INSTALL_DIR}/packages \
+		DEST_ROOT=$(OMX_INSTALL_DIR)/bin
+
+omx_clean:
+	rm -rf $(OMX_INSTALL_DIR)/bin ${OMX_INSTALL_DIR}/lib
+	make -C $(OMX_INSTALL_DIR)/packages clean \
+		ROOTDIR=$(OMX_INSTALL_DIR)/packages \
+		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR)/component-sources \
+		INTERNAL_SW_ROOT=$(OMX_INSTALL_DIR)/packages \
+        kernel_PATH=${KERNEL_INSTALL_DIR} \
+        bios_PATH=${SYSBIOS_INSTALL_DIR} \
+		fc_PATH=$(FC_INSTALL_DIR) \
+		osal_PATH=$(OSAL_INSTALL_DIR) \
+        xdais_PATH=${XDAIS_INSTALL_DIR} \
+		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
+        ce_PATH=${CE_INSTALL_DIR} \
+		ipc_PATH=$(IPC_INSTALL_DIR) \
+		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
+		xdc_PATH=$(XDC_INSTALL_DIR) \
+		uia_PATH=$(UIA_INSTALL_DIR) \
+        slog_PATH=${SLOG_INSTALL_DIR} \
+        lindevkit_PATH=${LINUX_DEVKIT_DIR}/arm-none-linux-gnueabi/usr \
+		PLATFORM=ti814x-evm \
 		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
         CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR} \
         EXAMPLES_ROOT=${OMX_INSTALL_DIR}/packages \
-		DEST_ROOT=$(OMX_INSTALL_DIR)/rebuilt-binaries/bin
-
-omx_clean:
-	rm -rf $(OMX_INSTALL_DIR)/rebuilt-binaries
 
 omx_install:
 	install -d $(EXEC_DIR)/omx
-	for i in `find ${OMX_INSTALL_DIR}/rebuilt-binaries/bin -name "*.xv5T"`
-	do
-	    install $i ${D}/${installdir}/ti-omx
+	for i in `find ${OMX_INSTALL_DIR}/bin -name "*.xv5T"`; do \
+		install $$i ${EXEC_DIR}/omx; \
 	done
 
 ################################################################################
@@ -548,7 +580,7 @@ omtb:
 		ROOTDIR=$(OMTB_INSTALL_DIR) \
 		OMTB_ROOT=$(OMTB_INSTALL_DIR) \
 		EZSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) \
-		DEST_ROOT=$(OMTB_INSTALL_DIR)/rebuilt-binaries \
+		DEST_ROOT=$(OMTB_INSTALL_DIR)/bin \
 		OMX_INSTALL_DIR=$(OMX_INSTALL_DIR)/packages \
 		fc_PATH=$(FC_INSTALL_DIR) \
 		uia_PATH=$(UIA_INSTALL_DIR) \
@@ -566,7 +598,7 @@ omtb_clean:
 		ROOTDIR=$(OMTB_INSTALL_DIR) \
 		OMTB_ROOT=$(OMTB_INSTALL_DIR) \
 		EZSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) \
-		DEST_ROOT=$(OMTB_INSTALL_DIR)/rebuilt-binaries \
+		DEST_ROOT=$(OMTB_INSTALL_DIR)/bin \
 		OMX_INSTALL_DIR=$(OMX_INSTALL_DIR)/packages \
 		fc_PATH=$(FC_INSTALL_DIR) \
 		ce_PATH=$(CE_INSTALL_DIR) \
@@ -581,7 +613,7 @@ omtb_clean:
 
 omtb_install:
 	install -d $(EXEC_DIR)/omtb
-	install $(OMTB_INSTALL_DIR)/rebuilt-binaries/dm814xbm/bin/ti816x-evm/omtb_dm814xbm_a8host.xv5T $(EXEC_DIR)/omtb
+	install $(OMTB_INSTALL_DIR)/bin/dm814xbm/bin/ti816x-evm/omtb_dm814xbm_a8host.xv5T $(EXEC_DIR)/omtb
 
 ################################################################################
 # Build the DSP image library
