@@ -52,6 +52,9 @@ PSP_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/board-support
 LINUXKERNEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/board-support/<__kernel__>
 KERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR)
 
+# Where the PSP Examples are installed.
+PSP_EXAMPLES_INSTALL_DIR=${DVSDK_INSTALL_DIR}/example-applications/`basename ${DVSDK_INSTALL_DIR}/example-applications/linux-driver-examples*`
+
 # Where the development headers and libs are installed.
 LINUX_DEVKIT_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit
 
