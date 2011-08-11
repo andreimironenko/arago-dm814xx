@@ -160,69 +160,69 @@ u-boot_install:
 # Build the Linux device driver examples
 ###############################################################################
 psp-examples:
-	mkdir -p $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio/bin
-	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio \
+	mkdir -p $(PSP_EXAMPLES_INSTALL_DIR)/audio/bin
+	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/audio \
 		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
-		INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio \
-		EXE_DIR=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio/bin \
+		INSTALL_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/audio \
+		EXE_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/audio/bin \
 		LIB_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit/arm-none-linux-gnueabi/usr/lib \
 		LIB_INC=$(DVSDK_INSTALL_DIR)/linux-devkit/arm-none-linux-gnueabi/usr/include \
 		CROSS_COMPILE=$(CSTOOL_PREFIX)
-	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/edma \
+	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/edma \
 		KDIR=$(LINUXKERNEL_INSTALL_DIR) \
-		PWD=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/edma \
+		PWD=$(PSP_EXAMPLES_INSTALL_DIR)/edma \
 		ARCH=arm \
 		CROSS_COMPILE=$(CSTOOL_PREFIX)
-	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/pcie \
+	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/pcie \
 		CC=$(CSTOOL_PREFIX)gcc \
 		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)
-	mkdir -p $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/video/bin
+	mkdir -p $(PSP_EXAMPLES_INSTALL_DIR)/video/bin
 #	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/video \
 #		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
 #		INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/video \
 #		EXE_DIR=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/video/bin \
 #		CROSS_COMPILE=$(CSTOOL_PREFIX)
-	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/watchdog \
+	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/watchdog \
 		CC=$(CSTOOL_PREFIX)gcc \
 		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)
 
 psp-examples_clean:
-	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio \
+	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/audio \
 		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
-		INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio \
-		EXE_DIR=$(EXEC_DIR)/psp-linux-driver-examples*/audio \
-		LIB_DIR=/home/user/ti-ezsdk_dm814x-evm_5_01_01_80.orig/linux-devkit/arm-none-linux-gnueabi/usr/lib \
-		LIB_INC=/home/user/ti-ezsdk_dm814x-evm_5_01_01_80.orig/linux-devkit/arm-none-linux-gnueabi/usr/include \
+		INSTALL_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/audio \
+		EXE_DIR=$(EXEC_DIR)/psp-audio \
+		LIB_DIR=${DVSDK_INSTALL_DIR}/linux-devkit/arm-none-linux-gnueabi/usr/lib \
+		LIB_INC=${DVSDK_INSTALL_DIR}/linux-devkit/arm-none-linux-gnueabi/usr/include \
 		CROSS_COMPILE=$(CSTOOL_PREFIX) \
 		clean
-	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/edma \
+	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/edma \
 		KDIR=$(LINUXKERNEL_INSTALL_DIR) \
-		PWD=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/edma \
+		PWD=$(PSP_EXAMPLES_INSTALL_DIR)/edma \
 		ARCH=arm \
 		CROSS_COMPILE=$(CSTOOL_PREFIX) \
 		clean
-	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/pcie \
+	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/pcie \
 		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
 		CC=$(CSTOOL_PREFIX)gcc \
 		clean
-	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/video \
-		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
-		INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/video \
-		EXE_DIR=$(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/video \
-		CROSS_COMPILE=$(CSTOOL_PREFIX) \
-		clean
-	$(MAKE) -C $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/watchdog \
+#	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/video \
+#		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
+#		INSTALL_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/video \
+#		EXE_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/video \
+#		CROSS_COMPILE=$(CSTOOL_PREFIX) \
+#		clean
+	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/watchdog \
 		CC=$(CSTOOL_PREFIX)gcc \
 		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
 		clean
 
 psp-examples_install:
 	mkdir -p $(EXEC_DIR)/psp-examples
-	-cp $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio/bin/minimal_capture $(EXEC_DIR)/psp-examples
-	-cp $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/audio/bin/minimal_playback $(EXEC_DIR)/psp-examples
-	-cp $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/edma/edma_test.ko $(EXEC_DIR)/psp-examples
-	-cp $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/pcie/saBootApp $(EXEC_DIR)/psp-examples
-	-cp $(DVSDK_INSTALL_DIR)/example-applications/linux-driver-examples*/watchdog/saWatchdog $(EXEC_DIR)/psp-examples
+	-cp $(PSP_EXAMPLES_INSTALL_DIR)/audio/bin/minimal_capture $(EXEC_DIR)/psp-examples
+	-cp $(PSP_EXAMPLES_INSTALL_DIR)/audio/bin/minimal_playback $(EXEC_DIR)/psp-examples
+	-cp $(PSP_EXAMPLES_INSTALL_DIR)/edma/edma_test.ko $(EXEC_DIR)/psp-examples
+	-cp $(PSP_EXAMPLES_INSTALL_DIR)/pcie/saBootApp $(EXEC_DIR)/psp-examples
+	-cp $(PSP_EXAMPLES_INSTALL_DIR)/watchdog/saWatchdog $(EXEC_DIR)/psp-examples
 
 #==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the
@@ -497,10 +497,11 @@ matrix_install:
 ################################################################################
 
 omx:
-	make -C $(OMX_INSTALL_DIR)/packages libs decode \
+	make -C $(OMX_INSTALL_DIR)/packages libs \
 		ROOTDIR=$(OMX_INSTALL_DIR)/packages \
-		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR) \
+		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR)/component-sources \
 		INTERNAL_SW_ROOT=$(OMX_INSTALL_DIR)/packages \
+        kernel_PATH=${KERNEL_INSTALL_DIR} \
 		fc_PATH=$(FC_INSTALL_DIR) \
 		osal_PATH=$(OSAL_INSTALL_DIR) \
 		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
@@ -509,14 +510,34 @@ omx:
 		xdc_PATH=$(XDC_INSTALL_DIR) \
 		uia_PATH=$(UIA_INSTALL_DIR) \
 		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
-		DEST_ROOT=$(OMX_INSTALL_DIR)/rebuilt-binaries
+        CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR} \
+		DEST_ROOT=$(OMX_INSTALL_DIR)/rebuilt-binaries/lib
+	make -C $(OMX_INSTALL_DIR)/packages examples \
+		ROOTDIR=$(OMX_INSTALL_DIR)/packages \
+		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR)/component-sources \
+		INTERNAL_SW_ROOT=$(OMX_INSTALL_DIR)/packages \
+        kernel_PATH=${KERNEL_INSTALL_DIR} \
+		fc_PATH=$(FC_INSTALL_DIR) \
+		osal_PATH=$(OSAL_INSTALL_DIR) \
+		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
+		ipc_PATH=$(IPC_INSTALL_DIR) \
+		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
+		xdc_PATH=$(XDC_INSTALL_DIR) \
+		uia_PATH=$(UIA_INSTALL_DIR) \
+		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
+        CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR} \
+        EXAMPLES_ROOT=${OMX_INSTALL_DIR}/packages \
+		DEST_ROOT=$(OMX_INSTALL_DIR)/rebuilt-binaries/bin
 
 omx_clean:
-	rm -rf $(OMX_INSTALL_DIR)/rebuilt-binaries/
+	rm -rf $(OMX_INSTALL_DIR)/rebuilt-binaries
 
 omx_install:
 	install -d $(EXEC_DIR)/omx
-	install $(OMX_INSTALL_DIR)/rebuilt-binaries/decode/bin/ti814x-evm/decode_a8host_debug.xv5T $(EXEC_DIR)/omx
+	for i in `find ${OMX_INSTALL_DIR}/rebuilt-binaries/bin -name "*.xv5T"`
+	do
+	    install $i ${D}/${installdir}/ti-omx
+	done
 
 ################################################################################
 # Build OMTB IL Client Applications 
@@ -530,6 +551,7 @@ omtb:
 		DEST_ROOT=$(OMTB_INSTALL_DIR)/rebuilt-binaries \
 		OMX_INSTALL_DIR=$(OMX_INSTALL_DIR)/packages \
 		fc_PATH=$(FC_INSTALL_DIR) \
+		uia_PATH=$(UIA_INSTALL_DIR) \
 		ce_PATH=$(CE_INSTALL_DIR) \
 		osal_PATH=$(OSAL_INSTALL_DIR) \
 		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
@@ -548,6 +570,7 @@ omtb_clean:
 		OMX_INSTALL_DIR=$(OMX_INSTALL_DIR)/packages \
 		fc_PATH=$(FC_INSTALL_DIR) \
 		ce_PATH=$(CE_INSTALL_DIR) \
+		uia_PATH=$(UIA_INSTALL_DIR) \
 		osal_PATH=$(OSAL_INSTALL_DIR) \
 		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
 		ipc_PATH=$(IPC_INSTALL_DIR) \
@@ -558,7 +581,7 @@ omtb_clean:
 
 omtb_install:
 	install -d $(EXEC_DIR)/omtb
-	install $(OMTB_INSTALL_DIR)/rebuilt-binaries/dm814xbm/bin/ti814x-evm/omtb_dm814xbm_a8host.xv5T $(EXEC_DIR)/omtb
+	install $(OMTB_INSTALL_DIR)/rebuilt-binaries/dm814xbm/bin/ti816x-evm/omtb_dm814xbm_a8host.xv5T $(EXEC_DIR)/omtb
 
 ################################################################################
 # Build the DSP image library
