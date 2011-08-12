@@ -6,11 +6,14 @@ LICENSE = "TI"
 require ti-paths.inc
 require ti-eula-unpack.inc
 
-PR = "r1"
+PR = "r2"
 
 S = "${WORKDIR}/c64plus-imglib_${PV}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/c6000/web/c64p_imglib/latest/exports//c64plus-imglib_${PV}_Linux-x86_Setup.bin;name=imglibbin"
+
+SRC_URI += "file://0001-Added-sdk-make-install-file-to-imglib.patch \
+"
 
 BINFILE="c64plus-imglib_${PV}_Linux-x86_Setup.bin"
 TI_BIN_UNPK_CMDS="Y:workdir"
