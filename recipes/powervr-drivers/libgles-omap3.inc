@@ -1,7 +1,7 @@
 DESCRIPTION = "libGLES for the omap3"
 LICENSE = "TI TSPA"
 
-PR = "r9"
+PR = "r10"
 
 COMPATIBLE_MACHINE = "(omap3|ti816x|ti814x)"
 
@@ -29,7 +29,9 @@ SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/gf
 		   file://rc.pvr \
 		   file://sample.desktop \
 		   file://99-bufferclass.rules  \
+		   file://0001-Added-sdk-make-install-file-to-graphics-sdk.patch \
 "
+
 
 S = "${WORKDIR}/OMAP35x_Graphics_SDK_${SGXPV}"
 
