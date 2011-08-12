@@ -2,8 +2,10 @@
 # Right now, the user has to manually edit the /etc/powervr.ini at
 # run time to switch between SGX and Qt
 
-# The current version of the Graphics SDK does not provide this library.
-# using this library results in the 3D demos being unable to execute.
-# LIBGLESWINDOWSYSTEM = "libpvrQWSWSEGL.so.1"
+# If Qt is built with OpenGLES, set the window system library to
+# libpvrQWSWSEGL.so.1. Otherwise use the default
+WS_LIBRARY := "${@base_conditional('ARAGO_QT_PROVIDER', 'qt4-embedded-gles', 'libpvrQWSWSEGL.so.1', '${LIBGLESWINDOWSYSTEM}', d)}"
 
-PR_append = "-arago1"
+LIBGLESWINDOWSYSTEM_armv7a = "${WS_LIBRARY}"
+
+PR_append = "-arago2"
