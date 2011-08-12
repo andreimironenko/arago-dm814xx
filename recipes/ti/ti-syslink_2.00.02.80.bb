@@ -27,6 +27,9 @@ SRC_URI = "http://www.sanb.design.ti.com/tisb_releases/SysLink/${PV}/exports/sys
 SRC_URI[syslinktarball.md5sum] = "7f052e759b300d54f070900d5115297e"
 SRC_URI[syslinktarball.sha256sum] = "d717f75d01ee3216239b1fd927a0e12ce0e79e6132e76a4c031072af9c0c5846"
 
+SRC_URI += "file://0001-Added-sdk-make-install-file-to-syslink.patch \
+"
+
 DEPENDS = "ti-sysbios ti-xdctools ti-cgt6x ti-ipc ti-cgt470"
 DEPENDS += "virtual/kernel" 
 
