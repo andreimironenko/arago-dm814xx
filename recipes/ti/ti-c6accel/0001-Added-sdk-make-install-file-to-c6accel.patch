@@ -1,0 +1,134 @@
+From 99b052f0d50f79576e4ca705aaca243827554fa0 Mon Sep 17 00:00:00 2001
+From: Niclas Anderberg <niclas.anderberg@gmail.com>
+Date: Fri, 12 Aug 2011 14:00:32 +0200
+Subject: [PATCH] Added sdk make install file to c6accel
+
+---
+ sdk.mk |  115 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 115 insertions(+), 0 deletions(-)
+ create mode 100644 sdk.mk
+
+diff --git a/sdk.mk b/sdk.mk
+new file mode 100644
+index 0000000..e5c6312
+--- /dev/null
++++ b/sdk.mk
+@@ -0,0 +1,115 @@
++# 
++#  Copyright (c) 2011, Texas Instruments Incorporated
++#  All rights reserved.
++# 
++#  Redistribution and use in source and binary forms, with or without
++#  modification, are permitted provided that the following conditions
++#  are met:
++# 
++#  *  Redistributions of source code must retain the above copyright
++#     notice, this list of conditions and the following disclaimer.
++# 
++#  *  Redistributions in binary form must reproduce the above copyright
++#     notice, this list of conditions and the following disclaimer in the
++#     documentation and/or other materials provided with the distribution.
++# 
++#  *  Neither the name of Texas Instruments Incorporated nor the names of
++#     its contributors may be used to endorse or promote products derived
++#     from this software without specific prior written permission.
++# 
++#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
++#  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++#  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++#  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
++#  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
++#  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
++#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
++#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
++#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
++#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
++#  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++# 
++
++#
++# ==== Standard Variables ====
++#
++
++
++#
++# Where to install/stage the packages
++# Typically this would point to the devkit location
++# This must be passed to the Makefile.
++#
++
++DESTDIR="<UNDEFINED>"
++
++
++
++#
++# Installation of XDCTools. This must be passed to the Makefile for the
++# install-xdc target.
++#
++
++XDC_INSTALL_DIR="<UNDEFINED>"
++
++
++
++# 
++# ==== Tools ====
++#
++
++XS=$(XDC_INSTALL_DIR)/xs
++XDC=$(XDC_INSTALL_DIR)/xdc
++XDCPKG=$(XDC_INSTALL_DIR)/bin/xdcpkg
++INSTALL=install
++
++#
++# == Helper variables ==
++#
++
++PACKAGES=ti.c6accel
++
++LIBS = $(wildcard soc/c6accelw/lib/*)
++HEADERS = soc/c6accelw/c6accelw.h
++
++LIBDIR = $(DESTDIR)/lib
++INCDIR = $(DESTDIR)/include
++
++
++#
++# ==== Helper functions ====
++#
++
++purge = @find $(1) -name $(2) -exec rm -rf {} \;
++
++
++
++# 
++# ==== Targets ====
++#
++
++install-xdc:
++	@echo "Installing packages.."
++	$(INSTALL) -d $(DESTDIR)
++	$(XS) xdc.tools.repoman -c -r $(DESTDIR) -p soc/packages $(PACKAGES)
++	$(call purge,$(DESTDIR),'*.c')
++	$(call purge,$(DESTDIR),'*.bld')
++
++install:
++	@echo "Installing libraries.."
++	@mkdir -p $(LIBDIR)
++	@cp $(LIBS) $(LIBDIR)
++	@echo "Installing header files.."
++	@mkdir -p $(INCDIR)
++	@cp $(HEADERS) $(INCDIR)
++
++help:
++	@echo
++	@echo "Available build targets are:"
++	@echo
++	@echo "  install-xdc"
++	@echo "      Install the RTSC packages in the repository at DESTDIR"
++	@echo
++	@echo "  install"
++	@echo "      Install the headers and libraries in the DESTDIR directory"
++	@echo
+-- 
+1.7.0.4
+

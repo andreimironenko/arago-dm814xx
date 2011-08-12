@@ -22,11 +22,13 @@ COMPATIBLE_MACHINE = "(da850-omapl138-evm|omap3evm|dm37x-evm|ti816x|ti814x)"
 
 PROVIDES += "ti-c6accel-apps"
 
-PR = "r12"
+PR = "r13"
 
 S = "${WORKDIR}/c6accel_${PV}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/c6000/web/c6accel/latest/exports//c6accel_${PV}_Linux-x86_Setup.bin;name=c6accelbin "
+
+SRC_URI += "file://0001-Added-sdk-make-install-file-to-c6accel.patch"
 
 BINFILE="c6accel_${PV}_Linux-x86_Setup.bin"
 TI_BIN_UNPK_CMDS="Y:workdir"
