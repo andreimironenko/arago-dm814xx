@@ -13,3 +13,5 @@ SRC_URI[cetarball.sha256sum] = "ca1fb9611a7f93fc5dfd0be18ee55c2a4ce0cfb585b89359
 SRC_URI += "file://0001-Added-sdk-make-install-file-to-ce.patch \
 "
 
+SRC_URI += "file://0001-Added-missing-package.bld-for-the-ti.sdo.ce.ipc.dspl.patch \
+"
