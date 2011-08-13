@@ -3,7 +3,6 @@
 #
 # Author: Brijesh Singh, Texas Instruments Inc.
 #       : Adapted for TI816x by Siddharth Heroor, Texas Instruments Inc.
-#       : Adapted for TI814x by Siddharth Heroor, Texas Instruments Inc.
 #
 # Licensed under terms of GPLv2
 #
@@ -68,7 +67,7 @@ if [ ! -d $sdkdir ]; then
    exit 1;
 fi
 
-if [ ! -f $sdkdir/filesystem/ezsdk-c6a814x-evm-rootfs.tar.gz ]; then
+if [ ! -f $sdkdir/filesystem/ezsdk-*-rootfs.tar.gz ]; then
   echo "ERROR: failed to find rootfs tar in $sdkdir/filesystem "
   exit 1;
 fi
@@ -140,7 +139,7 @@ fi
 # creating boot.scr
 execute "mkdir -p /tmp/sdk"
 cat <<EOF >/tmp/sdk/boot.cmd
-setenv bootargs 'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 rw mem=166M earlyprink vram=50M ti814xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd'
+setenv bootargs 'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 rw mem=256M earlyprink notifyk.vpssm3_sva=0xBF900000 vram=50M ti814xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd'
 fatload mmc 1 0x80009000 uImage
 bootm 0x80009000
 EOF
@@ -158,7 +157,7 @@ execute "mkdir -p /tmp/sdk/$$"
 execute "mount ${device}1 /tmp/sdk/$$"
 execute "cp /tmp/sdk/boot.scr /tmp/sdk/$$/"
 execute "cp /tmp/sdk/boot.cmd /tmp/sdk/$$/"
-execute "cp $sdkdir/board-support/prebuilt-images/uImage /tmp/sdk/$$/"
+execute "cp $sdkdir/board-support/prebuilt-images/uImage-*.bin /tmp/sdk/$$/uImage"
 execute "cp $sdkdir/board-support/prebuilt-images/u-boot.bin /tmp/sdk/$$/"
 execute "cp $sdkdir/board-support/prebuilt-images/MLO /tmp/sdk/$$/"
 execute "cp $sdkdir/bin/top_ti814x_evm.png /tmp/sdk/$$/"
@@ -197,7 +196,7 @@ if [ "$pc2" != "" ]; then
   execute "cp -ar $copy /tmp/sdk/$$"
   execute "cp $sdkdir/bin/setup.htm /tmp/sdk/$$"
   execute "cp $sdkdir/bin/top_ti814x_evm.png /tmp/sdk/$$/"
-  execute "cp $sdkdir/docs/C6A814x_AM387x_EVM_Quick_start_guide.pdf /tmp/sdk/$$/quickstartguide.pdf"
+  execute "cp $sdkdir/docs/*_Quick_start_guide.pdf /tmp/sdk/$$/quickstartguide.pdf"
   sync
   echo "unmounting ${device}3"
   execute "umount /tmp/sdk/$$"
