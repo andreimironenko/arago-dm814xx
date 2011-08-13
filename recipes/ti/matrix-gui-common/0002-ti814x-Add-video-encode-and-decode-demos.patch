@@ -1,0 +1,349 @@
+From b39fdcf38f024126509037999550ec17b8f239c5 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Sat, 13 Aug 2011 14:32:05 +0530
+Subject: [PATCH 2/2] ti814x: Add video encode and decode demos
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ trunk/ti814x/bin/runCaptureEncode                |   56 ++++++++++++++
+ trunk/ti814x/bin/runDecodeDisplay                |   56 ++++++++++++++
+ trunk/ti814x/html/desc_1080p_capture_encode.html |   79 +++++++++++++++++++
+ trunk/ti814x/html/menu_main.html                 |    5 +-
+ trunk/ti814x/html/menu_multimedia.html           |   88 ++++++++++++++++++++++
+ 5 files changed, 282 insertions(+), 2 deletions(-)
+ create mode 100755 trunk/ti814x/bin/runCaptureEncode
+ create mode 100755 trunk/ti814x/bin/runDecodeDisplay
+ create mode 100644 trunk/ti814x/html/desc_1080p_capture_encode.html
+ create mode 100644 trunk/ti814x/html/menu_multimedia.html
+
+diff --git a/trunk/ti814x/bin/runCaptureEncode b/trunk/ti814x/bin/runCaptureEncode
+new file mode 100755
+index 0000000..2081082
+--- /dev/null
++++ b/trunk/ti814x/bin/runCaptureEncode
+@@ -0,0 +1,56 @@
++#!/bin/sh
++
++
++
++#
++# Turn on the ALSA Mixer
++#
++configure_alsa_mixer()
++{
++   amixer sset 'Left PGA Mixer Mic3L' on
++   amixer sset 'Left PGA Mixer Mic3R' on
++   amixer sset 'Right PGA Mixer Mic3L' on
++   amixer sset 'Right PGA Mixer Mic3R' on
++
++   amixer cset name='PCM Playback Volume' 75%,75%
++   amixer cset name='PGA Capture Volume' 75%,75%
++}
++
++
++
++#
++# In order to view video, the graphics plane needs to be
++# disabled. Once the video has finished playing the graphics
++# plane needs to be re-enabled. 
++#
++# Call this function with 0 to disable graphics and 1 to
++# enable it.
++# 
++configure_graphics()
++{
++    echo $1 > /sys/devices/platform/vpss/graphics0/enabled
++    echo $1 > /sys/devices/platform/vpss/graphics1/enabled
++}
++
++
++
++
++# 
++# Call this function to setup and execute the demo 
++# 
++execute_demo()
++{
++    cd /usr/share/ti/ti-omx
++
++    ./capture_encode_a8host_debug.xv5T
++}
++
++
++# Disable Graphics Plane so that Video can be seen.
++configure_graphics 0
++
++configure_alsa_mixer
++execute_demo
++    
++# Enable Graphics again.
++configure_graphics 1
+diff --git a/trunk/ti814x/bin/runDecodeDisplay b/trunk/ti814x/bin/runDecodeDisplay
+new file mode 100755
+index 0000000..a4ca7ab
+--- /dev/null
++++ b/trunk/ti814x/bin/runDecodeDisplay
+@@ -0,0 +1,56 @@
++#!/bin/sh
++
++
++
++#
++# Turn on the ALSA Mixer
++#
++configure_alsa_mixer()
++{
++   amixer sset 'Left PGA Mixer Mic3L' on
++   amixer sset 'Left PGA Mixer Mic3R' on
++   amixer sset 'Right PGA Mixer Mic3L' on
++   amixer sset 'Right PGA Mixer Mic3R' on
++
++   amixer cset name='PCM Playback Volume' 75%,75%
++   amixer cset name='PGA Capture Volume' 75%,75%
++}
++
++
++
++#
++# In order to view video, the graphics plane needs to be
++# disabled. Once the video has finished playing the graphics
++# plane needs to be re-enabled. 
++#
++# Call this function with 0 to disable graphics and 1 to
++# enable it.
++# 
++configure_graphics()
++{
++    echo $1 > /sys/devices/platform/vpss/graphics0/enabled
++    echo $1 > /sys/devices/platform/vpss/graphics1/enabled
++}
++
++
++
++
++# 
++# Call this function to setup and execute the demo 
++# 
++execute_demo()
++{
++    cd /usr/share/ti/ti-omx
++
++    ./decode_display_a8host_debug.xv5T
++}
++
++
++# Disable Graphics Plane so that Video can be seen.
++configure_graphics 0
++
++configure_alsa_mixer
++execute_demo
++    
++# Enable Graphics again.
++configure_graphics 1
+diff --git a/trunk/ti814x/html/desc_1080p_capture_encode.html b/trunk/ti814x/html/desc_1080p_capture_encode.html
+new file mode 100644
+index 0000000..f0c0749
+--- /dev/null
++++ b/trunk/ti814x/html/desc_1080p_capture_encode.html
+@@ -0,0 +1,79 @@
++<!--                                                                           -->
++<!--                                                                           -->
++<!-- {module name} Capture Encode                                              -->
++<!--                                                                           -->
++<!-- {module description} Template for QT GUI interface                        -->
++<!--                                                                           -->
++<!-- Copyright (C) {YEAR} Texas Instruments Incorporated - http://www.ti.com/  -->
++<!--                                                                           -->
++<!--                                                                           -->
++<!--  Redistribution and use in source and binary forms, with or without       -->
++<!--  modification, are permitted provided that the following conditions       -->
++<!--  are met:                                                                 -->
++<!--                                                                           -->
++<!--    Redistributions of source code must retain the above copyright         -->
++<!--    notice, this list of conditions and the following disclaimer.          -->
++<!--                                                                           -->
++<!--    Redistributions in binary form must reproduce the above copyright      -->
++<!--    notice, this list of conditions and the following disclaimer in the    -->
++<!--    documentation and/or other materials provided with the                 -->
++<!--    distribution.                                                          -->
++<!--                                                                           -->
++<!--    Neither the name of Texas Instruments Incorporated nor the names of    -->
++<!--    its contributors may be used to endorse or promote products derived    -->
++<!--    from this software without specific prior written permission.          -->
++<!--                                                                           -->
++<!--  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS      -->
++<!--  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT        -->
++<!--  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR    -->
++<!--  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT     -->
++<!--  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,    -->
++<!--  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT         -->
++<!--  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,    -->
++<!--  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY    -->
++<!--  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT      -->
++<!--  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE    -->
++<!--  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     -->
++<!--                                                                           -->
++<!--                                                                           -->
++<head>
++  <title></title>
++  <link rel="stylesheet" href="/usr/share/matrix/html/matrix.css" />
++</head>
++
++<body>
++  <div class="topBar">
++    <object>
++    </object>
++  </div>
++  <div class="topBar">
++    <object type="image/svg+xml" data="/usr/share/matrix/images/tex.svg" >
++    <img src="/usr/share/matrix/images/tex.svg" />
++  </div>
++  <div id="header">Capture Encode</div>
++  <div class="topBar">
++    <object type="application/x-matrix" >
++      <param name="iconName" value="/usr/share/matrix/images/multi-icon.png" />
++      <param name="appName" value="Close" />
++    </object>
++  </div>
++  <div class="topBar">
++    <object>
++    </object>
++  </div>
++
++<h1> Capture Encode </h1>
++
++<h2> Description: </h2>
++<p> This demo uses TI OpenMax to capture video and encode it to a file
++</p>
++
++<div class="run">
++    <object type="application/x-matrix" >
++      <param name="iconName" value="/usr/share/matrix/images/run-icon.png" />
++      <param name="appName" value="Description" />
++    </object>
++</div>
++
++</body>
++</html>
+diff --git a/trunk/ti814x/html/menu_main.html b/trunk/ti814x/html/menu_main.html
+index 7bde487..f9c3696 100644
+--- a/trunk/ti814x/html/menu_main.html
++++ b/trunk/ti814x/html/menu_main.html
+@@ -76,6 +76,7 @@
+       <param name="iconName" value="/usr/share/matrix/images/signal-analyzer-icon.png" />
+       <param name="appName" value="/usr/share/ti/ti-integra-demos/runSADemo" />
+       <param name="appParameters" value="" />
++      <param name="appDesc" value="/usr/share/matrix/html/desc_signal_analyzer.html" />
+       <param name="appText" value="Disable" />
+     </object>
+     <div class="desc">Signal Analyzer</div>
+@@ -115,9 +116,9 @@
+   </div>
+   <div class="object">
+     <object type="application/x-matrix" >
+-      <param name="iconName" value="/usr/share/matrix/images/multimedia-dead.png" />
++      <param name="iconName" value="/usr/share/matrix/images/multimedia-icon.png" />
+       <param name="appName" value="Submenu" />
+-      <param name="appParameters" value="/usr/share/matrix/html/menu_comingsoon.html" />
++      <param name="appParameters" value="/usr/share/matrix/html/menu_multimedia.html" />
+     </object>
+     <div class="desc">Multimedia</div>
+   </div>
+diff --git a/trunk/ti814x/html/menu_multimedia.html b/trunk/ti814x/html/menu_multimedia.html
+new file mode 100644
+index 0000000..366c76d
+--- /dev/null
++++ b/trunk/ti814x/html/menu_multimedia.html
+@@ -0,0 +1,88 @@
++<!--                                                                           -->
++<!--                                                                           -->
++<!-- {module name} HTML Multimedia menu view                                   -->
++<!--                                                                           -->
++<!-- {module description} Template for QT GUI interface                        -->
++<!--                                                                           -->
++<!-- Copyright (C) {YEAR} Texas Instruments Incorporated - http://www.ti.com/  -->
++<!--                                                                           -->
++<!--                                                                           -->
++<!--  Redistribution and use in source and binary forms, with or without       -->
++<!--  modification, are permitted provided that the following conditions       -->
++<!--  are met:                                                                 -->
++<!--                                                                           -->
++<!--    Redistributions of source code must retain the above copyright         -->
++<!--    notice, this list of conditions and the following disclaimer.          -->
++<!--                                                                           -->
++<!--    Redistributions in binary form must reproduce the above copyright      -->
++<!--    notice, this list of conditions and the following disclaimer in the    -->
++<!--    documentation and/or other materials provided with the                 -->
++<!--    distribution.                                                          -->
++<!--                                                                           -->
++<!--    Neither the name of Texas Instruments Incorporated nor the names of    -->
++<!--    its contributors may be used to endorse or promote products derived    -->
++<!--    from this software without specific prior written permission.          -->
++<!--                                                                           -->
++<!--  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS      -->
++<!--  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT        -->
++<!--  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR    -->
++<!--  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT     -->
++<!--  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,    -->
++<!--  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT         -->
++<!--  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,    -->
++<!--  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY    -->
++<!--  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT      -->
++<!--  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE    -->
++<!--  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     -->
++<!--                                                                           -->
++<!--                                                                           -->
++<html>
++<head>
++  <title>Multimedia Demos</title>
++  <link rel="stylesheet" href="/usr/share/matrix/html/matrix.css" />
++</head>
++
++<body>
++  <div class="topBar">
++    <object >
++    </object>
++  </div>
++  <div class="topBar">
++    <object type="image/svg+xml" data="/usr/share/matrix/images/tex.svg" >
++    <img src="/usr/share/matrix/images/tex.svg" />
++  </div>
++  <div id="header">Multimedia Demos</div>
++  </div>
++  <div class="topBar">
++    <object type="application/x-matrix" >
++      <param name="iconName" value="/usr/share/matrix/images/multi-icon.png" />
++      <param name="appName" value="Close" />
++    </object>
++  </div>
++  <div class="topBar">
++    <object >
++    </object>
++  </div>
++
++  <div class="object">
++    <object type="application/x-matrix" >
++      <param name="iconName" value="/usr/share/matrix/images/video-conference-icon.png" />
++      <param name="appName" value="runDecodeDisplay" />
++      <param name="appText" value="Disable" />
++      <param name="appDesc" value="/usr/share/matrix/html/desc_1080p_decode_display.html" />
++      <param name="terminateMatrix" value="Disable" />
++    </object>
++    <div class="desc">1080p60 Decode and Display (requires Daughter card)</div>
++  </div>
++  <div class="object">
++    <object type="application/x-matrix" >
++      <param name="iconName" value="/usr/share/matrix/images/video-conference-icon.png" />
++      <param name="appName" value="runCaptureEncode" />
++      <param name="appText" value="Disable" />
++      <param name="appDesc" value="/usr/share/matrix/html/desc_1080p_capture_encode.html" />
++      <param name="terminateMatrix" value="Disable" />
++    </object>
++    <div class="desc">1080p60 Capture and Encode (requires Daughter card)</div>
++  </div>
++</body>
++</html>
+-- 
+1.7.0.4
+
