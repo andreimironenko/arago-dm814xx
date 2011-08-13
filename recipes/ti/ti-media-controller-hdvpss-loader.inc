@@ -4,7 +4,9 @@ LICENSE = "BSD"
 
 inherit update-rc.d
 
-INC_PR = "r0"
+PACKAGE_ARCH = "${MACHINE_ARCH}"
+
+INC_PR = "r1"
 
 DEPENDS = "ti-media-controller-utils"
 
