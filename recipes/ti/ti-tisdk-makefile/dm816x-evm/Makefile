@@ -11,7 +11,7 @@ PATH := ${PATH}:${CSTOOL_PATH}
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-all: linux cmem imglib dsplib mathlib syslink c6accel c6run u-boot sademo matrix c6run_examples omx psp-examples
+all: linux cmem imglib dsplib mathlib syslink c6accel c6run u-boot sademo matrix c6run_examples osal omx psp-examples
 
 #==============================================================================
 # Build components to enable all other build targets. 
@@ -494,7 +494,7 @@ c6run_clean:
 	distclean
 
 c6run_examples:
-	source $(C6RUN_INSTALL_DIR)/environment.sh; \
+	source $(C6RUN_INSTALL_DIR)/c6run-environment.sh; \
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
 	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
 	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
@@ -507,7 +507,7 @@ c6run_examples:
 	C6RUN_TOOLCHAIN_PATH="$(C6RUN_INSTALL_DIR)" \
 	examples
 
-	source $(C6RUN_INSTALL_DIR)/environment.sh; \
+	source $(C6RUN_INSTALL_DIR)/c6run-environment.sh; \
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
 	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
 	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
