@@ -11,7 +11,7 @@ PATH := ${PATH}:${CSTOOL_PATH}
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-all: linux cmem imglib dsplib mathlib syslink c6accel c6run u-boot sademo matrix c6run_examples omx psp-examples
+all: linux cmem imglib dsplib mathlib syslink c6accel c6run u-boot sademo matrix c6run_examples osal omx psp-examples
 
 #==============================================================================
 # Build components to enable all other build targets. 
@@ -171,9 +171,6 @@ psp-examples:
 		PWD=$(PSP_EXAMPLES_INSTALL_DIR)/edma \
 		ARCH=arm \
 		CROSS_COMPILE=$(CSTOOL_PREFIX)
-	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/pcie \
-		CC=$(CSTOOL_PREFIX)gcc \
-		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)
 #	mkdir -p $(PSP_EXAMPLES_INSTALL_DIR)/video/bin
 #	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/video \
 #		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
@@ -199,7 +196,6 @@ psp-examples_clean:
 		ARCH=arm \
 		CROSS_COMPILE=$(CSTOOL_PREFIX) \
 		clean
-	rm -f $(PSP_EXAMPLES_INSTALL_DIR)/pcie/saBootApp
 #	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/video \
 #		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
 #		INSTALL_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/video \
@@ -213,7 +209,6 @@ psp-examples_install:
 	-cp $(PSP_EXAMPLES_INSTALL_DIR)/audio/bin/minimal_capture $(EXEC_DIR)/psp-examples
 	-cp $(PSP_EXAMPLES_INSTALL_DIR)/audio/bin/minimal_playback $(EXEC_DIR)/psp-examples
 	-cp $(PSP_EXAMPLES_INSTALL_DIR)/edma/edma_test.ko $(EXEC_DIR)/psp-examples
-	-cp $(PSP_EXAMPLES_INSTALL_DIR)/pcie/saBootApp $(EXEC_DIR)/psp-examples
 	-cp $(PSP_EXAMPLES_INSTALL_DIR)/watchdog/saWatchdog $(EXEC_DIR)/psp-examples
 
 #==============================================================================
@@ -350,7 +345,7 @@ c6accel:
 	XDCPATH=${C6ACCEL_XDCPATH} \
 	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
 	PLATFORM="TI814X" \
-	PLATFORM_XDC="ti.platforms.evmTI814X" \
+	PLATFORM_XDC=ti.platforms.evmDM8148 \
 	ARM_ISA=armv7-a \
 	DSP_ISA=674 \
 	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
@@ -373,7 +368,7 @@ c6accel_linux:
 	XDCPATH=${C6ACCEL_XDCPATH} \
 	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
 	PLATFORM="TI814X" \
-	PLATFORM_XDC="ti.platforms.evmTI814X" \
+	PLATFORM_XDC=ti.platforms.evmDM8148 \
 	ARM_ISA=armv7-a \
 	DSP_ISA=674 \
 	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
@@ -396,7 +391,7 @@ c6accel_dsp:
 	XDCPATH=${C6ACCEL_XDCPATH} \
 	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
 	PLATFORM="TI814X" \
-	PLATFORM_XDC="ti.platforms.evmTI814X" \
+	PLATFORM_XDC=ti.platforms.evmDM8148 \
 	ARM_ISA=armv7-a \
 	DSP_ISA=674 \
 	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
@@ -494,7 +489,7 @@ c6run_clean:
 	distclean
 
 c6run_examples:
-	source $(C6RUN_INSTALL_DIR)/environment.sh; \
+	source $(C6RUN_INSTALL_DIR)/c6run-environment.sh; \
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
 	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
 	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
@@ -507,7 +502,7 @@ c6run_examples:
 	C6RUN_TOOLCHAIN_PATH="$(C6RUN_INSTALL_DIR)" \
 	examples
 
-	source $(C6RUN_INSTALL_DIR)/environment.sh; \
+	source $(C6RUN_INSTALL_DIR)/c6run-environment.sh; \
 	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
 	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
 	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
@@ -544,7 +539,7 @@ sademo:
 	$(MAKE) -C $(SADEMO_INSTALL_DIR)/app \
 		ROOTDIR=$(DVSDK_INSTALL_DIR) \
 	        PLATFORM="TI814X" \
-        PLATFORM_XDC="ti.platforms.evmTI814X" \
+		PLATFORM_XDC=ti.platforms.evmDM8148 \
 		FFT_QT_GUI_INSTALL_DIR=$(SADEMO_INSTALL_DIR)
 	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR) PLATFORM="TI814X" C6ACCEL_ROOT=$(C6ACCEL_INSTALL_DIR)
 
@@ -624,7 +619,6 @@ omx:
 		PLATFORM=ti814x-evm \
 		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
         CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR} \
-        PLATFORM=ti814x-evm \
         EXAMPLES_ROOT=${OMX_INSTALL_DIR}/packages \
 		DEST_ROOT=$(OMX_INSTALL_DIR)/bin
 
@@ -663,7 +657,7 @@ omx_install:
 ################################################################################
 
 omtb:
-	$(MAKE) -C $(OMTB_INSTALL_DIR) dm816xbm \
+	$(MAKE) -C $(OMTB_INSTALL_DIR) dm814xbm \
 		ROOTDIR=$(OMTB_INSTALL_DIR) \
 		OMTB_ROOT=$(OMTB_INSTALL_DIR) \
 		EZSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) \
@@ -681,7 +675,7 @@ omtb:
 		CODEGEN_PATH_A8=$(CSTOOL_DIR)
 
 omtb_clean:
-	$(MAKE) -C $(OMTB_INSTALL_DIR) clean_dm816xbm \
+	$(MAKE) -C $(OMTB_INSTALL_DIR) clean_dm814xbm \
 		ROOTDIR=$(OMTB_INSTALL_DIR) \
 		OMTB_ROOT=$(OMTB_INSTALL_DIR) \
 		EZSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) \
@@ -700,7 +694,7 @@ omtb_clean:
 
 omtb_install:
 	install -d $(EXEC_DIR)/omtb
-	install $(OMTB_INSTALL_DIR)/bin/dm814xbm/bin/ti816x-evm/omtb_dm814xbm_a8host.xv5T $(EXEC_DIR)/omtb
+	install $(OMTB_INSTALL_DIR)/bin/dm814xbm/bin/ti814x-evm/omtb_dm814xbm_a8host.xv5T $(EXEC_DIR)/omtb
 
 ################################################################################
 # Build the DSP image library
