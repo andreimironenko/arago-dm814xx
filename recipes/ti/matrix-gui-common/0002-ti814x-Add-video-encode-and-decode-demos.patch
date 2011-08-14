@@ -67,7 +67,7 @@ index 0000000..2081082
 +{
 +    cd /usr/share/ti/ti-omx
 +
-+    ./capture_encode_a8host_debug.xv5T
++    ./capture_encode_a8host_debug.xv5T  -o sample.h264 -m 1080p -f 30 -b 1000000 -n 1000 .d 1
 +}
 +
 +
@@ -129,7 +129,7 @@ index 0000000..a4ca7ab
 +{
 +    cd /usr/share/ti/ti-omx
 +
-+    ./decode_display_a8host_debug.xv5T
++    ./decode_display_a8host_debug.xv5T -w  1920  -h 1080 -f 30 -i /usr/share/ti/data/dm816x_1080p_demo.264 -g 0 -d 1
 +}
 +
 +
