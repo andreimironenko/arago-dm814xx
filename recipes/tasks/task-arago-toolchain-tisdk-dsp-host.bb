@@ -86,8 +86,9 @@ DSP_SOURCETREE_dm816x-custom = "\
     ${DSP_EZSDK_COMMON} \
     "
 
-DSP_SOURCETREE_ti814x = "\
+DSP_SOURCETREE_dm814x-evm = "\
     ${DSP_EZSDK_COMMON} \
+    ti-firmware-dm814x-src \
     "
 
 DSP_SOURCETREE = " "
