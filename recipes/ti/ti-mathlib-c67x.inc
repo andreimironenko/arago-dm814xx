@@ -5,6 +5,7 @@ LICENSE = "TI"
 
 require ti-paths.inc
 require ti-eula-unpack.inc
+require ti-staging.inc
 
 PR = "r2"
 
