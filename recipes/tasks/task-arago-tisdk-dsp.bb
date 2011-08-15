@@ -67,6 +67,7 @@ DSP_COMPONENTS_c6a814x-evm = "\
 
 DSP_COMPONENTS_dm814x-evm = "\
     ${DSP_EZSDK_COMMON} \
+    ti-firmware \
     "
 
 # For AM devices with no DSP we want to not build any DSP packages
