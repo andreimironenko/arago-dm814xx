@@ -1,0 +1,45 @@
+From c3c1fc06fa6267ead46c165b72752a10cce150b7 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Mon, 15 Aug 2011 13:18:01 +0530
+Subject: [PATCH] ti-c6accel: Fix Makefile to install for ti814x correctly
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ soc/app/c6accel_dsplib_testapp/Makefile |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/soc/app/c6accel_dsplib_testapp/Makefile b/soc/app/c6accel_dsplib_testapp/Makefile
+index f8f289d..0874b57 100755
+--- a/soc/app/c6accel_dsplib_testapp/Makefile
++++ b/soc/app/c6accel_dsplib_testapp/Makefile
+@@ -102,13 +102,13 @@ ifeq ($(PLATFORM),TI816X)
+ 	@chmod +x $(EXEC_DIR_C6ACCEL)/c6accel_dsplib_testapp/loadmodules_ti8168_c6accel.sh
+ endif
+ 
+-ifeq ($(PLATFORM),ti814x)
++ifeq ($(PLATFORM),TI814X)
+ 	@echo
+ 	@echo Copying kernel modules to target file system: $(EXEC_DIR_C6ACCEL)/c6accel_dsplib_testapp
+ 	@echo Copying cmemk.ko
+ 	@install -m 755 $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR_C6ACCEL)/c6accel_dsplib_testapp
+ 	@echo Copying syslink.ko
+-	@install -m 755 $(LINK_INSTALL_DIR)/ti/syslink/packages/bin/TI814X/syslink.ko $(EXEC_DIR_C6ACCEL)/
++	@install -m 755 $(LINK_INSTALL_DIR)/packages/ti/syslink/bin/TI814X/syslink.ko $(EXEC_DIR_C6ACCEL)/c6accel_dsplib_testapp
+ 	@echo Copying c6accel codec servers from $(C6ACCEL_INSTALL_DIR)/soc
+ 	@install -m 755 $(C6ACCEL_INSTALL_DIR)/soc/packages/ti/c6accel_unitservers/ti814x/bin/ti814x.xe674 $(EXEC_DIR_C6ACCEL)/c6accel_dsplib_testapp
+ 	@echo Copying c6accel test app from $(C6ACCEL_INSTALL_DIR)/soc/app
+@@ -116,8 +116,8 @@ ifeq ($(PLATFORM),ti814x)
+ 	@echo Copying testfile from $(C6ACCEL_INSTALL_DIR)/soc/app
+ 	@install -m 755 $(C6ACCEL_INSTALL_DIR)/soc/app/c6accel_dsplib_testapp/test_files/* $(EXEC_DIR_C6ACCEL)/c6accel_dsplib_testapp/test_files
+ 	@chmod -x $(EXEC_DIR_C6ACCEL)/c6accel_dsplib_testapp/*.xe674 $(EXEC_DIR_C6ACCEL)/c6accel_dsplib_testapp/*.ko 
+-	@chmod +x $(EXEC_DIR_C6ACCEL)/c6accel_app
+-	@install -m 755 $(C6ACCEL_INSTALL_DIR)/soc/app//c6accel_dsplib_testapp/ti814x/loadmodules_ti8148_c6accel.sh $(EXEC_DIR_C6ACCEL)//c6accel_dsplib_testapp
++	@chmod +x $(EXEC_DIR_C6ACCEL)/c6accel_dsplib_testapp/c6accel_dsplib_testapp
++	@install -m 755 $(C6ACCEL_INSTALL_DIR)/soc/app/c6accel_dsplib_testapp/TI814X/loadmodules_ti8148_c6accel.sh $(EXEC_DIR_C6ACCEL)/c6accel_dsplib_testapp
+ 	@chmod +x $(EXEC_DIR_C6ACCEL)/c6accel_dsplib_testapp/loadmodules_ti8148_c6accel.sh
+ endif
+ 
+-- 
+1.7.0.4
+
