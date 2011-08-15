@@ -1,0 +1,31 @@
+From 2446d49b1a5fda6d4dd2a148ccd0f50578a97e44 Mon Sep 17 00:00:00 2001
+From: Niclas Anderberg <niclas.anderberg@gmail.com>
+Date: Mon, 15 Aug 2011 15:14:13 +0200
+Subject: [PATCH] Fixed Makefile server and packages targets
+
+---
+ Makefile |    6 ++----
+ 1 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 079ff98..0c0fd73 100755
+--- a/Makefile
++++ b/Makefile
+@@ -101,12 +101,10 @@ c6accel_clean:
+ 	$(MAKE) -C $(C6ACCEL_INSTALL_DIR)/soc clean
+ 
+ server:
+-	$(XDC) -P $(C6ACCEL_INSTALL_DIR)/soc/packages/ti/c6accel_unitservers/$(PLATFORM)
++	$(MAKE) -C $(C6ACCEL_INSTALL_DIR)/soc server
+ 
+ packages:
+-	$(XDC) -P $(C6ACCEL_INSTALL_DIR)/soc/packages/ti/c6accel
+-	$(XDC) -P $(C6ACCEL_INSTALL_DIR)/soc/packages/ti/c6accel/ce
+-	$(XDC) -P $(C6ACCEL_INSTALL_DIR)/soc/packages/ti/c6accel_unitservers/$(PLATFORM)
++	$(MAKE) -C $(C6ACCEL_INSTALL_DIR)/soc codec_packages
+ 
+ clean_packages:
+ 	$(XDC) clean -PR $(C6ACCEL_INSTALL_DIR)/soc/packages
+-- 
+1.7.0.4
+
