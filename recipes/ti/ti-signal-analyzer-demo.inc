@@ -7,7 +7,7 @@ require ti-paths.inc
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-PR = "r2"
+PR = "r3"
 
 S  = "${WORKDIR}/signal-analyzer-demo_${PV}/"
 SADEMO_ROOT  = "${WORKDIR}/signal-analyzer-demo_${PV}/app"
@@ -24,6 +24,12 @@ PLATFORM_ti814x = "TI814X"
 PLATFORMXDC ?= "<UNDEFINED>"
 PLATFORMXDC_ti816x = "ti.platforms.evmDM8168"
 PLATFORMXDC_ti814x = "ti.platforms.evmTI814X"
+
+UNITSERVERDIR ?= "<UNDEFINED>"
+UNITSERVERDIR_ti816x = "TI816X"
+UNITSERVERDIR_ti814x = "ti814x"
+
+PACKAGE_STRIP = "no"
 
 inherit qt4e
 
@@ -64,18 +70,15 @@ do_install() {
     cp -pPrf ${S}/sigan_demo_app ${D}/${installdir}/ti-integra-demos
     cp -pPrf ${SADEMO_ROOT}/scripts/bin/runSADemo ${D}/${installdir}/ti-integra-demos
     cp -pPrf ${SADEMO_ROOT}/scripts/bin/fft_demo_8khz.pcm ${D}/${installdir}/ti-integra-demos
+ 
+    # Hack as postinst scripts are not working
+    cp -pPrf ${C6ACCEL_INSTALL_DIR}/soc/app/c6accel_dsplib_testapp/test_files ${D}/${installdir}/ti-integra-demos
+	for i in $(find ${C6ACCEL_INSTALL_DIR}/soc/packages/ti/c6accel_unitservers -name "*.xe674"); do
+       install $i ${D}/${installdir}/ti-integra-demos
+    done
 }
 
 PACKAGES += "ti-integra-demos"
 FILES_ti-integra-demos = "${installdir}/ti-integra-demos/*"
+RDEPENDS_ti-integra-demos += "ti-c6accel-apps"
 INSANE_SKIP_ti-integra-demos = True
-
-pkg_postinst_ti-integra-demos_ti816x () {
-	ln -sf ${installdir}/c6accel-apps/c6accel_dsplib_testapp/ti816x.${DSPSUFFIX} ${installdir}/ti-integra-demos/
-	ln -sf ${installdir}/c6accel-apps/c6accel_dsplib_testapp/test_files ${installdir}/ti-integra-demos/
-}
-
-pkg_postinst_ti-integra-demos_ti814x () {
-	ln -sf ${installdir}/c6accel-apps/c6accel_dsplib_testapp/ti814x.${DSPSUFFIX} ${installdir}/ti-integra-demos/
-	ln -sf ${installdir}/c6accel-apps/c6accel_dsplib_testapp/test_files ${installdir}/ti-integra-demos/
-}
