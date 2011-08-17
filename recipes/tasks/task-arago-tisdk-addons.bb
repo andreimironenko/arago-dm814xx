@@ -16,6 +16,7 @@ UTILS_dm6467 = ""
 UTILS_append_omapl138 = " am-benchmarks"
 UTILS_append_omap3 = " am-benchmarks"
 UTILS_append_ti816x = " am-benchmarks"
+UTILS_append_ti814x = " am-benchmarks"
 UTILS_append_dm365 = " am-benchmarks"
 
 # Comment out PRU and Profibus support until the code is migrated

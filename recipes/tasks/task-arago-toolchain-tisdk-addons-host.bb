@@ -15,6 +15,7 @@ UTILS_COMMON = " \
 UTILS_append_omapl138 = " am-benchmarks-src"
 UTILS_append_omap3 = " am-benchmarks-src"
 UTILS_append_ti816x = " am-benchmarks-src"
+UTILS_append_ti814x = " am-benchmarks-src"
 UTILS_append_dm365 = " am-benchmarks-src"
 
 
@@ -30,9 +31,6 @@ UTILS_append_am37x-evm = " matrix-tui-src"
 UTILS_append_am3517-evm = " matrix-tui-src"
 UTILS_append_am180x-evm = " matrix-tui-src"
 UTILS_append_am181x-evm = " matrix-tui-src"
-
-UTILS_ti814x = " \ 
-  "
 
 RDEPENDS_${PN} = "\
     ${UTILS_COMMON} \
