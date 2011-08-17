@@ -1,0 +1,57 @@
+From dadb13d86307195a725ffb00a37fea7a9d75aea9 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Wed, 17 Aug 2011 09:50:17 +0530
+Subject: [PATCH 2/3] ti81xx: Remove touchscreen calibration
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ trunk/ti814x/etc/init |   10 +++++-----
+ trunk/ti816x/etc/init |   10 +++++-----
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/trunk/ti814x/etc/init b/trunk/ti814x/etc/init
+index f2e42f6..b37359b 100644
+--- a/trunk/ti814x/etc/init
++++ b/trunk/ti814x/etc/init
+@@ -12,11 +12,11 @@ export QWS_MOUSE_PROTO=Auto:/dev/input/mice
+ 
+ case "$1" in
+   start)
+-    if [ ! -f /etc/pointercal ] ; then
+-        echo -n "Calibrating touchscreen (first time only)"
+-        ts_calibrate
+-        echo "."
+-    fi
++#    if [ ! -f /etc/pointercal ] ; then
++#        echo -n "Calibrating touchscreen (first time only)"
++#        ts_calibrate
++#        echo "."
++#    fi
+ 
+ 	if [ -e $PIDFILE ]; then
+       PIDDIR=/proc/$(cat $PIDFILE)
+diff --git a/trunk/ti816x/etc/init b/trunk/ti816x/etc/init
+index 74289fb..25e73ed 100644
+--- a/trunk/ti816x/etc/init
++++ b/trunk/ti816x/etc/init
+@@ -13,11 +13,11 @@ export QWS_MOUSE_PROTO=Auto:/dev/input/mice
+ 
+ case "$1" in
+   start)
+-    if [ ! -f /etc/pointercal ] ; then
+-        echo -n "Calibrating touchscreen (first time only)"
+-        ts_calibrate
+-        echo "."
+-    fi
++#    if [ ! -f /etc/pointercal ] ; then
++#        echo -n "Calibrating touchscreen (first time only)"
++#        ts_calibrate
++#        echo "."
++#    fi
+ 
+ 	if [ -e $PIDFILE ]; then
+       PIDDIR=/proc/$(cat $PIDFILE)
+-- 
+1.7.0.4
+

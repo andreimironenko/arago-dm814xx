@@ -1,7 +1,7 @@
 SRCREV = "295"
 PR_append = "-arago1"
 
-SRC_URI += "file://0001-Add-description-pages-for-ti814x-dsp-menu.patch;striplevel=2 \
-            file://0002-ti814x-Add-video-encode-and-decode-demos.patch;striplevel=2 \
-            file://0001-ti814x-Add-description-page-for-1080p-Decode-Display.patch;striplevel=2 \
+SRC_URI += "file://0001-ti814x-Add-Description-Pages-for-DSP-Menu.patch;striplevel=2 \
+            file://0002-ti81xx-Remove-touchscreen-calibration.patch;striplevel=2 \
+            file://0003-ti814x-Add-Video-Demos.patch;striplevel=2 \
 "

@@ -1,25 +1,31 @@
-From b39fdcf38f024126509037999550ec17b8f239c5 Mon Sep 17 00:00:00 2001
+From 6b2e585ebb5ac33a414ccbb8f1b63796c4dfbc26 Mon Sep 17 00:00:00 2001
 From: Siddharth Heroor <heroor@ti.com>
-Date: Sat, 13 Aug 2011 14:32:05 +0530
-Subject: [PATCH 2/2] ti814x: Add video encode and decode demos
+Date: Wed, 17 Aug 2011 09:56:21 +0530
+Subject: [PATCH 3/3] ti814x: Add Video Demos
 
 
 Signed-off-by: Siddharth Heroor <heroor@ti.com>
 ---
- trunk/ti814x/bin/runCaptureEncode                |   56 ++++++++++++++
- trunk/ti814x/bin/runDecodeDisplay                |   56 ++++++++++++++
- trunk/ti814x/html/desc_1080p_capture_encode.html |   79 +++++++++++++++++++
+ trunk/ti814x/bin/runCaptureEncode                |   56 ++++++++++++
+ trunk/ti814x/bin/runDecodeDisplayHDMI            |   56 ++++++++++++
+ trunk/ti814x/bin/runDecodeDisplayLCD             |   56 ++++++++++++
+ trunk/ti814x/html/desc_1080p_capture_encode.html |   79 +++++++++++++++++
+ trunk/ti814x/html/desc_1080p_decode_display.html |   80 ++++++++++++++++++
+ trunk/ti814x/html/desc_lcd_decode_display.html   |   80 ++++++++++++++++++
  trunk/ti814x/html/menu_main.html                 |    5 +-
- trunk/ti814x/html/menu_multimedia.html           |   88 ++++++++++++++++++++++
- 5 files changed, 282 insertions(+), 2 deletions(-)
+ trunk/ti814x/html/menu_multimedia.html           |   98 ++++++++++++++++++++++
+ 8 files changed, 508 insertions(+), 2 deletions(-)
  create mode 100755 trunk/ti814x/bin/runCaptureEncode
- create mode 100755 trunk/ti814x/bin/runDecodeDisplay
+ create mode 100755 trunk/ti814x/bin/runDecodeDisplayHDMI
+ create mode 100755 trunk/ti814x/bin/runDecodeDisplayLCD
  create mode 100644 trunk/ti814x/html/desc_1080p_capture_encode.html
+ create mode 100644 trunk/ti814x/html/desc_1080p_decode_display.html
+ create mode 100644 trunk/ti814x/html/desc_lcd_decode_display.html
  create mode 100644 trunk/ti814x/html/menu_multimedia.html
 
 diff --git a/trunk/ti814x/bin/runCaptureEncode b/trunk/ti814x/bin/runCaptureEncode
 new file mode 100755
-index 0000000..2081082
+index 0000000..8700670
 --- /dev/null
 +++ b/trunk/ti814x/bin/runCaptureEncode
 @@ -0,0 +1,56 @@
@@ -67,7 +73,7 @@ index 0000000..2081082
 +{
 +    cd /usr/share/ti/ti-omx
 +
-+    ./capture_encode_a8host_debug.xv5T  -o sample.h264 -m 1080p -f 30 -b 1000000 -n 1000 .d 1
++    ./capture_encode_a8host_debug.xv5T -o sample.h264 -m 1080p -f 30 -b 1000000 -n 1000 -d 1
 +}
 +
 +
@@ -79,11 +85,11 @@ index 0000000..2081082
 +    
 +# Enable Graphics again.
 +configure_graphics 1
-diff --git a/trunk/ti814x/bin/runDecodeDisplay b/trunk/ti814x/bin/runDecodeDisplay
+diff --git a/trunk/ti814x/bin/runDecodeDisplayHDMI b/trunk/ti814x/bin/runDecodeDisplayHDMI
 new file mode 100755
-index 0000000..a4ca7ab
+index 0000000..86e2407
 --- /dev/null
-+++ b/trunk/ti814x/bin/runDecodeDisplay
++++ b/trunk/ti814x/bin/runDecodeDisplayHDMI
 @@ -0,0 +1,56 @@
 +#!/bin/sh
 +
@@ -129,7 +135,69 @@ index 0000000..a4ca7ab
 +{
 +    cd /usr/share/ti/ti-omx
 +
-+    ./decode_display_a8host_debug.xv5T -w  1920  -h 1080 -f 30 -i /usr/share/ti/data/dm816x_1080p_demo.264 -g 0 -d 1
++    ./decode_display_a8host_debug.xv5T -w 1920 -h 1080 -f 30 -i /usr/share/ti/data/videos/dm816x_1080p_demo.264 -g 0 -d 0
++}
++
++
++# Disable Graphics Plane so that Video can be seen.
++configure_graphics 0
++
++configure_alsa_mixer
++execute_demo
++    
++# Enable Graphics again.
++configure_graphics 1
+diff --git a/trunk/ti814x/bin/runDecodeDisplayLCD b/trunk/ti814x/bin/runDecodeDisplayLCD
+new file mode 100755
+index 0000000..d7cae27
+--- /dev/null
++++ b/trunk/ti814x/bin/runDecodeDisplayLCD
+@@ -0,0 +1,56 @@
++#!/bin/sh
++
++
++
++#
++# Turn on the ALSA Mixer
++#
++configure_alsa_mixer()
++{
++   amixer sset 'Left PGA Mixer Mic3L' on
++   amixer sset 'Left PGA Mixer Mic3R' on
++   amixer sset 'Right PGA Mixer Mic3L' on
++   amixer sset 'Right PGA Mixer Mic3R' on
++
++   amixer cset name='PCM Playback Volume' 75%,75%
++   amixer cset name='PGA Capture Volume' 75%,75%
++}
++
++
++
++#
++# In order to view video, the graphics plane needs to be
++# disabled. Once the video has finished playing the graphics
++# plane needs to be re-enabled. 
++#
++# Call this function with 0 to disable graphics and 1 to
++# enable it.
++# 
++configure_graphics()
++{
++    echo $1 > /sys/devices/platform/vpss/graphics0/enabled
++    echo $1 > /sys/devices/platform/vpss/graphics1/enabled
++}
++
++
++
++
++# 
++# Call this function to setup and execute the demo 
++# 
++execute_demo()
++{
++    cd /usr/share/ti/ti-omx
++
++    ./decode_display_a8host_debug.xv5T -w 1920 -h 1080 -f 30 -i /usr/share/ti/data/videos/dm816x_1080p_demo.264 -g 0 -d 1
 +}
 +
 +
@@ -226,6 +294,178 @@ index 0000000..f0c0749
 +
 +</body>
 +</html>
+diff --git a/trunk/ti814x/html/desc_1080p_decode_display.html b/trunk/ti814x/html/desc_1080p_decode_display.html
+new file mode 100644
+index 0000000..d9d626b
+--- /dev/null
++++ b/trunk/ti814x/html/desc_1080p_decode_display.html
+@@ -0,0 +1,80 @@
++<!--                                                                           -->
++<!--                                                                           -->
++<!-- {module name} Decode Display                                              -->
++<!--                                                                           -->
++<!-- {module description} Template for QT GUI interface                        -->
++<!--                                                                           -->
++<!-- Copyright (C) {YEAR} Texas Instruments Incorporated - http://www.ti.com/  -->
++<!--                                                                           -->
++<!--                                                                           -->
++<!--  Redistribution and use in source and binary forms, with or without       -->
++<!--  modification, are permitted provided that the following conditions       -->
++<!--  are met:                                                                 -->
++<!--                                                                           -->
++<!--    Redistributions of source code must retain the above copyright         -->
++<!--    notice, this list of conditions and the following disclaimer.          -->
++<!--                                                                           -->
++<!--    Redistributions in binary form must reproduce the above copyright      -->
++<!--    notice, this list of conditions and the following disclaimer in the    -->
++<!--    documentation and/or other materials provided with the                 -->
++<!--    distribution.                                                          -->
++<!--                                                                           -->
++<!--    Neither the name of Texas Instruments Incorporated nor the names of    -->
++<!--    its contributors may be used to endorse or promote products derived    -->
++<!--    from this software without specific prior written permission.          -->
++<!--                                                                           -->
++<!--  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS      -->
++<!--  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT        -->
++<!--  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR    -->
++<!--  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT     -->
++<!--  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,    -->
++<!--  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT         -->
++<!--  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,    -->
++<!--  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY    -->
++<!--  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT      -->
++<!--  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE    -->
++<!--  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     -->
++<!--                                                                           -->
++<!--                                                                           -->
++<head>
++  <title></title>
++  <link rel="stylesheet" href="/usr/share/matrix/html/matrix.css" />
++</head>
++
++<body>
++  <div class="topBar">
++    <object>
++    </object>
++  </div>
++  <div class="topBar">
++    <object type="image/svg+xml" data="/usr/share/matrix/images/tex.svg" >
++    <img src="/usr/share/matrix/images/tex.svg" />
++  </div>
++  <div id="header">Capture Encode</div>
++  <div class="topBar">
++    <object type="application/x-matrix" >
++      <param name="iconName" value="/usr/share/matrix/images/multi-icon.png" />
++      <param name="appName" value="Close" />
++    </object>
++  </div>
++  <div class="topBar">
++    <object>
++    </object>
++  </div>
++
++<h1> Decode Display </h1>
++
++<h2> Description: </h2>
++<p> This demo uses TI OpenMax to decode video from a file and display it on
++the onchip HDMI display. 
++</p>
++
++<div class="run">
++    <object type="application/x-matrix" >
++      <param name="iconName" value="/usr/share/matrix/images/run-icon.png" />
++      <param name="appName" value="Description" />
++    </object>
++</div>
++
++</body>
++</html>
+diff --git a/trunk/ti814x/html/desc_lcd_decode_display.html b/trunk/ti814x/html/desc_lcd_decode_display.html
+new file mode 100644
+index 0000000..017bc8f
+--- /dev/null
++++ b/trunk/ti814x/html/desc_lcd_decode_display.html
+@@ -0,0 +1,80 @@
++<!--                                                                           -->
++<!--                                                                           -->
++<!-- {module name} Decode Display                                              -->
++<!--                                                                           -->
++<!-- {module description} Template for QT GUI interface                        -->
++<!--                                                                           -->
++<!-- Copyright (C) {YEAR} Texas Instruments Incorporated - http://www.ti.com/  -->
++<!--                                                                           -->
++<!--                                                                           -->
++<!--  Redistribution and use in source and binary forms, with or without       -->
++<!--  modification, are permitted provided that the following conditions       -->
++<!--  are met:                                                                 -->
++<!--                                                                           -->
++<!--    Redistributions of source code must retain the above copyright         -->
++<!--    notice, this list of conditions and the following disclaimer.          -->
++<!--                                                                           -->
++<!--    Redistributions in binary form must reproduce the above copyright      -->
++<!--    notice, this list of conditions and the following disclaimer in the    -->
++<!--    documentation and/or other materials provided with the                 -->
++<!--    distribution.                                                          -->
++<!--                                                                           -->
++<!--    Neither the name of Texas Instruments Incorporated nor the names of    -->
++<!--    its contributors may be used to endorse or promote products derived    -->
++<!--    from this software without specific prior written permission.          -->
++<!--                                                                           -->
++<!--  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS      -->
++<!--  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT        -->
++<!--  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR    -->
++<!--  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT     -->
++<!--  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,    -->
++<!--  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT         -->
++<!--  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,    -->
++<!--  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY    -->
++<!--  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT      -->
++<!--  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE    -->
++<!--  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.     -->
++<!--                                                                           -->
++<!--                                                                           -->
++<head>
++  <title></title>
++  <link rel="stylesheet" href="/usr/share/matrix/html/matrix.css" />
++</head>
++
++<body>
++  <div class="topBar">
++    <object>
++    </object>
++  </div>
++  <div class="topBar">
++    <object type="image/svg+xml" data="/usr/share/matrix/images/tex.svg" >
++    <img src="/usr/share/matrix/images/tex.svg" />
++  </div>
++  <div id="header">Capture Encode</div>
++  <div class="topBar">
++    <object type="application/x-matrix" >
++      <param name="iconName" value="/usr/share/matrix/images/multi-icon.png" />
++      <param name="appName" value="Close" />
++    </object>
++  </div>
++  <div class="topBar">
++    <object>
++    </object>
++  </div>
++
++<h1> Decode Display </h1>
++
++<h2> Description: </h2>
++<p> This demo uses TI OpenMax to decode video from a file and display it on the
++LCD. This demo requires the Expansion IO card with LCD. 
++</p>
++
++<div class="run">
++    <object type="application/x-matrix" >
++      <param name="iconName" value="/usr/share/matrix/images/run-icon.png" />
++      <param name="appName" value="Description" />
++    </object>
++</div>
++
++</body>
++</html>
 diff --git a/trunk/ti814x/html/menu_main.html b/trunk/ti814x/html/menu_main.html
 index 7bde487..f9c3696 100644
 --- a/trunk/ti814x/html/menu_main.html
@@ -252,10 +492,10 @@ index 7bde487..f9c3696 100644
    </div>
 diff --git a/trunk/ti814x/html/menu_multimedia.html b/trunk/ti814x/html/menu_multimedia.html
 new file mode 100644
-index 0000000..366c76d
+index 0000000..a3a7d6e
 --- /dev/null
 +++ b/trunk/ti814x/html/menu_multimedia.html
-@@ -0,0 +1,88 @@
+@@ -0,0 +1,98 @@
 +<!--                                                                           -->
 +<!--                                                                           -->
 +<!-- {module name} HTML Multimedia menu view                                   -->
@@ -325,12 +565,22 @@ index 0000000..366c76d
 +  <div class="object">
 +    <object type="application/x-matrix" >
 +      <param name="iconName" value="/usr/share/matrix/images/video-conference-icon.png" />
-+      <param name="appName" value="runDecodeDisplay" />
++      <param name="appName" value="runDecodeDisplayLCD" />
++      <param name="appText" value="Disable" />
++      <param name="appDesc" value="/usr/share/matrix/html/desc_lcd_decode_display.html" />
++      <param name="terminateMatrix" value="Disable" />
++    </object>
++    <div class="desc">1080p60 Decode and Display on LCD (requires Daughter card with LCD)</div>
++  </div>
++  <div class="object">
++    <object type="application/x-matrix" >
++      <param name="iconName" value="/usr/share/matrix/images/video-conference-icon.png" />
++      <param name="appName" value="runDecodeDisplayHDMI" />
 +      <param name="appText" value="Disable" />
 +      <param name="appDesc" value="/usr/share/matrix/html/desc_1080p_decode_display.html" />
 +      <param name="terminateMatrix" value="Disable" />
 +    </object>
-+    <div class="desc">1080p60 Decode and Display (requires Daughter card)</div>
++    <div class="desc">1080p60 Decode and Display on HDMI</div>
 +  </div>
 +  <div class="object">
 +    <object type="application/x-matrix" >
