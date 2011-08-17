@@ -1,0 +1,31 @@
+From cc5fb0bfeee8e3e6ec6d284073b7473a86169aec Mon Sep 17 00:00:00 2001
+From: Hardik Shah <hardik.shah@ti.com>
+Date: Wed, 17 Aug 2011 14:32:28 +0530
+Subject: [PATCH 1/1] TI814x: Set the required bit for TI814x HDMI
+
+This bit is called secret bit by designers. Its not
+clear what this bit does but this needs to be set otherwise
+some sparkling is seen on display
+
+Signed-off-by: Hardik Shah <hardik.shah@ti.com>
+---
+ arch/arm/plat-omap/hdmi_lib.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/plat-omap/hdmi_lib.c b/arch/arm/plat-omap/hdmi_lib.c
+index 1ca62f1..546f537 100644
+--- a/arch/arm/plat-omap/hdmi_lib.c
++++ b/arch/arm/plat-omap/hdmi_lib.c
+@@ -1116,6 +1116,9 @@ void hdmi_w1_video_stop(void)
+ 
+ void hdmi_w1_video_start(void)
+ {
++	/* For TI814x some secret bit needs to be set */
++	if (cpu_is_ti814x())
++		REG_FLD_MOD(HDMI_WP, HDMI_WP_VIDEO_CFG, (u32)0x1, 2, 2);
+ 	REG_FLD_MOD(HDMI_WP, HDMI_WP_VIDEO_CFG, (u32)0x1, 31, 31);
+ }
+ 
+-- 
+1.6.2.4
+
