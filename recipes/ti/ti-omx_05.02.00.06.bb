@@ -23,6 +23,9 @@ SRC_URI[omx.sha256sum] = "96fddf50c40fb8bc5de6ffc989fc2d751a5f8527ea53f225a4606e
 SRC_URI[omx.md5sum] = "bb405144dc14b1da4ef53acd9779f35e"
 SRC_URI[omx.sha256sum] = "c78add00818dea2f2f075a48f908c3e9ea4cab20271359ceb8517a79d962c48d"
 
+SRC_URI += "file://0001-Added-sdk-make-install-file-to-omx.patch \
+"
+
 DEPENDS = "ti-sysbios ti-xdctools ti-ipc ti-cgt470 ti-osal ti-syslink"
 DEPENDS += "ti-ivahd-hdvicp20api ti-codecs-dm816x"
 DEPENDS += "ti-xdais ti-codec-engine ti-framework-components"
