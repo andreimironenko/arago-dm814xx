@@ -1,19 +1,19 @@
-From f2c521065be1fc462a01b7435529a8d8229f2a05 Mon Sep 17 00:00:00 2001
+From 0568fc2954eee4fc7967ab4322cc2ae01324d0f0 Mon Sep 17 00:00:00 2001
 From: Niclas Anderberg <niclas.anderberg@gmail.com>
-Date: Fri, 12 Aug 2011 12:12:45 +0200
-Subject: [PATCH] Added sdk make install file to syslink
+Date: Wed, 17 Aug 2011 12:01:11 +0200
+Subject: [PATCH] Added sdk.mk
 
 ---
- sdk.mk |   78 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 78 insertions(+), 0 deletions(-)
+ sdk.mk |   84 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 84 insertions(+), 0 deletions(-)
  create mode 100644 sdk.mk
 
 diff --git a/sdk.mk b/sdk.mk
 new file mode 100644
-index 0000000..bc352f9
+index 0000000..a4a5e4a
 --- /dev/null
 +++ b/sdk.mk
-@@ -0,0 +1,78 @@
+@@ -0,0 +1,84 @@
 +# 
 +#  Copyright (c) 2011, Texas Instruments Incorporated
 +#  All rights reserved.
@@ -54,11 +54,13 @@ index 0000000..bc352f9
 +#
 +# Where to install/stage the packages
 +# Typically this would point to the devkit location
-+# This must be passed to the Makefile.
 +#
 +
-+DESTDIR="<UNDEFINED>"
-+
++DESTDIR ?= $(HOME)/target-root
++prefix ?= /usr
++libdir ?= /lib
++includedir ?= /include
++docdir ?= /share/ti/syslink/doc
 +
 +
 +#
@@ -68,10 +70,11 @@ index 0000000..bc352f9
 +LIBS = $(subst packages/,,$(wildcard packages/ti/syslink/lib/*.a*))
 +HEADERS  = $(subst packages/,,$(wildcard packages/ti/syslink/*.h))
 +HEADERS += $(subst packages/,,$(wildcard packages/ti/syslink/utils/*.h))
++DOCS = $(wildcard *ReleaseNotes.html) $(wildcard docs/*)
 +
-+LIBDIR = $(DESTDIR)/lib
-+INCDIR = $(DESTDIR)/include
-+
++LIBDIR = $(DESTDIR)/$(prefix)/$(libdir)
++INCDIR = $(DESTDIR)/$(prefix)/$(includedir)
++DOCDIR = $(DESTDIR)/$(prefix)/$(docdir)
 +
 +# 
 +# ==== Targets ====
@@ -84,6 +87,9 @@ index 0000000..bc352f9
 +	@echo "Installing header files.."
 +	@mkdir -p $(INCDIR)
 +	@cd packages && cp --parents $(HEADERS) $(INCDIR)
++	@echo "Installing documentation.."
++	@mkdir -p $(DOCDIR)
++	@cp -R $(DOCS) $(DOCDIR)
 +
 +help:
 +	@echo
