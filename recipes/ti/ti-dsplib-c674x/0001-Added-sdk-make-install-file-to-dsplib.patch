@@ -1,19 +1,19 @@
-From 1a25dabd13d7196da32f2f02b88272f1827f7b5a Mon Sep 17 00:00:00 2001
+From 4192a8095bbbf0ff138960c602173de7172b96e7 Mon Sep 17 00:00:00 2001
 From: Niclas Anderberg <niclas.anderberg@gmail.com>
-Date: Fri, 12 Aug 2011 14:09:46 +0200
-Subject: [PATCH] Added sdk make install file to dsplib
+Date: Wed, 17 Aug 2011 11:38:17 +0200
+Subject: [PATCH] sdk.mk updated
 
 ---
- sdk.mk |   77 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 77 insertions(+), 0 deletions(-)
+ sdk.mk |   83 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 83 insertions(+), 0 deletions(-)
  create mode 100644 sdk.mk
 
 diff --git a/sdk.mk b/sdk.mk
 new file mode 100644
-index 0000000..b3bfa94
+index 0000000..f267da7
 --- /dev/null
 +++ b/sdk.mk
-@@ -0,0 +1,77 @@
+@@ -0,0 +1,83 @@
 +# 
 +#  Copyright (c) 2011, Texas Instruments Incorporated
 +#  All rights reserved.
@@ -54,11 +54,13 @@ index 0000000..b3bfa94
 +#
 +# Where to install/stage the packages
 +# Typically this would point to the devkit location
-+# This must be passed to the Makefile.
 +#
 +
-+DESTDIR="<UNDEFINED>"
-+
++DESTDIR ?= $(HOME)/target-root
++prefix ?= /
++libdir ?= /lib
++includedir ?= /include
++docdir ?= /doc/dsplib
 +
 +
 +#
@@ -67,10 +69,11 @@ index 0000000..b3bfa94
 +
 +LIBS = $(wildcard lib/*)
 +HEADERS = $(wildcard include/*)
++DOCS = $(wildcard docs/*) README.txt
 +
-+LIBDIR = $(DESTDIR)/lib
-+INCDIR = $(DESTDIR)/include
-+
++LIBDIR = $(DESTDIR)/$(prefix)/$(libdir)
++INCDIR = $(DESTDIR)/$(prefix)/$(includedir)
++DOCDIR = $(DESTDIR)/$(prefix)/$(docdir)
 +
 +# 
 +# ==== Targets ====
@@ -83,6 +86,9 @@ index 0000000..b3bfa94
 +	@echo "Installing header files.."
 +	@mkdir -p $(INCDIR)
 +	@cp $(HEADERS) $(INCDIR)
++	@echo "Installing documentation.."
++	@mkdir -p $(DOCDIR)
++	@cp $(DOCS) $(DOCDIR)
 +
 +help:
 +	@echo
