@@ -1,19 +1,19 @@
-From a47894fde5810b965e5476e9fe95f704bbe35d10 Mon Sep 17 00:00:00 2001
+From 8fffd4693b35c86e991700e2418174936717a84e Mon Sep 17 00:00:00 2001
 From: Niclas Anderberg <niclas.anderberg@gmail.com>
-Date: Fri, 12 Aug 2011 12:44:15 +0200
-Subject: [PATCH] Added sdk make install file to edma3lld
+Date: Wed, 17 Aug 2011 11:46:56 +0200
+Subject: [PATCH] Added sdk.mk
 
 ---
- sdk.mk |  101 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 101 insertions(+), 0 deletions(-)
+ sdk.mk |  107 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 107 insertions(+), 0 deletions(-)
  create mode 100644 sdk.mk
 
 diff --git a/sdk.mk b/sdk.mk
 new file mode 100644
-index 0000000..5c23b35
+index 0000000..ce6b477
 --- /dev/null
 +++ b/sdk.mk
-@@ -0,0 +1,101 @@
+@@ -0,0 +1,107 @@
 +# 
 +#  Copyright (c) 2011, Texas Instruments Incorporated
 +#  All rights reserved.
@@ -54,10 +54,12 @@ index 0000000..5c23b35
 +#
 +# Where to install/stage the packages
 +# Typically this would point to the devkit location
-+# This must be passed to the Makefile.
 +#
 +
-+DESTDIR="<UNDEFINED>"
++DESTDIR ?= $(HOME)/target-root
++prefix ?= /
++packagedir ?= /packages
++docdir ?= /doc/edma3lld
 +
 +
 +
@@ -77,15 +79,16 @@ index 0000000..5c23b35
 +XS=$(XDC_INSTALL_DIR)/xs
 +XDC=$(XDC_INSTALL_DIR)/xdc
 +XDCPKG=$(XDC_INSTALL_DIR)/bin/xdcpkg
-+INSTALL=install
 +
 +#
 +# == Helper variables ==
 +#
 +
 +PACKAGES=`$(call all_packages) | grep -v wizards | grep -v examples | xargs`
++DOCS = $(wildcard docs/*.pdf) $(wildcard release_notes_*.html)
 +
-+
++DOCDIR = $(DESTDIR)/$(prefix)/$(docdir)
++PACKAGEDIR = $(DESTDIR)/$(xdcprefix)/$(packagedir)
 +
 +#
 +# ==== Helper functions ====
@@ -103,10 +106,13 @@ index 0000000..5c23b35
 +
 +install-xdc:
 +	@echo "Installing packages.."
-+	$(INSTALL) -d $(DESTDIR)
-+	$(XS) xdc.tools.repoman -c -r $(DESTDIR) -p packages $(PACKAGES)
-+	$(call purge,$(DESTDIR),'*.c')
-+	$(call purge,$(DESTDIR),'*.bld')
++	@mkdir -p $(PACKAGEDIR)
++	@$(XS) xdc.tools.repoman -c -r $(PACKAGEDIR) -p packages $(PACKAGES)
++	$(call purge,$(PACKAGEDIR),'*.c')
++	$(call purge,$(PACKAGEDIR),'*.bld')
++	@echo "Installing documentation.."
++	@mkdir -p $(DOCDIR)
++	@cp -R $(DOCS) $(DOCDIR)
 +
 +help:
 +	@echo
