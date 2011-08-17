@@ -12,8 +12,6 @@ PV = "05_02_00_08"
 
 COMPATIBLE_MACHINE = "ti814x"
 
-DEFAULT_PREFERENCE = "-1"
-
 S = "${WORKDIR}/omx-ti814x_${PV}"
 
 SRC_URI = "http://bangsdowebsvr01.india.ti.com:8090/DM814x-OMX/${PV}/exports/omx-ti814x_${PV}.tar.gz;name=omx \
