@@ -52,9 +52,6 @@ PSP_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/board-support
 LINUXKERNEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/board-support/<__kernel__>
 KERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR)
 
-# Where the development headers and libs are installed.
-LINUX_DEVKIT_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit
-
 # Where the dsp image library is installed
 IMGLIB_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__imglib-c64plus__>
 
@@ -96,7 +93,7 @@ CSTOOL_PATH=$(CSTOOL_DIR)/bin
 MVTOOL_DIR=$(CSTOOL_DIR)
 MVTOOL_PREFIX=$(CSTOOL_PREFIX)
 
-# Where the devkits are generated
+# Where the devkits are located
 LINUX_DEVKIT_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit
 DSP_DEVKIT_DIR=$(DVSDK_INSTALL_DIR)/dsp-devkit
 
