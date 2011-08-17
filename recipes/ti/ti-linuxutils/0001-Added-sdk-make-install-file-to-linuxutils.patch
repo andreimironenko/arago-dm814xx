@@ -1,19 +1,19 @@
-From b55c0814d1ffacf754dc7896fc0c0afb56f3a6a3 Mon Sep 17 00:00:00 2001
+From 4149801bdca5548acca6f08b4ea9ea2d592ef9b8 Mon Sep 17 00:00:00 2001
 From: Niclas Anderberg <niclas.anderberg@gmail.com>
-Date: Fri, 12 Aug 2011 12:22:12 +0200
-Subject: [PATCH] Added sdk make install file to linuxutils
+Date: Wed, 17 Aug 2011 11:54:30 +0200
+Subject: [PATCH] Added sdk.mk
 
 ---
- sdk.mk |   77 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 77 insertions(+), 0 deletions(-)
+ sdk.mk |   83 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 83 insertions(+), 0 deletions(-)
  create mode 100644 sdk.mk
 
 diff --git a/sdk.mk b/sdk.mk
 new file mode 100644
-index 0000000..3f9fac4
+index 0000000..54c8bcf
 --- /dev/null
 +++ b/sdk.mk
-@@ -0,0 +1,77 @@
+@@ -0,0 +1,83 @@
 +# 
 +#  Copyright (c) 2011, Texas Instruments Incorporated
 +#  All rights reserved.
@@ -54,11 +54,13 @@ index 0000000..3f9fac4
 +#
 +# Where to install/stage the packages
 +# Typically this would point to the devkit location
-+# This must be passed to the Makefile.
 +#
 +
-+DESTDIR="<UNDEFINED>"
-+
++DESTDIR ?= $(HOME)/target-root
++prefix ?= /usr
++libdir ?= /lib
++includedir ?= /include
++docdir ?= /share/ti/linuxutils/doc
 +
 +
 +#
@@ -67,10 +69,11 @@ index 0000000..3f9fac4
 +
 +LIBS = $(shell cd packages && find . -name '*.a470MV' -type f)
 +HEADERS = $(shell cd packages && find . -name '*.h' -type f -not \( -name "package.defs.h" -o -name "_*.h" \))
++DOCS = $(wildcard *_ReleaseNotes.html)
 +
-+LIBDIR = $(DESTDIR)/lib
-+INCDIR = $(DESTDIR)/include
-+
++LIBDIR = $(DESTDIR)/$(prefix)/$(libdir)
++INCDIR = $(DESTDIR)/$(prefix)/$(includedir)
++DOCDIR = $(DESTDIR)/$(prefix)/$(docdir)
 +
 +# 
 +# ==== Targets ====
@@ -83,6 +86,9 @@ index 0000000..3f9fac4
 +	@echo "Installing header files.."
 +	@mkdir -p $(INCDIR)
 +	@cd packages && cp --parents $(HEADERS) $(INCDIR)
++	@echo "Installing documentation.."
++	@mkdir -p $(DOCDIR)
++	@cp -R $(DOCS) docs/* $(DOCDIR)
 +
 +help:
 +	@echo
