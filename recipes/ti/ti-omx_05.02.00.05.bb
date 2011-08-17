@@ -21,6 +21,9 @@ SRC_URI = "http://bangsdowebsvr01.india.ti.com:8090/DM814x-OMX/${PV}/exports/omx
 SRC_URI[omx.md5sum] = "c2bf53db0e086ba5dd419ea0ca8d8118"
 SRC_URI[omx.sha256sum] = "96fddf50c40fb8bc5de6ffc989fc2d751a5f8527ea53f225a4606e859b8686d9"
 
+SRC_URI += "file://0001-Added-sdk-make-install-file-to-omx.patch \
+"
+
 DEPENDS = "ti-sysbios ti-xdctools ti-ipc ti-cgt470 ti-osal ti-syslink"
 DEPENDS += "ti-ivahd-hdvicp20api ti-codecs-dm816x"
 DEPENDS += "ti-xdais ti-codec-engine ti-framework-components"
