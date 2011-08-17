@@ -1,19 +1,19 @@
-From 8903b1673a20cf209bf684fa85ca88f58e3f7a97 Mon Sep 17 00:00:00 2001
+From a770be9b163ad062754c4f72e9107962fe394f15 Mon Sep 17 00:00:00 2001
 From: Niclas Anderberg <niclas.anderberg@gmail.com>
-Date: Fri, 12 Aug 2011 12:30:06 +0200
-Subject: [PATCH] Added sdk make install file to graphics sdk
+Date: Wed, 17 Aug 2011 11:50:50 +0200
+Subject: [PATCH] Added sdk.mk
 
 ---
- sdk.mk |   74 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 74 insertions(+), 0 deletions(-)
+ sdk.mk |   81 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 81 insertions(+), 0 deletions(-)
  create mode 100644 sdk.mk
 
 diff --git a/sdk.mk b/sdk.mk
 new file mode 100644
-index 0000000..f1a1ce3
+index 0000000..005d20c
 --- /dev/null
 +++ b/sdk.mk
-@@ -0,0 +1,74 @@
+@@ -0,0 +1,81 @@
 +# 
 +#  Copyright (c) 2011, Texas Instruments Incorporated
 +#  All rights reserved.
@@ -54,20 +54,24 @@ index 0000000..f1a1ce3
 +#
 +# Where to install/stage the packages
 +# Typically this would point to the devkit location
-+# This must be passed to the Makefile.
 +#
 +
-+DESTDIR="<UNDEFINED>"
-+
++DESTDIR ?= $(HOME)/target-root
++prefix ?= /usr
++libdir ?= /lib
++includedir ?= /include
++docdir ?= /share/ti/graphics-sdk/doc
 +
 +
 +#
 +# == Helper variables ==
 +#
 +
-+LIBDIR = $(DESTDIR)/lib
-+INCDIR = $(DESTDIR)/include
++DOCS = $(wildcard README.*)
 +
++LIBDIR = $(DESTDIR)/$(prefix)/$(libdir)
++INCDIR = $(DESTDIR)/$(prefix)/$(includedir)
++DOCDIR = $(DESTDIR)/$(prefix)/$(docdir)
 +
 +# 
 +# ==== Targets ====
@@ -80,6 +84,9 @@ index 0000000..f1a1ce3
 +	@echo "Installing header files.."
 +	@mkdir -p $(INCDIR)
 +	@cp -R include/* $(INCDIR)
++	@echo "Installing documentation.."
++	@mkdir -p $(DOCDIR)
++	@cp $(DOCS) $(DOCDIR)
 +
 +help:
 +	@echo
