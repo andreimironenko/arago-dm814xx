@@ -1,19 +1,19 @@
-From 99b052f0d50f79576e4ca705aaca243827554fa0 Mon Sep 17 00:00:00 2001
+From 4203f1582742de46be177641cb6ffa76820558bb Mon Sep 17 00:00:00 2001
 From: Niclas Anderberg <niclas.anderberg@gmail.com>
-Date: Fri, 12 Aug 2011 14:00:32 +0200
-Subject: [PATCH] Added sdk make install file to c6accel
+Date: Wed, 17 Aug 2011 11:42:29 +0200
+Subject: [PATCH] Added sdk.mk
 
 ---
- sdk.mk |  115 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 115 insertions(+), 0 deletions(-)
+ sdk.mk |  131 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 131 insertions(+), 0 deletions(-)
  create mode 100644 sdk.mk
 
 diff --git a/sdk.mk b/sdk.mk
 new file mode 100644
-index 0000000..e5c6312
+index 0000000..e8d4fb4
 --- /dev/null
 +++ b/sdk.mk
-@@ -0,0 +1,115 @@
+@@ -0,0 +1,131 @@
 +# 
 +#  Copyright (c) 2011, Texas Instruments Incorporated
 +#  All rights reserved.
@@ -54,12 +54,21 @@ index 0000000..e5c6312
 +#
 +# Where to install/stage the packages
 +# Typically this would point to the devkit location
-+# This must be passed to the Makefile.
 +#
 +
-+DESTDIR="<UNDEFINED>"
++DESTDIR ?= $(HOME)/target-root
++packagedir ?= /packages
++libdir ?= /lib
++includedir ?= /include
++ifeq ($(docdir),)
++    docdir := /share/ti/c6accel/doc
++    xdcdocdir := /doc/c6accel
++endif
 +
-+
++ifeq ($(prefix),)
++    prefix := /usr
++    xdcprefix := /
++endif
 +
 +#
 +# Installation of XDCTools. This must be passed to the Makefile for the
@@ -77,7 +86,6 @@ index 0000000..e5c6312
 +XS=$(XDC_INSTALL_DIR)/xs
 +XDC=$(XDC_INSTALL_DIR)/xdc
 +XDCPKG=$(XDC_INSTALL_DIR)/bin/xdcpkg
-+INSTALL=install
 +
 +#
 +# == Helper variables ==
@@ -88,9 +96,11 @@ index 0000000..e5c6312
 +LIBS = $(wildcard soc/c6accelw/lib/*)
 +HEADERS = soc/c6accelw/c6accelw.h
 +
-+LIBDIR = $(DESTDIR)/lib
-+INCDIR = $(DESTDIR)/include
-+
++LIBDIR = $(DESTDIR)/$(prefix)/$(libdir)
++INCDIR = $(DESTDIR)/$(prefix)/$(includedir)
++DOCDIR = $(DESTDIR)/$(prefix)/$(docdir)
++PACKAGEDIR = $(DESTDIR)/$(xdcprefix)/$(packagedir)
++XDCDOCDIR = $(DESTDIR)/$(xdcprefix)/$(xdcdocdir)
 +
 +#
 +# ==== Helper functions ====
@@ -106,10 +116,13 @@ index 0000000..e5c6312
 +
 +install-xdc:
 +	@echo "Installing packages.."
-+	$(INSTALL) -d $(DESTDIR)
-+	$(XS) xdc.tools.repoman -c -r $(DESTDIR) -p soc/packages $(PACKAGES)
-+	$(call purge,$(DESTDIR),'*.c')
-+	$(call purge,$(DESTDIR),'*.bld')
++	@mkdir -p $(PACKAGEDIR)
++	@$(XS) xdc.tools.repoman -c -r $(PACKAGEDIR) -p soc/packages $(PACKAGES)
++	$(call purge,$(PACKAGEDIR),'*.c')
++	$(call purge,$(PACKAGEDIR),'*.bld')
++	@echo "Installing documentation.."
++	@mkdir -p $(XDCDOCDIR)
++	@cp -R docs/* $(XDCDOCDIR)
 +
 +install:
 +	@echo "Installing libraries.."
@@ -118,6 +131,9 @@ index 0000000..e5c6312
 +	@echo "Installing header files.."
 +	@mkdir -p $(INCDIR)
 +	@cp $(HEADERS) $(INCDIR)
++	@echo "Installing documentation.."
++	@mkdir -p $(DOCDIR)
++	@cp -R docs/* $(DOCDIR)
 +
 +help:
 +	@echo
