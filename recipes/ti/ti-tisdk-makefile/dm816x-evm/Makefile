@@ -756,95 +756,112 @@ DSP_DEVKIT_LOG := $(DSP_DEVKIT_DIR)/ti-install.log
 DSP_DEVKIT_MD5 := $(DSP_DEVKIT_DIR)/md5sums
 
 dsp-devkit:
-	mkdir -p $(DSP_DEVKIT_DIR)/packages
-	$(MAKE) -C $(SYSBIOS_INSTALL_DIR) \
+	rm -f $(DSP_DEVKIT_LOG)
+	$(MAKE) -C $(UIA_INSTALL_DIR) \
 		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR)/packages \
+		DESTDIR=$(DSP_DEVKIT_DIR) \
 		-f sdk.mk install-xdc
-	echo $(notdir $(SYSBIOS_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
+	@echo $(notdir $(UIA_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 	$(MAKE) -C $(CE_INSTALL_DIR) \
 		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR)/packages \
+		DESTDIR=$(DSP_DEVKIT_DIR) \
 		-f sdk.mk install-xdc
-	echo $(notdir $(CE_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
+	@echo $(notdir $(CE_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 	$(MAKE) -C $(FC_INSTALL_DIR) \
 		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR)/packages \
+		DESTDIR=$(DSP_DEVKIT_DIR) \
 		-f sdk.mk install-xdc
-	echo $(notdir $(FC_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
+	@echo $(notdir $(FC_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
+	$(MAKE) -C $(SYSBIOS_INSTALL_DIR) \
+		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
+		DESTDIR=$(DSP_DEVKIT_DIR) \
+		-f sdk.mk install-xdc
+	@echo $(notdir $(SYSBIOS_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 	$(MAKE) -C $(IPC_INSTALL_DIR) \
 		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR)/packages \
+		DESTDIR=$(DSP_DEVKIT_DIR) \
 		-f sdk.mk install-xdc
-	echo $(notdir $(IPC_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
+	@echo $(notdir $(IPC_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 	$(MAKE) -C $(EDMA3_LLD_INSTALL_DIR) \
 		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR)/packages \
+		DESTDIR=$(DSP_DEVKIT_DIR) \
 		-f sdk.mk install-xdc
-	echo $(notdir $(EDMA3_LLD_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
+	@echo $(notdir $(EDMA3_LLD_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 	$(MAKE) -C $(XDAIS_INSTALL_DIR) \
 		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR)/packages \
+		DESTDIR=$(DSP_DEVKIT_DIR) \
 		-f sdk.mk install-xdc
-	echo $(notdir $(XDAIS_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
+	@echo $(notdir $(XDAIS_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 	$(MAKE) -C $(OSAL_INSTALL_DIR) \
 		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR)/packages \
+		DESTDIR=$(DSP_DEVKIT_DIR) \
 		-f sdk.mk install-xdc
-	echo $(notdir $(OSAL_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
+	@echo $(notdir $(OSAL_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
 		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR)/packages \
+		DESTDIR=$(DSP_DEVKIT_DIR) \
 		-f sdk.mk install-xdc
-	echo $(notdir $(C6ACCEL_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
-	$(MAKE) -C $(MATHLIB_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR) \
-		-f sdk.mk install
-	echo $(notdir $(MATHLIB_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
-	$(MAKE) -C $(IMGLIB_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR) \
-		-f sdk.mk install
-	echo $(notdir $(IMGLIB_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
+	@echo $(notdir $(C6ACCEL_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 	$(MAKE) -C $(DSPLIB_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR) \
-		-f sdk.mk install
-	echo $(notdir $(DSPLIB_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
-	cd $(DSP_DEVKIT_DIR) && find packages -type f -exec md5sum {} \; > $(DSP_DEVKIT_DIR)/md5sums
+		DESTDIR=$(DSP_DEVKIT_DIR) -f sdk.mk install
+	@echo $(notdir $(DSPLIB_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
+	$(MAKE) -C $(IMGLIB_INSTALL_DIR) \
+		DESTDIR=$(DSP_DEVKIT_DIR) -f sdk.mk install
+	@echo $(notdir $(IMGLIB_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
+	$(MAKE) -C $(MATHLIB_INSTALL_DIR) \
+		DESTDIR=$(DSP_DEVKIT_DIR) -f sdk.mk install
+	@echo $(notdir $(MATHLIB_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
+	@echo "Generating API documentation.."
+#	@cd $(DSP_DEVKIT_DIR) && doxygen
+#	@rm -f Doxyfile
+	@echo "Generating md5sums.."
+	@cd $(DSP_DEVKIT_DIR) && $(XDC_INSTALL_DIR)/xs xdc.tools.cdoc -od:doc/cdoc -Pr packages
+	@echo "Generating md5sums.."
+	@cd $(DSP_DEVKIT_DIR) && find . -type f -exec md5sum {} \; > $(EZSDK_INSTALL_DIR)/.dspmd5sums
+	@mv $(EZSDK_INSTALL_DIR)/.dspmd5sums $(DSP_DEVKIT_DIR)/md5sums
 
 ###############################################################################
 # Build the Linux devkit
 ###############################################################################
-LINUX_DEVKIT_DESTDIR := $(LINUX_DEVKIT_DIR)/arm-none-linux-gnueabi/usr
+LINUX_DEVKIT_DESTDIR := $(LINUX_DEVKIT_DIR)/arm-none-linux-gnueabi
 LINUX_DEVKIT_LOG := $(LINUX_DEVKIT_DIR)/ti-install.log
 LINUX_DEVKIT_MD5 := $(LINUX_DEVKIT_DIR)/md5sums
 
 linux-devkit:
-	mkdir -p $(LINUX_DEVKIT_DESTDIR)
-	$(MAKE) -C $(FC_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-	-f sdk.mk install
-	echo $(notdir $(FC_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
+	rm -f $(LINUX_DEVKIT_LOG)
 	$(MAKE) -C $(CE_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-	-f sdk.mk install
-	echo $(notdir $(CE_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
-	$(MAKE) -C $(OSAL_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-	-f sdk.mk install
-	echo $(notdir $(OSAL_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
+		-f sdk.mk install
+	@echo $(notdir $(CE_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
+	$(MAKE) -C $(FC_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
+		-f sdk.mk install
+	@echo $(notdir $(FC_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
 	$(MAKE) -C $(IPC_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-	-f sdk.mk install
-	echo $(notdir $(IPC_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
-	$(MAKE) -C $(LINUXUTILS_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-	-f sdk.mk install
-	echo $(notdir $(LINUXUTILS_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
+		-f sdk.mk install
+	@echo $(notdir $(IPC_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
 	$(MAKE) -C $(XDAIS_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-	-f sdk.mk install
-	echo $(notdir $(XDAIS_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
+		-f sdk.mk install
+	@echo $(notdir $(XDAIS_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
+	$(MAKE) -C $(OSAL_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
+		-f sdk.mk install
+	@echo $(notdir $(OSAL_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
+	$(MAKE) -C $(LINUXUTILS_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
+		-f sdk.mk install
+	@echo $(notdir $(LINUXUTILS_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
 	$(MAKE) -C $(SYSLINK_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-	-f sdk.mk install
-	echo $(notdir $(SYSLINK_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
+		-f sdk.mk install
+	@echo $(notdir $(SYSLINK_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
 	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-	-f sdk.mk install
-	echo $(notdir $(C6ACCEL_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
+		-f sdk.mk install
+	@echo $(notdir $(C6ACCEL_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
+	$(MAKE) -C $(UIA_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
+		-f sdk.mk install
+	@echo $(notdir $(UIA_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
+	$(MAKE) -C $(OMX_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
+		-f sdk.mk install
+	@echo $(notdir $(OMX_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
 	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-	-f sdk.mk install
-	echo $(notdir $(GRAPHICS_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
-	cd $(LINUX_DEVKIT_DIR) && find . -type f -exec md5sum {} \; > $(LINUX_DEVKIT_DIR)/md5sums
+		-f sdk.mk install
+	@echo $(notdir $(GRAPHICS_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
+	@echo "Generating md5sums.."
+	@cd $(LINUX_DEVKIT_DIR) && find . -type f -exec md5sum {} \; > $(EZSDK_INSTALL_DIR)/.linuxmd5sums
+	@mv $(EZSDK_INSTALL_DIR)/.linuxmd5sums $(LINUX_DEVKIT_DIR)/md5sums
