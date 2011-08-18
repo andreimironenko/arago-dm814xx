@@ -1,0 +1,69 @@
+From 9f1842b161734623e20e63e08ad0ea5865faaf17 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Thu, 18 Aug 2011 21:52:17 +0530
+Subject: [PATCH] ti814x: Force Enable I2C Clock.
+
+* I2C 0 and I2C 2 share the same clock. As a result, if one is
+  turned off, any accesses to the other will fail. This results in
+  weird issues like OMX Capture not working once we run a QT app and
+  exit it.
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ arch/arm/mach-omap2/clock814x_data.c |    2 +-
+ arch/arm/mach-omap2/devices.c        |   19 +++++++++++++++++++
+ 2 files changed, 20 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/clock814x_data.c b/arch/arm/mach-omap2/clock814x_data.c
+index 5b3d233..221a5d8 100644
+--- a/arch/arm/mach-omap2/clock814x_data.c
++++ b/arch/arm/mach-omap2/clock814x_data.c
+@@ -3913,7 +3913,7 @@ static struct omap_clk ti814x_clks[] = {
+ 	CLK(NULL,		"i2c13_ck",			&i2c13_ck,			CK_TI814X),
+ 	CLK("omap_i2c.1",	"fck",				&i2c1_fck,			CK_TI814X),
+ 	CLK("omap_i2c.2",	"fck",				&i2c2_fck,			CK_TI814X),
+-	CLK("omap_i2c.3",	"fck",				&i2c3_fck,			CK_TI814X),
++	CLK(NULL,	"i2c3_fck",				&i2c3_fck,			CK_TI814X),
+ 	CLK("omap_i2c.4",	"fck",				&i2c4_fck,			CK_TI814X),
+ 	CLK(NULL,		"uart1_fck",			&uart1_fck,			CK_TI814X),
+ 	CLK(NULL,		"uart2_fck",			&uart2_fck,			CK_TI814X),
+diff --git a/arch/arm/mach-omap2/devices.c b/arch/arm/mach-omap2/devices.c
+index f7fd0e6..509aaa2 100644
+--- a/arch/arm/mach-omap2/devices.c
++++ b/arch/arm/mach-omap2/devices.c
+@@ -2151,6 +2151,22 @@ static inline void ti816x_init_pcie(void)
+ static inline void ti816x_init_pcie(void) {}
+ #endif
+ 
++#ifdef CONFIG_ARCH_TI814X
++static inline void ti814x_enable_i2c2(void)
++{
++	struct clk *fclk;
++	struct device dev;
++
++
++	//dev_set_name(&dev, "omap_i2c.3");
++	fclk = clk_get(NULL, "i2c3_fck");
++	if(!IS_ERR(fclk))
++		clk_enable(fclk);
++	else
++		printk("clk get on i2c3 fck failed\n");
++}
++#endif
++
+ static int __init omap2_init_devices(void)
+ {
+ 	/*
+@@ -2176,6 +2192,9 @@ static int __init omap2_init_devices(void)
+ 	ti81xx_register_edma();
+ 	ti81xx_init_pcm();
+ 	ti816x_sr_init();
++#ifdef CONFIG_ARCH_TI814X
++	ti814x_enable_i2c2();
++#endif
+ #endif
+ 	omap_init_ahci();
+ 	return 0;
+-- 
+1.7.0.4
+

@@ -10,4 +10,5 @@ BRANCH = "ti81xx-master"
 SRCREV = "v2.6.37_TI814XPSP_04.01.00.05.patch1"
 
 SRC_URI += "file://0001-TI814x-Set-the-required-bit-for-TI814x-HDMI.patch \
+            file://0001-ti814x-Force-Enable-I2C-Clock.patch \
 "
