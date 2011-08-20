@@ -85,6 +85,9 @@ OMTB_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/<__omtb__>
 # Where SLOG package is installed
 SLOG_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__slog__>
 
+# Where Media Controller Utils package is installed
+MEDIA_CONTROLLER_UTILS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/board-support/<__media-controller-utils__>
+
 # The prefix to be added before the GNU compiler tools (optionally including # path), i.e. "arm_v5t_le-" or "/opt/bin/arm_v5t_le-".
 CSTOOL_DIR=<__CROSS_COMPILER_PATH__>
 CSTOOL_PREFIX=$(CSTOOL_DIR)/bin/arm-none-linux-gnueabi-
