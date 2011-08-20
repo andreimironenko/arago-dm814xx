@@ -6,6 +6,7 @@ SRC_URI += "file://0001-ti814x-Add-Description-Pages-for-DSP-Menu.patch;striplev
             file://0003-ti814x-Add-Video-Demos.patch;striplevel=2 \
             file://0004-ti816x-Update-runOMTB-not-to-pause.patch;striplevel=2 \
             file://0005-ti814x-Fix-the-text-for-getting-started.patch;striplevel=2 \
+            file://0006-ti814x-Correct-CMEM-in-DSP-Benchmarks.patch;striplevel=2 \
             file://top_ti814x_evm.png \
 "
 
