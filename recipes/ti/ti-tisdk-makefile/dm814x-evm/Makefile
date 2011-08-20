@@ -6,7 +6,7 @@ MIN_UBOOT_CONFIG=ti8148_evm_min_sd
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	components components_clean linux_component dsp_components all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_linux c6accel_dsp c6accel_clean c6accel_install syslink syslink_clean syslink_install sademo sademo_clean sademo_install matrix matrix_clean matrix_install c6run c6run_linux c6run_dsp c6run_clean c6run_examples c6run_install imglib imglib_clean dsplib dsplib_clean mathlib mathlib_clean dsp-devkit linux-devkit
+.PHONY:	components components_clean linux_component dsp_components all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_linux c6accel_dsp c6accel_clean c6accel_install syslink syslink_clean syslink_install sademo sademo_clean sademo_install matrix matrix_clean matrix_install c6run c6run_linux c6run_dsp c6run_clean c6run_examples c6run_install imglib imglib_clean dsplib dsplib_clean mathlib mathlib_clean dsp-devkit linux-devkit media-controller-utils_clean media-controller-utils_install
 
 #==============================================================================
 # Build everything rebuildable.
@@ -101,6 +101,10 @@ help:
 	@echo "    omtb                         : Build OMTB IL Clients"
 	@echo "    omtb_clean                   : Remove OMTB generated files"
 	@echo "    omtb_install                 : Install OMTB IL Clients"
+	@echo
+	@echo "    media-controller             : Build media controller utils"
+	@echo "    media-controller_clean       : Remove media controller utils generated files"
+	@echo "    media-controller_install     : Install media controller utils"
 	@echo
 	@echo "    all                          : Rebuild everything"
 	@echo "    clean                        : Remove all generated files"
@@ -860,3 +864,22 @@ linux-devkit:
 	@echo "Generating md5sums.."
 	@cd $(LINUX_DEVKIT_DIR) && find . -type f -exec md5sum {} \; > $(EZSDK_INSTALL_DIR)/.linuxmd5sums
 	@mv $(EZSDK_INSTALL_DIR)/.linuxmd5sums $(LINUX_DEVKIT_DIR)/md5sums
+
+###################################################################################
+# build media controller utils
+##################################################################################
+media-controller-utils:
+	make -C $(MEDIA_CONTROLLER_UTILS_INSTALL_DIR) \
+		PLATFORM=ti814x \
+		SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
+		CC=$(CSTOOL_PREFIX)gcc
+
+media-controller-utils_clean:
+	make -C  $(MEDIA_CONTROLLER_UTILS_INSTALL_DIR) \
+		PLATFORM=ti814x \
+		DESTDIR=$(EXEC_DIR) clean
+
+media-controller-utils_install:
+	make -C  $(MEDIA_CONTROLLER_UTILS_INSTALL_DIR) \
+		PLATFORM=ti814x \
+		DESTDIR=$(EXEC_DIR) install
