@@ -1,19 +1,19 @@
-From 51083833f7937c9c476eb5479b5dd629d4c70a53 Mon Sep 17 00:00:00 2001
+From d4be1e527ceffbe1f07a357cba5c249d02073d40 Mon Sep 17 00:00:00 2001
 From: Niclas Anderberg <niclas.anderberg@gmail.com>
-Date: Wed, 17 Aug 2011 11:56:22 +0200
-Subject: [PATCH] Added sdk make install file to omx
+Date: Mon, 22 Aug 2011 10:55:13 +0200
+Subject: [PATCH] Added sdk.mk
 
 ---
- sdk.mk |  137 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 137 insertions(+), 0 deletions(-)
+ sdk.mk |  143 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 143 insertions(+), 0 deletions(-)
  create mode 100644 sdk.mk
 
 diff --git a/sdk.mk b/sdk.mk
 new file mode 100644
-index 0000000..ace3268
+index 0000000..9d4556a
 --- /dev/null
 +++ b/sdk.mk
-@@ -0,0 +1,137 @@
+@@ -0,0 +1,143 @@
 +# 
 +#  Copyright (c) 2011, Texas Instruments Incorporated
 +#  All rights reserved.
@@ -131,9 +131,15 @@ index 0000000..ace3268
 +install:
 +	@echo "Installing libraries.."
 +	@mkdir -p $(LIBDIR)
++ifneq ($(LIBSINPACKAGES),)
 +	@cd packages && cp --parents $(LIBSINPACKAGES) $(LIBDIR)
++endif
++ifneq ($(LIBSINBIN),)
 +	@cd bin && cp --parents $(LIBSINBIN) $(LIBDIR)
++endif
++ifneq ($(LIBSINLIB),)
 +	@cd lib && cp --parents $(LIBSINLIB) $(LIBDIR)
++endif
 +	@echo "Installing header files.."
 +	@mkdir -p $(INCDIR)
 +	@cd packages && cp --parents $(HEADERS) $(INCDIR)
