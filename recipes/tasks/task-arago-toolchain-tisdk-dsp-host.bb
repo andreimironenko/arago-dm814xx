@@ -35,6 +35,7 @@ DSP_EZSDK_COMMON = " \
     ti-docs-faqs \
     ti-dsp-benchmark-src \
     ti-media-controller-utils-src \
+    ti-docs-dsp-devkit \
 "
 
 DSP_SOURCETREE_dm6446 = "\
