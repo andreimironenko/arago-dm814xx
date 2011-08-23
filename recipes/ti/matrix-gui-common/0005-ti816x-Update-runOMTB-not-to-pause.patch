@@ -1,0 +1,99 @@
+From b9d08088bdf6c9a0cb123df4393c6190db546f9d Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Wed, 17 Aug 2011 16:05:22 +0530
+Subject: [PATCH 5/7] ti816x: Update runOMTB not to pause
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ trunk/ti816x/bin/runOMTB |   65 +++++++--------------------------------------
+ 1 files changed, 10 insertions(+), 55 deletions(-)
+
+diff --git a/trunk/ti816x/bin/runOMTB b/trunk/ti816x/bin/runOMTB
+index 0d161c3..e1de729 100755
+--- a/trunk/ti816x/bin/runOMTB
++++ b/trunk/ti816x/bin/runOMTB
+@@ -34,70 +34,25 @@ configure_graphics()
+ 
+ 
+ 
+-#
+-# In the OMTB dual_display_encode_decode script, we run the
+-# video for 60 seconds before pausing the output. To start the
+-# video again, a message has to be posted to pipe on which OMTB
+-# is listening. Once, OMTB gets the message, it starts playing 
+-# for another 60 seconds. 
+ # 
+-# Call this function to 'unpause' the video.
+-#
+-unpause_video()
+-{
+-    cd /usr/share/ti/ti-omtb
+-
+-    ./unpause_omx.xv5T test_pipe U
+-
+-    sleep 60
+-}
+-
+-
+-
+-# 
+-# When running OMTB for the first time, configuration of ALSA
+-# setting up of the lock file etc has to be done. The OMTB script
+-# creates a pipe and then runs for 5 seconds before pausing. So, 
+-# we need to wait for the pipe to be created before we are sure that
+-# the video is running.
+-#
+-# Call this function to setup and execute OMTB for the first time.
+-# 
+-# This function must be called only once. Once that's called, unpause
+-# the video so that it runs for a full minute.
++# Call this function to setup and execute OMTB.
+ #
+ execute_omtb()
+ {
+     cd /usr/share/ti/ti-omtb
+ 
+-    touch /tmp/OMTB.lock
+-    rm -f test_pipe
+-    ./omtb_dm816xbm_a8host.xv5T dual_display_encode_decode.oms &
+- 
+-    until [ -e test_pipe ]
+-    do
+-        sleep 1
+-    done
++    ./omtb_dm816xbm_a8host.xv5T dual_display_encode_decode.oms
+ }
+ 
+ 
+ #
+ # Run OMTB only if we have installed multimedia. 
+ #
+-if [ -e /usr/share/ti/ti-omtb ] 
+-then
+-    # Disable Graphics Plane so that Video can be seen.
+-    configure_graphics 0
+-    
+-    if [ -e /tmp/OMTB.lock ]
+-    then 
+-        unpause_video
+-    else
+-       configure_alsa_mixer
+-       execute_omtb
+-       unpause_video
+-    fi
+-    
+-    # Enable Graphics again.
+-    configure_graphics 1
+-fi
++# Disable Graphics Plane so that Video can be seen.
++configure_graphics 0
++
++configure_alsa_mixer
++execute_omtb
++
++# Enable Graphics again.
++configure_graphics 1
+-- 
+1.7.0.4
+
