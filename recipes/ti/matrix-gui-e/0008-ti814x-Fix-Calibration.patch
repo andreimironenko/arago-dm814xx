@@ -1,0 +1,48 @@
+From 8a655de1a8e52fc72a5329c7042c17d3b015806c Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Thu, 25 Aug 2011 09:27:45 +0530
+Subject: [PATCH 8/8] ti814x: Fix Calibration.
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ trunk/ti814x/etc/init |   20 ++++++++++++--------
+ 1 files changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/trunk/ti814x/etc/init b/trunk/ti814x/etc/init
+index b37359b..b48578b 100644
+--- a/trunk/ti814x/etc/init
++++ b/trunk/ti814x/etc/init
+@@ -6,17 +6,21 @@ PIDFILE="/var/run/matrix-gui-e.pid"
+ 
+ test -x "$matrixgui" || exit 0
+ 
+-#export TSLIB_TSDEVICE=/dev/input/touchscreen0
+-#export QWS_MOUSE_PROTO=Tslib:/dev/input/touchscreen0
+-export QWS_MOUSE_PROTO=Auto:/dev/input/mice
++export TSLIB_TSDEVICE=/dev/input/event0
++export QWS_MOUSE_PROTO="Tslib:/dev/input/event0 Auto:/dev/input/mice"
++
++calibrate()
++{
++    if [ ! -f /etc/pointercal ] ; then
++        echo -n "Calibrating touchscreen (first time only)"
++        ts_calibrate
++        echo "."
++    fi
++}
+ 
+ case "$1" in
+   start)
+-#    if [ ! -f /etc/pointercal ] ; then
+-#        echo -n "Calibrating touchscreen (first time only)"
+-#        ts_calibrate
+-#        echo "."
+-#    fi
++    calibrate
+ 
+ 	if [ -e $PIDFILE ]; then
+       PIDDIR=/proc/$(cat $PIDFILE)
+-- 
+1.7.0.4
+
