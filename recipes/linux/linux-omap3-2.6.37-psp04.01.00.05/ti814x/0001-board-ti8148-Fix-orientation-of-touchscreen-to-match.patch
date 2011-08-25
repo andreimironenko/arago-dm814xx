@@ -1,0 +1,27 @@
+From f53ba9c116028df84fdea826d6f2a0ea7c0759be Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Thu, 25 Aug 2011 09:08:36 +0530
+Subject: [PATCH] board-ti8148: Fix orientation of touchscreen to match EVM layout.
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ arch/arm/mach-omap2/board-ti8148evm.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/board-ti8148evm.c b/arch/arm/mach-omap2/board-ti8148evm.c
+index 7c35930..d463b43 100644
+--- a/arch/arm/mach-omap2/board-ti8148evm.c
++++ b/arch/arm/mach-omap2/board-ti8148evm.c
+@@ -101,7 +101,7 @@ static struct qt602240_platform_data ts_platform_data = {
+ 	.blen		= 0x01,
+ 	.threshold	= 30,
+ 	.voltage	= 2800000,
+-	.orient		= QT602240_DIAGONAL,
++	.orient		= QT602240_HORIZONTAL_FLIP,
+ };
+ 
+ static struct at24_platform_data eeprom_info = {
+-- 
+1.7.0.4
+
