@@ -1,0 +1,138 @@
+diff --git a/examples/video/Makefile b/examples/video/Makefile
+index cc09104..28d41cb 100755
+--- a/examples/video/Makefile
++++ b/examples/video/Makefile
+@@ -69,7 +69,6 @@ SRCS := saFbdevDisplay.c  \
+ 	saFbdevHdmiDisplay.c \
+ 	saMmapDisplay.c \
+ 	saUserptrDisplay.c
+-	saFbdevHdmiDisplay.c
+ 
+ #
+ # Common libraries
+diff --git a/examples/video/saFbdevHdmiDisplay.c b/examples/video/saFbdevHdmiDisplay.c
+index 32ed9d6..847a32e 100755
+--- a/examples/video/saFbdevHdmiDisplay.c
++++ b/examples/video/saFbdevHdmiDisplay.c
+@@ -38,12 +38,12 @@
+ 
+ #define MAX_BUFFER 2
+ #define MAXLOOPCOUNT	1000
++#define X_RES		1280
++#define Y_RES		720
+ /*
+  * Default fbdev device node
+  */
+ static char display_dev_name[30] = {"/dev/fb0"};
+-/*HDMI device node*/
+-static char hdmi_dev_name[30] = {"/dev/TI81XX_HDMI"};
+ 
+ static unsigned int rgb888[8] = {
+         (0xFF << 16) | (0xFF << 8) | (0xFF),
+@@ -152,29 +152,26 @@ static int get_varinfo(int display_fd, struct fb_var_screeninfo *varinfo)
+ 
+ }
+ 
+-static int setup_hdmi(int hdmi_fd, enum ti81xxhdmi_mode mode)
++static int hdmi_change_mode(void)
+ {
+-	int r;
+-
+-	/*stop HDMI first*/
+-	r = ioctl(hdmi_fd, TI81XXHDMI_STOP, mode);
+-	if (r) {
+-		perror("Failed to stop\n");
++	/* Disable Venc and HDMI to change mode */
++	if(system("echo 0 > /sys/devices/platform/vpss/display0/enabled")) {
++		perror("Failed to stop Venc and HDMI\n");
+ 		return -1;
+ 	}
+-	/*set new mode*/
+-	r = ioctl(hdmi_fd, TI81XXHDMI_SET_MODE, mode);
+-	if (r) {
+-		perror("Failed to set mode\n");
++	/* Change the mode */
++	if(system("echo 720p-60 > /sys/devices/platform/vpss/display0/mode")) {
++		perror("Failed to change mode on Venc and HDMI\n");
+ 		return -1;
+ 	}
+-	/*start HDMI*/
+-	r = ioctl(hdmi_fd, TI81XXHDMI_START, mode);
+-	if (r) {
+-		perror("Failed to star\n");
++	/* Enable Venc and HDMI */
++	if(system("echo 1 > /sys/devices/platform/vpss/display0/enabled")) {
++		perror("Failed to start Venc and HDMI\n");
+ 		return -1;
+ 	}
+-
++	printf("Mode Changed to 720P60 from default mode of 1080P60\n");
++	printf("press any key and hit return to continue...\n");
++	getchar();
+ 	return 0;
+ }
+ 
+@@ -182,21 +179,14 @@ int app_main(int argc , char *argv[])
+ {
+ 	struct fb_fix_screeninfo fixinfo;
+ 	struct fb_var_screeninfo varinfo, org_varinfo;
+-	int display_fd, hdmi_fd;
+ 	struct timeval before, after, result;
++	int display_fd;
+ 	int ret;
+ 	int buffersize;
+ 	int i;
+ 	unsigned char *buffer_addr[MAX_BUFFER];
+ 
+-	/*Open on-chip HDMI device*/
+-        hdmi_fd = open(hdmi_dev_name, O_RDONLY);
+-	if (hdmi_fd <= 0) {
+-		perror("Count not open hdmi device\n");
+-		return -1;
+-	}
+-	/*Setup HDMI mode to 1080P-60*/
+-	ret = setup_hdmi(hdmi_fd, hdmi_1080P_60_mode);
++	ret = hdmi_change_mode();
+ 	if (ret) {
+ 		perror("failed to set HDMI mode\n");
+ 		return -1;
+@@ -228,6 +218,8 @@ int app_main(int argc , char *argv[])
+ 	 * FBIOPUT_VSCREENINFO ioctl, except virtual part which is required for
+ 	 * panning.
+ 	 */
++	varinfo.xres = X_RES;
++	varinfo.yres = Y_RES;
+ 	varinfo.xres_virtual = varinfo.xres;
+ 	varinfo.yres_virtual = varinfo.yres * MAX_BUFFER;
+ 
+@@ -237,6 +229,8 @@ int app_main(int argc , char *argv[])
+ 		goto exit1;
+ 	}
+ 
++	if (get_varinfo(display_fd, &varinfo))
++		goto exit1;
+ 	/* It is better to get fix screen information again. its because
+ 	 * changing variable screen info may also change fix screen info. */
+ 	ret = ioctl(display_fd, FBIOGET_FSCREENINFO, &fixinfo);
+@@ -319,8 +313,6 @@ exit2:
+ 	}
+ exit1:
+ 	close(display_fd);
+-	ioctl(hdmi_fd, TI81XXHDMI_STOP, hdmi_1080I_60_mode);
+-	close(hdmi_fd);
+ 	return ret;
+ }
+ 
+diff --git a/examples/video/saFbdevScalingDisplay.c b/examples/video/saFbdevScalingDisplay.c
+index 5839093..516155b 100755
+--- a/examples/video/saFbdevScalingDisplay.c
++++ b/examples/video/saFbdevScalingDisplay.c
+@@ -359,7 +359,7 @@ static int app_main(void)
+ 			break;
+ 		}
+ 
+-		varinfo.yoffset = varinfo.yres * (i & 1);
++		varinfo.yoffset = i % varinfo.yres;
+ 		/*runtime enable/disable scaling*/
+ 		if ( i % 100 == 0) {
+ 			regp.scalaren ^= TI81XXFB_FEATURE_ENABLE;
