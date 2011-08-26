@@ -82,6 +82,9 @@ OMX_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__omx__>
 # Where OMTB package is installed
 OMTB_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/<__omtb__>
 
+# Where AAC-LC Decoder package is installed
+AACLCDEC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/codecs/<__c674x-aaclcdec__>
+
 # Where SLOG package is installed
 SLOG_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__slog__>
 
