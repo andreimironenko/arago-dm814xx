@@ -15,3 +15,8 @@ S = "${WORKDIR}/c674x_aaclcdec_${PV}${PVExtra}"
 
 SRC_URI[aaclcdec.md5sum] = "a167c6965858e1f7547f57bbc45baef1"
 SRC_URI[aaclcdec.sha256sum] = "f95c6cb4cf0cf09af85902de3eb3aa5c7aa0b3681fd82bbb78985e237e1db1a0"
+
+do_install() {
+    install -d ${D}${CODEC_INSTALL_DIR_RECIPE}
+    cp -pPrf ${S}/* ${D}${CODEC_INSTALL_DIR_RECIPE}
+}
