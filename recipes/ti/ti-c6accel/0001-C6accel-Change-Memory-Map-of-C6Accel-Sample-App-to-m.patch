@@ -1,0 +1,45 @@
+From 2593419a3b70ef17aaa071056ac5008560257179 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Fri, 26 Aug 2011 15:26:45 +0530
+Subject: [PATCH] C6accel: Change Memory Map of C6Accel Sample App to match EZSDK
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ .../TI814X/c6accel_dsplib_testapp.cfg              |    4 ++--
+ .../TI816X/c6accel_dsplib_testapp.cfg              |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/soc/app/c6accel_dsplib_testapp/TI814X/c6accel_dsplib_testapp.cfg b/soc/app/c6accel_dsplib_testapp/TI814X/c6accel_dsplib_testapp.cfg
+index 9983f48..bc71a31 100755
+--- a/soc/app/c6accel_dsplib_testapp/TI814X/c6accel_dsplib_testapp.cfg
++++ b/soc/app/c6accel_dsplib_testapp/TI814X/c6accel_dsplib_testapp.cfg
+@@ -18,8 +18,8 @@ var Proc = xdc.useModule('ti.sdo.ce.ipc.dsplink.Processor');
+ 
+ // The following values should be created as part of Engine.createFromServer().
+ // For now, we need to match values in the platform's memory map.
+-Proc.sharedRegionId = common.SharedRegion_map["Ipc"];
+-Proc.heapId = common.MessageQ_heapMap["Ipc"];
++Proc.sharedRegionId = 0;
++Proc.heapId = 3;
+ 
+ // Use the Linux ipc
+ var ipcSettings = xdc.useModule('ti.sdo.ce.ipc.Settings');
+diff --git a/soc/app/c6accel_dsplib_testapp/TI816X/c6accel_dsplib_testapp.cfg b/soc/app/c6accel_dsplib_testapp/TI816X/c6accel_dsplib_testapp.cfg
+index def8f74..8d0f0ba 100755
+--- a/soc/app/c6accel_dsplib_testapp/TI816X/c6accel_dsplib_testapp.cfg
++++ b/soc/app/c6accel_dsplib_testapp/TI816X/c6accel_dsplib_testapp.cfg
+@@ -42,8 +42,8 @@ var Proc = xdc.useModule('ti.sdo.ce.ipc.dsplink.Processor');
+ 
+ // The following values should be created as part of Engine.createFromServer().
+ // For now, we need to match values in the platform's memory map.
+-Proc.sharedRegionId = SharedRegion_map["Ipc"];
+-Proc.heapId = MessageQ_heapMap["Ipc"]
++Proc.sharedRegionId = 0;
++Proc.heapId = 3;
+ 
+ // Use the Linux ipc
+ var ipcSettings = xdc.useModule('ti.sdo.ce.ipc.Settings');
+-- 
+1.7.0.4
+

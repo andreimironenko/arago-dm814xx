@@ -9,6 +9,7 @@ SRC_URI = "https://gforge01.dal.design.ti.com/gf/download/frsrelease/563/4833/c6
            file://0001-Added-sdk-make-install-file-to-c6accel.patch \
            file://0001-Fixed-Makefile-server-and-packages-targets.patch \
            file://0001-ti814x-Update-Memory-Map-for-EZSDK-5.02.patch \
+           file://0001-C6accel-Change-Memory-Map-of-C6Accel-Sample-App-to-m.patch \
 "
 
 SRC_URI[c6accelbin.md5sum] = "60f0cb727094408a7acfc46f40757db4"
