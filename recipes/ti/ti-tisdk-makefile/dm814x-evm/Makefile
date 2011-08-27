@@ -599,6 +599,7 @@ omx:
         xdais_PATH=${XDAIS_INSTALL_DIR} \
 		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
         ce_PATH=${CE_INSTALL_DIR} \
+        aaclcdec_PATH=${AACLCDEC_INSTALL_DIR} \
 		ipc_PATH=$(IPC_INSTALL_DIR) \
 		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
 		xdc_PATH=$(XDC_INSTALL_DIR) \
@@ -619,6 +620,7 @@ omx:
         xdais_PATH=${XDAIS_INSTALL_DIR} \
 		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
         ce_PATH=${CE_INSTALL_DIR} \
+        aaclcdec_PATH=${AACLCDEC_INSTALL_DIR} \
 		ipc_PATH=$(IPC_INSTALL_DIR) \
 		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
 		xdc_PATH=$(XDC_INSTALL_DIR) \
@@ -643,6 +645,7 @@ omx_clean:
 		osal_PATH=$(OSAL_INSTALL_DIR) \
         xdais_PATH=${XDAIS_INSTALL_DIR} \
 		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
+        aaclcdec_PATH=${AACLCDEC_INSTALL_DIR} \
         ce_PATH=${CE_INSTALL_DIR} \
 		ipc_PATH=$(IPC_INSTALL_DIR) \
 		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
