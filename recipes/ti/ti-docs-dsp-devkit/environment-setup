@@ -1,6 +1,6 @@
 export DSP_DEVKIT_PATH=<__DSP_DEVKIT_PATH__>
-export CODEGEN_PATH="${DSP_DEVKIT_PATH}/<__cgt6x__>
-export XDCTOOLS_PATH="${DSP_DEVKIT_PATH}/<__xdctools__>
-export PATH="${PATH}:${CODEGEN_PATH}/bin:${XDCTOOLS_PATH}"
+export CODEGEN_PATH="${DSP_DEVKIT_PATH}/<__cgt6x__>"
+export XDCTOOLS_PATH="<__xdctools__>"
+export PATH="${PATH}:${CODEGEN_PATH}/bin:${XDCTOOLS_PATH}:${XDCTOOLS_PATH}/bin"
 export XDCPATH="${XDCPATH};${DSP_DEVKIT_PATH}/packages"
 export PS1="\[\e[34;1m\][dsp-devkit]\[\e[0m\]:\w> "

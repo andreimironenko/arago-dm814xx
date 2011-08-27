@@ -76,6 +76,20 @@ update_linux_devkit ()
 
 }
 
+#
+# update dsp-devkit
+#
+update_dsp_devkit ()
+{
+  echo "Updating DSP Devkit environment-setup"
+  cgtools=`grep -e "CODEGEN.*dsp-devkit" Rules.make | sed -e "s/^.*dsp-devkit\///"`
+  xdctools=`grep -e "XDC.*component-sources" Rules.make | sed -e "s/^.*DIR)\///"`
+  sed -i -e s:DSP_DEVKIT_PATH=.*:DSP_DEVKIT_PATH=$install_dir/dsp-devkit: $install_dir/dsp-devkit/environment-setup
+  sed -i -e s:\<__cgt6x__\>:$cgtools: $install_dir/dsp-devkit/environment-setup
+  sed -i -e s:\<__xdctools__\>:$install_dir/$xdctools: $install_dir/dsp-devkit/environment-setup
+
+}
+
 # Process command line...
 while [ $# -gt 0 ]; do
   case $1 in
@@ -119,6 +133,7 @@ done
 
 update_rules_make
 update_linux_devkit
+update_dsp_devkit
 
 # Delete this script
 rm -f $0
