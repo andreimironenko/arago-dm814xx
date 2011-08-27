@@ -6,7 +6,6 @@ require ti-paths.inc
 COMPATIBLE_MACHINE = "ti816x"
 
 SRC_URI = "ftp://ftp.india.ti.com/PSP/Releases/ODC/Netra_GIT_PSP/TI816X-LINUX-PSP-04.00.00.12.tgz;name=psptarball \
-           file://examples.patch;striplevel=2 \
 "
 
 SRC_URI[psptarball.md5sum] = "097f4f8c25095bfee3e421916e1527ba"
