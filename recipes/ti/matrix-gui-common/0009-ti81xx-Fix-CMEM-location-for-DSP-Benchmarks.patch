@@ -1,0 +1,41 @@
+From 550a53e86ec582b357ea4291840508039ee3d176 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Sat, 27 Aug 2011 14:32:32 +0530
+Subject: [PATCH 9/9] ti81xx: Fix CMEM location for DSP Benchmarks.
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ trunk/ti814x/bin/dsp_benchmarks |    3 ++-
+ trunk/ti816x/bin/dsp_benchmarks |    3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/trunk/ti814x/bin/dsp_benchmarks b/trunk/ti814x/bin/dsp_benchmarks
+index 813745a..988dd6a 100644
+--- a/trunk/ti814x/bin/dsp_benchmarks
++++ b/trunk/ti814x/bin/dsp_benchmarks
+@@ -1,6 +1,7 @@
+ #!/bin/sh
+ 
+ cd /usr/share/ti/dsp-benchmark-apps
+-modprobe cmemk phys_start=0x94000000 phys_end=0x95400000 pools=20x4096
++modprobe cmemk phys_start=0x96C00000 phys_end=0x98000000 pools=20x4096
++lsmod
+ ./dsp_benchmark_app
+ rmmod cmemk
+diff --git a/trunk/ti816x/bin/dsp_benchmarks b/trunk/ti816x/bin/dsp_benchmarks
+index 813745a..988dd6a 100644
+--- a/trunk/ti816x/bin/dsp_benchmarks
++++ b/trunk/ti816x/bin/dsp_benchmarks
+@@ -1,6 +1,7 @@
+ #!/bin/sh
+ 
+ cd /usr/share/ti/dsp-benchmark-apps
+-modprobe cmemk phys_start=0x94000000 phys_end=0x95400000 pools=20x4096
++modprobe cmemk phys_start=0x96C00000 phys_end=0x98000000 pools=20x4096
++lsmod
+ ./dsp_benchmark_app
+ rmmod cmemk
+-- 
+1.7.0.4
+
