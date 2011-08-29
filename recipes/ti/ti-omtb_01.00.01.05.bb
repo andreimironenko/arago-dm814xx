@@ -12,8 +12,6 @@ PVExtra = ""
 
 S = "${WORKDIR}/omtb_${PV}${PVExtra}"
 
-COMPATIBLE_MACHINE = "ti816x"
-
 SRC_URI = "http://bangsdowebsvr01.india.ti.com:8090/OMTB/${PV}/exports/omtb_${PV}.tar.gz;name=omtb \
 "
 
