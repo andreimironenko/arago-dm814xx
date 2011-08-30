@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r12"
+PR = "r14"
 LICENSE = "MIT"
 
 inherit task
@@ -9,14 +9,30 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 QTWIDGET_DEMO = ""
 QTWIDGET_DEMO_omapl138 = "qt-embedded-widgets-demo"
 
-# Make the default to not include matrix-gui since this is a machine
-# specific component and often times a new machine type will be added
-# before matrix is updated to support it.
-MATRIX_APPS = ""
-MATRIX_APPS_omapl138 = "matrix-gui-e"
-MATRIX_APPS_omap3 = "matrix-gui-e"
-MATRIX_APPS_ti816x = "matrix-gui-e"
-MATRIX_APPS_dm365 = "matrix-gui-e"
+MATRIX_APPS_COMMON = "matrix-gui-coming-soon \
+                      matrix-gui-crypto-demos \
+                      matrix-gui-qt4-demos \
+                      "
+
+MATRIX_APPS_omap3 = "matrix-gui-clocks-300mhz \
+                     matrix-gui-clocks-600mhz \
+                     matrix-gui-clocks-800mhz \
+                     matrix-gui-clocks-1ghz \
+                     matrix-gui-wifi-demos \
+                     matrix-gui-3d-demos \
+                     matrix-gui-display-control \
+                     matrix-gui-pm-demos \
+                     "
+
+MATRIX_APPS_ti33x = "matrix-gui-clocks-300mhz \
+                     matrix-gui-clocks-600mhz \
+                     matrix-gui-clocks-800mhz \
+                     matrix-gui-clocks-1ghz \
+                     matrix-gui-wifi-demos \
+                     matrix-gui-3d-demos \
+                     matrix-gui-display-control \
+                     matrix-gui-pm-demos \
+                     "
 
 # Install 3D graphics for all omap3 SOC_FAMILY devices
 GRAPHICS_3D = ""
@@ -28,6 +44,7 @@ RDEPENDS_${PN} = "\
     qt4-embedded-plugin-imageformat-gif \
     qt4-embedded-plugin-imageformat-jpeg \
     libxml2 \
+    ${MATRIX_APPS_COMMON} \
     ${MATRIX_APPS} \
     ${QTWIDGET_DEMO} \
     ${GRAPHICS_3D} \
