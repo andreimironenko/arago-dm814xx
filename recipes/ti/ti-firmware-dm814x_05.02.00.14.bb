@@ -20,6 +20,7 @@ S = "${WORKDIR}/firmware-ti814x_${PV}"
 do_install() {
     install -d ${D}/${installdir}/ti-media-controller-utils
     install ${S}/*.xem3 ${D}/${installdir}/ti-media-controller-utils
+    install ${S}/*.xe674 ${D}/${installdir}/ti-media-controller-utils
 }
 
 PACKAGES += "ti-firmware"
