@@ -25,3 +25,4 @@ do_install() {
 
 PACKAGES += "ti-firmware"
 FILES_ti-firmware = "${installdir}/ti-media-controller-utils"
+INSANE_SKIP_ti-firmware = True
