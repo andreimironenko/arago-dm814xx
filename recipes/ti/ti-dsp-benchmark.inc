@@ -2,7 +2,7 @@ DESCRIPTION = "TI DSP Benchmark applications"
 HOMEPAGE = "http://software-dl.ti.com/dsps/dsps_public_sw/c6000/web/c6accel/latest/index_FDS.html"
 
 SECTION = "devel"
-LICENSE = "TI TSPA"
+LICENSE = "TI Proprietary"
 
 require ti-paths.inc
 require ti-staging.inc

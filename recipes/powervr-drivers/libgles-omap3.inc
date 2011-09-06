@@ -1,5 +1,5 @@
 DESCRIPTION = "libGLES for the omap3"
-LICENSE = "TI TSPA"
+LICENSE = "TI Proprietary"
 
 PR = "r10"
 

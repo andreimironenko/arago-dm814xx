@@ -2,7 +2,7 @@ DESCRIPTION = "TI C6Accel - DSP Software Libraries on ARM"
 HOMEPAGE = "https://gforge01.dal.design.ti.com/gf/project/dsplib4arm/"
 
 SECTION = "devel"
-LICENSE = "TI TSPA"
+LICENSE = "TI Proprietary"
 
 require ti-paths.inc
 require ti-staging.inc

@@ -1,6 +1,6 @@
 DESCRIPTION = "TI Codecs for TI81xx"
 SECTION = "multimedia"
-LICENSE = "TI TSPA"
+LICENSE = "TI Proprietary"
 
 require ti-paths.inc
 require ti-staging.inc
