@@ -3,7 +3,7 @@ HOMEPAGE = "http://arago-project.org/git/projects/test-automation/ltp-ddt.git"
 LICENSE = "GPLv2"
 SECTION = "console/utils"
 DEPENDS += "zip-native virtual/kernel alsa-lib"
-PV = "0.0.2"
+PV = "0.0.4"
 PR = "r1"
 PR_append = "+gitr${SRCPV}"
 
