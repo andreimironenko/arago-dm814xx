@@ -10,7 +10,7 @@ QSG_c6a816x-evm = C6A816x_AM389x_EVM_Quick_start_guide.pdf
 QSG_dm816x-evm = DM816x_C6A816x_AM389x_EVM_Quick_start_guide.pdf 
 QSG_dm816x-custom = DM816x_Quick_Start_Guide.pdf
 QSG_c6a814x-evm = C6A814x_AM387x_EVM_Quick_start_guide.pdf 
-QSG_dm814x-evm = DM814x_C6A814x_AM387x_EVM_Quick_start_guide.pdf
+QSG_dm814x-evm = DM814x_AM387x_EVM_Quick_start_guide.pdf
 QSG_dm814x-custom = DM814x_Quick_Start_Guide.pdf
 
 SRC_URI = "\
