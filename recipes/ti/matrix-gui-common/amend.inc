@@ -10,6 +10,7 @@ SRC_URI += "file://0001-ti814x-Add-Description-Pages-for-DSP-Menu.patch;striplev
             file://0007-ti814x-Correct-CMEM-in-DSP-Benchmarks.patch;striplevel=2 \
             file://0008-ti814x-Fix-Calibration.patch;striplevel=2 \
             file://0009-ti81xx-Fix-CMEM-location-for-DSP-Benchmarks.patch;striplevel=2 \
+            file://0010-ti816x-Add-Decode-Display-and-Capture-Encode-OMX-IL-.patch;striplevel=2 \
             file://top_ti814x_evm.png \
 "
 
