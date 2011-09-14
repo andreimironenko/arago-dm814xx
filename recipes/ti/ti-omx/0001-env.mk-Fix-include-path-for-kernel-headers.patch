@@ -1,0 +1,31 @@
+From a76ca841bf9ab702b4ce23001d3f6add26d68e57 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Wed, 14 Sep 2011 16:45:32 +0530
+Subject: [PATCH] env.mk: Fix include path for kernel headers.
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ packages/makerules/env.mk |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/packages/makerules/env.mk b/packages/makerules/env.mk
+index cfde973..e95d467 100644
+--- a/packages/makerules/env.mk
++++ b/packages/makerules/env.mk
+@@ -115,10 +115,10 @@ lindevkit_INCLUDE = $(lindevkit_PATH)/include
+ # PSP
+ ifeq ($(PLATFORM),ti816x-evm)
+ kernel_PATH = $(EXTERNAL_SW_ROOT)/TI816X-LINUX-PSP-04.00.00.12
+-kernel_INCLUDE = $(kernel_PATH)/src/kernel/linux-04.00.00.12/include $(kernel_PATH)/src/kernel/linux-04.00.00.12/arch/arm/include
++kernel_INCLUDE = $(kernel_PATH)/include $(kernel_PATH)/arch/arm/include
+ else
+ kernel_PATH = $(EXTERNAL_SW_ROOT)/TI814X-LINUX-PSP-04.01.00.05
+-kernel_INCLUDE = $(kernel_PATH)/src/kernel/linux-04.01.00.05/include $(kernel_PATH)/src/kernel/linux-04.01.00.05/arch/arm/include
++kernel_INCLUDE = $(kernel_PATH)/include $(kernel_PATH)/arch/arm/include
+ endif
+ 
+ # Audio (ALSA)
+-- 
+1.7.0.4
+
