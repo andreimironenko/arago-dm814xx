@@ -6,47 +6,71 @@ MIN_UBOOT_CONFIG=ti8148_evm_min_sd
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	components components_clean linux_component dsp_components all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_linux c6accel_dsp c6accel_clean c6accel_install syslink syslink_clean syslink_install sademo sademo_clean sademo_install matrix matrix_clean matrix_install c6run c6run_linux c6run_dsp c6run_clean c6run_examples c6run_install imglib imglib_clean dsplib dsplib_clean mathlib mathlib_clean dsp-devkit linux-devkit media-controller-utils_clean media-controller-utils_install
+.PHONY:	components components_clean components_linux components_dsp all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_linux c6accel_dsp c6accel_clean c6accel_install syslink syslink_clean syslink_install sademo sademo_clean sademo_install matrix matrix_clean matrix_install c6run c6run_linux c6run_dsp c6run_clean c6run_examples c6run_install imglib imglib_clean dsplib dsplib_clean mathlib mathlib_clean dsp-devkit linux-devkit media-controller-utils_clean media-controller-utils_install
 
 #==============================================================================
 # Build everything rebuildable.
 #==============================================================================
-all: linux cmem imglib dsplib mathlib syslink c6accel c6run u-boot sademo matrix c6run_examples osal omx psp-examples
+all: components apps
 
 #==============================================================================
 # Build components to enable all other build targets. 
 #==============================================================================
 components: components_linux components_dsp
-components_linux: linux cmem osal syslink_hlos c6accel_linux omx
+components_linux: linux cmem osal syslink_hlos syslink_driver c6accel_linux omx
 components_dsp: imglib dsplib mathlib syslink_rtos c6accel_dsp
+
+#==============================================================================
+# Install components
+#==============================================================================
+components_install: linux_install syslink_install cmem_install c6accel_install omx_install
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-components_clean: linux_clean syslink_clean cmem_clean imglib_clean dsplib_clean mathlib_clean syslink_clean c6accel_clean omx_clean
+components_clean: linux_clean syslink_clean cmem_clean imglib_clean dsplib_clean mathlib_clean c6accel_clean omx_clean
+
+#==============================================================================
+# Build all Demos, Examples and Applications
+#==============================================================================
+apps: u-boot c6run c6run_examples imglib_examples dsplib_examples mathlib_examples sademo matrix psp-examples omtb media-controller-utils
 
 #==============================================================================
 # Install everything
 #==============================================================================
-install: linux_install cmem_install syslink_install u-boot_install c6accel_install sademo_install matrix_install c6run_install omx_install psp-examples_install
+apps_install: u-boot_install c6run_install sademo_install matrix_install psp-examples_install omtb_install media-controller-utils_install
+
+#==============================================================================
+# Clean all Demos, Examples and Applications
+#==============================================================================
+apps_clean: u-boot_clean c6run_clean sademo_clean matrix_clean psp-examples_clean omtb_clean media-controller-utils_clean
+
+#==============================================================================
+# Install everything
+#==============================================================================
+install: components_install apps_install
 
 #==============================================================================
 # Clean up all targets.
 #==============================================================================
-clean: components_clean u-boot_clean sademo_clean matrix_clean c6run_clean omx_clean psp-examples_clean
+clean: components_clean apps_clean
 
 #==============================================================================
 # A help message target.
 #==============================================================================
 help:
 	@echo
-	@echo "Available build targets are:"
+	@echo "Available build targets are  :"
 	@echo
 	@echo "    components_linux               : Build the Linux components"
 	@echo "    components_dsp                 : Build the DSP components"
 	@echo "    components                     : Build the components for which a rebuild is necessary to enable all other build targets listed below. You must do this at least once upon installation prior to attempting the other targets."
 	@echo "    components_clean               : Remove files generated by the 'components' target"
 	@echo 
+	@echo "    apps                           : Build all Examples, Demos and Applications"
+	@echo "    apps_clean                     : Remove all files generated by 'apps' target"
+	@echo "    install                        : Install all Examples, Demos and Applicatiosn the targets in $(EXEC_DIR)"
+	@echo
 	@echo "    linux-devkit                   : Populate the linux devkit"
 	@echo "    dsp-devkit                     : Populate the dsp devkit"
 	@echo
@@ -67,16 +91,19 @@ help:
 	@echo "    u-boot_install                 : Install the u-boot image"
 	@echo
 	@echo "    psp-examples                   : Build the driver examples"
-	@echo "    psp-examples_clean		      : Remove generated driver example files"
+	@echo "    psp-examples_clean             : Remove generated driver example files"
 	@echo "    psp-examples_install           : Install the psp examples"
 	@echo
 	@echo "    imglib                         : Build the DSP image library"
+	@echo "    imglib_examples                : Build the DSP image library driver projects"
 	@echo "    imglib_clean                   : Remove generated imglib files"
 	@echo
 	@echo "    dsplib                         : Build the DSP library"
+	@echo "    dsplib_examples                : Build the DSP library driver projects"
 	@echo "    dsplib_clean                   : Remove generated dsplib files"
 	@echo
 	@echo "    mathlib                        : Build the DSP math library"
+	@echo "    mathlib_examples               : Build the DSP math library driver projects"
 	@echo "    mathlib_clean                  : Remove generated mathlib files"
 	@echo
 	@echo "    osal                           : Build the OSAL"
@@ -717,7 +744,13 @@ imglib:
 	$(MAKE) -C $(IMGLIB_INSTALL_DIR) \
 		IMGLIB_INSTALL_DIR=$(IMGLIB_INSTALL_DIR) \
 		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
-		BUILD_TYPE=Release_elf
+		BUILD_TYPE=Release_elf lib
+
+imglib_examples:
+	$(MAKE) -C $(IMGLIB_INSTALL_DIR) \
+		IMGLIB_INSTALL_DIR=$(IMGLIB_INSTALL_DIR) \
+		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
+		BUILD_TYPE=Release_elf src
 
 imglib_clean:
 	$(MAKE) -C $(IMGLIB_INSTALL_DIR) \
@@ -733,7 +766,13 @@ dsplib:
 	$(MAKE) -C $(DSPLIB_INSTALL_DIR) \
 		DSPLIBC674x_INSTALL_DIR=$(DSPLIB_INSTALL_DIR) \
 		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
-		BUILD_TYPE=Release_elf
+		BUILD_TYPE=Release_elf lib
+
+dsplib_examples:
+	$(MAKE) -C $(DSPLIB_INSTALL_DIR) \
+		DSPLIBC674x_INSTALL_DIR=$(DSPLIB_INSTALL_DIR) \
+		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
+		BUILD_TYPE=Release_elf src
 
 dsplib_clean:
 	$(MAKE) -C $(DSPLIB_INSTALL_DIR) \
@@ -749,7 +788,13 @@ mathlib:
 	$(MAKE) -C $(MATHLIB_INSTALL_DIR) \
 		MATHLIB_INSTALL_DIR=$(MATHLIB_INSTALL_DIR) \
 		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
-		BUILD_TYPE=C674x_elf
+		BUILD_TYPE=C674x_elf lib
+
+mathlib_examples:
+	$(MAKE) -C $(MATHLIB_INSTALL_DIR) \
+		MATHLIB_INSTALL_DIR=$(MATHLIB_INSTALL_DIR) \
+		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
+		BUILD_TYPE=C674x_elf src
 
 mathlib_clean:
 	$(MAKE) -C $(MATHLIB_INSTALL_DIR) \
