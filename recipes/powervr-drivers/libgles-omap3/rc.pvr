@@ -90,8 +90,6 @@ case $CPUTYPE in
 	devmem2 0x48180900 w 0x2
 	devmem2 0x48180920 w 0x2
 
-	sleep 2
-
 	ES_REVISION="$(devmem2 0x56000014 | sed -e s:0x00010205:5: -e s:0x00010201:3: -e s:0x00010003:2: | tail -n1 | awk -F': ' '{print $2}')"
 
 	echo "${ES_REVISION}" > /etc/powervr-esrev
@@ -120,8 +118,6 @@ case $CPUTYPE in
 	devmem2 0x48180F04 w 0x0
 	devmem2 0x48180900 w 0x2
 	devmem2 0x48180920 w 0x2
-
-	sleep 2
 
 	ES_REVISION="$(devmem2 0x56000014 | sed -e s:0x00010205:5: -e s:0x00010201:3: -e s:0x00010003:2: | tail -n1 | awk -F': ' '{print $2}')"
 
