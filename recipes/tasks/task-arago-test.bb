@@ -15,6 +15,7 @@ ARAGO_TEST = "\
     iperf \
     lmbench \
     rt-tests \
+    evtest \
     "
 
 ARAGO_TI_TEST = "\
