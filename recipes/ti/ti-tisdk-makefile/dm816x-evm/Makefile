@@ -6,7 +6,7 @@ MIN_UBOOT_CONFIG=ti8168_evm_min_sd
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	components components_clean components_linux components_dsp all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install c6accel c6accel_linux c6accel_dsp c6accel_clean c6accel_install syslink syslink_clean syslink_install sademo sademo_clean sademo_install matrix matrix_clean matrix_install c6run c6run_linux c6run_dsp c6run_clean c6run_examples c6run_install imglib imglib_clean dsplib dsplib_clean mathlib mathlib_clean dsp-devkit linux-devkit media-controller-utils_clean media-controller-utils_install
+.PHONY:	components components_clean components_linux components_dsp all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install syslink syslink_clean syslink_install matrix matrix_clean matrix_install dsp-devkit linux-devkit media-controller-utils_clean media-controller-utils_install
 
 #==============================================================================
 # Build everything rebuildable.
@@ -17,33 +17,33 @@ all: components apps
 # Build components to enable all other build targets. 
 #==============================================================================
 components: components_linux components_dsp
-components_linux: linux cmem osal syslink_hlos syslink_driver c6accel_linux omx
-components_dsp: imglib dsplib mathlib syslink_rtos c6accel_dsp
+components_linux: linux cmem osal syslink_hlos syslink_driver omx
+components_dsp: syslink_rtos 
 
 #==============================================================================
 # Install components
 #==============================================================================
-components_install: linux_install syslink_install cmem_install c6accel_install omx_install
+components_install: linux_install syslink_install cmem_install omx_install
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-components_clean: linux_clean syslink_clean cmem_clean imglib_clean dsplib_clean mathlib_clean c6accel_clean omx_clean
+components_clean: linux_clean syslink_clean cmem_clean omx_clean
 
 #==============================================================================
 # Build all Demos, Examples and Applications
 #==============================================================================
-apps: u-boot c6run c6run_examples imglib_examples dsplib_examples mathlib_examples sademo matrix psp-examples omtb media-controller-utils
+apps: u-boot matrix psp-examples omtb media-controller-utils
 
 #==============================================================================
 # Install everything
 #==============================================================================
-apps_install: u-boot_install c6run_install sademo_install matrix_install psp-examples_install omtb_install media-controller-utils_install
+apps_install: u-boot_install matrix_install psp-examples_install omtb_install media-controller-utils_install
 
 #==============================================================================
 # Clean all Demos, Examples and Applications
 #==============================================================================
-apps_clean: u-boot_clean c6run_clean sademo_clean matrix_clean psp-examples_clean omtb_clean media-controller-utils_clean
+apps_clean: u-boot_clean matrix_clean psp-examples_clean omtb_clean media-controller-utils_clean
 
 #==============================================================================
 # Install everything
@@ -94,33 +94,8 @@ help:
 	@echo "    psp-examples_clean             : Remove generated driver example files"
 	@echo "    psp-examples_install           : Install the psp examples"
 	@echo
-	@echo "    imglib                         : Build the DSP image library"
-	@echo "    imglib_examples                : Build the DSP image library driver projects"
-	@echo "    imglib_clean                   : Remove generated imglib files"
-	@echo
-	@echo "    dsplib                         : Build the DSP library"
-	@echo "    dsplib_examples                : Build the DSP library driver projects"
-	@echo "    dsplib_clean                   : Remove generated dsplib files"
-	@echo
-	@echo "    mathlib                        : Build the DSP math library"
-	@echo "    mathlib_examples               : Build the DSP math library driver projects"
-	@echo "    mathlib_clean                  : Remove generated mathlib files"
-	@echo
 	@echo "    osal                           : Build the OSAL"
 	@echo "    osal_clean                     : Remove generated OSAL files"
-	@echo
-	@echo "    c6accel                        : Build c6accel package"
-	@echo "    c6accel_clean                  : Remove generated c6accel files"
-	@echo "    c6accel_install                : Install c6accel examples"
-	@echo
-	@echo "    c6run                          : Build c6run backend libraries"
-	@echo "    c6run_clean                    : Remove c6run backend libraries"
-	@echo "    c6run_examples                 : Build c6run examples & tests"
-	@echo "    c6run_install                  : Install c6run examples & tests"
-	@echo 
-	@echo "    sademo                         : Build the Signal Analyzer demo for $(PLATFORM)"
-	@echo "    sademo_clean                   : Remove Signal Analyzer demo files."
-	@echo "    sademo_install                 : install Signal Analyzer demo executables."
 	@echo
 	@echo "    matrix                         : Build matrix application launcher"
 	@echo "    matrix_clean                   : Remove all matrix files"
@@ -379,222 +354,6 @@ syslink_install:
 	install ${SYSLINK_INSTALL_DIR}/packages/ti/syslink/bin/TI816X/syslink.ko $(EXEC_DIR)/syslink
 	cp ${SYSLINK_INSTALL_DIR}/packages/ti/syslink/lib/syslink.a* $(EXEC_DIR)/syslink
 
-##############################################################################
-#  Build c6accel
-##############################################################################
-c6accel:
-	XDCPATH=${C6ACCEL_XDCPATH} \
-	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
-	PLATFORM="TI816X" \
-	PLATFORM_XDC="ti.platforms.evmTI816X" \
-	ARM_ISA=armv7-a \
-	DSP_ISA=674 \
-	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
-	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
-	LINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
-	IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
-	OSAL_INSTALL_DIR="${OSAL_INSTALL_DIR}" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	EDMA3_LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	FC_INSTALL_DIR="$(FC_INSTALL_DIR)" \
-	BIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
-	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
-	all
-
-c6accel_linux:
-	XDCPATH=${C6ACCEL_XDCPATH} \
-	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
-	PLATFORM="TI816X" \
-	PLATFORM_XDC="ti.platforms.evmTI816X" \
-	ARM_ISA=armv7-a \
-	DSP_ISA=674 \
-	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
-	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
-	LINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
-	IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
-	OSAL_INSTALL_DIR="${OSAL_INSTALL_DIR}" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	EDMA3_LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	FC_INSTALL_DIR="$(FC_INSTALL_DIR)" \
-	BIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
-	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
-	c6accelw
-
-c6accel_dsp:
-	XDCPATH=${C6ACCEL_XDCPATH} \
-	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
-	PLATFORM="TI816X" \
-	PLATFORM_XDC="ti.platforms.evmTI816X" \
-	ARM_ISA=armv7-a \
-	DSP_ISA=674 \
-	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
-	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
-	LINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
-	IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
-	OSAL_INSTALL_DIR="${OSAL_INSTALL_DIR}" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	EDMA3_LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	FC_INSTALL_DIR="$(FC_INSTALL_DIR)" \
-	BIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
-	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
-	dsp packages server
-
-c6accel_clean:
-	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
-	PLATFORM="TI816X" \
-	CE_INSTALL_DIR="$(CE_INSTALL_DIR)" \
-	XDAIS_INSTALL_DIR="$(XDAIS_INSTALL_DIR)" \
-	LINK_INSTALL_DIR="$(LINK_INSTALL_DIR)" \
-	IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
-	OSAL_INSTALL_DIR="${OSAL_INSTALL_DIR}" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	EDMA3_LLD_INSTALL_DIR="$(EDMA3_LLD_INSTALL_DIR)" \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	FC_INSTALL_DIR="$(FC_INSTALL_DIR)" \
-	BIOS_INSTALL_DIR="$(BIOS_INSTALL_DIR)" \
-	SERVER_INSTALL_DIR="$(CODEC_INSTALL_DIR)" \
-	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
-	CSTOOL_DIR="$(CSTOOL_DIR)" \
-	CSTOOL_PREFIX="$(CSTOOL_PREFIX)" \
-	clean
-
-c6accel_install:
-	$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
-	PLATFORM="TI816X" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	LINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
-	C6ACCEL_INSTALL_DIR="$(C6ACCEL_INSTALL_DIR)" \
-	EXEC_DIR_C6ACCEL="$(EXEC_DIR)/c6accel" \
-	install
-
-################################################################################
-# Build C6run
-################################################################################
-c6run:
-	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	SYSLINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
-	IPC_INSTALL_DIR="$(IPC_INSTALL_DIR)" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
-	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
-	TI816x_config
-
-	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	SYSLINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
-	IPC_INSTALL_DIR="$(IPC_INSTALL_DIR)" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
-	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
-	clean
-
-	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	SYSLINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
-	IPC_INSTALL_DIR="$(IPC_INSTALL_DIR)" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
-	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
-	all
-
-c6run_clean:
-	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	SYSLINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
-	IPC_INSTALL_DIR="$(IPC_INSTALL_DIR)" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
-	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
-	distclean
-
-c6run_examples:
-	source $(C6RUN_INSTALL_DIR)/c6run-environment.sh; \
-	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	SYSLINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
-	IPC_INSTALL_DIR="$(IPC_INSTALL_DIR)" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
-	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
-	C6RUN_TOOLCHAIN_PATH="$(C6RUN_INSTALL_DIR)" \
-	examples
-
-	source $(C6RUN_INSTALL_DIR)/c6run-environment.sh; \
-	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	SYSLINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
-	IPC_INSTALL_DIR="$(IPC_INSTALL_DIR)" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
-	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
-	C6RUN_TOOLCHAIN_PATH="$(C6RUN_INSTALL_DIR)" \
-	tests
-
-c6run_install:
-	install -d $(EXEC_DIR)/usr/share/ti/c6run-apps
-
-	$(MAKE) -C $(C6RUN_INSTALL_DIR) \
-	INSTALL_DIR="$(EXEC_DIR)/usr/share/ti/c6run-apps" \
-	CODEGEN_INSTALL_DIR="$(CODEGEN_INSTALL_DIR)" \
-	SYSBIOS_INSTALL_DIR="$(SYSBIOS_INSTALL_DIR)" \
-	XDC_INSTALL_DIR="$(XDC_INSTALL_DIR)" \
-	SYSLINK_INSTALL_DIR="$(SYSLINK_INSTALL_DIR)" \
-	IPC_INSTALL_DIR="$(IPC_INSTALL_DIR)" \
-	CMEM_INSTALL_DIR="$(CMEM_INSTALL_DIR)" \
-	ARM_TOOLCHAIN_PATH="$(CSTOOL_DIR)" \
-	ARM_TOOLCHAIN_PREFIX="arm-none-linux-gnueabi-" \
-	install_programs
-
-################################################################################
-# Build Signal Analyzer demo
-################################################################################
-
-sademo:
-	. $(LINUX_DEVKIT_DIR)/environment-setup; cd $(SADEMO_INSTALL_DIR); qmake; cd -
-	$(MAKE) -C $(SADEMO_INSTALL_DIR)/app \
-		ROOTDIR=$(DVSDK_INSTALL_DIR) \
-	        PLATFORM="TI816X" \
-		PLATFORM_XDC=ti.platforms.evmDM8168 \
-		FFT_QT_GUI_INSTALL_DIR=$(SADEMO_INSTALL_DIR)
-	. $(LINUX_DEVKIT_DIR)/environment-setup; $(MAKE) -C $(SADEMO_INSTALL_DIR) PLATFORM="TI816X" C6ACCEL_ROOT=$(C6ACCEL_INSTALL_DIR)
-
-sademo_clean:
-	$(MAKE) -C $(SADEMO_INSTALL_DIR)/app PLATFORM="TI816X" clean
-	if [ -e $(SADEMO_INSTALL_DIR)/Makefile ]; then $(MAKE) -C $(SADEMO_INSTALL_DIR) PLATFORM="TI816X" distclean; fi
-
-sademo_install: c6accel_install
-	install -d $(EXEC_DIR)/signal-analyzer
-	install $(SADEMO_INSTALL_DIR)/sigan_demo_app $(EXEC_DIR)/signal-analyzer
-	install $(SADEMO_INSTALL_DIR)/app/scripts/bin/fft_demo_8khz.pcm $(EXEC_DIR)/signal-analyzer
-	cd $(EXEC_DIR)/signal-analyzer; ln -s ../c6accel/test_files; cd -
-	cd $(EXEC_DIR)/signal-analyzer; ln -s ../c6accel/ti816x.xe674; cd -
-
 ################################################################################
 # Build Martix GUI Application Launcher
 ################################################################################
@@ -742,72 +501,6 @@ omtb_install:
 	install -d $(EXEC_DIR)/omtb
 	install $(OMTB_INSTALL_DIR)/bin/dm816xbm/bin/ti816x-evm/omtb_dm816xbm_a8host.xv5T $(EXEC_DIR)/omtb
 
-################################################################################
-# Build the DSP image library
-################################################################################
-imglib:
-	$(MAKE) -C $(IMGLIB_INSTALL_DIR) \
-		IMGLIB_INSTALL_DIR=$(IMGLIB_INSTALL_DIR) \
-		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
-		BUILD_TYPE=Release_elf lib
-
-imglib_examples:
-	$(MAKE) -C $(IMGLIB_INSTALL_DIR) \
-		IMGLIB_INSTALL_DIR=$(IMGLIB_INSTALL_DIR) \
-		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
-		BUILD_TYPE=Release_elf src
-
-imglib_clean:
-	$(MAKE) -C $(IMGLIB_INSTALL_DIR) \
-		IMGLIB_INSTALL_DIR=$(IMGLIB_INSTALL_DIR) \
-		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
-		BUILD_TYPE=Release_elf \
-		clean
-
-################################################################################
-# Build the DSP library
-################################################################################
-dsplib:
-	$(MAKE) -C $(DSPLIB_INSTALL_DIR) \
-		DSPLIBC674x_INSTALL_DIR=$(DSPLIB_INSTALL_DIR) \
-		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
-		BUILD_TYPE=Release_elf lib
-
-dsplib_examples:
-	$(MAKE) -C $(DSPLIB_INSTALL_DIR) \
-		DSPLIBC674x_INSTALL_DIR=$(DSPLIB_INSTALL_DIR) \
-		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
-		BUILD_TYPE=Release_elf src
-
-dsplib_clean:
-	$(MAKE) -C $(DSPLIB_INSTALL_DIR) \
-		DSPLIBC674x_INSTALL_DIR=$(DSPLIB_INSTALL_DIR) \
-		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
-		BUILD_TYPE=Release_elf \
-		clean
-
-################################################################################
-# Build the DSP math library
-################################################################################
-mathlib:
-	$(MAKE) -C $(MATHLIB_INSTALL_DIR) \
-		MATHLIB_INSTALL_DIR=$(MATHLIB_INSTALL_DIR) \
-		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
-		BUILD_TYPE=C674x_elf lib
-
-mathlib_examples:
-	$(MAKE) -C $(MATHLIB_INSTALL_DIR) \
-		MATHLIB_INSTALL_DIR=$(MATHLIB_INSTALL_DIR) \
-		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
-		BUILD_TYPE=C674x_elf src
-
-mathlib_clean:
-	$(MAKE) -C $(MATHLIB_INSTALL_DIR) \
-		MATHLIB_INSTALL_DIR=$(MATHLIB_INSTALL_DIR) \
-		CODEGEN_INSTALL_DIR=$(CODEGEN_INSTALL_DIR) \
-		BUILD_TYPE=C674x_elf \
-		clean
-
 ###################################################################################
 # build media controller utils
 ##################################################################################
@@ -892,28 +585,6 @@ dsp-devkit:
 		-f sdk.mk install-xdc
 	@echo $(notdir $(OSAL_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 
-	@echo "Installing $(notdir $(C6ACCEL_INSTALL_DIR)) to dsp-devkit.."
-	@$(MAKE) -C $(C6ACCEL_INSTALL_DIR) \
-		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR) \
-		-f sdk.mk install-xdc
-	@echo $(notdir $(C6ACCEL_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
-
-	@echo "Installing $(notdir $(DSPLIB_INSTALL_DIR)) to dsp-devkit.."
-	@$(MAKE) -C $(DSPLIB_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR) -f sdk.mk install
-	@echo $(notdir $(DSPLIB_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
-
-	@echo "Installing $(notdir $(IMGLIB_INSTALL_DIR)) to dsp-devkit.."
-	@$(MAKE) -C $(IMGLIB_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR) -f sdk.mk install
-	@echo $(notdir $(IMGLIB_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
-
-	@echo "Installing $(notdir $(MATHLIB_INSTALL_DIR)) to dsp-devkit.."
-	@$(MAKE) -C $(MATHLIB_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR) -f sdk.mk install
-	@echo $(notdir $(MATHLIB_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
-
 	@chmod u+w -R $(DSP_DEVKIT_DIR)/packages $(DSP_DEVKIT_DIR)/doc
 	@echo "Generating API documentation.."
 #	@cd $(DSP_DEVKIT_DIR) && doxygen
@@ -967,11 +638,6 @@ linux-devkit:
 	@$(MAKE) -C $(SYSLINK_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
 		-f sdk.mk install
 	@echo $(notdir $(SYSLINK_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
-
-	@echo "Installing $(notdir $(C6ACCEL_INSTALL_DIR)) to linux-devkit.."
-	@$(MAKE) -C $(C6ACCEL_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-		-f sdk.mk install
-	@echo $(notdir $(C6ACCEL_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
 
 	@echo "Installing $(notdir $(UIA_INSTALL_DIR)) to linux-devkit.."
 	@$(MAKE) -C $(UIA_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
