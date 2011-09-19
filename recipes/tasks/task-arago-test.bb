@@ -1,6 +1,6 @@
 DESCRIPTION = "Extended task to get System Test specific apps"
 LICENSE = "MIT"
-PR = "r2"
+PR = "r3"
 
 inherit task
 
@@ -16,6 +16,7 @@ ARAGO_TEST = "\
     lmbench \
     rt-tests \
     evtest \
+    bc \
     "
 
 ARAGO_TI_TEST = "\
