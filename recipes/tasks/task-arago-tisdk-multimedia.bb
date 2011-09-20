@@ -17,6 +17,7 @@ MULTIMEDIA_DVSDK_COMMON = " \
 "
 
 MULTIMEDIA_EZSDK_COMMON = " \
+    ti-syslink-examples \
     ti-codec-engine-examples \
     ti-uia \
     ti-media-controller-utils \
