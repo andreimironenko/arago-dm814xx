@@ -45,19 +45,6 @@ BSP_COMPONENTS_append_omap3 = "\
     x-load-src \
     "
 
-BSP_COMPONENTS_append_ti816x = "\
-    linux-omap3-src \
-    pinmux-utility \
-    ti-docs-linux-devkit \
-    ti-docs-dsp-devkit \
-    "
-
-BSP_COMPONENTS_append_ti814x = "\
-    linux-omap3-src \
-    ti-docs-linux-devkit \
-    ti-docs-dsp-devkit \
-    "
-
 BSP_COMPONENTS_append_omap4 = "\
     linux-omap4-src \
     "
@@ -130,6 +117,8 @@ BSP_COMPONENTS_ti816x = "\
     ti-tisdk-mksdboot \
     linux-omap3-src \
     pinmux-utility \
+    ti-docs-linux-devkit \
+    ti-docs-dsp-devkit \
     "
 
 BSP_COMPONENTS_ti814x = "\
@@ -142,6 +131,8 @@ BSP_COMPONENTS_ti814x = "\
     ti-psp-driver-examples \
     ti-tisdk-mksdboot \
     linux-omap3-src \
+    ti-docs-linux-devkit \
+    ti-docs-dsp-devkit \
     "
 
 RRECOMMENDS_${PN} = "\
