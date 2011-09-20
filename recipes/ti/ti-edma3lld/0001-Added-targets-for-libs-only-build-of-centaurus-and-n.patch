@@ -1,0 +1,143 @@
+From 79cee287bfd091ff440941efbb34408986ef6b90 Mon Sep 17 00:00:00 2001
+From: Prasad Konnur <prasad.konnur@ti.com>
+Date: Mon, 19 Sep 2011 20:00:10 +0530
+Subject: [PATCH] Added targets for libs only build of centaurus and netra
+
+Signed-off-by: Prasad Konnur <prasad.konnur@ti.com>
+---
+ packages/makefile |  119 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 119 insertions(+), 0 deletions(-)
+
+diff --git a/packages/makefile b/packages/makefile
+index a20e4d2..d625a9d 100755
+--- a/packages/makefile
++++ b/packages/makefile
+@@ -49,6 +49,125 @@ cleanall: $(CLEANALL_TARGETS) $(CLEANALL_EXAMPLES)
+ #
+ # Rule to build all modules
+ #
++edma3_lld_ti816x_dsp_libs: edma3_lld_ti816x_dsp_libs_drv edma3_lld_ti816x_dsp_libs_rm edma3_lld_ti816x_dsp_libs_drvsample edma3_lld_ti816x_dsp_libs_rmsample
++edma3_lld_ti816x_dsp_libs_drv:
++	$(ECHO) \# Making c674:debug:edma3_lld_drv
++	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti816x-evm PROFILE_c6xdsp=debug
++	$(ECHO) \# Making c674:release:edma3_lld_drv
++	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti816x-evm PROFILE_c6xdsp=release
++edma3_lld_ti816x_dsp_libs_rm:
++	$(ECHO) \# Making ti816x-evm:debug:edma3_lld_rm
++	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti816x-evm PROFILE_c6xdsp=debug
++	$(ECHO) \# Making ti816x-evm:release:edma3_lld_rm
++	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti816x-evm PROFILE_c6xdsp=release
++edma3_lld_ti816x_dsp_libs_drvsample:
++	$(ECHO) \# Making ti816x-evm:debug:edma3_lld_drv_sample 
++	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti816x-evm CORE=c6xdsp PROFILE_c6xdsp=debug
++	$(ECHO) \# Making ti816x-evm:release:edma3_lld_drv_sample 
++	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti816x-evm CORE=c6xdsp PROFILE_c6xdsp=release
++edma3_lld_ti816x_dsp_libs_rmsample:
++	$(ECHO) \# Making ti816x-evm:debug:edma3_lld_rm_sample
++	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti816x-evm CORE=c6xdsp PROFILE_c6xdsp=debug
++	$(ECHO) \# Making ti816x-evm:release:edma3_lld_rm_sample
++	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti816x-evm CORE=c6xdsp PROFILE_c6xdsp=release
++
++edma3_lld_ti814x_dsp_libs: edma3_lld_ti814x_dsp_libs_drv edma3_lld_ti814x_dsp_libs_rm edma3_lld_ti814x_dsp_libs_drvsample edma3_lld_ti814x_dsp_libs_rmsample
++edma3_lld_ti814x_dsp_libs_drv:
++	$(ECHO) \# Making c674:debug:edma3_lld_drv
++	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti814x-evm PROFILE_c6xdsp=debug
++	$(ECHO) \# Making c674:release:edma3_lld_drv
++	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti814x-evm PROFILE_c6xdsp=release
++edma3_lld_ti814x_dsp_libs_rm:
++	$(ECHO) \# Making ti814x-evm:debug:edma3_lld_rm 
++	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti814x-evm PROFILE_c6xdsp=debug
++	$(ECHO) \# Making ti814x-evm:release:edma3_lld_rm 
++	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti814x-evm PROFILE_c6xdsp=release
++edma3_lld_ti814x_dsp_libs_drvsample:
++	$(ECHO) \# Making ti814x-evm :debug:edma3_lld_drv_sample 
++	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti814x-evm CORE=c6xdsp PROFILE_c6xdsp=debug
++	$(ECHO) \# Making ti814x-evm:release:edma3_lld_drv_sample 
++	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti814x-evm CORE=c6xdsp PROFILE_c6xdsp=release
++edma3_lld_ti814x_dsp_libs_rmsample:
++	$(ECHO) \# Making ti814x-evm :debug:edma3_lld_rm_sample 
++	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti814x-evm CORE=c6xdsp PROFILE_c6xdsp=debug
++	$(ECHO) \# Making ti814x-evm :release:edma3_lld_rm_sample 
++	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti814x-evm CORE=c6xdsp PROFILE_c6xdsp=release
++
++edma3_lld_ti816x_arm_libs: edma3_lld_ti816x_arm_libs_drv edma3_lld_ti816x_arm_libs_rm edma3_lld_ti816x_arm_libs_drvsample edma3_lld_ti816x_arm_libs_rmsample
++edma3_lld_ti816x_arm_libs_drv:
++ifeq ($(FORMAT),ELF)
++	$(ECHO) \# Making m3:debug:edma3_lld_drv 
++	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti816x-evm CORE=m3vpss PROFILE_m3vpss=debug
++	$(ECHO) \# Making m3:release:edma3_lld_drv 
++	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti816x-evm CORE=m3vpss PROFILE_m3vpss=release
++	$(ECHO) \# Making m3:debug:edma3_lld_drv 
++	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti816x-evm CORE=m3video PROFILE_m3video=debug
++	$(ECHO) \# Making m3:release:edma3_lld_drv 
++	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti816x-evm CORE=m3video PROFILE_m3video=release
++endif
++edma3_lld_ti816x_arm_libs_rm:
++ifeq ($(FORMAT),ELF)
++	$(ECHO) \# Making ti816x-evm:debug:edma3_lld_rm 
++	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti816x-evm CORE=m3vpss PROFILE_m3vpss=debug
++	$(ECHO) \# Making ti816x-evm:rel:edma3_lld_rm 
++	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti816x-evm CORE=m3vpss PROFILE_m3vpss=release
++	$(ECHO) \# Making ti816x-evm:debug:edma3_lld_rm 
++	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti816x-evm CORE=m3video PROFILE_m3video=debug
++	$(ECHO) \# Making ti816x-evm:rel:edma3_lld_rm 
++	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti816x-evm CORE=m3video PROFILE_m3video=release
++endif
++edma3_lld_ti816x_arm_libs_drvsample:
++ifeq ($(FORMAT),ELF)
++	$(ECHO) \# Making ti816x-evm:debug:edma3_lld_drv_sample
++	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti816x-evm CORE=m3vpss PROFILE_m3vpss=debug
++	$(ECHO) \# Making ti816x-evm:rel:edma3_lld_drv_sample 	
++	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti816x-evm CORE=m3vpss PROFILE_m3vpss=release
++	$(ECHO) \# Making ti816x-evm:rel:edma3_lld_drv_sample 
++	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti816x-evm CORE=m3video PROFILE_m3video=release
++	$(ECHO) \# Making ti816x-evm:debug:edma3_lld_drv_sample 
++	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti816x-evm CORE=m3video PROFILE_m3video=debug
++endif
++edma3_lld_ti816x_arm_libs_rmsample:
++ifeq ($(FORMAT),ELF)
++	$(ECHO) \# Making ti816x-evm:debug:edma3_lld_rm_sample 
++	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti816x-evm CORE=m3video PROFILE_m3video=debug
++	$(ECHO) \# Making ti816x-evm:rel:edma3_lld_rm_sample 
++	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti816x-evm CORE=m3video PROFILE_m3video=release	
++	$(ECHO) \# Making ti816x-evm:debug:edma3_lld_rm_sample 
++	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti816x-evm CORE=m3vpss PROFILE_m3vpss=debug
++	$(ECHO) \# Making ti816x-evm:rel:edma3_lld_rm_sample 
++	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti816x-evm CORE=m3vpss PROFILE_m3vpss=release
++endif
++
++edma3_lld_ti814x_arm_libs: edma3_lld_ti814x_arm_libs_drv edma3_lld_ti814x_arm_libs_rm edma3_lld_ti814x_arm_libs_drvsample edma3_lld_ti814x_arm_libs_rmsample
++edma3_lld_ti814x_arm_libs_drv:
++ifeq ($(FORMAT),ELF)
++	$(ECHO) \# Making a8:debug:edma3_lld_drv 
++	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=debug
++	$(ECHO) \# Making a8:release:edma3_lld_drv 
++	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=release
++endif
++edma3_lld_ti814x_arm_libs_rm:
++ifeq ($(FORMAT),ELF)
++	$(ECHO) \# Making ti814x-evm:debug:edma3_lld_rm 
++	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=debug
++	$(ECHO) \# Making ti814x-evm:rel:edma3_lld_rm 
++	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=release
++endif
++edma3_lld_ti814x_arm_libs_drvsample:
++ifeq ($(FORMAT),ELF)
++	$(ECHO) \# Making ti814x-evm:debug:edma3_lld_drv_sample 
++	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=debug
++	$(ECHO) \# Making ti814x-evm:rel:edma3_lld_drv_sample 
++	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=release
++endif
++edma3_lld_ti814x_arm_libs_rmsample:
++ifeq ($(FORMAT),ELF)
++	$(ECHO) \# Making ti814x-evm:debug:edma3_lld_rm_sample 
++	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=debug
++	$(ECHO) \# Making ti814x-evm:rel:edma3_lld_rm_sample 
++	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=release
++endif
+ 
+ edma3_lld_drv:
+ 	$(ECHO) \# Making c64p:debug:edma3_lld_drv
+-- 
+1.7.0.4
+
