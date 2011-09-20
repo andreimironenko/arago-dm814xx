@@ -6,7 +6,7 @@ MIN_UBOOT_CONFIG=ti8148_evm_min_sd
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	components components_clean components_linux components_dsp all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install syslink syslink_clean syslink_install matrix matrix_clean matrix_install dsp-devkit linux-devkit media-controller-utils_clean media-controller-utils_install
+.PHONY:	components components_clean components_linux components_dsp all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install syslink syslink_clean syslink_install matrix matrix_clean matrix_install dsp-devkit linux-devkit media-controller-utils_clean media-controller-utils_install edma3lld edma3lld_clean
 
 #==============================================================================
 # Build everything rebuildable.
@@ -18,7 +18,7 @@ all: components apps
 #==============================================================================
 components: components_linux components_dsp
 components_linux: linux cmem osal syslink_hlos syslink_driver omx
-components_dsp: syslink_rtos 
+components_dsp: syslink_rtos edma3lld
 
 #==============================================================================
 # Install components
@@ -28,7 +28,7 @@ components_install: linux_install syslink_install cmem_install omx_install
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-components_clean: linux_clean syslink_clean cmem_clean omx_clean
+components_clean: linux_clean syslink_clean cmem_clean omx_clean edma3lld_clean
 
 #==============================================================================
 # Build all Demos, Examples and Applications
@@ -112,6 +112,9 @@ help:
 	@echo "    media-controller-utils         : Build media controller utils"
 	@echo "    media-controller-utils_clean   : Remove media controller utils generated files"
 	@echo "    media-controller-utils_install : Install media controller utils"
+	@echo
+	@echo "    edma3lld                       : Build the EDMA3LLD Libraries"
+	@echo "    edma3lld_clean                 : Remove generated EDMA3LLD files"
 	@echo
 	@echo "    all                            : Rebuild everything"
 	@echo "    clean                          : Remove all generated files"
@@ -514,6 +517,35 @@ media-controller-utils_install:
 	make -C  $(MEDIA_CONTROLLER_UTILS_INSTALL_DIR) \
 		PLATFORM=ti814x \
 		DESTDIR=$(EXEC_DIR) install
+
+
+###################################################################################
+# build EDMA3 LLD
+##################################################################################
+
+edma3lld:
+	make -C $(EDMA3_LLD_INSTALL_DIR)/packages \
+		ROOTDIR=$(EDMA3_LLD_INSTALL_DIR) \
+		INTERNAL_SW_ROOT=$(EDMA3_LLD_INSTALL_DIR) \
+		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR) \
+		edma3_lld_PATH=$(EDMA3_LLD_INSTALL_DIR) \
+		bios_PATH=$(SYSBIOS_INSTALL_DIR) \
+		xdc_PATH=$(XDC_INSTALL_DIR) \
+		CODEGEN_PATH_DSPELF=$(CODEGEN_INSTALL_DIR) \
+		FORMAT=ELF \
+		edma3_lld_ti814x_dsp_libs
+
+edma3lld_clean:
+	make -C $(EDMA3_LLD_INSTALL_DIR)/packages \
+		ROOTDIR=$(EDMA3_LLD_INSTALL_DIR) \
+		INTERNAL_SW_ROOT=$(EDMA3_LLD_INSTALL_DIR) \
+		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR) \
+		edma3_lld_PATH=$(EDMA3_LLD_INSTALL_DIR) \
+		bios_PATH=$(SYSBIOS_INSTALL_DIR) \
+		xdc_PATH=$(XDC_INSTALL_DIR) \
+		CODEGEN_PATH_DSPELF=$(CODEGEN_INSTALL_DIR) \
+		FORMAT=ELF \
+		cleanall
 
 ###############################################################################
 # Build the DSP devkit
