@@ -49,11 +49,13 @@ BSP_COMPONENTS_append_ti816x = "\
     linux-omap3-src \
     pinmux-utility \
     ti-docs-linux-devkit \
+    ti-docs-dsp-devkit \
     "
 
 BSP_COMPONENTS_append_ti814x = "\
     linux-omap3-src \
     ti-docs-linux-devkit \
+    ti-docs-dsp-devkit \
     "
 
 BSP_COMPONENTS_append_omap4 = "\
