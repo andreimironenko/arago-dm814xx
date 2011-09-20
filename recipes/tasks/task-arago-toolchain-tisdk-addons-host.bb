@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install sources for additional utilities/demos for SDKs"
-PR = "r13"
+PR = "r14"
 LICENSE = "MIT"
 
 inherit task
@@ -14,6 +14,7 @@ UTILS_COMMON = " \
 # Add am-benchmarks sources for supported devices
 UTILS_append_omapl138 = " am-benchmarks-src"
 UTILS_append_omap3 = " am-benchmarks-src"
+UTILS_append_ti33x = " am-benchmarks-src"
 UTILS_append_ti816x = " am-benchmarks-src"
 UTILS_append_dm365 = " am-benchmarks-src"
 
