@@ -131,6 +131,7 @@ BSP_COMPONENTS_ti814x = "\
     ti-psp-driver-examples \
     ti-tisdk-mksdboot \
     linux-omap3-src \
+    pinmux-utility \
     ti-docs-linux-devkit \
     ti-docs-dsp-devkit \
     "
