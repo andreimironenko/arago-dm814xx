@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install Board Support Package binaries on ${MACHINE}"
-PR = "r21"
+PR = "r22"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -34,6 +34,10 @@ BSP_COMPONENTS_am3517-evm = "\
 
 BSP_COMPONENTS_omap3 = "\
     x-load \
+    "
+
+BSP_COMPONENTS_ti33x = "\
+    u-boot-min-sd \
     "
 
 BSP_COMPONENTS_ti816x = "\
