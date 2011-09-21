@@ -1,0 +1,28 @@
+From 027012aa9582194167926754fbc0dcfa605ed476 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Wed, 21 Sep 2011 08:23:38 +0530
+Subject: [PATCH 12/12] ti816x: Change start-stop-daemon to use $matrixgui
+
+* Intermittent failures seen when using pid.
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ trunk/ti816x/etc/init |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/trunk/ti816x/etc/init b/trunk/ti816x/etc/init
+index 25e73ed..e63666b 100644
+--- a/trunk/ti816x/etc/init
++++ b/trunk/ti816x/etc/init
+@@ -37,7 +37,7 @@ case "$1" in
+ 
+   stop)
+     echo -n "Stopping Matrix GUI application"
+-    start-stop-daemon --stop --quiet --pidfile /var/run/matrix-gui-e.pid
++    start-stop-daemon --stop --quiet --exec $matrixgui
+     echo "."
+     ;;
+   *)
+-- 
+1.7.0.4
+
