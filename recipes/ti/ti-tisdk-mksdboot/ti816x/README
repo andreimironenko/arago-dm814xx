@@ -1,12 +1,12 @@
 
            == README ==
 
-The purpose of this readme is to describe on how to create SD card for C6A816x/AM389x EVM.
+The purpose of this readme is to describe on how to create SD card for DM814x EVM.
 
 1. Download EVSDK from ....
 
 2. Install the EVSDK on supported Linux host machine.
-  host # ./ezsdk_c6a816x-evm_5_00_00_00_setuplinux.bin
+  host # ./ezsdk_dm816x-evm_5_00_00_00_setuplinux.bin
 
 3. Power OFF the EVM.
 
@@ -29,8 +29,8 @@ The purpose of this readme is to describe on how to create SD card for C6A816x/A
      <installation bin file names>
 
    e.g
-    sudo ./mksdboot --device /dev/sdc --sdk /home/user/ti-ezsdk_c6a816x-evm_5_00 
-    /downloads/ezsdk_c6a816x-evm_5_00_00_00_setuplinux.bin
+    sudo ./mksdboot --device /dev/sdc --sdk /home/user/ti-ezsdk_dm816x-evm_5_00 
+    /downloads/ezsdk_dm816x-evm_5_00_00_00_setuplinux.bin
 
 7. On completion, plug the SD card on EVM and Power cycle the board.
 

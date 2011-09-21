@@ -24,7 +24,7 @@ version ()
 {
   echo
   echo "`basename $1` version $VERSION"
-  echo "Script to create bootable SD card for C6A814x/AM387x EVM"
+  echo "Script to create bootable SD card for DM814x EVM"
   echo
 
   exit 0
