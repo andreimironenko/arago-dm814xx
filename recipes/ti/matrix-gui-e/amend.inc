@@ -16,3 +16,5 @@ SRC_URI += "file://0001-ti814x-Add-Description-Pages-for-DSP-Menu.patch;striplev
             file://0013-ti814x-Remove-references-to-parts-other-than-DM814x.patch;striplevel=2 \
             file://0014-ti816x-Remove-references-to-parts-other-than-dm816x.patch;striplevel=2 \
 "
+
+INITSCRIPT_PARAMS = "defaults 99 05"
