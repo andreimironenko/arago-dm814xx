@@ -17,7 +17,7 @@ index cc8ed5c..4de53e7 100644
      "TMS320TCI6616": {
          transport:       nyqSimTransport
      },    
-+    "TMS320DM814X": {
++    "TMS320DM8148": {
 +        transport:       nullTransport
 +    },
  };
