@@ -1,0 +1,27 @@
+From 17f61db6bc31a390f80be684f802c4a7fe75e706 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Fri, 23 Sep 2011 13:45:29 +0530
+Subject: [PATCH 15/16] ti814x: Fix Incorrect header in Decode Display Description.
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ trunk/ti814x/html/desc_1080p_decode_display.html |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/trunk/ti814x/html/desc_1080p_decode_display.html b/trunk/ti814x/html/desc_1080p_decode_display.html
+index d9d626b..594f05f 100644
+--- a/trunk/ti814x/html/desc_1080p_decode_display.html
++++ b/trunk/ti814x/html/desc_1080p_decode_display.html
+@@ -50,7 +50,7 @@
+     <object type="image/svg+xml" data="/usr/share/matrix/images/tex.svg" >
+     <img src="/usr/share/matrix/images/tex.svg" />
+   </div>
+-  <div id="header">Capture Encode</div>
++  <div id="header">Decode Display</div>
+   <div class="topBar">
+     <object type="application/x-matrix" >
+       <param name="iconName" value="/usr/share/matrix/images/multi-icon.png" />
+-- 
+1.7.0.4
+

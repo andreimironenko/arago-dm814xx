@@ -15,6 +15,8 @@ SRC_URI += "file://0001-ti814x-Add-Description-Pages-for-DSP-Menu.patch;striplev
             file://0012-ti816x-Change-start-stop-daemon-to-use-matrixgui.patch;striplevel=2 \
             file://0013-ti814x-Remove-references-to-parts-other-than-DM814x.patch;striplevel=2 \
             file://0014-ti816x-Remove-references-to-parts-other-than-dm816x.patch;striplevel=2 \
+            file://0015-ti814x-Fix-Incorrect-header-in-Decode-Display-Descri.patch;striplevel=2 \
+            file://0016-ti816x-Add-description-pages-for-OMX-IL-Client-demos.patch;striplevel=2 \
             file://top_ti814x_evm.png \
 "
 
