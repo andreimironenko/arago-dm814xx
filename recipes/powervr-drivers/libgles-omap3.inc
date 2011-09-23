@@ -284,7 +284,7 @@ FILES_${PN}-dev = "${includedir}"
 inherit update-rc.d
 
 INITSCRIPT_NAME = "pvr-init"
-INITSCRIPT_PARAMS = "start 30 5 2 . stop 40 0 1 6 ."
+INITSCRIPT_PARAMS = "start 30 5 2 . stop 05 0 1 6 ."
 
 # Append to update-rc.d postinst
 pkg_postinst_${PN}_append() {
