@@ -8,17 +8,19 @@ require ti-paths.inc
 require ti-staging.inc
 require ti-eula-unpack.inc
 
-PR = "r3"
+PR = "r4"
 
-S = "${WORKDIR}/ipc_${PV}"
+PVExtra = ""
 
-SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/ipc/${PV}/exports/ipc_setuplinux_${PV}.bin;name=ipcbin"
+S = "${WORKDIR}/ipc_${PV}${PVExtra}"
+
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/ipc/${PV}/exports/ipc_setuplinux_${PV}${PVExtra}.bin;name=ipcbin"
 
 SRC_URI =+ "file://ipc.pc"
 
 DEPENDS = "ti-sysbios ti-cgt6x ti-xdctools"
 
-BINFILE="ipc_setuplinux_${PV}.bin"
+BINFILE="ipc_setuplinux_${PV}${PVExtra}.bin"
 TI_BIN_UNPK_CMDS="Y: q:workdir:Y"
 
 do_configure() {
