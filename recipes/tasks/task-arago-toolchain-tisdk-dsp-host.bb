@@ -59,6 +59,7 @@ DSP_SOURCETREE_am389x-evm = ""
 DSP_SOURCETREE_am387x-evm = ""
 DSP_SOURCETREE_am45x-evm = ""
 DSP_SOURCETREE_am335x-evm = ""
+DSP_SOURCETREE_am3359-evm = ""
 
 RRECOMMENDS_${PN} = "\
     ${DSP_SOURCETREE} \

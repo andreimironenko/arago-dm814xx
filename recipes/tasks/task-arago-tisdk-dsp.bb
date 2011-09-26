@@ -43,6 +43,7 @@ DSP_COMPONENTS_am389x-evm = ""
 DSP_COMPONENTS_am387x-evm = ""
 DSP_COMPONENTS_am45x-evm = ""
 DSP_COMPONENTS_am335x-evm = ""
+DSP_COMPONENTS_am3359-evm = ""
 
 DSP_COMPONENTS = ""
 
