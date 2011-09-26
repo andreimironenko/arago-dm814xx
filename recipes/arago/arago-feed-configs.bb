@@ -10,7 +10,7 @@ PR = "r12"
 #PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 MACHS_ARMV5 = "dm6446-evm dm6467-evm dm6467t-evm dm355-evm dm365-evm da830-omapl137-evm da850-omapl138-evm am180x-evm am181x-evm"
-MACHS_ARMV7 = "omap3evm beagleboard am3517-evm am37x-evm dm37x-evm am389x-evm c6a816x-evm am387x-evm am45x-evm am335x-evm"
+MACHS_ARMV7 = "omap3evm beagleboard am3517-evm am37x-evm dm37x-evm am389x-evm c6a816x-evm am387x-evm am45x-evm am335x-evm am3359-evm"
 
 # This gets set in the distro/local configuration
 ARAGO_FEED_BASEPATH ?= "feeds"
@@ -21,7 +21,7 @@ do_compile() {
 # Populate the list of supported architectures
 	rm ${S}/${sysconfdir}/opkg/arch.conf || true
 #	ipkgarchs="${PACKAGE_ARCHS}"
-	ipkgarchs="all any noarch arm armv4 armv4t armv5te #armv6 #armv7 #armv7a arago #omap3evm #beagleboard #dm6446-evm #dm6467-evm #dm6467t-evm #dm355-evm #dm365-evm #da830-omapl137-evm #da850-omapl138-evm #am180x-evm #am181x-evm #am3517-evm #am37x-evm #dm37x-evm #am389x-evm #c6a816x-evm #am387x-evm #am45x-evm #am335x-evm"
+	ipkgarchs="all any noarch arm armv4 armv4t armv5te #armv6 #armv7 #armv7a arago #omap3evm #beagleboard #dm6446-evm #dm6467-evm #dm6467t-evm #dm355-evm #dm365-evm #da830-omapl137-evm #da850-omapl138-evm #am180x-evm #am181x-evm #am3517-evm #am37x-evm #dm37x-evm #am389x-evm #c6a816x-evm #am387x-evm #am45x-evm #am335x-evm #am3359-evm"
 	priority=1
 	for arch in $ipkgarchs; do
 		disable=`echo $arch|cut -c1`
