@@ -1,7 +1,7 @@
 DESCRIPTION = "Package containing scripts to setup the development host and target board"
 LICENSE = "TI"
 
-COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|dm37x-evm|dm365-evm|omapl138|am3517-evm|am389x-evm|dm368-evm|beagleboard|am335x-evm)"
+COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|dm37x-evm|dm365-evm|omapl138|am3517-evm|am389x-evm|dm368-evm|beagleboard|ti33x)"
 
 UBOOT_ENV_dm365-evm = "setup-uboot-env-dm365.sh"
 UBOOT_ENV_dm368-evm = "setup-uboot-env-dm368.sh"
@@ -14,7 +14,7 @@ UBOOT_ENV_am3517-evm = "setup-uboot-env-am3517.sh"
 UBOOT_ENV_am180x-evm = "setup-uboot-env-am18x.sh"
 UBOOT_ENV_am181x-evm = "setup-uboot-env-am18x.sh"
 UBOOT_ENV_am389x-evm = "setup-uboot-env-am389x.sh"
-UBOOT_ENV_am335x-evm = "setup-uboot-env-am335x.sh"
+UBOOT_ENV_ti33x = "setup-uboot-env-am335x.sh"
 
 SRC_URI = "\
 	file://setup.sh \
