@@ -14,8 +14,8 @@ S = "${WORKDIR}/bios_${PV}${PVExtra}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/bios/sysbios/${PV}${PVExtra}/exports/bios_setuplinux_${PV}${PVExtra}.bin;name=sysbiosbin"
 
-SRC_URI += "file://0001-Added-sdk-make-install-file-to-bios.patch \
-"
+# SRC_URI += "file://0001-Added-sdk-make-install-file-to-bios.patch \
+# "
 
 BINFILE="bios_setuplinux_${PV}${PVExtra}.bin"
 TI_BIN_UNPK_CMDS="Y: q:workdir:Y"
