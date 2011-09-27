@@ -581,14 +581,14 @@ dsp-devkit:
 	@$(MAKE) -C $(SYSBIOS_INSTALL_DIR) \
 		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
 		DESTDIR=$(DSP_DEVKIT_DIR) \
-		-f sdk.mk install-xdc
+		-f bios.mak install-packages
 	@echo $(notdir $(SYSBIOS_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 
 	@echo "Installing $(notdir $(IPC_INSTALL_DIR)) to dsp-devkit.."
 	@$(MAKE) -C $(IPC_INSTALL_DIR) \
 		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
 		DESTDIR=$(DSP_DEVKIT_DIR) \
-		-f sdk.mk install-xdc
+		-f ipc.mak install-packages
 	@echo $(notdir $(IPC_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 
 	@echo "Installing $(notdir $(EDMA3_LLD_INSTALL_DIR)) to dsp-devkit.."
