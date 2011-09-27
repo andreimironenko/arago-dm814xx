@@ -8,12 +8,13 @@ require ti-staging.inc
 require ti-eula-unpack.inc
 
 PR = "r2"
+PVExtra = ""
 
-S = "${WORKDIR}/bios_${PV}"
+S = "${WORKDIR}/bios_${PV}${PVExtra}"
 
-SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/bios/sysbios/${PV}/exports/bios_setuplinux_${PV}.bin;name=sysbiosbin"
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/bios/sysbios/${PV}${PVExtra}/exports/bios_setuplinux_${PV}${PVExtra}.bin;name=sysbiosbin"
 
-BINFILE="bios_setuplinux_${PV}.bin"
+BINFILE="bios_setuplinux_${PV}${PVExtra}.bin"
 TI_BIN_UNPK_CMDS="Y: q:workdir:Y"
 
 do_install() {
