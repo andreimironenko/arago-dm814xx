@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install additional utilities/demos for SDKs"
-PR = "r16"
+PR = "r17"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -36,6 +36,7 @@ UTILS_append_beagleboard = " ${AM_ADDONS}"
 UTILS_append_am180x-evm = " ${AM_ADDONS}"
 UTILS_append_am181x-evm = " ${AM_ADDONS}"
 UTILS_append_am3517-evm = " ${AM_ADDONS}"
+UTILS_append_am335x-evm = " ${AM_ADDONS}"
 
 RDEPENDS_${PN} = "\
     ${UTILS} \
