@@ -1,8 +1,11 @@
 #platform
-PLATFORM=am387x-evm
+PLATFORM=__PLATFORM__
 
 #Architecture
-ARCH=armv7a
+ARCH=__ARCH__
+
+#u-boot machine
+UBOOT_MACHINE=__UBOOT_MACHINE__
 
 #Points to the root of the TI SDK
 export TI_SDK_PATH=__SDK__INSTALL_DIR__
