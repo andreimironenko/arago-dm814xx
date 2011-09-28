@@ -7,7 +7,7 @@ KERNEL_VERSION=2.6.37
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	components components_clean components_linux components_dsp all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install syslink syslink_clean syslink_install matrix matrix_clean matrix_install dsp-devkit linux-devkit media-controller-utils_clean media-controller-utils_install edma3lld edma3lld_clean
+.PHONY:	components components_clean components_linux components_dsp all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install syslink syslink_clean syslink_install matrix matrix_clean matrix_install dsp-devkit linux-devkit media-controller-utils_clean media-controller-utils_install edma3lld edma3lld_clean sgx-driver sgx-driver_clean sgx-driver_install
 
 #==============================================================================
 # Build everything rebuildable.
@@ -18,18 +18,18 @@ all: components apps
 # Build components to enable all other build targets. 
 #==============================================================================
 components: components_linux components_dsp
-components_linux: linux cmem osal syslink_hlos syslink_driver omx
+components_linux: linux cmem osal syslink_hlos syslink_driver sgx-driver omx
 components_dsp: syslink_rtos edma3lld
 
 #==============================================================================
 # Install components
 #==============================================================================
-components_install: linux_install syslink_install cmem_install omx_install
+components_install: linux_install syslink_install cmem_install sgx-driver_install omx_install
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-components_clean: linux_clean syslink_clean cmem_clean omx_clean edma3lld_clean
+components_clean: linux_clean syslink_clean cmem_clean sgx-driver_clean omx_clean edma3lld_clean
 
 #==============================================================================
 # Build all Demos, Examples and Applications
@@ -352,6 +352,21 @@ syslink_install:
 	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 	install ${SYSLINK_INSTALL_DIR}/packages/ti/syslink/bin/TI814X/syslink.ko $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 	install ${SYSLINK_INSTALL_DIR}/packages/ti/syslink/lib/syslink.a* $(EXEC_DIR)/usr/lib
+
+###############################################################################
+# Build SGX Kernel Modules
+###############################################################################
+sgx-driver: 
+	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=6.x GRAPHICS_INSTALL_DIR=$(GRAPHICS_INSTALL_DIR) CSTOOL_DIR=$(CSTOOL_DIR) KERNEL_INSTALL_DIR=$(KERNEL_INSTALL_DIR) all_km
+
+sgx-driver_clean: 
+	$(MAKE) -C $(GRAPHICS_INSTALL_DIR) BUILD=release OMAPES=6.x GRAPHICS_INSTALL_DIR=$(GRAPHICS_INSTALL_DIR) CSTOOL_DIR=$(CSTOOL_DIR) KERNEL_INSTALL_DIR=$(KERNEL_INSTALL_DIR) clean_km
+
+sgx-driver_install: 
+	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/gpu
+	for i in `find $(GRAPHICS_INSTALL_DIR)/GFX_Linux_KM -name "*.ko"`; do \
+		install $$i $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/gpu; \
+	done
 
 ################################################################################
 # Build Matrix GUI Application Launcher
