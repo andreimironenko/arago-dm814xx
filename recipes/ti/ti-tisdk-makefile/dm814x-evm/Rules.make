@@ -1,5 +1,5 @@
 # Define target platform.
-PLATFORM=dm816x-evm
+PLATFORM=dm814x-evm
 
 # The installation directory of the SDK.
 EZSDK_INSTALL_DIR=<__SDK__INSTALL_DIR__>
