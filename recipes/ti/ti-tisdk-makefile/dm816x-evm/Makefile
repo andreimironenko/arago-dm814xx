@@ -467,7 +467,7 @@ omx_install:
 ################################################################################
 
 omtb:
-	$(MAKE) -C $(OMTB_INSTALL_DIR) dm816xbm \
+	$(MAKE) -C $(OMTB_INSTALL_DIR) dm81xxbm \
 		ROOTDIR=$(OMTB_INSTALL_DIR) \
 		PLATFORM=ti816x-evm \
 		OMTB_ROOT=$(OMTB_INSTALL_DIR) \
@@ -486,7 +486,7 @@ omtb:
 		CODEGEN_PATH_A8=$(CSTOOL_DIR)
 
 omtb_clean:
-	$(MAKE) -C $(OMTB_INSTALL_DIR) clean_dm816xbm \
+	$(MAKE) -C $(OMTB_INSTALL_DIR) clean_dm81xxbm \
 		ROOTDIR=$(OMTB_INSTALL_DIR) \
 		PLATFORM=ti816x-evm \
 		OMTB_ROOT=$(OMTB_INSTALL_DIR) \
@@ -506,7 +506,7 @@ omtb_clean:
 
 omtb_install:
 	install -d $(EXEC_DIR)/usr/share/ti/ti-omtb
-	install $(OMTB_INSTALL_DIR)/bin/dm816xbm/bin/ti816x-evm/omtb_dm816xbm_a8host.xv5T $(EXEC_DIR)/usr/share/ti/ti-omtb
+	install $(OMTB_INSTALL_DIR)/bin/dm81xxbm/bin/ti816x-evm/omtb_dm81xxbm_a8host.xv5T $(EXEC_DIR)/usr/share/ti/ti-omtb
 	install $(OMTB_INSTALL_DIR)/packages/ti/sdo/omtb/scripts/* $(EXEC_DIR)/usr/share/ti/ti-omtb
 
 ###################################################################################
