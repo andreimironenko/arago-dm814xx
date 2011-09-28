@@ -3,6 +3,7 @@ include Rules.make
 DEFAULT_LINUXKERNEL_CONFIG=ti8148_evm_defconfig
 DEFAULT_UBOOT_CONFIG=ti8148_evm_config
 MIN_UBOOT_CONFIG=ti8148_evm_min_sd
+KERNEL_VERSION=2.6.37
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
@@ -219,11 +220,10 @@ psp-examples_clean:
 	rm -f $(PSP_EXAMPLES_INSTALL_DIR)/watchdog/saWatchdog
 
 psp-examples_install:
-	mkdir -p $(EXEC_DIR)/psp-examples
-	-cp $(PSP_EXAMPLES_INSTALL_DIR)/audio/bin/minimal_capture $(EXEC_DIR)/psp-examples
-	-cp $(PSP_EXAMPLES_INSTALL_DIR)/audio/bin/minimal_playback $(EXEC_DIR)/psp-examples
-	-cp $(PSP_EXAMPLES_INSTALL_DIR)/edma/edma_test.ko $(EXEC_DIR)/psp-examples
-	-cp $(PSP_EXAMPLES_INSTALL_DIR)/watchdog/saWatchdog $(EXEC_DIR)/psp-examples
+	install -d $(EXEC_DIR)/usr/share/ti/ti-psp-examples
+	install $(PSP_EXAMPLES_INSTALL_DIR)/audio/bin/minimal_capture $(EXEC_DIR)/usr/share/ti/ti-psp-examples
+	install $(PSP_EXAMPLES_INSTALL_DIR)/audio/bin/minimal_playback $(EXEC_DIR)/usr/share/ti/ti-psp-examples
+	install $(PSP_EXAMPLES_INSTALL_DIR)/edma/edma_test.ko $(EXEC_DIR)/usr/share/ti/ti-psp-examples
 
 #==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the
@@ -239,8 +239,8 @@ cmem_clean:
 	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/interface clean
 
 cmem_install:
-	install -d $(EXEC_DIR)/cmem
-	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/cmem
+	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
+	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 
 ###############################################################################
 # Build the OSAL
@@ -348,12 +348,13 @@ syslink_clean:
 	clean
 
 syslink_install:
-	install -d $(EXEC_DIR)/syslink
-	install ${SYSLINK_INSTALL_DIR}/packages/ti/syslink/bin/TI814X/syslink.ko $(EXEC_DIR)/syslink
-	cp ${SYSLINK_INSTALL_DIR}/packages/ti/syslink/lib/syslink.a* $(EXEC_DIR)/syslink
+	install -d $(EXEC_DIR)/usr/lib
+	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
+	install ${SYSLINK_INSTALL_DIR}/packages/ti/syslink/bin/TI814X/syslink.ko $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
+	install ${SYSLINK_INSTALL_DIR}/packages/ti/syslink/lib/syslink.a* $(EXEC_DIR)/usr/lib
 
 ################################################################################
-# Build Martix GUI Application Launcher
+# Build Matrix GUI Application Launcher
 ################################################################################
 matrix:
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup ; cd example-applications/matrix-gui-e* ; qmake ; $(MAKE) PLATFORM=ti814x
@@ -362,14 +363,16 @@ matrix_clean:
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup;  cd example-applications/matrix-gui-e* ; qmake ; $(MAKE) distclean
 
 matrix_install:
-	install -d $(EXEC_DIR)/matrix
-	install -m 0755 $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/matrix_gui $(EXEC_DIR)/matrix
-	cp  $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/ti814x/bin/* \
-        $(EXEC_DIR)/matrix/
-	cp  $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/ti814x/html/* \
-        $(EXEC_DIR)/matrix/
-	cp  $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/images/* \
-        $(EXEC_DIR)/matrix/
+	install -d $(EXEC_DIR)/usr/share/matrix/html
+	install -d $(EXEC_DIR)/usr/share/matrix/images
+	install -d $(EXEC_DIR)/usr/bin
+	install -m 0755 $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/matrix_gui $(EXEC_DIR)/usr/bin/
+	install  $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/ti814x/bin/* \
+        $(EXEC_DIR)/usr/bin
+	install  $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/ti814x/html/* \
+        $(EXEC_DIR)/usr/share/matrix/html
+	install  $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/images/* \
+        $(EXEC_DIR)/usr/share/matrix/images
 
 
 ################################################################################
@@ -448,9 +451,9 @@ omx_clean:
         EXAMPLES_ROOT=${OMX_INSTALL_DIR}/packages \
 
 omx_install:
-	install -d $(EXEC_DIR)/omx
+	install -d $(EXEC_DIR)/usr/share/ti/ti-omx
 	for i in `find ${OMX_INSTALL_DIR}/bin -name "*.xv5T"`; do \
-		install $$i ${EXEC_DIR}/omx; \
+		install $$i ${EXEC_DIR}/usr/share/ti/ti-omx; \
 	done
 
 ################################################################################
@@ -496,8 +499,9 @@ omtb_clean:
 		CODEGEN_PATH_A8=$(TOOLCHAIN_PATH)
 
 omtb_install:
-	install -d $(EXEC_DIR)/omtb
-	install $(OMTB_INSTALL_DIR)/bin/dm814xbm/bin/ti814x-evm/omtb_dm814xbm_a8host.xv5T $(EXEC_DIR)/omtb
+	install -d $(EXEC_DIR)/usr/share/ti/ti-omtb
+	install $(OMTB_INSTALL_DIR)/bin/dm814xbm/bin/ti814x-evm/omtb_dm814xbm_a8host.xv5T $(EXEC_DIR)/usr/share/ti/ti-omtb
+	install $(OMTB_INSTALL_DIR)/packages/ti/sdo/omtb/scripts/* $(EXEC_DIR)/usr/share/ti/ti-omtb
 
 ###################################################################################
 # build media controller utils
@@ -516,7 +520,10 @@ media-controller-utils_clean:
 media-controller-utils_install:
 	make -C  $(MEDIA_CONTROLLER_UTILS_INSTALL_DIR) \
 		PLATFORM=ti814x \
-		DESTDIR=$(EXEC_DIR) install
+		DESTDIR=$(EXEC_DIR) prefix=/usr install
+	for i in `find board-support/prebuilt-images -name "*.xem3" -or -name "*.xe674"`; do \
+		install $$i $(EXEC_DIR)/usr/share/ti/ti-media-controller-utils/ ; \
+	done
 
 
 ###################################################################################
