@@ -596,7 +596,7 @@ dsp-devkit:
 	@$(MAKE) -C $(FC_INSTALL_DIR) \
 		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
 		DESTDIR=$(DSP_DEVKIT_DIR) \
-		-f sdk.mk install-xdc
+		-f framework_components.mak install-packages
 	@echo $(notdir $(FC_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 
 	@echo "Installing $(notdir $(SYSBIOS_INSTALL_DIR)) to dsp-devkit.."
@@ -624,7 +624,7 @@ dsp-devkit:
 	@$(MAKE) -C $(XDAIS_INSTALL_DIR) \
 		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
 		DESTDIR=$(DSP_DEVKIT_DIR) \
-		-f sdk.mk install-xdc
+		-f xdais.mak install-packages
 	@echo $(notdir $(XDAIS_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 
 	@echo "Installing $(notdir $(OSAL_INSTALL_DIR)) to dsp-devkit.."
@@ -660,17 +660,17 @@ linux-devkit:
 
 	@echo "Installing $(notdir $(FC_INSTALL_DIR)) to linux-devkit.."
 	@$(MAKE) -C $(FC_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-		-f sdk.mk install
+		-f framework_components.mak install
 	@echo $(notdir $(FC_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
 
-	@echo "Installing $(notdir $(IPC_INSTALL_DIR)) to linux-devkit.."
-	@$(MAKE) -C $(IPC_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-		-f sdk.mk install
-	@echo $(notdir $(IPC_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
+	# @echo "Installing $(notdir $(IPC_INSTALL_DIR)) to linux-devkit.."
+	# @$(MAKE) -C $(IPC_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
+	# 	-f sdk.mk install
+	# @echo $(notdir $(IPC_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
 
 	@echo "Installing $(notdir $(XDAIS_INSTALL_DIR)) to linux-devkit.."
 	@$(MAKE) -C $(XDAIS_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-		-f sdk.mk install
+		-f xdais.mak install
 	@echo $(notdir $(XDAIS_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
 
 	@echo "Installing $(notdir $(OSAL_INSTALL_DIR)) to linux-devkit.."
