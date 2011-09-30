@@ -46,7 +46,7 @@ SRC_URI = "\
     file://Makefile_u-boot-min-sd \
 "
 
-PR = "r82"
+PR = "r83"
 
 do_configure_prepend_dm37x-evm () { 
          sed -i -e 's:OMAPES=3.x:OMAPES=5.x:g' ${WORKDIR}/Makefile

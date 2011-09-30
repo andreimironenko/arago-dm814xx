@@ -24,5 +24,5 @@ export CROSS_COMPILE=$(LINUX_DEVKIT_PATH)/bin/arm-arago-linux-gnueabi-
 export ENV_SETUP=$(LINUX_DEVKIT_PATH)/environment-setup
 
 #The directory that points to the SDK kernel source tree
-LINUXKERNEL_INSTALL_DIR=$(TI_SDK_PATH)/psp/__KERNEL_NAME__
+LINUXKERNEL_INSTALL_DIR=$(TI_SDK_PATH)/board-support/__KERNEL_NAME__
 
