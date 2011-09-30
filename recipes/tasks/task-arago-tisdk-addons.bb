@@ -30,7 +30,7 @@ AM_ADDONS = " \
     task-arago-test \
     "
 
-# Add matrix-tui for AM devices
+# Add additional packages for AM devices
 UTILS_append_am37x-evm = " ${AM_ADDONS}"
 UTILS_append_beagleboard = " ${AM_ADDONS}"
 UTILS_append_am180x-evm = " ${AM_ADDONS}"
