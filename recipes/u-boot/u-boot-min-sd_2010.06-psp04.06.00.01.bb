@@ -8,7 +8,7 @@ PROVIDES = "u-boot-min-sd"
 
 UBOOT_MACHINE = "am335x_evm_min_sd"
 UBOOT_BINARY = "u-boot.min.sd"
-UBOOT_SYMLINK = "MLO"
+UBOOT_SYMLINK = "MLO-${MACHINE}"
 UBOOT_IMAGE = "MLO-${MACHINE}-${PV}-${PR}"
 
 # Look to the base recipes directory to find files as well.

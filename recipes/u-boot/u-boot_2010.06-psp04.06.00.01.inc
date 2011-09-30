@@ -21,7 +21,7 @@ SRC_URI = "git://gitorious.tif.ti.com/am335x-linux/am335x-u-boot.git;protocol=gi
 
 SRCREV = "${AUTOREV}"
 PV = "2010.06"
-PR = "r1"
+PR = "r2"
 PR_append = "+gitr${SRCPV}"
 
 UVER = "2010.06"
