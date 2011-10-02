@@ -43,3 +43,15 @@ SRC_URI += " \
 SRC_URI += " \
     file://0001-mt9t111-enable-clock-pad-register-in-configuration.patch \
 "
+
+# The following patches add support for wake on wlan (WoWlan)
+# which is supported in nlcp R4 release
+SRC_URI += "file://0001-omap3evm-add-wake-on-wlan-support.patch \
+    file://0001-nlcp-sdio-fixes-for-wowlan-support.patch \
+    file://0002-mmc-sdio-support-suspend-resume-while-runtime-suspen.patch \
+    file://0003-mmc_card_keep_power-cleanups.patch \
+    file://0004-mmc-do-not-switch-to-1-bit-mode-if-not-required.patch \
+    file://0005-mmc-fix-division-by-zero-in-MMC-core.patch \
+    file://0006-revert-duplicate-insertion-of-mmc_card_keep_power-fu.patch \
+"
+
