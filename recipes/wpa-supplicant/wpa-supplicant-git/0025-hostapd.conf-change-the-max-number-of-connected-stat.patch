@@ -1,0 +1,41 @@
+From 166fc28c206f8af220ead25b9b31751c19bfeb0e Mon Sep 17 00:00:00 2001
+From: Arik Nemtsov <arik@wizery.com>
+Date: Tue, 19 Jul 2011 10:31:24 +0300
+Subject: [PATCH 25/32] hostapd.conf: change the max number of connected station to 8
+
+The R4 AP-mode firmware+driver supports up to 8 connected stations. Make
+the appropriate change in hostapd.conf files
+---
+ android_hostapd_11a.conf |    2 +-
+ android_hostapd_11g.conf |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/android_hostapd_11a.conf b/android_hostapd_11a.conf
+index 95a453f..3126ee0 100644
+--- a/android_hostapd_11a.conf
++++ b/android_hostapd_11a.conf
+@@ -21,7 +21,7 @@ interface=wlan1
+ ssid=AndroidAP
+ ieee80211d=1
+ country_code=US
+-max_num_sta=5
++max_num_sta=8
+ macaddr_acl=0
+ auth_algs=3
+ tx_queue_data3_aifs=7
+diff --git a/android_hostapd_11g.conf b/android_hostapd_11g.conf
+index 46d420a..a0a7981 100644
+--- a/android_hostapd_11g.conf
++++ b/android_hostapd_11g.conf
+@@ -21,7 +21,7 @@ interface=wlan1
+ ssid=AndroidAP
+ ieee80211d=1
+ country_code=US
+-max_num_sta=5
++max_num_sta=8
+ macaddr_acl=0
+ auth_algs=3
+ tx_queue_data3_aifs=7
+-- 
+1.7.0.4
+

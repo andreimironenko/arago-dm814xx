@@ -1,0 +1,30 @@
+From 98be56e3abdee64f337b93ed5f7913eeca961505 Mon Sep 17 00:00:00 2001
+From: Shahar Levi <shahar_levi@ti.com>
+Date: Thu, 14 Jul 2011 10:12:35 +0300
+Subject: [PATCH 23/32] wpa_supplicant: prevent connection attempt while unfit security: STA open to secured peer
+
+In case STA set to open with ssid fit to secured peer the WPA select
+that peer for connection.
+Validate that the peer not secured before returning matching ssid.
+
+Signed-off-by: Shahar Levi <shahar_levi@ti.com>
+---
+ wpa_supplicant/events.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/wpa_supplicant/events.c b/wpa_supplicant/events.c
+index e58abdc..b1e78b7 100644
+--- a/wpa_supplicant/events.c
++++ b/wpa_supplicant/events.c
+@@ -435,7 +435,7 @@ static int wpa_supplicant_ssid_bss_match(struct wpa_supplicant *wpa_s,
+ 		return 0;
+ 	}
+ 
+-	if (!wpa_key_mgmt_wpa(ssid->key_mgmt)) {
++	if (!wpa_key_mgmt_wpa(ssid->key_mgmt) && (!wpa_ie && !rsn_ie)) {
+ 		wpa_dbg(wpa_s, MSG_DEBUG, "   allow in non-WPA/WPA2");
+ 		return 1;
+ 	}
+-- 
+1.7.0.4
+
