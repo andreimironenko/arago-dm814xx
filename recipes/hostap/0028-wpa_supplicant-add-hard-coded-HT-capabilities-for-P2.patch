@@ -1,0 +1,30 @@
+From 5e3ff2ac49028d2eaa0a3c59991e91777d4904fe Mon Sep 17 00:00:00 2001
+From: Arik Nemtsov <arik@wizery.com>
+Date: Thu, 28 Jul 2011 12:03:04 +0300
+Subject: [PATCH 28/32] wpa_supplicant: add hard-coded HT capabilities for P2P GO
+
+Temporarily add hard-coded HT capabilities to wpa_supplicant to allow
+operating as a 11n GO. These will be determined automatically from the
+wiphy (the driver) in a future version.
+---
+ src/ap/ap_config.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/src/ap/ap_config.c b/src/ap/ap_config.c
+index e77716b..0c299e0 100644
+--- a/src/ap/ap_config.c
++++ b/src/ap/ap_config.c
+@@ -160,7 +160,9 @@ struct hostapd_config * hostapd_config_defaults(void)
+ 	conf->tx_queue[2] = txq_be;
+ 	conf->tx_queue[3] = txq_bk;
+ 
+-	conf->ht_capab = HT_CAP_INFO_SMPS_DISABLED;
++	/* TEMP: hard-coded HT capabilities. We should get these from wiphy */
++	conf->ht_capab = HT_CAP_INFO_SHORT_GI20MHZ | HT_CAP_INFO_GREEN_FIELD |
++			 HT_CAP_INFO_RX_STBC_1 | HT_CAP_INFO_SMPS_DISABLED;
+ 
+ 	return conf;
+ }
+-- 
+1.7.0.4
+

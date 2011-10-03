@@ -1,0 +1,30 @@
+From 0cb4e29538ebe9730d5eff312d2d92e7d9989366 Mon Sep 17 00:00:00 2001
+From: Eliad Peller <eliad@wizery.com>
+Date: Mon, 1 Aug 2011 19:55:29 +0300
+Subject: [PATCH 31/32] If uapsd is explicitly enabled, set conf->bss->wmm_enabled and conf->bss->wmm_uapsd to enable (and advertise) uapsd.
+
+Signed-off-by: Eliad Peller <eliad@wizery.com>
+Signed-off-by: Arik Nemtsov <arik@wizery.com>
+---
+ wpa_supplicant/ap.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
+
+diff --git a/wpa_supplicant/ap.c b/wpa_supplicant/ap.c
+index 7a1c9aa..ce3631a 100644
+--- a/wpa_supplicant/ap.c
++++ b/wpa_supplicant/ap.c
+@@ -420,6 +420,11 @@ int wpa_supplicant_create_ap(struct wpa_supplicant *wpa_s,
+ 		return -1;
+ 	}
+ 
++	if (params.uapsd > 0) {
++		conf->bss->wmm_enabled = 1;
++		conf->bss->wmm_uapsd = 1;
++	}
++
+ 	if (wpa_supplicant_conf_ap(wpa_s, ssid, conf)) {
+ 		wpa_printf(MSG_ERROR, "Failed to create AP configuration");
+ 		wpa_supplicant_ap_deinit(wpa_s);
+-- 
+1.7.0.4
+

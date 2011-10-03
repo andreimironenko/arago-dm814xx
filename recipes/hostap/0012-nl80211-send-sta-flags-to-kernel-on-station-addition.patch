@@ -1,0 +1,85 @@
+From fa93fa0cba430e0cecb4da2b5529d3c3af845c56 Mon Sep 17 00:00:00 2001
+From: Arik Nemtsov <arik@wizery.com>
+Date: Sat, 18 Jun 2011 21:16:43 +0300
+Subject: [PATCH 12/32] nl80211: send sta flags to kernel on station addition
+
+Send sta flags to kernel when adding a new station. This ensures stations
+are added with up to date flags by kernel drivers.
+---
+ src/drivers/driver_nl80211.c |   40 +++++++++++++++++++++++-----------------
+ 1 files changed, 23 insertions(+), 17 deletions(-)
+
+diff --git a/src/drivers/driver_nl80211.c b/src/drivers/driver_nl80211.c
+index 48b5a5d..034a710 100644
+--- a/src/drivers/driver_nl80211.c
++++ b/src/drivers/driver_nl80211.c
+@@ -3793,12 +3793,30 @@ nla_put_failure:
+ }
+ 
+ 
++static u32 sta_flags_nl80211(int flags)
++{
++	u32 f = 0;
++
++	if (flags & WPA_STA_AUTHORIZED)
++		f |= BIT(NL80211_STA_FLAG_AUTHORIZED);
++	if (flags & WPA_STA_WMM)
++		f |= BIT(NL80211_STA_FLAG_WME);
++	if (flags & WPA_STA_SHORT_PREAMBLE)
++		f |= BIT(NL80211_STA_FLAG_SHORT_PREAMBLE);
++	if (flags & WPA_STA_MFP)
++		f |= BIT(NL80211_STA_FLAG_MFP);
++
++	return f;
++}
++
++
+ static int wpa_driver_nl80211_sta_add(void *priv,
+ 				      struct hostapd_sta_add_params *params)
+ {
+ 	struct i802_bss *bss = priv;
+ 	struct wpa_driver_nl80211_data *drv = bss->drv;
+ 	struct nl_msg *msg;
++	struct nl80211_sta_flag_update upd;
+ 	int ret = -ENOBUFS;
+ 
+ 	msg = nlmsg_alloc();
+@@ -3821,6 +3839,11 @@ static int wpa_driver_nl80211_sta_add(void *priv,
+ 			params->ht_capabilities);
+ 	}
+ 
++	os_memset(&upd, 0, sizeof(upd));
++	upd.mask = sta_flags_nl80211(params->flags);
++	upd.set = upd.mask;
++	NLA_PUT(msg, NL80211_ATTR_STA_FLAGS2, sizeof(upd), &upd);
++
+ 	ret = send_and_recv_msgs(drv, msg, NULL, NULL);
+ 	if (ret)
+ 		wpa_printf(MSG_DEBUG, "nl80211: NL80211_CMD_NEW_STATION "
+@@ -4402,23 +4425,6 @@ static int wpa_driver_nl80211_hapd_send_eapol(
+ }
+ 
+ 
+-static u32 sta_flags_nl80211(int flags)
+-{
+-	u32 f = 0;
+-
+-	if (flags & WPA_STA_AUTHORIZED)
+-		f |= BIT(NL80211_STA_FLAG_AUTHORIZED);
+-	if (flags & WPA_STA_WMM)
+-		f |= BIT(NL80211_STA_FLAG_WME);
+-	if (flags & WPA_STA_SHORT_PREAMBLE)
+-		f |= BIT(NL80211_STA_FLAG_SHORT_PREAMBLE);
+-	if (flags & WPA_STA_MFP)
+-		f |= BIT(NL80211_STA_FLAG_MFP);
+-
+-	return f;
+-}
+-
+-
+ static int wpa_driver_nl80211_sta_set_flags(void *priv, const u8 *addr,
+ 					    int total_flags,
+ 					    int flags_or, int flags_and)
+-- 
+1.7.0.4
+

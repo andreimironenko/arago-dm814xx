@@ -1,0 +1,33 @@
+From 1ffe455a1b2fcdcec92e94a6750759f80b591086 Mon Sep 17 00:00:00 2001
+From: Arik Nemtsov <arik@wizery.com>
+Date: Thu, 28 Jul 2011 12:12:57 +0300
+Subject: [PATCH 26/32] hostapd.conf: support one stream of RX-STBC for AP-mode
+
+---
+ android_hostapd_11a.conf |    2 +-
+ android_hostapd_11g.conf |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/android_hostapd_11a.conf b/android_hostapd_11a.conf
+index 3126ee0..c15080e 100644
+--- a/android_hostapd_11a.conf
++++ b/android_hostapd_11a.conf
+@@ -76,4 +76,4 @@ eap_server=1
+ disassoc_low_ack=1
+ ap_max_inactivity=10000
+ ieee80211n=1
+-ht_capab=[SHORT-GI-20][GF]
++ht_capab=[SHORT-GI-20][GF][RX-STBC1]
+diff --git a/android_hostapd_11g.conf b/android_hostapd_11g.conf
+index a0a7981..5f0da9c 100644
+--- a/android_hostapd_11g.conf
++++ b/android_hostapd_11g.conf
+@@ -76,4 +76,4 @@ eap_server=1
+ disassoc_low_ack=1
+ ap_max_inactivity=10000
+ ieee80211n=1
+-ht_capab=[SHORT-GI-20][GF]
++ht_capab=[SHORT-GI-20][GF][RX-STBC1]
+-- 
+1.7.0.4
+

@@ -1,0 +1,22 @@
+From ace907d2b374760c5a4fa4282dff0623d6add8ac Mon Sep 17 00:00:00 2001
+From: Arik Nemtsov <arik@wizery.com>
+Date: Tue, 8 Mar 2011 16:32:17 +0900
+Subject: [PATCH 04/32] wpa_supplicant: create symlink to src/ inside wpa_supplicant
+
+This is required by the default Android.mk commited to hostap.git
+---
+ wpa_supplicant/src |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+ create mode 120000 wpa_supplicant/src
+
+diff --git a/wpa_supplicant/src b/wpa_supplicant/src
+new file mode 120000
+index 0000000..e057607
+--- /dev/null
++++ b/wpa_supplicant/src
+@@ -0,0 +1 @@
++../src/
+\ No newline at end of file
+-- 
+1.7.0.4
+
