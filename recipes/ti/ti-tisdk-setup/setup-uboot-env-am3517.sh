@@ -32,7 +32,7 @@ else
 fi
 
 uimage="uImage-""$platform"".bin"
-uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/$uimage`
+uimagesrc=`ls -1 $cwd/../board-support/prebuilt-images/$uimage`
 uimagedefault=`basename $uimagesrc`
 
 baseargs="console=ttyO2,115200n8 rw noinitrd"

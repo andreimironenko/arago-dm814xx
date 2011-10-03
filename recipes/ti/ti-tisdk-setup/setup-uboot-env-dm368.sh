@@ -43,7 +43,7 @@ else
     echo
 fi
 
-uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
+uimagesrc=`ls -1 $cwd/../board-support/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
 baseargs="console=ttyS0,115200n8 rw dm365_imp.oper_mode=0"
