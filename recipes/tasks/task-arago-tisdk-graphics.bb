@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r14"
+PR = "r15"
 LICENSE = "MIT"
 
 inherit task
@@ -14,6 +14,7 @@ MATRIX_APPS_COMMON = "matrix-gui-coming-soon \
                       matrix-gui-qt4-demos \
                       "
 
+MATRIX_APPS = ""
 MATRIX_APPS_omap3 = "matrix-gui-clocks-300mhz \
                      matrix-gui-clocks-600mhz \
                      matrix-gui-clocks-800mhz \
