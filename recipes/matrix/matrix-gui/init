@@ -18,6 +18,17 @@ case "$1" in
         echo "."
     fi
 
+    # Temporarily create the /dev/input/touchscreen0 symlink if it is
+    # not already present.  On devices like am335x the driver does not
+    # report the right string in /sys/devices/platform/tsc/input/input0/modalias
+    # to match the regular expression in /etc/udev/rules.d/local.rules
+    # to have this symlink created automatically.
+    if [ ! -e /dev/input/touchscreen0 ]
+    then
+        # assume we are going to use event0
+        ln -s /dev/input/event0 /dev/input/touchscreen0
+    fi
+
 	if [ -e $PIDFILE ]; then
       PIDDIR=/proc/$(cat $PIDFILE)
       if [ -d ${PIDDIR} -a  "$(readlink -f ${PIDDIR}/exe)" = "${matrixgui}" ]; then
