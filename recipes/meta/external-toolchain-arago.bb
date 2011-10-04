@@ -1,11 +1,14 @@
 require external-toolchain-arago.inc
 
-PR = "r7"
+PR = "r8"
 
 INHIBIT_DEFAULT_DEPS = "1"
 
 PACKAGE_NO_GCONV = "1"
 PACKAGE_NO_LOCALE = "1"
+
+ALLOW_EMPTY_libgcc = "1"
+ALLOW_EMPTY_libstdc++ = "1"
 
 INSANE_SKIP_libgcc = "True"
 INSANE_SKIP_libstdc++ = "True"
