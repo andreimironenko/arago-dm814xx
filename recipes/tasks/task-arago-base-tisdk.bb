@@ -1,6 +1,6 @@
 DESCRIPTION = "Additional packages beyond console packages shared by TI SDKs"
 LICENSE = "MIT"
-PR = "r4"
+PR = "r5"
 
 inherit task
 
@@ -20,5 +20,6 @@ RDEPENDS_${PN} = "\
     iperf \
     psplash-ti \
     u-boot \
+    arago-gplv3-notice \
     ${SECONDARY_BOOTLOADER} \
     "
