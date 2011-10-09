@@ -1,7 +1,7 @@
 # NLCP supports both station and AP modes.
 # don't start hostapd automatically when the system boot up.
 
-PR_append = "-arago3"
+PR_append = "-arago4"
 
 # The default hostapd.conf file that is fetched from upstream is using
 # "a" band which is not supported by the 1271 chip.
@@ -12,7 +12,7 @@ updatercd_postinst () {
 :
 }
 
-# Update hostapd sources in the public git with r4-10 patches that have not been up 
+# Update hostapd sources in the public git with r4-11 patches that have not been up 
 # streamed yet. Once the up stream of R4 release by wlan r&d is finsished we would
 # remove these patches from the amend.
 
@@ -50,9 +50,14 @@ SRC_URI_append = " \
     file://0030-hostap-set-ht_capab-from-wiphy-when-in-P2P-GO-mode.patch;patchdir=.. \
     file://0031-If-uapsd-is-explicitly-enabled-set-conf-bss-wmm_enab.patch;patchdir=.. \
     file://0032-backport-P2P-Do-not-reply-to-Probe-Request-frame-ind.patch;patchdir=.. \
+    file://0032-backport-P2P-Do-not-reply-to-Probe-Request-frame-ind.patch;patchdir=.. \
+    file://0033-WPS2-Add-WPS-IE-to-Assoc-Resp-for-cases-of-WLAN_STA_.patch;patchdir=.. \
+    file://0034-hostap-allow-action-frames-with-unknown-BSSID-in-GO-.patch;patchdir=.. \
+    file://0035-use-GO-channel-for-Operating-Channel-IE.patch;patchdir=.. \
+    file://0036-Sync-with-include-linux-nl80211.h.patch;patchdir=.. \
+    file://0037-P2P-Remove-CCK-supported-rates-when-running-P2P-scan.patch;patchdir=.. \
+    file://0038-nl80211-Add-support-to-disable-CCK-rate-for-p2p-prob.patch;patchdir=.. \
+    file://0039-p2p-disable-11b-rates-only-on-p2p-interface-creation.patch;patchdir=.. \
+    file://0040-nl80211-fix-the-not-disabled-case-in-disable_11b_rat.patch;patchdir=.. \
+    file://0041-driver_nl80211-added-the-power-save-private-driver-c.patch;patchdir=.. \
     "
-
-
-
-
-
