@@ -17,4 +17,6 @@ PSPREL = "-prerelease"
 
 # Override the SRC_URI from the linux-omap3.inc file
 SRC_URI = "git://arago-project.org/git/projects/linux-am33x.git;protocol=git;branch=${BRANCH} \
+           file://0001-am335x-evm-Add-support-for-Beaglebone-Board.patch \
+           file://0002-Enable-bit15-in-the-maccontrol-register-for-100Mbps.patch \
            file://defconfig"
