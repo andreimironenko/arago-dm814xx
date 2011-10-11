@@ -41,6 +41,7 @@ MATRIX_APPS_ti33x = "matrix-gui-submenus-3d \
 # Install 3D graphics for all omap3 SOC_FAMILY devices
 GRAPHICS_3D = ""
 GRAPHICS_3D_omap3 = "libgles-omap3-rawdemos"
+GRAPHICS_3D_ti33x = "libgles-omap3-rawdemos"
 
 RDEPENDS_${PN} = "\
     task-arago-qte \
