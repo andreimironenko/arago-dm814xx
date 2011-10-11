@@ -9,14 +9,14 @@ COMPATIBLE_MACHINE = "ti33x"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-BRANCH = "int_am335xpsp_04.06.00.01-v2011.09-with-spl-30sept"
+BRANCH = "int_am335xpsp_04.06.00.01-v2011.09-for-sdk-05.03.00.00"
 
 S = "${WORKDIR}/git"
 
 SRC_URI = "git://github.com/trini/u-boot.git;protocol=git;branch=${BRANCH}"
 
-SRCREV = "bebf75c52780dfdafbe5b5eb05a7d24579674f9d"
-PR = "r0"
+SRCREV = "6368194b2218c8f66dfa9ad19b2bd9a746c28560"
+PR = "r1"
 PR_append = "+gitr${SRCPV}"
 
 UVER = "2011.09"
