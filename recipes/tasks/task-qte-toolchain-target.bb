@@ -2,14 +2,13 @@ DESCRIPTION = "Target packages for Qt Embedded SDK"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
-PR = "r7"
+PR = "r8"
 
 RDEPENDS_${PN} += " \
         task-arago-toolchain-target \
         qt4-embedded-mkspecs \
         libqt-embeddedphonon4-dev \
         libqt-embedded3support4-dev \
-        libqt-embeddedassistantclient4-dev \
         libqt-embeddedclucene4-dev \
         libqt-embeddedcore4-dev \
         libqt-embeddeddbus4-dev \
