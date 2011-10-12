@@ -1,0 +1,36 @@
+From fc8b063b751062e2955ea23dd36307478c2b74a5 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Wed, 12 Oct 2011 16:33:04 +0530
+Subject: [PATCH] Syslink: Update Memory Map of TI814x for EZSDK 5.03
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ .../samples/rtos/platforms/ti814x/dsp/Platform.xdc |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/packages/ti/syslink/samples/rtos/platforms/ti814x/dsp/Platform.xdc b/packages/ti/syslink/samples/rtos/platforms/ti814x/dsp/Platform.xdc
+index 7eb5afa..570ade6 100755
+--- a/packages/ti/syslink/samples/rtos/platforms/ti814x/dsp/Platform.xdc
++++ b/packages/ti/syslink/samples/rtos/platforms/ti814x/dsp/Platform.xdc
+@@ -57,13 +57,13 @@ metaonly module Platform inherits xdc.platform.IPlatform {
+                 ["EXT_RAM",
+                     {name: "EXT_RAM",     base: 0x80000000, len: 0x0A600000, space: "code/data",access: "RWX"}],
+                 ["DDR2",
+-                    {name: "DDR2",        base: 0x8B000000, len: 0x01FFDB00, space: "code/data",access: "RWX"}],
++                    {name: "DDR2",        base: 0x99500000, len: 0x00C00000, space: "code/data",access: "RWX"}],
+                 ["HOST_DSP_NOTIFYMEM",
+-                    {name: "HOST_DSP_NOTIFYMEM", base: 0x8CFFDB00, len: 0x00002500, space: "code/data",access: "RWX"}],
++                    {name: "HOST_DSP_NOTIFYMEM", base: 0x98000000, len: 0x01400000, space: "code/data",access: "RWX"}],
+                 ["SR0",
+-                    {name: "SR0",         base: 0x8E000000, len: 0x01000000, space: "code/data",access: "RWX"}],
++                    {name: "SR0",         base: 0x9F700000, len: 0x00200000, space: "code/data",access: "RWX"}],
+                 ["SR1",
+-                    {name: "SR1",         base: 0x8D000000, len: 0x00C00000, space: "code/data",access: "RWX"}],
++                    {name: "SR1",         base: 0x99400000, len: 0x00100000, space: "code/data",access: "RWX"}],
+             ],
+             l1DMode:"32k",
+             l1PMode:"32k",
+-- 
+1.7.0.4
+

@@ -22,6 +22,7 @@ S = "${WORKDIR}/syslink_${PV}${PVExtra}"
 
 SRC_URI = "http://www.sanb.design.ti.com/tisb_releases/SysLink/${PV}/exports/syslink_${PV}.tar.gz;name=syslinktarball \
            file://0001-Syslink-Update-Memory-Map-for-EZSDK-5.02.patch \
+           file://0001-Syslink-Update-Memory-Map-of-TI814x-for-EZSDK-5.03.patch \
            file://0001-Added-sdk-make-install-file-to-syslink.patch \
 "
 
