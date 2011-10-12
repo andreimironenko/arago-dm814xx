@@ -4,7 +4,7 @@ LICENSE = "BSD MIT Apache"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-PR = "r4"
+PR = "r5"
 
 INITSCRIPT_NAME = "matrix-gui-2.0"
 INITSCRIPT_PARAMS = "defaults 99"
@@ -14,7 +14,7 @@ PACKAGE_ARCH = "all"
 inherit update-rc.d
 
 BRANCH ?= "master"
-SRCREV = "c6db82baffcd96b20e67aa5cfdb4c0c98ef208b9"
+SRCREV = "9f5d27fec216f223c43b48fa146edf4a4bb7aa24"
 
 SRC_URI = "git://gitorious.org/matrix-gui-v2/matrix-gui-v2.git;protocol=git;branch=${BRANCH} \
            file://init"
