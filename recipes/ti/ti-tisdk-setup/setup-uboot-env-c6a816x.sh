@@ -116,10 +116,6 @@ fi
 if [ -n "$bootfile" ]; then
     echo $bootfile
 fi
-echo "--------------------------------------------------------------------------------"
-echo "Please setup ethaddr manually by choosing your MAC Address"
-echo "setenv ethaddr xx:xx:xx:xx:xx"
-echo "--------------------------------------------------------------------------------"
 
 do_expect() {
     echo "expect {" >> $3
