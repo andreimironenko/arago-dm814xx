@@ -1,0 +1,31 @@
+From d39902a232ad9b4d185185df5cd99ca9da77797c Mon Sep 17 00:00:00 2001
+From: Raj, Deepu <deepu.raj@ti.com>
+Date: Wed, 12 Oct 2011 11:29:32 +0530
+Subject: [PATCH 1/1] TI816X : Fixed autoload boot.scr issue in SD boot
+
+ Auto loading of boot.scr from SD card was not
+ happening  due to mmc command change.This is
+ fixed by updating the 2nd stage boot cmd with
+ 'mmc rescan 0'.
+
+Signed-off-by: Raj, Deepu <deepu.raj@ti.com>
+---
+ include/configs/ti8168_evm.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/include/configs/ti8168_evm.h b/include/configs/ti8168_evm.h
+index 77fe8dc..b2618a0 100644
+--- a/include/configs/ti8168_evm.h
++++ b/include/configs/ti8168_evm.h
+@@ -96,7 +96,7 @@
+ 		"source ${script_addr}\0" \
+ 
+ #define CONFIG_BOOTCOMMAND \
+-	"if mmc init; then " \
++	"if mmc rescan 0; then " \
+ 		"if run loadbootscript; then " \
+ 			"run bootscript; " \
+ 		"else " \
+-- 
+1.7.0.4
+
