@@ -15,8 +15,8 @@ S = "${WORKDIR}/git"
 
 SRC_URI = "git://github.com/trini/u-boot.git;protocol=git;branch=${BRANCH}"
 
-SRCREV = "6368194b2218c8f66dfa9ad19b2bd9a746c28560"
-PR = "r1"
+SRCREV = "456880b203bc44c025c374c98fa327b804a9cf64"
+PR = "r2"
 PR_append = "+gitr${SRCPV}"
 
 UVER = "2011.09"
