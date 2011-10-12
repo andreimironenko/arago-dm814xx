@@ -7,7 +7,7 @@
 # Licensed under terms of GPLv2
 #
 
-VERSION="0.3"
+VERSION="0.4"
 
 execute ()
 {
@@ -140,7 +140,7 @@ fi
 execute "mkdir -p /tmp/sdk"
 cat <<EOF >/tmp/sdk/boot.cmd
 setenv bootargs 'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 rw mem=256M earlyprink notifyk.vpssm3_sva=0xBF900000 vram=50M ti814xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd'
-fatload mmc 1 0x80009000 uImage
+fatload mmc 0 0x80009000 uImage
 bootm 0x80009000
 EOF
 
