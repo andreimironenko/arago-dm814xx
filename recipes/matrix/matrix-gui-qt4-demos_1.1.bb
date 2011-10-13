@@ -7,7 +7,7 @@ PR = "r0"
 
 PACKAGE_ARCH = "all"
 
-SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/608/5036/qt4demos_1.0.tar.gz"
+SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/664/5071/qt4demos_1.1.tar.gz"
 
 S = ${WORKDIR}/qt4demos
 
@@ -18,5 +18,5 @@ RDEPENDS +=  matrix-gui-submenus-qt4
 
 FILES_${PN} += "${MATRIX_BASE_DIR}/*"
 
-SRC_URI[md5sum] = "49b65c4af67117ba70e0ddabfe486abe"
-SRC_URI[sha256sum] = "8367c539caf6902961db4b8f38b0fb1f05b7b105d5e7fd143c9503ca0c8a1df2"
+SRC_URI[md5sum] = "0c514ad64c44fc795031fc6640362dca"
+SRC_URI[sha256sum] = "4109e5b36ea19d8a87442ab78d26ba0801affa71fbb634d53e8e0239518ce5d5"
