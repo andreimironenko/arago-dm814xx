@@ -86,21 +86,37 @@ do_compile() {
 KERNEL_VERSION = "${@base_read_file('${STAGING_KERNEL_DIR}/kernel-abiversion')}"
 
 do_install () {
+    # Install the kernel module
+    make DEVICE="${SYSLINKDEVICE}" \
+         GPPOS=Linux \
+         LOADER=ELF \
+         SDK=EZSDK \
+         IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
+         BIOS_INSTALL_DIR="${SYSBIOS_INSTALL_DIR}" \
+         XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
+         LINUXKERNEL="${STAGING_KERNEL_DIR}" \
+         CGT_ARM_INSTALL_DIR="${TOOLCHAIN_PATH}" \
+         CGT_ARM_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+         CGT_C674_ELF_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
+         USE_SYSLINK_NOTIFY=0 \
+         EXEC_DIR=${D} \
+         install_driver
 
-    # Install the hlos kernel module
-    install -d ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp
-    install -m 0755 ${S}/packages/ti/syslink/bin/${SYSLINKVARIANT}/syslink.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp/
-
-    # Install the hlos example kernel modules and apps
-    install -d ${D}/${installdir}/ti-syslink-examples
-    install -m 0755 ${S}/packages/ti/syslink/bin/${SYSLINKVARIANT}/samples/* ${D}/${installdir}/ti-syslink-examples/
-
-    # Install the rtos example apps 
-    install -d ${D}/${installdir}/ti-syslink-examples/dsp
-    cd ${S}/packages/ti/syslink/samples/rtos
-    for i in $(find . -name "*.${SYSLINKSUFFIX}" | grep ${SOC_FAMILY}); do
-        install ${i} ${D}/${installdir}/ti-syslink-examples/dsp/
-    done
+    # Install Samples
+    make DEVICE="${SYSLINKDEVICE}" \
+         GPPOS=Linux \
+         LOADER=ELF \
+         SDK=EZSDK \
+         IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
+         BIOS_INSTALL_DIR="${SYSBIOS_INSTALL_DIR}" \
+         XDC_INSTALL_DIR="${XDC_INSTALL_DIR}" \
+         LINUXKERNEL="${STAGING_KERNEL_DIR}" \
+         CGT_ARM_INSTALL_DIR="${TOOLCHAIN_PATH}" \
+         CGT_ARM_PREFIX="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}" \
+         CGT_C674_ELF_INSTALL_DIR="${CODEGEN_INSTALL_DIR}" \
+         USE_SYSLINK_NOTIFY=0 \
+         EXEC_DIR=${D}/usr/share \
+         install_samples
 
     # Install/Stage the Source Tree
     install -d ${D}${SYSLINK_INSTALL_DIR_RECIPE}
@@ -128,7 +144,7 @@ update-modules || true
 
 PACKAGES += "ti-syslink-examples"
 RDEPENDS_ti-syslink-examples_append = " ti-syslink-module"
-FILES_ti-syslink-examples = "${installdir}/ti-syslink-examples/*"
+FILES_ti-syslink-examples = "${installdir}/syslink-examples/*"
 INSANE_SKIP_ti-syslink-examples = True
 
 FILES_ti-syslink-dev = "${libdir}/*"
