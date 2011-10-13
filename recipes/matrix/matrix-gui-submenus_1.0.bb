@@ -3,7 +3,7 @@ HOMEPAGE = "https://gforge.ti.com/gf/project/matrixguiv2apps/"
 LICENSE = "CC-BY-SA"
 PRIORITY = "optional"
 
-PR = "r0"
+PR = "r1"
 
 require matrix-gui-paths.inc
 
@@ -24,13 +24,13 @@ SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/589/5037/arm.tar.gz;name
            https://gforge.ti.com/gf/download/frsrelease/598/5046/settings.tar.gz;name=settingstarball \
            https://gforge.ti.com/gf/download/frsrelease/599/5047/usb.tar.gz;name=usbtarball \
            https://gforge.ti.com/gf/download/frsrelease/600/5048/wifi.tar.gz;name=wifitarball \
-
+           https://gforge.ti.com/gf/download/frsrelease/662/5068/oprofile.tar.gz;name=oprofiletarball \
 "
 
 S = ${WORKDIR}
 
 # List of submenus to build packages for
-SUBMENUS = "arm 3d cryptos display ethernet multimedia power pru qt4 settings usb wifi"
+SUBMENUS = "arm 3d cryptos display ethernet multimedia power pru qt4 settings usb wifi oprofile"
 
 do_install(){
 	install -d ${D}${MATRIX_APP_DIR}
@@ -41,7 +41,7 @@ do_install(){
     done
 }
 
-PACKAGES += "${PN}-arm ${PN}-3d ${PN}-cryptos ${PN}-display ${PN}-ethernet ${PN}-multimedia ${PN}-power ${PN}-pru ${PN}-qt4 ${PN}-settings ${PN}-usb ${PN}-wifi"
+PACKAGES += "${PN}-arm ${PN}-3d ${PN}-cryptos ${PN}-display ${PN}-ethernet ${PN}-multimedia ${PN}-power ${PN}-pru ${PN}-qt4 ${PN}-settings ${PN}-usb ${PN}-wifi ${PN}-oprofile"
 
 # All submenu packages should depend on matrix-gui being installed
 RDEPENDS +=  matrix-gui
@@ -59,6 +59,7 @@ FILES_${PN}-qt4 = "${MATRIX_APP_DIR}/qt4/*"
 FILES_${PN}-settings = "${MATRIX_APP_DIR}/settings/*"
 FILES_${PN}-usb = "${MATRIX_APP_DIR}/usb/*"
 FILES_${PN}-wifi = "${MATRIX_APP_DIR}/wifi/*"
+FILES_${PN}-oprofile = "${MATRIX_APP_DIR}/oprofile/*"
 
 # checksums for the submenu tarballs
 SRC_URI[armtarball.md5sum] = "ed7d73441e0d85e84aa6df06d86e9d72"
@@ -96,3 +97,6 @@ SRC_URI[usbtarball.sha256sum] = "384f733ef1b6808a29a0cfd102ab1ec766913fc88bfa587
 
 SRC_URI[wifitarball.md5sum] = "f6ee538c77ac1ea7a502955e7e3cc624"
 SRC_URI[wifitarball.sha256sum] = "83edd8cf1c6efbfaa8c2e25b4a984ff6587aa7e379b833810452cb47ff5a6200"
+
+SRC_URI[oprofiletarball.md5sum] = "bc4f93018910817bab79eef4e0e20564"
+SRC_URI[oprofiletarball.sha256sum] = "67803d1bee995496d4b632aaf2dc731d58f6826cc45b79f5545d1a8ffb3d2583"
