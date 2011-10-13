@@ -69,7 +69,7 @@ fi
 echo $dst > $cwd/../.targetfs
 echo "--------------------------------------------------------------------------------"
 
-platform=`grep PLATFORM= $cwd/../Rules.make | cut -d= -f2`
+platform=`grep -e "^PLATFORM=" $cwd/../Rules.make | cut -d= -f2`
 echo
 echo "--------------------------------------------------------------------------------"
 echo "This step will update the EXEC_DIR variables in the Rules.make file"
@@ -83,10 +83,10 @@ echo "EXEC_DIR variable."
 echo
 read -p "Press return to continue"
 
-sed -i "s=EXEC_DIR\=.*$=EXEC_DIR\=$dst/home/root/$platform=g" $cwd/../Rules.make
+sed -i "s=^EXEC_DIR\=.*$=EXEC_DIR\=$dst/home/root/$platform=g" $cwd/../Rules.make
 check_status
 
-sed -i "s=DESTDIR\=.*$=DESTDIR\=$dst=g" $cwd/../Rules.make
+sed -i "s=^DESTDIR\=.*$=DESTDIR\=$dst=g" $cwd/../Rules.make
 check_status
 
 echo "Rules.make edited successfully.."
