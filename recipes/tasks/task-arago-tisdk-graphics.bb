@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r15"
+PR = "r16"
 LICENSE = "MIT"
 
 inherit task
@@ -25,14 +25,8 @@ MATRIX_APPS_omap3 = "matrix-gui-clocks-300mhz \
                      matrix-gui-pm-demos \
                      "
 
-MATRIX_APPS_ti33x = "matrix-gui-clocks-300mhz \
-                     matrix-gui-clocks-600mhz \
-                     matrix-gui-clocks-800mhz \
-                     matrix-gui-clocks-1ghz \
-                     matrix-gui-wifi-demos \
+MATRIX_APPS_ti33x = "matrix-gui-wifi-demos \
                      matrix-gui-3d-demos \
-                     matrix-gui-display-control \
-                     matrix-gui-pm-demos \
                      "
 
 # Install 3D graphics for all omap3 SOC_FAMILY devices
