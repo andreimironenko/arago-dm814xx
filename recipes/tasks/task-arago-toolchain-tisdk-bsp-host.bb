@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support Package sources (or development header) packages on host"
-PR = "r42"
+PR = "r43"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -50,6 +50,7 @@ BSP_COMPONENTS_append_ti814x = "\
 BSP_COMPONENTS_append_ti33x = "\
     linux-am335x-src \
     ti-tisdk-setup \
+    pinmux-utility \
     "
 
 BSP_COMPONENTS_append_omap4 = "\
