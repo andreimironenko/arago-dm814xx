@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support Package sources (or development header) packages on host"
-PR = "r43"
+PR = "r44"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -51,6 +51,7 @@ BSP_COMPONENTS_append_ti33x = "\
     linux-am335x-src \
     ti-tisdk-setup \
     pinmux-utility \
+    bootcamp-lects \
     "
 
 BSP_COMPONENTS_append_omap4 = "\
@@ -80,6 +81,7 @@ BSP_COMPONENTS_append_am37x-evm = "\
     flash-utility \
     pinmux-utility \
     av-examples-src \
+    bootcamp-lects \
     "
 
 BSP_COMPONENTS_append_beagleboard = "\
@@ -87,6 +89,7 @@ BSP_COMPONENTS_append_beagleboard = "\
     ti-tisdk-setup \
     flash-utility \
     pinmux-utility \
+    bootcamp-lects \
     "
 
 BSP_COMPONENTS_append_am3517-evm = "\
@@ -95,12 +98,14 @@ BSP_COMPONENTS_append_am3517-evm = "\
     flash-utility \
     pinmux-utility \
     av-examples-src \
+    bootcamp-lects \
     "
 
 BSP_COMPONENTS_append_am389x-evm = "\
     ti-tisdk-setup \
     flash-utility \
     pinmux-utility \
+    bootcamp-lects \
     "
 
 BSP_COMPONENTS_omapl138 = "\
@@ -108,6 +113,14 @@ BSP_COMPONENTS_omapl138 = "\
     ti-tisdk-mksdboot \
     linux-davinci-src \
     pinmux-utility \
+    "
+
+BSP_COMPONENTS_append_am180x-evm = "\
+    bootcamp-lects \
+    "
+
+BSP_COMPONENTS_append_am181x-evm = "\
+    bootcamp-lects \
     "
 
 RRECOMMENDS_${PN} = "\
