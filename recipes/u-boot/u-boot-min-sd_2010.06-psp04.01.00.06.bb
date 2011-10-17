@@ -15,3 +15,5 @@ UBOOT_IMAGE = "MLO"
 
 # Look to the base recipes directory to find files as well.
 FILESDIR = "${@os.path.dirname(bb.data.getVar('FILE',d,1))}/u-boot-${PV}"
+
+DEFAULT_PREFERENCE = "-1"
