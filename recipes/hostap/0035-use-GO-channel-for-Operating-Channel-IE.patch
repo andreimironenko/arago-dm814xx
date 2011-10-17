@@ -1,0 +1,72 @@
+From 126de5fb2322b0b0f752be178cef2faf4c59e608 Mon Sep 17 00:00:00 2001
+From: Eliad Peller <eliad@wizery.com>
+Date: Mon, 22 Aug 2011 16:40:29 +0300
+Subject: [PATCH 3/9] use GO channel for Operating Channel IE
+
+Signed-off-by: Eliad Peller <eliad@wizery.com>
+---
+ src/p2p/p2p.c                   |    2 +-
+ src/p2p/p2p.h                   |    2 ++
+ src/p2p/p2p_invitation.c        |    4 ++--
+ wpa_supplicant/p2p_supplicant.c |    6 ++++++
+ 4 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/src/p2p/p2p.c b/src/p2p/p2p.c
+index 0ea139b..da227e7 100644
+--- a/src/p2p/p2p.c
++++ b/src/p2p/p2p.c
+@@ -936,7 +936,7 @@ void p2p_stop_find(struct p2p_data *p2p)
+ }
+ 
+ 
+-static int p2p_prepare_channel(struct p2p_data *p2p, unsigned int force_freq)
++int p2p_prepare_channel(struct p2p_data *p2p, unsigned int force_freq)
+ {
+ 	if (force_freq) {
+ 		u8 op_reg_class, op_channel;
+diff --git a/src/p2p/p2p.h b/src/p2p/p2p.h
+index 1a9ecae..415e3d0 100644
+--- a/src/p2p/p2p.h
++++ b/src/p2p/p2p.h
+@@ -1491,4 +1491,6 @@ void p2p_remove_wps_vendor_extensions(struct p2p_data *p2p);
+ int p2p_add_wps_vendor_extension(struct p2p_data *p2p,
+ 				 const struct wpabuf *vendor_ext);
+ 
++int p2p_prepare_channel(struct p2p_data *p2p, unsigned int force_freq);
++
+ #endif /* P2P_H */
+diff --git a/src/p2p/p2p_invitation.c b/src/p2p/p2p_invitation.c
+index bb2767d..dcce690 100644
+--- a/src/p2p/p2p_invitation.c
++++ b/src/p2p/p2p_invitation.c
+@@ -469,8 +469,8 @@ int p2p_invite(struct p2p_data *p2p, const u8 *peer, enum p2p_invite_role role,
+ 		p2p->channels.reg_class[0].reg_class = p2p->op_reg_class;
+ 		p2p->channels.reg_class[0].channel[0] = p2p->op_channel;
+ 	} else {
+-		p2p->op_reg_class = p2p->cfg->op_reg_class;
+-		p2p->op_channel = p2p->cfg->op_channel;
++		//p2p->op_reg_class = p2p->cfg->op_reg_class;
++		//p2p->op_channel = p2p->cfg->op_channel;
+ 		os_memcpy(&p2p->channels, &p2p->cfg->channels,
+ 			  sizeof(struct p2p_channels));
+ 	}
+diff --git a/wpa_supplicant/p2p_supplicant.c b/wpa_supplicant/p2p_supplicant.c
+index af1de8a..3234c2c 100644
+--- a/wpa_supplicant/p2p_supplicant.c
++++ b/wpa_supplicant/p2p_supplicant.c
+@@ -3276,6 +3276,12 @@ int wpas_p2p_group_add(struct wpa_supplicant *wpa_s, int persistent_group,
+ 		return -1;
+ 	}
+ 
++	if (p2p_prepare_channel(wpa_s->global->p2p, freq) < 0) {
++		wpa_printf(MSG_DEBUG, "P2P: Can't prepare channel %d MHz",
++			   freq);
++		return -1;
++	}
++
+ 	wpas_p2p_init_go_params(wpa_s, &params, freq);
+ 	p2p_go_params(wpa_s->global->p2p, &params);
+ 	params.persistent_group = persistent_group;
+-- 
+1.7.0.4
+

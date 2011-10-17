@@ -1,0 +1,41 @@
+From 40d6bc4a7f194fd59d73426a856c9754a1de4357 Mon Sep 17 00:00:00 2001
+From: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
+Date: Thu, 22 Sep 2011 21:26:38 +0530
+Subject: [PATCH 6/9] nl80211: Add support to disable CCK rate for p2p probe and frames
+
+Add a new attribute to specify whether to use CCK rate or not during
+scan and sending management frames. This helps to send p2p probes
+at non-CCK rate. This ensures that P2P probe request/response/action
+frames are awlays sent at non CCK rates.
+
+Signed-off-by: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
+Signed-off-by: Guy Eilam <guy@wizery.com>
+---
+ src/drivers/driver_nl80211.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/src/drivers/driver_nl80211.c b/src/drivers/driver_nl80211.c
+index a515b7b..27f20d1 100644
+--- a/src/drivers/driver_nl80211.c
++++ b/src/drivers/driver_nl80211.c
+@@ -2316,6 +2316,8 @@ static int wpa_driver_nl80211_scan(void *priv,
+ 		NLA_PUT(rates, NL80211_BAND_2GHZ, 8,
+ 			"\x0c\x12\x18\x24\x30\x48\x60\x6c");
+ 		nla_put_nested(msg, NL80211_ATTR_SCAN_SUPP_RATES, rates);
++
++		NLA_PUT_FLAG(msg, NL80211_ATTR_TX_NO_CCK_RATE);
+ 	}
+ 
+ 	ret = send_and_recv_msgs(drv, msg, NULL, NULL);
+@@ -6097,6 +6099,8 @@ static int nl80211_send_frame_cmd(struct wpa_driver_nl80211_data *drv,
+ 	NLA_PUT_U32(msg, NL80211_ATTR_WIPHY_FREQ, freq);
+ 	NLA_PUT_U32(msg, NL80211_ATTR_DURATION, wait);
+ 	NLA_PUT_FLAG(msg, NL80211_ATTR_OFFCHANNEL_TX_OK);
++	NLA_PUT_FLAG(msg, NL80211_ATTR_TX_NO_CCK_RATE);
++
+ 	NLA_PUT(msg, NL80211_ATTR_FRAME, buf_len, buf);
+ 
+ 	cookie = 0;
+-- 
+1.7.0.4
+
