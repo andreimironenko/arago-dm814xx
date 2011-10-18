@@ -13,10 +13,10 @@ BRANCH = "int_am335xpsp_04.06.00.01-v2011.09-for-sdk-05.03.00.00"
 
 S = "${WORKDIR}/git"
 
-SRC_URI = "git://github.com/trini/u-boot.git;protocol=git;branch=${BRANCH}"
+SRC_URI = "git://arago-project.org/git/projects/u-boot-am33x.git;protocol=git;branch=${BRANCH}"
 
-SRCREV = "456880b203bc44c025c374c98fa327b804a9cf64"
-PR = "r2"
+SRCREV = "4b41772ae4ef8fbea0b3e93af169a115e3ad6d12"
+PR = "r3"
 PR_append = "+gitr${SRCPV}"
 
 UVER = "2011.09"
