@@ -3,7 +3,7 @@ HOMEPAGE = "https://gforge.ti.com/gf/project/matrixguiv2apps/"
 LICENSE = "CC-BY-SA"
 PRIORITY = "optional"
 
-PR = "r2"
+PR = "r3"
 
 require matrix-gui-paths.inc
 
@@ -16,7 +16,7 @@ SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/589/5037/arm.tar.gz;name
            https://gforge.ti.com/gf/download/frsrelease/588/5038/3d.tar.gz;name=3dtarball \
            https://gforge.ti.com/gf/download/frsrelease/591/5039/cryptos.tar.gz;name=cryptostarball \
            https://gforge.ti.com/gf/download/frsrelease/592/5040/display.tar.gz;name=displaytarball \
-           https://gforge.ti.com/gf/download/frsrelease/665/5073/ethernet_1.1.tar.gz;name=ethernettarball \
+           https://gforge.ti.com/gf/download/frsrelease/666/5074/ethernet_1.2.tar.gz;name=ethernettarball \
            https://gforge.ti.com/gf/download/frsrelease/594/5042/multimedia.tar.gz;name=multimediatarball \
            https://gforge.ti.com/gf/download/frsrelease/595/5043/power.tar.gz;name=powertarball \
            https://gforge.ti.com/gf/download/frsrelease/596/5044/pru.tar.gz;name=prutarball \
@@ -74,8 +74,8 @@ SRC_URI[cryptostarball.sha256um] = "f4c1645bf858dc157d4efae3ca66e437310294bfd564
 SRC_URI[displaytarball.md5sum] = "aa72fc22aa550b48ab32e28b2f8cbbcf"
 SRC_URI[displaytarball.sha256sum] = "593a7f91226b10b1f37fdf85c0d70c8aaf4a690df50ae364c422dbc2c586352b"
 
-SRC_URI[ethernettarball.md5sum] = "1161f007069d6d0d4c2842b9303fd0a2"
-SRC_URI[ethernettarball.sha256sum] = "37e5cfdaba9d2b6fbf68392dd341b53cf37415a47da4099eee95b1508bb926ce"
+SRC_URI[ethernettarball.md5sum] = "d0f405709c9a1c499836edd8b470bec3"
+SRC_URI[ethernettarball.sha256sum] = "2c90b84774eea584a4b4a35c2299843b135bd316cd6b557b272c2a9c47500547"
 
 SRC_URI[multimediatarball.md5sum] = "8ef64f7b252633d6b2f74561f047f874"
 SRC_URI[multimediatarball.sha256sum] = "e093c06b7bb40e51ab42ef1d896008d3ba3463629532bd0dcc1417368b73054b"
