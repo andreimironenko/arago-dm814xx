@@ -1,7 +1,7 @@
 #! /bin/sh
 
-matrixgui="/usr/bin/qtopia/demos/browser/browser"
-GUI_OPTS="-qws -nogui http://localhost:8080/index.html"
+matrixgui="/usr/bin/matrix_browser"
+GUI_OPTS="-qws http://localhost:8080/"
 PIDFILE="/var/run/matrix-gui-2.0.pid"
 
 test -x "$matrixgui" || exit 0
@@ -23,6 +23,14 @@ case "$1" in
         fi
     fi
 
+    # Check if json.txt file needs to be generated
+    cd __MATRIX_WEB_DIR__
+    if [ ! -f ./json.txt ]
+    then
+        php generate.php
+    fi
+    cd -
+
 	if [ -e $PIDFILE ]; then
       PIDDIR=/proc/$(cat $PIDFILE)
       if [ -d ${PIDDIR} -a  "$(readlink -f ${PIDDIR}/exe)" = "${matrixgui}" ]; then
@@ -34,11 +42,6 @@ case "$1" in
     fi
 
     echo -n "Starting Matrix GUI application"
-    cd __MATRIX_BASE_DIR__
-    start-stop-daemon --start --quiet --background --exec node -- server.js
-    # Need to investigate how to make the second start-stop command wait
-    # until the start of node is done.
-    sleep 5
     start-stop-daemon --start --quiet --background --exec $matrixgui -- $GUI_OPTS
 	pidof ${matrixgui} > $PIDFILE
     echo "."
