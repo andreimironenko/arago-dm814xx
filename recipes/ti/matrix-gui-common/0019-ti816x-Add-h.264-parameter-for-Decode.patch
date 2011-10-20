@@ -1,0 +1,27 @@
+From 1b86ce2eaafd57d466a1bc190f50b5233af9be75 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Thu, 20 Oct 2011 21:04:51 +0530
+Subject: [PATCH 19/19] ti816x: Add h.264 parameter for Decode
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ trunk/ti816x/bin/runDecodeDisplayHDMI |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/trunk/ti816x/bin/runDecodeDisplayHDMI b/trunk/ti816x/bin/runDecodeDisplayHDMI
+index 1a60f59..65c58b3 100755
+--- a/trunk/ti816x/bin/runDecodeDisplayHDMI
++++ b/trunk/ti816x/bin/runDecodeDisplayHDMI
+@@ -42,7 +42,7 @@ execute_demo()
+ {
+     cd /usr/share/ti/ti-omx
+ 
+-    ./decode_display_a8host_debug.xv5T -w 1920 -h 1080 -f 60 -i /usr/share/ti/data/videos/dm816x_1080p_demo.264 -g 0 -d 0
++    ./decode_display_a8host_debug.xv5T -w 1920 -h 1080 -f 60 -i /usr/share/ti/data/videos/dm816x_1080p_demo.264 -g 0 -d 0 -c h264 
+ }
+ 
+ 
+-- 
+1.7.0.4
+
