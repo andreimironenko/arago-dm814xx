@@ -1,6 +1,6 @@
 require external-toolchain-arago.inc
 
-PR = "r8"
+PR = "r10"
 
 INHIBIT_DEFAULT_DEPS = "1"
 
@@ -32,6 +32,7 @@ PROVIDES = "\
 	glibc-thread-db \
 	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', 'linux-libc-headers linux-libc-headers-dev', '', d)} \
 	${@base_conditional('PREFERRED_PROVIDER_gdbserver', 'external-toolchain-arago', 'gdbserver', '', d)} \
+	${@base_conditional('PREFERRED_PROVIDER_binutils-dev', 'external-toolchain-arago', 'binutils-dev', '', d)} \
 "
 
 DEPENDS = "${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', '', 'linux-libc-headers', d)}"
@@ -48,6 +49,7 @@ PACKAGES = "\
 	libstdc++-dev \
 	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', 'linux-libc-headers-dev', '', d)} \
 	${@base_conditional('PREFERRED_PROVIDER_gdbserver', 'external-toolchain-arago', 'gdbserver', '', d)} \
+	${@base_conditional('PREFERRED_PROVIDER_binutils-dev', 'external-toolchain-arago', 'binutils-dev', '', d)} \
 	glibc-dbg \
 	glibc \
 	catchsegv \
@@ -113,6 +115,18 @@ FILES_libstdc++-dev = "\
 	${libdir}/libsupc++.a \
 "
 
+FILES_binutils-dev = "\
+	${includedir}/ansidecl.h \
+	${includedir}/dis-asm.h \
+	${includedir}/bfdlink.h \
+	${includedir}/libiberty.h \
+	${includedir}/symcat.h \
+	${includedir}/bfd.h \
+	${libdir}/libbfd* \
+	${libdir}/libopcodes* \
+	${libdir}/libiberty* \
+"
+
 FILES_linux-libc-headers-dev = "\
 	${includedir}/asm* \
 	${includedir}/drm \
@@ -140,7 +154,8 @@ DESCRIPTION_ldd = "glibc: print shared library dependencies"
 DESCRIPTION_nscd = "glibc: name service cache daemon for passwd, group, and hosts"
 DESCRIPTION_sln = "glibc: create symbolic links between files"
 DESCRIPTION_localedef = "glibc: compile locale definition files"
-DESCRIPTION_gdbserver = "gdb - GNU debugger"
+DESCRIPTION_gdbserver = "gdb: GNU debugger"
+DESCRIPTION_binutils-dev = "binutils: GNU collection of binary utilities"
 
 LICENSE = "${ARG_LIC_LIBC}"
 LICENSE_ldd = "${ARG_LIC_LIBC}"
@@ -151,6 +166,7 @@ LICENSE_libgcc-dev = "${ARG_LIC_RLE}"
 LICENSE_libstdc++ = "${ARG_LIC_RLE}"
 LICENSE_libstdc++-dev = "${ARG_LIC_RLE}"
 LICENSE_gdbserver = "${ARG_LIC_GDB}"
+LICENSE_binutils-dev = "${ARG_LIC_BFD}"
 
 PKGV = "${ARG_VER_MAIN}"
 PKGV_libgcc = "${ARG_VER_GCC}"
@@ -174,6 +190,15 @@ PKGV_localedef = "${ARG_VER_LIBC}"
 PKGV_libsegfault = "${ARG_VER_LIBC}"
 PKGV_linux-libc-headers-dev = "${ARG_VER_KERNEL}"
 PKGV_gdbserver = "${ARG_VER_GDB}"
+PKGV_binutils-dev = "${ARG_VER_BFD}"
+
+do_int_binutils() {
+	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${libdir}/{libbfd*,libopcodes*,libiberty*} ${D}${libdir}
+}
+
+do_ext_binutils() {
+	rm -rf ${D}${includedir}/{ansidecl.h,dis-asm.h,bfdlink.h,libiberty.h,symcat.h,bfd.h}
+}
 
 do_install() {
 	install -d ${D}${sysconfdir}
@@ -191,7 +216,7 @@ do_install() {
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${bindir}/{gdbserver,gencat,getconf,getent,iconv,locale,mtrace,pcprofiledump,rpcgen,sprof,tzselect,xtrace} ${D}${bindir}
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${sbindir}/{iconvconfig,rpcinfo,zdump,zic} ${D}${sbindir}
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${includedir}/{arpa,asm*,bits,drm,gnu,linux,mtd,net*,nfs,protocols,rdma,rpc*,scsi,sound,sys*,video,*.h} ${D}${includedir}
-	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${libdir}/{?crt1.o,crt?.o,libBrokenLocale*,libanl*,libc.*,libc_*,libcrypt.*,libcidn.*,libdl.*,libg.*,libieee.*,libm.*,libmcheck.*,libnsl*,libnss*,libpthread*,libresolv*,librt*,libstdc*,libthread*,libutil*} ${D}${libdir}
+	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${libdir}/{?crt1.o,crt?.o,libBrokenLocale*,libanl*,libc.*,libc_*,libcrypt.*,libcidn.*,libdl.*,libg.*,libieee.*,libm.*,libmcheck.*,libnsl*,libnss*,libpthread*,libresolv*,librt*,libstdc*,libsupc*,libthread*,libutil*} ${D}${libdir}
 	rm -rf ${D}${base_libdir}/*.la
 	rm -rf ${D}${libdir}/*.la
 	rm -rf ${D}${includedir}/{zconf,zlib}.h
@@ -200,6 +225,8 @@ do_install() {
 
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}/include/* ${D}${includedir}
 	${@base_conditional('PREFERRED_PROVIDER_gdbserver', 'external-toolchain-arago', '', 'rm -rf ${D}${bindir}/gdbserver', d)}
+
+	${@base_conditional('PREFERRED_PROVIDER_binutils-dev', 'external-toolchain-arago', 'do_int_binutils', 'do_ext_binutils', d)}
 
 	sed -e "s# /lib# ../../lib#g" -e "s# /usr/lib# .#g" ${D}${libdir}/libc.so > ${D}${libdir}/temp
 	mv ${D}${libdir}/temp ${D}${libdir}/libc.so
