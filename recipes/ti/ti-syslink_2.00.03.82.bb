@@ -22,6 +22,7 @@ S = "${WORKDIR}/syslink_${PV}${PVExtra}"
 
 SRC_URI = "http://www.sanb.design.ti.com/tisb_releases/SysLink/${PV}/exports/syslink_${PV}.tar.gz;name=syslinktarball \
            file://0001-Added-sdk-make-install-file-to-syslink.patch \
+           file://0001-Syslink-Change-GPTimer-to-4-for-TI816x.patch \
 "
 
 SRC_URI[syslinktarball.md5sum] = "3b78ef7d175969aaae40d4903f5bec54"

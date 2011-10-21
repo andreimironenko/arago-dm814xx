@@ -1,0 +1,34 @@
+From b2e6b64c8b113dc03b15abb838e1d543a63bd2fb Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Fri, 21 Oct 2011 13:41:31 +0530
+Subject: [PATCH] Syslink: Change GPTimer to 4 for TI816x
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ .../family/common/ti81xx/ti81xxdsp/Dm8168DspPwr.c  |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/packages/ti/syslink/family/common/ti81xx/ti81xxdsp/Dm8168DspPwr.c b/packages/ti/syslink/family/common/ti81xx/ti81xxdsp/Dm8168DspPwr.c
+index 8fa4593..159a32a 100755
+--- a/packages/ti/syslink/family/common/ti81xx/ti81xxdsp/Dm8168DspPwr.c
++++ b/packages/ti/syslink/family/common/ti81xx/ti81xxdsp/Dm8168DspPwr.c
+@@ -1031,13 +1031,13 @@ DM8168DSPPWR_on (PwrMgr_Handle handle)
+          * Here we are enabling the gptimer 3 clk module
+          */
+ 
+-        object->dspTimerIclkHandle = ClockOps_get(object->clockHandle, "gpt3_ick");
++        object->dspTimerIclkHandle = ClockOps_get(object->clockHandle, "gpt4_ick");
+         /* Do not put this check under SYSLINK_BUILD_OPTIMIZE */
+         GT_assert (curTrace, (object->dspTimerIclkHandle != NULL));
+         status = ClockOps_enable(object->clockHandle, object->dspTimerIclkHandle);
+         GT_assert (curTrace, (status >= 0));
+ 
+-        object->dspTimerFclkHandle = ClockOps_get(object->clockHandle, "gpt3_fck");
++        object->dspTimerFclkHandle = ClockOps_get(object->clockHandle, "gpt4_fck");
+         /* Do not put this check under SYSLINK_BUILD_OPTIMIZE */
+         GT_assert (curTrace, (object->dspTimerFclkHandle != NULL));
+         status = ClockOps_enable(object->clockHandle, object->dspTimerFclkHandle);
+-- 
+1.7.0.4
+
