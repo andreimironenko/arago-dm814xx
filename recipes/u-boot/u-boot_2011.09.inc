@@ -15,11 +15,11 @@ S = "${WORKDIR}/git"
 
 SRC_URI = "git://arago-project.org/git/projects/u-boot-am33x.git;protocol=git;branch=${BRANCH}"
 
-SRCREV = "9158d7f37d596b867039345cb2e3f8f18f54fe46"
-PR = "r5"
+SRCREV = "865ecbf67fe4def1f94589e5aa4528ba1f982e78"
+PR = "r6"
 PR_append = "+gitr${SRCPV}"
 
 UVER = "2011.09"
-PSPREL = "sdk"
+PSPREL = "04.06.00.01"
 
 UBOOT_MACHINE = "am335x_evm_config"
