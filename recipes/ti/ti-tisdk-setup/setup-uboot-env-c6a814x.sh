@@ -9,7 +9,7 @@ echo "This step will set up the u-boot variables for booting the EVM."
 
 ipdefault=`ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1 }'`
 platform=`grep PLATFORM= $cwd/../Rules.make | cut -d= -f2`
-prompt="TI8164_EVM#"
+prompt="TI8148_EVM#"
 
 echo "Autodetected the following ip address of your host, correct it if necessary"
 read -p "[ $ipdefault ] " ip
@@ -153,7 +153,6 @@ if [ "$minicom" == "y" ]; then
     echo "timeout $timeout" >> $minicomfilepath
     echo "verbose on" >> $minicomfilepath
     echo >> $minicomfilepath
-    do_expect "\"stop autoboot:\"" "send \"\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv bootdelay 4\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
@@ -184,9 +183,14 @@ if [ "$minicom" == "y" ]; then
     echo
     echo "Would you like to run the setup script now (y/n)? This requires you to connect"
     echo "the RS-232 cable between your host and EVM as well as your ethernet cable as"
-    echo "described in the Quick Start Guide. Once answering 'y' on the prompt below"
-    echo "you will have $timeout seconds to connect the board and power cycle it"
-    echo "before the setup times out"
+    echo "described in the Quick Start Guide. Please ensure that SW2 switch for NAND is"
+    echo "in ON position."
+    echo
+    echo "Once answering 'y' on the prompt below you will have $timeout seconds to connect"
+    echo "the board and power cycle it before the setup times out"
+    echo
+    echo "Press any key to stop autoboot of the uboot second stage. Once the autoboot is"
+    echo "stopped, this script will automatically set parameters."
     echo
     echo "After successfully executing this script, your EVM will be set up. You will be "
     echo "able to connect to it by executing 'minicom -w' or if you prefer a windows host"
