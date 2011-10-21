@@ -1,7 +1,7 @@
 # Add changes for matrix-gui v2
-PR_append = "-arago1"
+PR_append = "-arago2"
 
-SRC_URI += "https://gforge.ti.com/gf/download/frsrelease/614/5051/settings_1.0.tar.gz"
+SRC_URI += "https://gforge.ti.com/gf/download/frsrelease/668/5091/settings_1.1.tar.gz"
 
 MATRIX_FILES_DIR = "${WORKDIR}/settings"
 require recipes/matrix/matrix-gui-apps.inc
@@ -13,6 +13,6 @@ RDEPENDS += matrix-gui-submenus-settings
 # Used am-sysinfo because ${PN} was not resolving in time
 FILES_am-sysinfo += "${MATRIX_BASE_DIR}/*"
 
-SRC_URI[md5sum] = "a515470463c36f3dd6d418b06f7bec31"
-SRC_URI[sha256sum] = "9aaf362a58f97df50aeabbb28956b2ba11f4d114584eb39a3ad15addeec03e41"
+SRC_URI[md5sum] = "6410c89bc88b24d190435ff08bc14ef8"
+SRC_URI[sha256sum] = "c643c447c717ce93b8dfb080e8345af37eb47ee6c241d8303283be642d321886"
 

@@ -3,13 +3,13 @@ HOMEPAGE = "https://gforge.ti.com/gf/project/matrixguiv2apps/"
 LICENSE = "CC-BY-SA"
 PRIORITY = "optional"
 
-PR = "r0"
+PR = "r1"
 
 PACKAGE_ARCH = "all"
 
-SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/617/5049/wifi_1.0.tar.gz"
+SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/678/5101/wifidemos_1.1.tar.gz"
 
-S = ${WORKDIR}/wifi
+S = ${WORKDIR}/wifidemos
 
 require matrix-gui-apps.inc
 
@@ -18,5 +18,5 @@ RDEPENDS +=  matrix-gui-submenus-wifi
 
 FILES_${PN} += "${MATRIX_BASE_DIR}/*"
 
-SRC_URI[md5sum] = "10a57c18f0c6dcadb0371778a0959bbc"
-SRC_URI[sha256sum] = "91de898d12a2f980a454a8c3f14b8165fcbd15da3cf565ea5dc80f04ad982159"
+SRC_URI[md5sum] = "60d85261bcad85da7ecd024613343068"
+SRC_URI[sha256sum] = "36fe8bbc461e157b00ebf8f9deab1e5c83eef2f618bc98f2956d974e76534c56"

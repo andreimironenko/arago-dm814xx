@@ -3,9 +3,9 @@ HOMEPAGE = "https://gforge.ti.com/gf/project/matrixguiv2apps/"
 LICENSE = "CC-BY-SA"
 PRIORITY = "optional"
 
-PR = "r1"
+PR = "r2"
 
-SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/661/5063/3ddemos_1.1.tar.gz"
+SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/672/5095/3ddemos_1.2.tar.gz"
 
 S = ${WORKDIR}/3ddemos
 
@@ -21,5 +21,5 @@ RDEPENDS +=  "matrix-gui-submenus-3d libgles-omap3-rawdemos"
 
 FILES_${PN} += "${MATRIX_BASE_DIR}/*"
 
-SRC_URI[md5sum] = "0359fc2bca2ac8148a6dbe7451bce8f7"
-SRC_URI[sha256sum] = "bfd4344aa95bb2a7dc783b067d93e152915c2fb4da490d072a459859a0e5c84a"
+SRC_URI[md5sum] = "daacfcefac0721be388d88f4cb8284e6"
+SRC_URI[sha256sum] = "22b8e1eb775970b1027a881ce37ab998526503cb5a0de540400f52e642276a0c"
