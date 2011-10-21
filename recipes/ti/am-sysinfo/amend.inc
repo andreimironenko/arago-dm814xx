@@ -1,7 +1,7 @@
 # Add changes for matrix-gui v2
-PR_append = "-arago2"
+PR_append = "-arago3"
 
-SRC_URI += "https://gforge.ti.com/gf/download/frsrelease/668/5091/settings_1.1.tar.gz"
+SRC_URI += "https://gforge.ti.com/gf/download/frsrelease/684/5107/settingsdemo_1.2.tar.gz"
 
 MATRIX_FILES_DIR = "${WORKDIR}/settings"
 require recipes/matrix/matrix-gui-apps.inc
