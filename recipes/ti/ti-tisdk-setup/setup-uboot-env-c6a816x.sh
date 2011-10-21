@@ -184,14 +184,17 @@ if [ "$minicom" == "y" ]; then
     echo
     echo "Would you like to run the setup script now (y/n)? This requires you to connect"
     echo "the RS-232 cable between your host and EVM as well as your ethernet cable as"
-    echo "described in the Quick Start Guide. Once answering 'y' on the prompt below"
-    echo "you will have $timeout seconds to connect the board and power cycle it"
-    echo "before the setup times out"
+    echo "described in the Quick Start Guide. Please ensure that SW4 switch for NAND is"
+    echo "in ON position."
+    echo
+    echo "Once answering 'y' on the prompt below you will have $timeout seconds to connect"
+    echo "the board and power cycle it before the setup times out"
     echo
     echo "After successfully executing this script, your EVM will be set up. You will be "
     echo "able to connect to it by executing 'minicom -w' or if you prefer a windows host"
     echo "you can set up Tera Term as explained in the Software Developer's Guide."
     echo "If you connect minicom or Tera Term and power cycle the board Linux will boot."
+    echo
     echo
     read -p "[ y ] " minicomsetup
 
