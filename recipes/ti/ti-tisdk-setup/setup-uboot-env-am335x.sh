@@ -3,13 +3,29 @@
 cwd=`dirname $0`
 . $cwd/common.sh
 
+do_expect() {
+    echo "expect {" >> $3
+    check_status
+    echo "    $1" >> $3
+    check_status
+    echo "}" >> $3
+    check_status
+    echo $2 >> $3
+    check_status
+    echo >> $3
+}
+
+
 echo
 echo "--------------------------------------------------------------------------------"
 echo "This step will set up the u-boot variables for booting the EVM."
+echo "Becuase the not all AM335x devices have a NAND, the u-boot variables will"
+echo "be stored in uEnv.txt on the boot partition. U-boot will read this" echo "file on boot."
+echo
 
 ipdefault=`ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1 }'`
 platform=`grep PLATFORM= $cwd/../Rules.make | cut -d= -f2`
-prompt="EVM #"
+
 
 echo "Autodetected the following ip address of your host, correct it if necessary"
 read -p "[ $ipdefault ] " ip
@@ -32,17 +48,9 @@ else
 fi
 
 uimage="uImage-""$platform"".bin"
-uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/$uimage`
+uimagesrc=`ls -1 $cwd/../board-support/prebuilt-images/$uimage`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyO0,115200n8 rw noinitrd"
-videoargs="omap_vout.vid1_static_vrfb_alloc=y"
-fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3 rootwait"
-fsnfsargs1="root=/dev/nfs nfsroot="
-fsnfsargs2="$ip:"
-fsnfsargs3="$rootpath"
-fsnfsargs4=",nolock,rsize=1024,wsize=1024"
-fsnfsargs=$fsnfsargs1$fsnfsargs2$fsnfsargs3$fsnfsargs4
 
 echo "Select Linux kernel location:"
 echo " 1: TFTP"
@@ -80,159 +88,87 @@ if [ "$kernel" -eq "1" ]; then
         uimage=$uimagedefault
     fi
 
-    bootcmd="setenv bootcmd 'dhcp;setenv serverip $ip;tftpboot;bootm'"
-    serverip="setenv serverip $ip"
-    bootfile="setenv bootfile $uimage"
 
     if [ "$fs" -eq "1" ]; then
-        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
-        cfg="uimage-tftp_fs-nfs"
+	#TFTP and NFS Boot
+        echo "serverip=$ip" > uEnv.txt
+	echo "rootpath=$rootpath" >> uEnv.txt
+	echo "bootfile=$uimage" >> uEnv.txt
+	echo "ip_method=dhcp" >> uEnv.txt
+	echo "uenvcmd=run net_boot" >> uEnv.txt
+
     else
-        bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
-        cfg="uimage-tftp_fs-sd"
+	#TFTP and SD Boot
+	echo "serverip=$ip" > uEnv.txt
+	echo "bootfile=$uimage" >> uEnv.txt
+	echo "uenvcmd=run bootargs_defaults; setenv autoload no; dhcp; tftp \${loadaddr} \${bootfile}; run mmc_args; bootm \${loadaddr}" >> uEnv.txt
+
     fi
 else
     if [ "$fs" -eq "1" ]; then
-        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
-        bootcmd="setenv bootcmd 'mmc init;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
-        cfg="uimage-sd_fs-nfs"
+	#SD and NFS Boot
+        echo "serverip=$ip" > uEnv.txt
+	echo "rootpath=$rootpath" >> uEnv.txt
+	echo "ip_method=dhcp" >> uEnv.txt
+	echo "uenvcmd=setenv autoload no; run mmc_load_uimage; run net_args; bootm \${loadaddr}" >> uEnv.txt
     else
-        bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
-        bootcmd="setenv bootcmd 'mmc init;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
-        cfg="uimage-sd_fs-sd"
+        #SD and SD boot
+	echo "uenvcmd=run mmc_boot" > uEnv.txt
     fi
 fi
 
 echo
-echo "Resulting u-boot variable settings:"
+echo "Resulting u-boot variable settings (saved to uEnv.txt):"
 echo
-echo "setenv bootdelay 4"
-echo "setenv baudrate 115200"
-echo $bootargs
-echo $bootcmd
+cat uEnv.txt
 
-if [ -n "$serverip" ]; then
-    echo "setenv autoload no"
-    echo $serverip
-fi
 
-if [ -n "$bootfile" ]; then
-    echo $bootfile
-fi
-echo "--------------------------------------------------------------------------------"
+#Create minicom script to parse IP and make uEnv.txt
+echo "timeout 300" > $cwd/setupBoard.minicom
+echo "verbose on" >> $cwd/setupBoard.minicom
+echo "send \"\""  >> $cwd/setupBoard.minicom
+do_expect "\"am335x-evm login: \"" "send \"root\"" $cwd/setupBoard.minicom
+do_expect "\"root@am335x-evm:~#\"" "send \"ifconfig\"" $cwd/setupBoard.minicom
+do_expect "\"root@am335x-evm:~#\"" "send \"cd /media/mmcblk0p1/\"" $cwd/setupBoard.minicom
+do_expect "\"root@am335x-evm:/media/mmcblk0p1#\"" "send \"rm uEnv.txt\"" $cwd/setupBoard.minicom
 
-do_expect() {
-    echo "expect {" >> $3
-    check_status
-    echo "    $1" >> $3
-    check_status
-    echo "}" >> $3
-    check_status
-    echo $2 >> $3
-    check_status
-    echo >> $3
-}
+while read line
+do
+	do_expect "\"root@am335x-evm:/media/mmcblk0p1#\"" "send \"echo \"\\\"$line\\\"\" >> uEnv.txt\"" $cwd/setupBoard.minicom
+done < uEnv.txt
+
+do_expect "\"root@am335x-evm:/media/mmcblk0p1#\"" "! killall -s SIGHUP minicom" $cwd/setupBoard.minicom
+
 
 echo
 echo "--------------------------------------------------------------------------------"
-echo "Would you like to create a minicom script with the above parameters (y/n)?"
-read -p "[ y ] " minicom
+echo
+read -p "Press enter to complete the install. Minicom will load, followed shortly by Firefox with the Matrix GUI." foo
 echo
 
-if [ ! -n "$minicom" ]; then
-    minicom="y"
-fi
 
-#Use = instead of == for POSIX compliance and dash compatibility
-if [ "$minicom" = "y" ]; then
-    minicomfile=setup_$platform_$cfg.minicom
-    minicomfilepath=$cwd/../$minicomfile
+check_status
+minicom -S $cwd/setupBoard.minicom | tee $cwd/../bootLog.txt
+check_status
 
-    if [ -f $minicomfilepath ]; then
-        echo "Moving existing $minicomfile to $minicomfile.old"
-        mv $minicomfilepath $minicomfilepath.old
-        check_status
-    fi
 
-    timeout=300
-    echo "timeout $timeout" >> $minicomfilepath
-    echo "verbose on" >> $minicomfilepath
-    echo >> $minicomfilepath
-    do_expect "\"stop autoboot:\"" "send \"\"" $minicomfilepath
-    do_expect "\"$prompt\"" "send \"setenv bootdelay 4\"" $minicomfilepath
-    do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
-    do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
-    do_expect "\"$prompt\"" "send \"setenv oldbootargs \$\{bootargs\}\"" $minicomfilepath
+boardIP=`cat $cwd/../bootLog.txt | grep 'inet addr:' | grep -v '127.0.0.1' | cut -d: -f2 | awk '{
+	 print $1}'`
+firefox $boardIP:8080/ &
+#cp uEnv.txt /media/boot
 
-#   For dash compatibility need to use printf instead of echo
-#   because dash shell will expand the \c by default
-#   do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs \c\"" $minicomfilepath
-    echo "expect {" >> $minicomfilepath
-    check_status
-    echo "    \"$prompt\"" >> $minicomfilepath
-    check_status
-    echo "}" >> $minicomfilepath
-    check_status
-    printf "send \"setenv bootargs $baseargs \c\"\n" >> $minicomfilepath
-    check_status
+read -p "The board is now ready for it's out-of-box experience. Please explore the Matrix GUI now loaded in Firefox. When you're ready to start development, press enter. When enter is hit, the board will reset and load the settings as defined in the previous steps." foo
 
-#   For dash compatibility need to use printf instead of echo
-    if [ "$fs" -eq "1" ]; then
-        printf "send \"$fsnfsargs1\c\"\n" >> $minicomfilepath
-        printf "send \"$fsnfsargs2\c\"\n" >> $minicomfilepath
-        printf "send \"$fsnfsargs3\c\"\n" >> $minicomfilepath
-        printf "send \"$fsnfsargs4 \c\"\n" >> $minicomfilepath
-        printf "send \"$videoargs \c\"\n" >> $minicomfilepath
-        echo "send \"ip=dhcp\"" >> $minicomfilepath
-    else
-        printf "send \"$fssdargs \c\"\n" >> $minicomfilepath
-        printf "send \"$videoargs \c\"\n" >> $minicomfilepath
-        echo "send \"ip=off\"" >> $minicomfilepath
-    fi
-    if [ "$kernel" -eq "1" ]; then
-        do_expect "\"$prompt\"" "send \"setenv autoload no\"" $minicomfilepath
-        do_expect "\"$prompt\"" "send \"setenv oldserverip \$\{serverip\}\"" $minicomfilepath
-        do_expect "\"$prompt\"" "send \"$serverip\"" $minicomfilepath
-        do_expect "\"$prompt\"" "send \"setenv oldbootfile \$\{bootfile\}\"" $minicomfilepath
-        do_expect "\"$prompt\"" "send \"$bootfile\"" $minicomfilepath
-    fi
-    do_expect "\"$prompt\"" "send \"setenv oldbootcmd \$\{bootcmd\}\"" $minicomfilepath
-    do_expect "\"$prompt\"" "send \"$bootcmd\"" $minicomfilepath
-    do_expect "\"$prompt\"" "send \"saveenv\"" $minicomfilepath
-    do_expect "\"$prompt\"" "! killall -s SIGHUP minicom" $minicomfilepath
+#Create minicom file to reset board
+echo "timeout 300" > $cwd/resetBoard.minicom
+echo "verbose on" >> $cwd/resetBoard.minicom
+echo "send \"\""  >> $cwd/resetBoard.minicom
+echo "send \"init 6\""  >> $cwd/resetBoard.minicom
+do_expect "\"Restarting system.\"" "! killall -s SIGHUP minicom" $cwd/resetBoard.minicom
 
-    echo -n "Successfully wrote "
-    readlink -m $minicomfilepath
-    echo
-    echo "Would you like to run the setup script now (y/n)? This requires you to connect"
-    echo "the RS-232 cable between your host and EVM as well as your ethernet cable as"
-    echo "described in the Quick Start Guide. Once answering 'y' on the prompt below"
-    echo "you will have $timeout seconds to connect the board and power cycle it"
-    echo "before the setup times out"
-    echo
-    echo "After successfully executing this script, your EVM will be set up. You will be "
-    echo "able to connect to it by executing 'minicom -w' or if you prefer a windows host"
-    echo "you can set up Tera Term as explained in the Software Developer's Guide."
-    echo "If you connect minicom or Tera Term and power cycle the board Linux will boot."
-    echo
-    read -p "[ y ] " minicomsetup
+minicom -w -S $cwd/resetBoard.minicom
+rm $cwd/*.minicom
+minicom -w
 
-    if [ ! -n "$minicomsetup" ]; then
-        minicomsetup="y"
-    fi
 
-    savedir=""
-#Use = instead of == for POSIX compliance and dash compatibility
-    if [ "$minicomsetup" = "y" ]; then
-#For dash compatibility, do not use pushd and popd
-        savedir=$cwd
-        cd "$cwd/.."
-        check_status
-        minicom -S $minicomfile
-        cd $savedir
-        check_status
-    fi
-    
-    echo "You can manually run minicom in the future with this setup script using: minicom -S $minicomfile"
-fi
-echo "--------------------------------------------------------------------------------"
+
