@@ -3,11 +3,11 @@ HOMEPAGE = "https://gforge.ti.com/gf/project/matrixguiv2apps/"
 LICENSE = "CC-BY-SA"
 PRIORITY = "optional"
 
-PR = "r1"
+PR = "r3"
 
 PACKAGE_ARCH = "all"
 
-SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/677/5100/qt4demos_1.2.tar.gz"
+SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/686/5110/qt4demos_1.4.tar.gz"
 
 S = ${WORKDIR}/qt4demos
 
@@ -18,5 +18,5 @@ RDEPENDS +=  matrix-gui-submenus-qt4
 
 FILES_${PN} += "${MATRIX_BASE_DIR}/*"
 
-SRC_URI[md5sum] = "85344ae272a78466aa80e06610254500"
-SRC_URI[sha256sum] = "4f40e21229a2716d184c970b18ff8a782427a41a28589fe674f665d6a911cc2a"
+SRC_URI[md5sum] = "a293e5f5324ea235ed3dc4bb47556686"
+SRC_URI[sha256sum] = "2cbc049900fcd92fd393d3719c8ce38efad8b8d823ddd1d57fc12045541e95cb"
