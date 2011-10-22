@@ -1,5 +1,5 @@
 require recipes/qt4/qt4-embedded.inc
-PR = "${INC_PR}.10"
+PR = "${INC_PR}.11"
 
 PROVIDES += "qt4-embedded"
 RPROVIDES_${PN} += "qt4-embedded"
@@ -16,3 +16,7 @@ FILESPATHPKG .= ":qt4-embedded-${PV}:qt4-embedded"
 
 DEPENDS += "virtual/egl"
 require recipes/egl/egl.inc
+
+QT_CONFIG_FLAGS += " \
+ -exceptions \
+"
