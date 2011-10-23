@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r19"
+PR = "r20"
 LICENSE = "MIT"
 
 inherit task
@@ -33,6 +33,7 @@ MATRIX_APPS_ti33x = "matrix-gui-3d-demos \
                      matrix-gui-submenus-ethernet \
                      matrix-gui-submenus-power \
                      matrix-gui-submenus-pru \
+                     matrix-gui-submenus-oprofile \
                      "
 
 # Install 3D graphics for all omap3 SOC_FAMILY devices
