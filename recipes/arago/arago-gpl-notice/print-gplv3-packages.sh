@@ -4,7 +4,7 @@ gplv3_packages=""
 
 # find all files with GPLv3 in them that do not also have RLE
 # exception listed.
-files=`grep -i GPLv3 /usr/lib/opkg/info/*.control | grep -v RLE | cut -d: -f1`
+files=`grep License: /usr/lib/opkg/info/*.control | grep -i GPLv3 | grep -v RLE | cut -d: -f1 | sort -u`
 
 for i in $files
 do
