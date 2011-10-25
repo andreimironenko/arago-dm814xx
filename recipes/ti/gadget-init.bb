@@ -8,7 +8,7 @@
 # This recipe is based on the recipe by Koen in meta-texasinstruments
 DESCRIPTION = "Units to initialize usb gadgets"
 
-PR = "r3"
+PR = "r4"
 
 LICENSE = "MIT"
 
