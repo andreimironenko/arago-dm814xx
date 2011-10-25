@@ -6,9 +6,9 @@
 # the device is removed we need to turn the VBUS power back on so that
 # re-insertion will work.
 # This recipe is based on the recipe by Koen in meta-texasinstruments
-DESCRIPTION = "Units to initialize usb gadgets"
+DESCRIPTION = "Scripts to initialize usb gadgets"
 
-PR = "r4"
+PR = "r5"
 
 LICENSE = "MIT"
 
@@ -21,7 +21,7 @@ SRC_URI = "file://init \
           "
 
 INITSCRIPT_NAME = "storage-gadget-init"
-INITSCRIPT_PARAMS = "defaults 99"
+INITSCRIPT_PARAMS = "defaults 98"
 
 inherit update-rc.d
 
