@@ -4,5 +4,7 @@
 
 # Provide our own version of local.rules until touchscreen is fixed
 
+# Provide own udev default file, that disables dev cache for armv7a
+
 # Set the suffix to specify amended packages
-PR_append = "-arago3"
+PR_append = "-arago4"
