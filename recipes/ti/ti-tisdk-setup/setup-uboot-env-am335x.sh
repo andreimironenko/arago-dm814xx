@@ -73,102 +73,163 @@ if [ ! -n "$fs" ]; then
     fs="1"
 fi
 
+
+
 if [ "$kernel" -eq "1" ]; then
     echo
     echo "Available kernel images in /tftproot:"
     for file in /tftpboot/*; do
-        basefile=`basename $file`
-        echo "    $basefile"
+	basefile=`basename $file`
+	echo "    $basefile"
     done
     echo
     echo "Which kernel image do you want to boot from TFTP?"
     read -p "[ $uimagedefault ] " uimage
 
     if [ ! -n "$uimage" ]; then
-        uimage=$uimagedefault
-    fi
-
-
-    if [ "$fs" -eq "1" ]; then
-	#TFTP and NFS Boot
-        echo "serverip=$ip" > uEnv.txt
-	echo "rootpath=$rootpath" >> uEnv.txt
-	echo "bootfile=$uimage" >> uEnv.txt
-	echo "ip_method=dhcp" >> uEnv.txt
-	echo "uenvcmd=run net_boot" >> uEnv.txt
-
-    else
-	#TFTP and SD Boot
-	echo "serverip=$ip" > uEnv.txt
-	echo "bootfile=$uimage" >> uEnv.txt
-	echo "uenvcmd=run bootargs_defaults; setenv autoload no; dhcp; tftp \${loadaddr} \${bootfile}; run mmc_args; bootm \${loadaddr}" >> uEnv.txt
-
-    fi
-else
-    if [ "$fs" -eq "1" ]; then
-	#SD and NFS Boot
-        echo "serverip=$ip" > uEnv.txt
-	echo "rootpath=$rootpath" >> uEnv.txt
-	echo "ip_method=dhcp" >> uEnv.txt
-	echo "uenvcmd=setenv autoload no; run mmc_load_uimage; run net_args; bootm \${loadaddr}" >> uEnv.txt
-    else
-        #SD and SD boot
-	echo "uenvcmd=run mmc_boot" > uEnv.txt
+	uimage=$uimagedefault
     fi
 fi
 
-echo
-echo "Resulting u-boot variable settings (saved to uEnv.txt):"
-echo
-cat uEnv.txt
+hasFTDI=`lsusb | grep "0403:a6d0"`
+
+if [ -n "$hasFTDI" ]; then
+#The BeagleBone has been detected, write information to uEnv.txt
+	 
+	if [ "$kernel" -eq "1" ]; then	   
+		 if [ "$fs" -eq "1" ]; then
+			#TFTP and NFS Boot
+			echo "serverip=$ip" > uEnv.txt
+			echo "rootpath=$rootpath" >> uEnv.txt
+			echo "bootfile=$uimage" >> uEnv.txt
+			echo "ip_method=dhcp" >> uEnv.txt
+			echo "tftp_nfs_boot=echo Booting from network...; setenv autoload no; dhcp \${bootfile}; tftp \${loadaddr} \${bootfile}; run net_args; bootm \${loadaddr}" >> uEnv.txt
+			echo "uenvcmd=run tftp_nfs_boot" >> uEnv.txt
+		    else
+			#TFTP and SD Boot  
+			echo "serverip=$ip" > uEnv.txt 
+			echo "bootfile=$uimage" >> uEnv.txt
+			echo "tftp_sd_boot=run bootargs_defaults; setenv autoload no; dhcp \${bootfile}; tftp \${loadaddr} \${bootfile}; run mmc_args; bootm \${loadaddr}" >> uEnv.txt
+			echo "uenvcmd=run tftp_sd_boot" >> uEnv.txt     
+
+		    fi
+		else
+		    if [ "$fs" -eq "1" ]; then
+			#SD and NFS Boot
+			echo "serverip=$ip" > uEnv.txt
+			echo "rootpath=$rootpath" >> uEnv.txt
+			echo "ip_method=dhcp" >> uEnv.txt
+			echo "uenvcmd=setenv autoload no; run mmc_load_uimage; run net_args; bootm \${loadaddr}" >> uEnv.txt
+		    else
+			#SD and SD boot
+			echo "uenvcmd=run mmc_boot" > uEnv.txt
+		    fi
+	fi
 
 
-#Create minicom script to parse IP and make uEnv.txt
-echo "timeout 300" > $cwd/setupBoard.minicom
-echo "verbose on" >> $cwd/setupBoard.minicom
-echo "send \"\""  >> $cwd/setupBoard.minicom
-do_expect "\"am335x-evm login: \"" "send \"root\"" $cwd/setupBoard.minicom
-do_expect "\"root@am335x-evm:~#\"" "send \"ifconfig\"" $cwd/setupBoard.minicom
-do_expect "\"root@am335x-evm:~#\"" "send \"cd /media/mmcblk0p1/\"" $cwd/setupBoard.minicom
-do_expect "\"root@am335x-evm:/media/mmcblk0p1#\"" "send \"rm uEnv.txt\"" $cwd/setupBoard.minicom
 
-while read line
-do
-	do_expect "\"root@am335x-evm:/media/mmcblk0p1#\"" "send \"echo \"\\\"$line\\\"\" >> uEnv.txt\"" $cwd/setupBoard.minicom
-done < uEnv.txt
+	#Copy uEnv.txt to the mounted /media/boot partition
+	cp uEnv.txt /media/boot/
+	umount /media/START_HERE
+	umount /media/boot
 
-do_expect "\"root@am335x-evm:/media/mmcblk0p1#\"" "! killall -s SIGHUP minicom" $cwd/setupBoard.minicom
+	echo
+	echo "uEnv.txt has been saved with following values:"
+	
 
 
-echo
-echo "--------------------------------------------------------------------------------"
-echo
-read -p "Press enter to complete the install. Minicom will load, followed shortly by Firefox with the Matrix GUI." foo
-echo
+	echo "--------------------------------------------------------------------------------"
+	echo "uEnv.text has been saved to the boot partition. uEnv.txt contains:"
+	cat uEnv.txt
+	echo
+	echo "On the next boot, the BeagleBone will boot with these settings." 
+	echo "Would you like to restart now (y/n)?"
+	read -p "[ y ]" restartNow
 
+	if [ ! -n "$restartNow" ]; then
+  	  restartNow="y"
+	fi
 
-check_status
-minicom -S $cwd/setupBoard.minicom | tee $cwd/../bootLog.txt
-check_status
+	if [ "$restartNow" = "y" ]; then
+		echo "timeout 300" > $cwd/resetBoard.minicom
+		echo "verbose on" >> $cwd/resetBoard.minicom
+		echo "send \"\""  >> $cwd/resetBoard.minicom
+		do_expect "\"am335x-evm login: \"" "send \"root\"" $cwd/resetBoard.minicom
+		echo "send \"init 6\""  >> $cwd/resetBoard.minicom
+		do_expect "\"Restarting system.\"" "! killall -s SIGHUP minicom" $cwd/resetBoard.minicom
+		minicom -w -S $cwd/resetBoard.minicom
+		
+	fi
 
+	echo "--------------------------------------------------------------------------------"
+	minicom -w	
 
-boardIP=`cat $cwd/../bootLog.txt | grep 'inet addr:' | grep -v '127.0.0.1' | cut -d: -f2 | awk '{
-	 print $1}'`
-firefox $boardIP:8080/ &
-#cp uEnv.txt /media/boot
+else
+#This is an AM335x EVM and thus has a NAND. Flash information to NAND.
 
-read -p "The board is now ready for it's out-of-box experience. Please explore the Matrix GUI now loaded in Firefox. When you're ready to start development, press enter. When enter is hit, the board will reset and load the settings as defined in the previous steps." foo
+	echo "timeout 300" > $cwd/setupBoard.minicom
+	echo "verbose on" >> $cwd/setupBoard.minicom
+	echo "send \"\""  >> $cwd/setupBoard.minicom
+	do_expect "\"am335x-evm login: \"" "send \"root\"" $cwd/setupBoard.minicom
+	echo "send \"init 6\""  >> $cwd/setupBoard.minicom
+	do_expect "\"stop autoboot:\"" "send \" \"" $cwd/setupBoard.minicom
+	if [ "$kernel" -eq "1" ]; then	
+	    	if [ "$fs" -eq "1" ]; then
+			#TFTP and NFS Boot
+			do_expect "\"U-Boot#\"" "send \"setenv serverip $ip\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv rootpath $rootpath\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv bootfile $uimage\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv ip_method dhcp\"" $cwd/setupBoard.minicom
+			bootcmd="setenv bootcmd 'setenv autoload no;dhcp $uImage;tftp $ip $uimage;run net_args;bootm'"
+			
+#			do_expect "\"U-Boot#\"" "send \"$tftp_nfs_boot\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"$bootcmd\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"saveenv\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"boot\"" $cwd/setupBoard.minicom
+	   	else
+			#TFTP and SD Boot  
+			do_expect "\"U-Boot#\"" "send \"setenv serverip $ip\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv bootfile $uimage\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv tftp_sd_boot \"run bootargs_defaults; setenv autoload no; dhcp \${bootfile}; tftp \${loadaddr} \${bootfile}; run mmc_args; bootm \${loadaddr}\"\"" $cwd/setupBoard.minicom
+			
+			do_expect "\"U-Boot#\"" "send \"setenv bootcmd \"run tftp_sd_boot\"\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"saveenv\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"boot\"" $cwd/setupBoard.minicom
+		fi    
+	else
+		if [ "$fs" -eq "1" ]; then
+			#SD and NFS Boot
+			do_expect "\"U-Boot#\"" "send \"setenv serverip $ip\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv rootpath $rootpath\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv ip_method dhcp\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv bootcmd \"setenv autoload no; run mmc_load_uimage; run net_args; bootm \${loadaddr}\"\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"saveenv\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"boot\"" $cwd/setupBoard.minicom
+		    else
+			#SD and SD boot
+			do_expect "\"U-Boot#\"" "send \"setenv bootcmd \"run mmc_boot\"\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"saveenv\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"boot\"" $cwd/setupBoard.minicom
+		    
+		fi
+	fi
+	echo "! killall -s SIGHUP minicom" >> $cwd/setupBoard.minicom
 
-#Create minicom file to reset board
-echo "timeout 300" > $cwd/resetBoard.minicom
-echo "verbose on" >> $cwd/resetBoard.minicom
-echo "send \"\""  >> $cwd/resetBoard.minicom
-echo "send \"init 6\""  >> $cwd/resetBoard.minicom
-do_expect "\"Restarting system.\"" "! killall -s SIGHUP minicom" $cwd/resetBoard.minicom
+	echo "--------------------------------------------------------------------------------"
+	echo "The NAND on the AM335x EVM will be flashed with the previous settings. Please "
+	echo "press enter to begin the flashing process."
+	read -p "" restartNow
+	minicom -w -S $cwd/setupBoard.minicom
+	minicom -w
+	echo "--------------------------------------------------------------------------------"
+	minicom -w
+	
 
-minicom -w -S $cwd/resetBoard.minicom
+fi
+
 rm $cwd/*.minicom
-minicom -w
+
+
 
 
 
