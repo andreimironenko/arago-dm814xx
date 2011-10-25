@@ -1,13 +1,13 @@
 DESCRIPTION = "Cryptography demo descriptions for Matrix v2"
-HOMEPAGE = "https://gforge.ti.com/gf/project/matrixguiv2apps/"
+HOMEPAGE = "https://gforge.ti.com/gf/project/arm_crypto/"
 LICENSE = "CC-BY-SA"
 PRIORITY = "optional"
 
-PR = "r1"
+PR = "r2"
 
 PACKAGE_ARCH = "all"
 
-SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/667/5090/cryptodemos_1.1.tar.gz"
+SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/688/5114/cryptodemos_1.2.tar.gz"
 
 S = ${WORKDIR}/cryptodemos
 
@@ -18,5 +18,5 @@ RDEPENDS +=  "matrix-gui-submenus-cryptos openssl"
 
 FILES_${PN} += "${MATRIX_BASE_DIR}/*"
 
-SRC_URI[md5sum] = "b2d4d565d41d1f740dcc22d7e190a11e"
-SRC_URI[sha256sum] = "6e6efa0c5202be82cd2d325f60d385a71f61b5754b1cfcfe3230bf061dfeb6ad"
+SRC_URI[md5sum] = "dfab3e918fee165fb24e00cba5db8918"
+SRC_URI[sha256sum] = "44fa00ce999279c10a51718298157d3006afb018f6f327f1803006b5e7068c8c"
