@@ -1,0 +1,14 @@
+#!/bin/sh
+
+case "$1" in
+    start )
+        if [ -e /media/mmcblk0p1 ]
+        then
+            echo `ifconfig | grep 'inet addr:' | grep -v '127.0.0.1' | cut -d: -f2 | awk '{print $1}'` > /media/mmcblk0p1/.ipaddr
+        fi
+    ;;
+    stop )
+        exit 0;;
+esac
+
+exit 0
