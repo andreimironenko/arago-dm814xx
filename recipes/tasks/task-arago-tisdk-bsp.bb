@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install Board Support Package binaries on ${MACHINE}"
-PR = "r24"
+PR = "r25"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -39,6 +39,7 @@ BSP_COMPONENTS_omap3 = "\
 BSP_COMPONENTS_ti33x = "\
     u-boot-spl \
     gadget-init \
+    ti-oobe-script \
     "
 
 BSP_COMPONENTS_ti816x = "\
