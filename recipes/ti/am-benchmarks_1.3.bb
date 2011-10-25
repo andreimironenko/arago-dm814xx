@@ -8,7 +8,7 @@ LICENSE = "BSD"
 SECTION = "system"
 PRIORITY = "optional"
 
-SRCREV = "66"
+SRCREV = "68"
 PR = "r5+svnr${SRCPV}"
 
 SRC_URI = "svn://gforge.ti.com/svn/am_benchmarks/;module=trunk;proto=https;user=anonymous;pswd='' \
@@ -18,15 +18,6 @@ S = "${WORKDIR}/trunk"
 
 MATRIX_FILES_DIR = "${WORKDIR}/armbenchmarks"
 require recipes/matrix/matrix-gui-apps.inc
-
-do_configure() {
-    # Find all the objects.mk files for the Release target
-    files=`find ${BASE_PACKAGE_ARCH} -name "objects.mk" | grep Release`
-    for f in $files
-    do
-        sed -i -e 's|LIBS :=|LIBS := ${LDFLAGS} |' $f
-    done
-}
 
 do_compile() {
 	# don't build debug version
