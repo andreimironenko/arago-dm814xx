@@ -3,7 +3,7 @@ HOMEPAGE = "https://gforge.ti.com/gf/project/matrixguiv2apps/"
 LICENSE = "CC-BY-SA"
 PRIORITY = "optional"
 
-PR = "r4"
+PR = "r5"
 
 require matrix-gui-paths.inc
 
@@ -42,9 +42,6 @@ do_install(){
 }
 
 PACKAGES += "${PN}-arm ${PN}-3d ${PN}-cryptos ${PN}-display ${PN}-ethernet ${PN}-multimedia ${PN}-power ${PN}-pru ${PN}-qt4 ${PN}-settings ${PN}-usb ${PN}-wifi ${PN}-oprofile"
-
-# All submenu packages should depend on matrix-gui being installed
-RDEPENDS +=  matrix-gui
 
 # Add the files for each submenu package
 FILES_${PN}-arm = "${MATRIX_APP_DIR}/arm/*"
