@@ -1,7 +1,7 @@
 DESCRIPTION = "Script to warn users of GPLv3 content on the target file system at boot time"
 LICENSE = "MIT"
 
-PR = "r0"
+PR = "r1"
 
 INITSCRIPT_NAME = "gplv3-notice"
 INITSCRIPT_PARAMS = "defaults 99"
