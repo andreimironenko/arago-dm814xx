@@ -383,67 +383,51 @@ dsp-devkit:
 	@rm -rf $(DSP_DEVKIT_DIR)/packages
 
 	@echo "Installing $(notdir $(UIA_INSTALL_DIR)) to dsp-devkit.."
-	@$(MAKE) -C $(UIA_INSTALL_DIR) \
-		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR) \
-		-f sdk.mk install-xdc
+	@$(MAKE) -C $(UIA_INSTALL_DIR) 	DESTDIR=$(DSP_DEVKIT_DIR) \
+		-f sdk.mk install-packages
 	@echo $(notdir $(UIA_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 
 	@echo "Installing $(notdir $(CE_INSTALL_DIR)) to dsp-devkit.."
-	@$(MAKE) -C $(CE_INSTALL_DIR) \
-		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR) \
+	@$(MAKE) -C $(CE_INSTALL_DIR) DESTDIR=$(DSP_DEVKIT_DIR) \
 		-f codec_engine.mak install-packages
 	@echo $(notdir $(CE_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 
 	@echo "Installing $(notdir $(FC_INSTALL_DIR)) to dsp-devkit.."
-	@$(MAKE) -C $(FC_INSTALL_DIR) \
-		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR) \
+	@$(MAKE) -C $(FC_INSTALL_DIR) DESTDIR=$(DSP_DEVKIT_DIR) \
 		-f framework_components.mak install-packages
 	@echo $(notdir $(FC_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 
 	@echo "Installing $(notdir $(SYSBIOS_INSTALL_DIR)) to dsp-devkit.."
-	@$(MAKE) -C $(SYSBIOS_INSTALL_DIR) \
-		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR) \
+	@$(MAKE) -C $(SYSBIOS_INSTALL_DIR) DESTDIR=$(DSP_DEVKIT_DIR) \
 		-f bios.mak install-packages
 	@echo $(notdir $(SYSBIOS_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 
 	@echo "Installing $(notdir $(IPC_INSTALL_DIR)) to dsp-devkit.."
-	@$(MAKE) -C $(IPC_INSTALL_DIR) \
-		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR) \
+	@$(MAKE) -C $(IPC_INSTALL_DIR) DESTDIR=$(DSP_DEVKIT_DIR) \
 		-f ipc.mak install-packages
 	@echo $(notdir $(IPC_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 
 	@echo "Installing $(notdir $(EDMA3_LLD_INSTALL_DIR)) to dsp-devkit.."
-	@$(MAKE) -C $(EDMA3_LLD_INSTALL_DIR) \
-		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR) \
-		-f sdk.mk install-xdc
+	@$(MAKE) -C $(EDMA3_LLD_INSTALL_DIR) DESTDIR=$(DSP_DEVKIT_DIR) \
+		-f sdk.mk install-packages
 	@echo $(notdir $(EDMA3_LLD_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 
 	@echo "Installing $(notdir $(XDAIS_INSTALL_DIR)) to dsp-devkit.."
-	@$(MAKE) -C $(XDAIS_INSTALL_DIR) \
-		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR) \
+	@$(MAKE) -C $(XDAIS_INSTALL_DIR) DESTDIR=$(DSP_DEVKIT_DIR) \
 		-f xdais.mak install-packages
 	@echo $(notdir $(XDAIS_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 
 	@echo "Installing $(notdir $(OSAL_INSTALL_DIR)) to dsp-devkit.."
-	@$(MAKE) -C $(OSAL_INSTALL_DIR) \
-		XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		DESTDIR=$(DSP_DEVKIT_DIR) \
-		-f sdk.mk install-xdc
+	@$(MAKE) -C $(OSAL_INSTALL_DIR) DESTDIR=$(DSP_DEVKIT_DIR) \
+		-f sdk.mk install-packages
 	@echo $(notdir $(OSAL_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 
-	@chmod u+w -R $(DSP_DEVKIT_DIR)/packages $(DSP_DEVKIT_DIR)/docs $(DSP_DEVKIT_DIR)/doc
+	@chmod u+w -R $(DSP_DEVKIT_DIR)/packages $(DSP_DEVKIT_DIR)/docs
 	@echo "Generating API documentation.."
 #	@cd $(DSP_DEVKIT_DIR) && doxygen
 #	@rm -f Doxyfile
 	@echo "Generating md5sums.."
-	@cd $(DSP_DEVKIT_DIR) && $(XDC_INSTALL_DIR)/xs xdc.tools.cdoc -od:doc/cdoc -Pr packages
+	@cd $(DSP_DEVKIT_DIR) && $(XDC_INSTALL_DIR)/xs xdc.tools.cdoc -od:docs/cdoc -Pr packages
 	@echo "Generating md5sums.."
 	@cd $(DSP_DEVKIT_DIR) && find . -type f -exec md5sum {} \; > $(EZSDK_INSTALL_DIR)/.dspmd5sums
 	@mv -f $(EZSDK_INSTALL_DIR)/.dspmd5sums $(DSP_DEVKIT_DIR)/md5sums
