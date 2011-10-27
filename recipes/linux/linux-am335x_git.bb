@@ -7,7 +7,7 @@ COMPATIBLE_MACHINE = "ti33x"
 BRANCH = "master"
 
 SRCREV = "${AUTOREV}"
-PV = "3.0+3.1-rc8"
+PV = "3.1.0"
 
 # Append to the MACHINE_KERNEL_PR so that a new SRCREV will cause a rebuild
 MACHINE_KERNEL_PR_append = "+gitr${SRCPV}"
