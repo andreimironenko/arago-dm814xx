@@ -1,19 +1,19 @@
-From 5c9be65925303cad47735a31601bf3c9f4efbbaa Mon Sep 17 00:00:00 2001
+From 80d6bc04267422925e8323de5ae398582cde4fda Mon Sep 17 00:00:00 2001
 From: Niclas Anderberg <niclas.anderberg@gmail.com>
-Date: Wed, 17 Aug 2011 12:03:43 +0200
-Subject: [PATCH] Added sdk make install file for UIA
+Date: Thu, 27 Oct 2011 12:23:57 +0200
+Subject: [PATCH] uia: added sdk.mk
 
 ---
- sdk.mk |  134 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 134 insertions(+), 0 deletions(-)
+ sdk.mk |  137 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 137 insertions(+), 0 deletions(-)
  create mode 100644 sdk.mk
 
 diff --git a/sdk.mk b/sdk.mk
 new file mode 100644
-index 0000000..8da41aa
+index 0000000..975b25e
 --- /dev/null
 +++ b/sdk.mk
-@@ -0,0 +1,134 @@
+@@ -0,0 +1,137 @@
 +# 
 +#  Copyright (c) 2011, Texas Instruments Incorporated
 +#  All rights reserved.
@@ -62,17 +62,21 @@ index 0000000..8da41aa
 +includedir ?= /include
 +ifeq ($(docdir),)
 +    docdir := /share/ti/uia/doc
-+    xdcdocdir := /doc/uia
++    xdcdocdir := /docs/uia
++else
++    xdcdocdir := $(docdir)
 +endif
 +
 +ifeq ($(prefix),)
 +    prefix := /usr
 +    xdcprefix := /
++else
++    xdcprefix = $(prefix)
 +endif
 +
 +#
 +# Installation of XDCTools. This must be passed to the Makefile for the
-+# install-xdc target.
++# install-packages target.
 +#
 +
 +XDC_INSTALL_DIR="<UNDEFINED>"
@@ -91,58 +95,57 @@ index 0000000..8da41aa
 +# == Helper variables ==
 +#
 +
-+PACKAGES=`$(call all_packages) | grep -v wizards | grep -v examples | xargs`
++PRODUCTS = $(subst packages/,,$(wildcard packages/ti/*))
 +LIBS = $(shell cd packages && find . -name '*.av5T' -or -name '*.a' -type f)
 +HEADERS = $(shell cd packages && find . -name '*.h' -type f -not \( -name "package.defs.h" -o -name "_*.h" \))
-+XDCDOCS = $(wildcard docs/*.pdf) $(wildcard *release_notes.html) docs/relnotes_archive
 +DOCS = $(wildcard *release_notes.html) docs/*
 +
 +LIBDIR = $(DESTDIR)/$(prefix)/$(libdir)
 +INCDIR = $(DESTDIR)/$(prefix)/$(includedir)
 +DOCDIR = $(DESTDIR)/$(prefix)/$(docdir)
-+PACKAGEDIR = $(DESTDIR)/$(xdcprefix)/$(packagedir)
++PACKAGESDIR = $(DESTDIR)/$(xdcprefix)/$(packagedir)
 +XDCDOCDIR = $(DESTDIR)/$(xdcprefix)/$(xdcdocdir)
 +
 +#
 +# ==== Helper functions ====
 +#
 +
-+purge = @find $(1) -name $(2) -exec rm -rf {} \;
++define purge
++        @find $(PACKAGESDIR)/$(1) -name $(2) -exec rm -rf {} \;
 +
-+all_packages = $(XDCPKG) packages | sed -e 's:packages/::' -e 's:/:.:g'
-+
++endef
 +
 +
 +# 
 +# ==== Targets ====
 +#
 +
-+install-xdc:
++install-packages:
 +	@echo "Installing packages.."
-+	@mkdir -p $(PACKAGEDIR)
-+	@$(XS) xdc.tools.repoman -c -r $(PACKAGEDIR) -p packages $(PACKAGES)
-+	$(call purge,$(PACKAGEDIR),'*.c')
-+	$(call purge,$(PACKAGEDIR),'*.bld')
++	@mkdir -p $(PACKAGESDIR)
++	@cd packages && cp --parents -rf $(PRODUCTS) $(PACKAGESDIR)
++	$(foreach prod,$(PRODUCTS),$(call purge,$(prod),'*.c'))
++	$(foreach prod,$(PRODUCTS),$(call purge,$(prod),'*.bld'))
 +	@echo "Installing documentation.."
 +	@mkdir -p $(XDCDOCDIR)
-+	@cp -R $(XDCDOCS) $(XDCDOCDIR)
++	@cp -rf $(DOCS) $(XDCDOCDIR)
 +
 +install:
 +	@echo "Installing libraries.."
 +	@mkdir -p $(LIBDIR)
-+	@cd packages && cp --parents $(LIBS) $(LIBDIR)
++	@cd packages && cp -f --parents $(LIBS) $(LIBDIR)
 +	@echo "Installing header files.."
 +	@mkdir -p $(INCDIR)
-+	@cd packages && cp --parents $(HEADERS) $(INCDIR)
++	@cd packages && cp -f --parents $(HEADERS) $(INCDIR)
 +	@echo "Installing documentation.."
 +	@mkdir -p $(DOCDIR)
-+	@cp -R $(DOCS) $(DOCDIR)
++	@cp -rf $(DOCS) $(DOCDIR)
 +
 +help:
 +	@echo
 +	@echo "Available build targets are:"
 +	@echo
-+	@echo "  install-xdc"
++	@echo "  install-packages"
 +	@echo "      Install the RTSC packages in the repository at DESTDIR"
 +	@echo
 +	@echo "  install"
