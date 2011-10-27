@@ -4,7 +4,7 @@ LICENSE = "BSD MIT Apache"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-PR = "r15"
+PR = "r16"
 
 INITSCRIPT_NAME = "matrix-gui-2.0"
 INITSCRIPT_PARAMS = "defaults 99"
@@ -14,7 +14,7 @@ PACKAGE_ARCH = "all"
 inherit update-rc.d
 
 BRANCH ?= "master"
-SRCREV = "a399ea05de87a8539c72e6c29d54c5c3aea62069"
+SRCREV = "c61be841a53bbc088d002fb5401344a5f8d97470"
 
 SRC_URI = "git://gitorious.org/matrix-gui-v2/matrix-gui-v2.git;protocol=git;branch=${BRANCH} \
            file://init \
@@ -39,6 +39,6 @@ do_install(){
     install -m 0755 ${WORKDIR}/init ${D}${sysconfdir}/init.d/matrix-gui-2.0
 }
 
-RDEPENDS_${PN} += "lighttpd lighttpd-module-fastcgi lighttpd-module-compress lighttpd-module-expire lighttpd-module-rewrite php php-cgi php-cli matrix-gui-browser"
+RDEPENDS_${PN} += "lighttpd lighttpd-module-cgi lighttpd-module-compress lighttpd-module-expire php php-cgi php-cli matrix-gui-browser"
 
 FILES_${PN} += "${MATRIX_BASE_DIR}/*"

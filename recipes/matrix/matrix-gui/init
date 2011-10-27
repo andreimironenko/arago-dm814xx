@@ -31,6 +31,12 @@ case "$1" in
     fi
     cd -
 
+    #Clear out the the tmp and lock directory
+    cd __MATRIX_WEB_DIR__
+    rm -rf tmp/* 
+    rm -rf lock/*
+    cd - 
+
 	if [ -e $PIDFILE ]; then
       PIDDIR=/proc/$(cat $PIDFILE)
       if [ -d ${PIDDIR} -a  "$(readlink -f ${PIDDIR}/exe)" = "${matrixgui}" ]; then
