@@ -109,6 +109,7 @@ if [ -n "$hasFTDI" ]; then
 			#TFTP and SD Boot  
 			echo "serverip=$ip" > uEnv.txt 
 			echo "bootfile=$uimage" >> uEnv.txt
+			echo "ip_method=dhcp" >> uEnv.txt
 			echo "tftp_sd_boot=run bootargs_defaults; setenv autoload no; dhcp \${bootfile}; tftp \${loadaddr} \${bootfile}; run mmc_args; bootm \${loadaddr}" >> uEnv.txt
 			echo "uenvcmd=run tftp_sd_boot" >> uEnv.txt     
 
@@ -122,21 +123,28 @@ if [ -n "$hasFTDI" ]; then
 			echo "uenvcmd=setenv autoload no; run mmc_load_uimage; run net_args; bootm \${loadaddr}" >> uEnv.txt
 		    else
 			#SD and SD boot
-			echo "uenvcmd=run mmc_boot" > uEnv.txt
+			echo "ip_method=dhcp" > uEnv.txt
+			echo "uenvcmd=run mmc_boot" >> uEnv.txt
 		    fi
 	fi
 
 
 
 	#Copy uEnv.txt to the mounted /media/boot partition
+	if [ ! -d /media/boot ]; then
+		echo "The boot partition doesn't appear to be mounted on the host."
+		echo "If you're using a virtual machine, please ensure it has been imported to Linux"
+		read -p "" pressEnter
+	fi
+	
 	cp uEnv.txt /media/boot/
+	sync
+	sync
 	umount /media/START_HERE
 	umount /media/boot
-
-	echo
-	echo "uEnv.txt has been saved with following values:"
 	
 
+	echo
 
 	echo "--------------------------------------------------------------------------------"
 	echo "uEnv.text has been saved to the boot partition. uEnv.txt contains:"
@@ -167,6 +175,7 @@ if [ -n "$hasFTDI" ]; then
 else
 #This is an AM335x EVM and thus has a NAND. Flash information to NAND.
 
+
 	echo "timeout 300" > $cwd/setupBoard.minicom
 	echo "verbose on" >> $cwd/setupBoard.minicom
 	echo "send \"\""  >> $cwd/setupBoard.minicom
@@ -180,19 +189,15 @@ else
 			do_expect "\"U-Boot#\"" "send \"setenv rootpath $rootpath\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"setenv bootfile $uimage\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"setenv ip_method dhcp\"" $cwd/setupBoard.minicom
-			bootcmd="setenv bootcmd 'setenv autoload no;dhcp $uImage;tftp $ip $uimage;run net_args;bootm'"
-			
-#			do_expect "\"U-Boot#\"" "send \"$tftp_nfs_boot\"" $cwd/setupBoard.minicom
-			do_expect "\"U-Boot#\"" "send \"$bootcmd\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv bootcmd 'setenv autoload no;dhcp \"\$\{bootfile\}\";tftp \"\$\{loadaddr\}\" \"\$\{bootfile\}\";run net_args;bootm \"\$\{loadaddr\}\"'\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"boot\"" $cwd/setupBoard.minicom
 	   	else
 			#TFTP and SD Boot  
 			do_expect "\"U-Boot#\"" "send \"setenv serverip $ip\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"setenv bootfile $uimage\"" $cwd/setupBoard.minicom
-			do_expect "\"U-Boot#\"" "send \"setenv tftp_sd_boot \"run bootargs_defaults; setenv autoload no; dhcp \${bootfile}; tftp \${loadaddr} \${bootfile}; run mmc_args; bootm \${loadaddr}\"\"" $cwd/setupBoard.minicom
-			
-			do_expect "\"U-Boot#\"" "send \"setenv bootcmd \"run tftp_sd_boot\"\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv ip_method dhcp\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv bootcmd 'run bootargs_defaults; setenv autoload no; dhcp \"\$\{bootfile\}\"; tftp \"\${\loadaddr\}\" \"\$\{bootfile\}\"; run mmc_args; bootm \"\$\{loadaddr\}\"'\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"boot\"" $cwd/setupBoard.minicom
 		fi    
@@ -202,12 +207,13 @@ else
 			do_expect "\"U-Boot#\"" "send \"setenv serverip $ip\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"setenv rootpath $rootpath\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"setenv ip_method dhcp\"" $cwd/setupBoard.minicom
-			do_expect "\"U-Boot#\"" "send \"setenv bootcmd \"setenv autoload no; run mmc_load_uimage; run net_args; bootm \${loadaddr}\"\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv bootcmd 'setenv autoload no; run mmc_load_uimage; run net_args; bootm \"\${loadaddr}\"'\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"boot\"" $cwd/setupBoard.minicom
 		    else
-			#SD and SD boot
-			do_expect "\"U-Boot#\"" "send \"setenv bootcmd \"run mmc_boot\"\"" $cwd/setupBoard.minicom
+			#SD and SD boot.	
+			do_expect "\"U-Boot#\"" "send \"setenv ip_method dhcp\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv bootcmd 'run mmc_boot'\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"boot\"" $cwd/setupBoard.minicom
 		    
