@@ -15,7 +15,7 @@ COMPATIBLE_MACHINE = "ti816x|ti814x"
 S = "${WORKDIR}/omx-ti81xx_${PV}"
 
 SRC_URI = "http://bangsdowebsvr01.india.ti.com:8090/DM81xx-OMX/${PV}/exports/omx-ti81xx_${PV}.tar.gz;name=omx \
-           file://0001-Added-sdk-make-install-file-to-omx.patch \
+           file://sdk.mk \
 "
 
 SRC_URI[omx.md5sum] = "13c32dc2ffe20a52fdd429d1d72fffa2"
@@ -56,6 +56,13 @@ PARALLEL_MAKE = ""
 
 PLATFORM_ti816x = "ti816x-evm"
 PLATFORM_ti814x = "ti814x-evm"
+
+do_prepsources() {
+    # run the release steps - this will delete .svn file and run doxygen to
+    # generate proper documentation of the source etc.
+    cp ${WORKDIR}/sdk.mk ${S}
+}
+addtask prepsources after do_unpack before do_patch
 
 do_compile() {
     # Build OMX Library Package
