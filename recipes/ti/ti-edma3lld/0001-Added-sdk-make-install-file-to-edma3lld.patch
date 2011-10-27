@@ -1,19 +1,19 @@
-From 8fffd4693b35c86e991700e2418174936717a84e Mon Sep 17 00:00:00 2001
+From 0df8b667d29a0a180b8a507e8bb31002b0ee6ee6 Mon Sep 17 00:00:00 2001
 From: Niclas Anderberg <niclas.anderberg@gmail.com>
-Date: Wed, 17 Aug 2011 11:46:56 +0200
-Subject: [PATCH] Added sdk.mk
+Date: Thu, 27 Oct 2011 12:25:43 +0200
+Subject: [PATCH] edma3lld: added sdk.mk
 
 ---
- sdk.mk |  107 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 107 insertions(+), 0 deletions(-)
+ sdk.mk |  109 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 109 insertions(+), 0 deletions(-)
  create mode 100644 sdk.mk
 
 diff --git a/sdk.mk b/sdk.mk
 new file mode 100644
-index 0000000..ce6b477
+index 0000000..0e79a8d
 --- /dev/null
 +++ b/sdk.mk
-@@ -0,0 +1,107 @@
+@@ -0,0 +1,109 @@
 +# 
 +#  Copyright (c) 2011, Texas Instruments Incorporated
 +#  All rights reserved.
@@ -59,7 +59,7 @@ index 0000000..ce6b477
 +DESTDIR ?= $(HOME)/target-root
 +prefix ?= /
 +packagedir ?= /packages
-+docdir ?= /doc/edma3lld
++docdir ?= /docs/edma3lld
 +
 +
 +
@@ -84,19 +84,20 @@ index 0000000..ce6b477
 +# == Helper variables ==
 +#
 +
-+PACKAGES=`$(call all_packages) | grep -v wizards | grep -v examples | xargs`
-+DOCS = $(wildcard docs/*.pdf) $(wildcard release_notes_*.html)
++PRODUCTS = $(subst packages/,,$(wildcard packages/ti/sdo/*))
++DOCS = $(wildcard docs/*) $(wildcard release_notes_*.html)
 +
 +DOCDIR = $(DESTDIR)/$(prefix)/$(docdir)
-+PACKAGEDIR = $(DESTDIR)/$(xdcprefix)/$(packagedir)
++PACKAGESDIR = $(DESTDIR)/$(xdcprefix)/$(packagedir)
 +
 +#
 +# ==== Helper functions ====
 +#
 +
-+purge = @find $(1) -name $(2) -exec rm -rf {} \;
++define purge
++        @find $(PACKAGESDIR)/$(1) -name $(2) -exec rm -rf {} \;
 +
-+all_packages = $(XDCPKG) packages | sed -e 's:packages/::' -e 's:/:.:g'
++endef
 +
 +
 +
@@ -104,12 +105,13 @@ index 0000000..ce6b477
 +# ==== Targets ====
 +#
 +
-+install-xdc:
++install-packages:
 +	@echo "Installing packages.."
-+	@mkdir -p $(PACKAGEDIR)
-+	@$(XS) xdc.tools.repoman -c -r $(PACKAGEDIR) -p packages $(PACKAGES)
-+	$(call purge,$(PACKAGEDIR),'*.c')
-+	$(call purge,$(PACKAGEDIR),'*.bld')
++	@mkdir -p $(PACKAGESDIR)
++	@cd packages && cp --parents -rf $(PRODUCTS) $(PACKAGESDIR)
++	$(foreach prod,$(PRODUCTS),$(call purge,$(prod),'*.c'))
++	$(foreach prod,$(PRODUCTS),$(call purge,$(prod),'*.bld'))
++	$(foreach prod,$(PRODUCTS),$(call purge,$(prod),'makefile'))
 +	@echo "Installing documentation.."
 +	@mkdir -p $(DOCDIR)
 +	@cp -R $(DOCS) $(DOCDIR)
@@ -118,7 +120,7 @@ index 0000000..ce6b477
 +	@echo
 +	@echo "Available build targets are:"
 +	@echo
-+	@echo "  install-xdc"
++	@echo "  install-packages"
 +	@echo "      Install the RTSC packages in the repository at DESTDIR"
 +	@echo
 -- 
