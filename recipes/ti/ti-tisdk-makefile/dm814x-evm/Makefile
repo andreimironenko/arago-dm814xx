@@ -320,12 +320,12 @@ matrix_install:
 ################################################################################
 
 omx:
-	$(MAKE) -C $(OMX_INSTALL_DIR)/packages $(OMX_BUILD_VARS) libs
-	$(MAKE) -C $(OMX_INSTALL_DIR)/packages $(OMX_BUILD_VARS) DEST_ROOT=$(OMX_INSTALL_DIR)/bin examples 
+	$(MAKE) -C $(OMX_INSTALL_DIR)/src $(OMX_BUILD_VARS) libs
+	$(MAKE) -C $(OMX_INSTALL_DIR)/src $(OMX_BUILD_VARS) DEST_ROOT=$(OMX_INSTALL_DIR)/bin examples 
 
 omx_clean:
 	rm -rf $(OMX_INSTALL_DIR)/bin ${OMX_INSTALL_DIR}/lib
-	$(MAKE) -C $(OMX_INSTALL_DIR)/packages $(OMX_BUILD_VARS) clean
+	$(MAKE) -C $(OMX_INSTALL_DIR)/src $(OMX_BUILD_VARS) clean
 
 omx_install:
 	install -d $(EXEC_DIR)/usr/share/ti/ti-omx

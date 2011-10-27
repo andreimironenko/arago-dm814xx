@@ -115,9 +115,9 @@ UIA_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__uia__>
 OMX_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__omx__>
 
 # OMX build variables
-OMX_BUILD_VARS = ROOTDIR=$(OMX_INSTALL_DIR)/packages \
+OMX_BUILD_VARS = ROOTDIR=$(OMX_INSTALL_DIR)/ \
 		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR)/component-sources \
-		INTERNAL_SW_ROOT=$(OMX_INSTALL_DIR)/packages \
+		INTERNAL_SW_ROOT=$(OMX_INSTALL_DIR)/src \
         kernel_PATH=${LINUXKERNEL_INSTALL_DIR} \
         bios_PATH=${SYSBIOS_INSTALL_DIR} \
 		fc_PATH=$(FC_INSTALL_DIR) \
