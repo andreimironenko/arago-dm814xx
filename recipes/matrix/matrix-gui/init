@@ -27,7 +27,9 @@ case "$1" in
     cd __MATRIX_WEB_DIR__
     if [ ! -f ./json.txt ]
     then
+	rm -rf cache/* 
         php generate.php
+	
     fi
     cd -
 

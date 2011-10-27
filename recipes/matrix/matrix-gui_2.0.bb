@@ -14,7 +14,7 @@ PACKAGE_ARCH = "all"
 inherit update-rc.d
 
 BRANCH ?= "master"
-SRCREV = "c61be841a53bbc088d002fb5401344a5f8d97470"
+SRCREV = "7dac7650b0fd0f976e15a17c8882a64a1a415a32"
 
 SRC_URI = "git://gitorious.org/matrix-gui-v2/matrix-gui-v2.git;protocol=git;branch=${BRANCH} \
            file://init \
