@@ -4,10 +4,10 @@ LICENSE = "BSD"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-PR = "r2"
+PR = "r3"
 
-SRCREV = "274185aa2fc7e086ed18abe64fc4a55a696e33dc"
-BRANCH ?= "qwebview"
+SRCREV = "8f50865be383e2b3b77704544924939e5a095056"
+BRANCH ?= "master"
 
 SRC_URI = "git://gitorious.org/matrix-gui-v2/matrix_browser.git;protocol=git;branch=${BRANCH}"
 
