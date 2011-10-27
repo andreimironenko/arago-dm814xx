@@ -7,8 +7,6 @@ UBOOT_MACHINE = "ti8148_evm_config"
 # This is the NAND binary which is signed to be booted by the boot ROM
 TI_UBOOT_BINARY = "u-boot.bin"
 
-DEFAULT_PREFERENCE = "-1"
-
 # Append the install and deploy functions so that we ship the
 # u-boot.bin file, which is used in the case of SD card boot,
 # and u-boot.noxip.bin, which is used in the case of NAND boot.
