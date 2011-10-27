@@ -186,15 +186,15 @@ psp-examples:
 		PWD=$(PSP_EXAMPLES_INSTALL_DIR)/edma \
 		ARCH=arm \
 		CROSS_COMPILE=$(CSTOOL_PREFIX)
-	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/pcie \
-		CC=$(CSTOOL_PREFIX)gcc \
-		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)
-#	mkdir -p $(PSP_EXAMPLES_INSTALL_DIR)/video/bin
-#	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/video \
-#		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
-#		INSTALL_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/video \
-#		EXE_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/video/bin \
-#		CROSS_COMPILE=$(CSTOOL_PREFIX)
+#	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/pcie \
+#		CC=$(CSTOOL_PREFIX)gcc \
+#		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)
+	mkdir -p $(PSP_EXAMPLES_INSTALL_DIR)/video/bin
+	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/video \
+		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
+		INSTALL_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/video \
+		EXE_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/video/bin \
+		CROSS_COMPILE=$(CSTOOL_PREFIX)
 	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/watchdog \
 		CC=$(CSTOOL_PREFIX)gcc \
 		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)
@@ -214,13 +214,13 @@ psp-examples_clean:
 		ARCH=arm \
 		CROSS_COMPILE=$(CSTOOL_PREFIX) \
 		clean
-	rm -f $(PSP_EXAMPLES_INSTALL_DIR)/pcie/saBootApp
-#	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/video \
-#		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
-#		INSTALL_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/video \
-#		EXE_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/video \
-#		CROSS_COMPILE=$(CSTOOL_PREFIX) \
-#		clean
+#	rm -f $(PSP_EXAMPLES_INSTALL_DIR)/pcie/saBootApp
+	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/video \
+		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
+		INSTALL_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/video \
+		EXE_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/video \
+		CROSS_COMPILE=$(CSTOOL_PREFIX) \
+		clean
 	rm -f $(PSP_EXAMPLES_INSTALL_DIR)/watchdog/saWatchdog
 
 psp-examples_install:
@@ -228,7 +228,8 @@ psp-examples_install:
 	install $(PSP_EXAMPLES_INSTALL_DIR)/audio/bin/minimal_capture $(EXEC_DIR)/usr/share/ti/ti-psp-examples
 	install $(PSP_EXAMPLES_INSTALL_DIR)/audio/bin/minimal_playback $(EXEC_DIR)/usr/share/ti/ti-psp-examples
 	install $(PSP_EXAMPLES_INSTALL_DIR)/edma/edma_test.ko $(EXEC_DIR)/usr/share/ti/ti-psp-examples
-	install $(PSP_EXAMPLES_INSTALL_DIR)/pcie/saBootApp $(EXEC_DIR)/usr/share/ti/ti-psp-examples
+#	install $(PSP_EXAMPLES_INSTALL_DIR)/pcie/saBootApp $(EXEC_DIR)/usr/share/ti/ti-psp-examples
+	install $(PSP_EXAMPLES_INSTALL_DIR)/video/bin/* $(EXEC_DIR)/usr/share/ti/ti-psp-examples
 	install $(PSP_EXAMPLES_INSTALL_DIR)/watchdog/saWatchdog $(EXEC_DIR)/usr/share/ti/ti-psp-examples
 
 #==============================================================================
