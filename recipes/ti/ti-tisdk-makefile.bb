@@ -10,7 +10,7 @@ require ti-paths.inc
 # It is assumed that the component makefiles follow the naming
 # Makefile_$component.  All Makefiles will be part of the SRC_URI to be
 # fetched, but only the listed ones will be used to build the final Makefile
-MAKEFILES_COMMON = "linux matrix-gui am-benchmarks am-sysinfo"
+MAKEFILES_COMMON = "linux matrix-gui am-benchmarks am-sysinfo matrix-gui-browser"
 
 # Blank the MAKEFILES_COMMON for DM devices for legacy support
 MAKEFILES_COMMON_c6a816x-evm = ""
@@ -45,9 +45,10 @@ SRC_URI = "\
     file://Makefile_av-examples \
     file://Makefile_u-boot-min-sd \
     file://Makefile_u-boot-spl \
+    file://Makefile_matrix-gui-browser \
 "
 
-PR = "r84"
+PR = "r86"
 
 do_configure_prepend_dm37x-evm () { 
          sed -i -e 's:OMAPES=3.x:OMAPES=5.x:g' ${WORKDIR}/Makefile
