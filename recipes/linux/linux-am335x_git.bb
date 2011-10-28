@@ -6,14 +6,16 @@ COMPATIBLE_MACHINE = "ti33x"
 
 BRANCH = "master"
 
+DEFAULT_PREFERENCE = "-1"
+
 SRCREV = "${AUTOREV}"
-PV = "3.1.0"
+PV = "3.0+3.1-rc8"
 
 # Append to the MACHINE_KERNEL_PR so that a new SRCREV will cause a rebuild
 MACHINE_KERNEL_PR_append = "+gitr${SRCPV}"
 
 KVER = ${PV}
-PSPREL = "04.06.00.01.sdk"
+PSPREL = "04.06.00.02.sdk"
 
 # Override the SRC_URI from the linux-omap3.inc file
 SRC_URI = "git://arago-project.org/git/projects/linux-am33x.git;protocol=git;branch=${BRANCH} \
