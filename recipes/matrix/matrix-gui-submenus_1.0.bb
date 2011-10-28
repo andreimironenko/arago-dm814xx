@@ -3,7 +3,7 @@ HOMEPAGE = "https://gforge.ti.com/gf/project/matrixguiv2apps/"
 LICENSE = "CC-BY-SA"
 PRIORITY = "optional"
 
-PR = "r6"
+PR = "r7"
 
 require matrix-gui-paths.inc
 
@@ -14,13 +14,13 @@ PACKAGE_ARCH = "all"
 # and PNG graphic file for the submenu.
 SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/699/5133/arm_1.1.tar.gz;name=armtarball \
            https://gforge.ti.com/gf/download/frsrelease/698/5134/3d_1.1.tar.gz;name=3dtarball \
-           https://gforge.ti.com/gf/download/frsrelease/700/5135/cryptos_1.1.tar.gz;name=crypztostarball \
+           https://gforge.ti.com/gf/download/frsrelease/700/5135/cryptos_1.1.tar.gz;name=cryptostarball \
            https://gforge.ti.com/gf/download/frsrelease/693/5120/display_1.2.tar.gz;name=displaytarball \
            https://gforge.ti.com/gf/download/frsrelease/692/5119/ethernet_1.4.tar.gz;name=ethernettarball \
            https://gforge.ti.com/gf/download/frsrelease/701/5136/multimedia_1.1.tar.gz;name=multimediatarball \
            https://gforge.ti.com/gf/download/frsrelease/702/5137/power_1.1.tar.gz;name=powertarball \
            https://gforge.ti.com/gf/download/frsrelease/704/5139/pru_1.1.tar.gz;name=prutarball \
-           https://gforge.ti.com/gf/download/frsrelease/705/5132/qt4.tar.gz;name=qzt4tarball \
+           https://gforge.ti.com/gf/download/frsrelease/705/5140/qt4_1.1.tar.gz;name=qt4tarball \
            https://gforge.ti.com/gf/download/frsrelease/694/5121/settings_1.2.tar.gz;name=settingstarball \
            https://gforge.ti.com/gf/download/frsrelease/695/5122/usb_1.2.tar.gz;name=usbtarball \
            https://gforge.ti.com/gf/download/frsrelease/697/5124/wifi_1.2.tar.gz;name=wifitarball \
