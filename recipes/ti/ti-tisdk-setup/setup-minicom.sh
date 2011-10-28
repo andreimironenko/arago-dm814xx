@@ -30,25 +30,10 @@ portdefault=/dev/ttyS0
 if [ -n "$hasFTDI" ]; then
 	echo "The BeagleBone has been detected!"
 	echo "Adding capability to recognize BeagleBone serial port to the host..."
-	modprobe -q ftdi_sio vendor=0x0403 product=0xa6d0
-
-	#Create uDev rule
-	echo "# Load ftdi_sio driver including support for XDS100v2." > $cwd/99-custom.rules
-	echo "SYSFS{idVendor}=="0403", SYSFS{idProduct}=="a6d0", \\" >>  $cwd/99-custom.rules
-	echo "RUN+=\"/sbin/modprobe -q ftdi_sio vendor=0x0403 product=0xa6d0\"" >> $cwd/99-custom.rules
-	sudo cp $cwd/99-custom.rules /etc/udev/rules.d/
-	rm $cwd/99-custom.rules
-
-	port=`dmesg | grep FTDI | grep "tty" | tail -1 | grep "attached" |  awk '{ print $NF }'`
-	while [ -z "$port" ]
-	do
-		sleep 1
-		port=`dmesg  | grep FTDI | grep "tty" | tail -1 | grep "attached" |  awk '{ print $NF }'`
-	done
-
-	port=/dev/$port
-	echo "The BeagleBone is attached to $port, press enter to automatically set up minicom..."
-	read -p "" foo
+	port=/dev/ttyUSB1 #Set as default, will be overwritten later.
+	#Note this is changed later in uboot-setup. The mass storage is removed when a modprobe is perfomed.
+	echo "Press enter to automatically setup minicom for the BeagleBone."
+	read -p "" pressEnter
 else
 	echo "A built in USB-to-Serial device was not detected."
 	echo "Which serial port do you want to use with minicom?"

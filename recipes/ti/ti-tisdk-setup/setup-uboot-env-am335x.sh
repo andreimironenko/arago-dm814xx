@@ -137,15 +137,59 @@ if [ -n "$hasFTDI" ]; then
 		read -p "" pressEnter
 	fi
 	
+	echo "Copying uEnv.txt to boot partition, then unmounting drives...."
 	cp uEnv.txt /media/boot/
 	sync
 	sync
 	umount /media/START_HERE
 	umount /media/boot
-	
+
+	ftdiInstalled=`lsmod | grep ftdi_sio`
+	if [ -z "$ftdiInstalled" ]; then
+	#Add the ability to regconize the BeagleBone as two serial ports
+		echo "Finishing install by adding drivers for Beagle Bone..."
+		modprobe -q ftdi_sio vendor=0x0403 product=0xa6d0
+
+		#Create uDev rule
+		echo "# Load ftdi_sio driver including support for XDS100v2." > $cwd/99-custom.rules
+		echo "SYSFS{idVendor}=="0403", SYSFS{idProduct}=="a6d0", \\" >>  $cwd/99-custom.rules
+		echo "RUN+=\"/sbin/modprobe -q ftdi_sio vendor=0x0403 product=0xa6d0\"" >> $cwd/99-custom.rules
+		sudo cp $cwd/99-custom.rules /etc/udev/rules.d/
+		rm $cwd/99-custom.rules
+	fi
+
+	port=`dmesg | grep FTDI | grep "tty" | tail -1 | grep "attached" |  awk '{ print $NF }'`
+	while [ -z "$port" ]
+	do
+		sleep 1
+		port=`dmesg  | grep FTDI | grep "tty" | tail -1 | grep "attached" |  awk '{ print $NF }'`
+	done
+
+	#Change minicom to accurately reflect the bone
+	minicomcfg=${HOME}/.minirc.dfl
+	echo "pu port             /dev/$port
+	pu baudrate         115200
+	pu bits             8
+	pu parity           N
+	pu stopbits         1
+	pu minit
+	pu mreset
+	pu mdialpre
+	pu mdialsuf
+	pu mdialpre2
+	pu mdialsuf2
+	pu mdialpre3
+	pu mdialsuf3
+	pu mconnect
+	pu mnocon1          NO CARRIER
+	pu mnocon2          BUSY
+	pu mnocon3          NO DIALTONE
+	pu mnocon4          VOICE
+	pu rtscts           No" | tee $minicomcfg > /dev/null
+	check_status
 
 	echo
-
+	echo
 	echo "--------------------------------------------------------------------------------"
 	echo "uEnv.text has been saved to the boot partition. uEnv.txt contains:"
 	cat uEnv.txt
