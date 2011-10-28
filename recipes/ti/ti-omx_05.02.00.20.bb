@@ -25,7 +25,7 @@ DEPENDS = "ti-sysbios ti-xdctools ti-ipc ti-osal ti-syslink"
 DEPENDS += "ti-c674x-aaclcdec ti-xdais ti-codec-engine ti-framework-components"
 DEPENDS += "ti-uia ti-slog"
 
-EXTRA_OEMAKE = "ROOTDIR=${S}/ \
+EXTRA_OEMAKE = "ROOTDIR=${S} \
         INTERNAL_SW_ROOT=${S}/src \
         EXTERNAL_SW_ROOT=${DVSDK_INSTALL_DIR} \
         kernel_PATH=${STAGING_KERNEL_DIR} \
