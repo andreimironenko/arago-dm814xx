@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r22"
+PR = "r23"
 LICENSE = "MIT"
 
 inherit task
@@ -28,7 +28,7 @@ MATRIX_APPS_omap3 = "matrix-gui-clocks-300mhz \
                      "
 
 # For now add some explicit submenus to get a consistent look and feel
-MATRIX_APPS_ti33x = "matrix-gui-3d-demos \
+MATRIX_APPS_ti33x = "matrix-gui-submenus-3d \
                      matrix-gui-submenus-wifi \
                      matrix-gui-submenus-multimedia \
                      matrix-gui-submenus-ethernet \
