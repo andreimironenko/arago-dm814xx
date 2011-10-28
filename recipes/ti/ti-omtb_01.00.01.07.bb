@@ -30,7 +30,7 @@ EXTRA_OEMAKE = "ROOTDIR=${S} \
         EZSDK_INSTALL_DIR=${DVSDK_INSTALL_DIR} \
         OMTB_ROOT=${S} \
         PLATFORM=${OMTBEVM} \
-        OMX_INSTALL_DIR=${OMX_INSTALL_DIR}/packages \
+        OMX_INSTALL_DIR=${OMX_INSTALL_DIR}/src \
         fc_PATH=${FC_INSTALL_DIR} \
         ce_PATH=${CE_INSTALL_DIR} \
         osal_PATH=${OSAL_INSTALL_DIR} \
