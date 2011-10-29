@@ -61,6 +61,8 @@ do_prepsources() {
     # run the release steps - this will delete .svn file and run doxygen to
     # generate proper documentation of the source etc.
     cp ${WORKDIR}/sdk.mk ${S}
+ 
+    rm -f ${S}/include/*
 }
 addtask prepsources after do_unpack before do_patch
 
