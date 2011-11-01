@@ -581,13 +581,13 @@ install_graphics_sdk_host ()
 #
 install_arago_sdk ()
 {
-  if [ ! -f devel/arago*.tar.gz ]; then
+  if [ ! -f devel/arago*.tar.bz2 ]; then
     echo "ERROR: failed to find arago sdk tarball"
     exit 1
   fi
-  arago_sdk="`ls -1 devel/arago*.tar.gz`"
+  arago_sdk="`ls -1 devel/arago*.tar.bz2`"
   echo "Installing linux-devkit ($arago_sdk)"
-  execute "tar zxf ${arago_sdk} -C ${install_dir}"
+  execute "tar jxf ${arago_sdk} -C ${install_dir}"
 
   execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  update"
 

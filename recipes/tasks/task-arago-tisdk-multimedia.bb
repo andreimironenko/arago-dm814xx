@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r33"
+PR = "r37"
 LICENSE = "MIT"
 
 inherit task
@@ -83,6 +83,19 @@ MULTIMEDIA_omap3evm = " \
 MULTIMEDIA_am37x-evm = " \
     task-arago-gst \
     gst-ffmpeg \
+    amsdk-av-files \
+    "
+
+MULTIMEDIA_am3517-evm = " \
+    task-arago-gst \
+    gst-ffmpeg \
+    amsdk-av-files \
+    "
+
+MULTIMEDIA_beagleboard = " \
+    task-arago-gst \
+    gst-ffmpeg \
+    amsdk-av-files \
     "
 
 MULTIMEDIA_am45x-evm = " \
@@ -98,6 +111,11 @@ MULTIMEDIA_ti816x = " \
 MULTIMEDIA_ti814x = " \
     ${MULTIMEDIA_EZSDK_COMMON} \
     ti-firmware \
+    "
+
+MULTIMEDIA_ti33x = " \
+    task-arago-gst \
+    gst-ffmpeg \
     "
 
 RDEPENDS_${PN} = "\

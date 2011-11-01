@@ -4,15 +4,16 @@ LICENSE = "BSD"
 DEPENDS += "virtual/kernel openobex"
 RDEPENDS += "bluez4 openobex ussp-push obexftp bluez-hcidump"
 
-PR = "r0"
+PR = "r1"
 
 PACKAGE_ARCH = ${MACHINE_ARCH}
 
 MACHINE_KERNEL_PR_append = "a"
 
-COMPATIBLE_MACHINE = "am37x-evm|am180x-evm|da850-omapl138-evm"
+COMPATIBLE_MACHINE = "am37x-evm|am180x-evm|da850-omapl138-evm|am335x-evm"
 
-SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/556/4630/wl1271-bluetooth-2011-05-17.tar"
+SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/660/5062/wl1271-bluetooth-2011-10-11.tar"
+
 S = "${WORKDIR}/wl1271-bluetooth"
 
 inherit module
@@ -20,6 +21,7 @@ inherit module
 PLATFORM_am37x-evm = "omap3evm"
 PLATFORM_am180x-evm = "am1808"
 PLATFORM_da850-omapl138-evm = "am1808"
+PLATFORM_am335x-evm = "am335x"
 PLATFORM ?= "UNKNOWN"
 
 EXTRA_OEMAKE = " \
@@ -67,5 +69,5 @@ FILES_${PN}-dbg += "${base_libdir}/modules/${KERNEL_VERSION}/kernel/drivers/bt_e
 
 PACKAGE_STRIP = "no"
 
-SRC_URI[md5sum] = "6c3a11a1d1676062c7fd5ba2b764122f"
-SRC_URI[sha256sum] = "e7463d9bbf21f2efdfe36c1819580b6ff56879c5ee241f61115b3c085d2cb1c3"
+SRC_URI[md5sum] = "36fa9ad30047634335039c9b1a07e82d"
+SRC_URI[sha256sum] = "a6b9b18ed5f01847d99a038984549f057e1def4d65d57ecdaaf7076948b42da2"

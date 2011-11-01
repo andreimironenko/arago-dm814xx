@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install Board Support Package binaries on ${MACHINE}"
-PR = "r19"
+PR = "r25"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -28,8 +28,22 @@ BSP_COMPONENTS_da850-omapl138-evm = "\
     ti-linux-driver-examples-omapl \
     "
 
+BSP_COMPONENTS_am37x-evm = "\
+    av-examples \
+    "
+
+BSP_COMPONENTS_am3517-evm = "\
+    av-examples \
+    "
+
 BSP_COMPONENTS_omap3 = "\
     x-load \
+    "
+
+BSP_COMPONENTS_ti33x = "\
+    u-boot-spl \
+    gadget-init \
+    ti-oobe-script \
     "
 
 BSP_COMPONENTS_ti816x = "\
@@ -57,6 +71,7 @@ BLUETOOTH_SUPPORT_omapl138 = "${BLUETOOTH_STACK}"
 BLUETOOTH_SUPPORT_ti816x = "${BLUETOOTH_STACK}"
 BLUETOOTH_SUPPORT_ti814x = "${BLUETOOTH_STACK}"
 BLUETOOTH_SUPPORT_omap4 = "${BLUETOOTH_STACK}"
+BLUETOOTH_SUPPORT_ti33x = "${BLUETOOTH_STACK}"
 
 RDEPENDS_${PN} = "\
     ${BSP_COMPONENTS} \

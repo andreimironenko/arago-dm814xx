@@ -1,9 +1,8 @@
 DESCRIPTION = "Package contain Makefile and Rule.make used for building DVSDK components"
 LICENSE = "TI"
 
-COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|dm37x-evm|dm365-evm|da850-omapl138-evm|dm368-evm|ti816x|ti814x)"
-
 require ti-paths.inc
+COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|dm37x-evm|dm365-evm|omapl138|am3517-evm|dm368-evm|beagleboard|ti33x|ti816x|ti814x)"
 
 UBOOT_ENV_dm365-evm = "setup-uboot-env-dm365.sh"
 UBOOT_ENV_dm368-evm = "setup-uboot-env-dm365.sh"
@@ -13,10 +12,12 @@ UBOOT_ENV_omap3evm = "setup-uboot-env-omap3530.sh"
 UBOOT_ENV_ti816x = "setup-uboot-env-c6a816x.sh"
 UBOOT_ENV_ti814x = "setup-uboot-env-c6a814x.sh"
 UBOOT_ENV_am37x-evm = "setup-uboot-env-am37x.sh"
+UBOOT_ENV_beagleboard = "setup-uboot-env-am37x.sh"
 UBOOT_ENV_am3517-evm = "setup-uboot-env-am3517.sh"
 UBOOT_ENV_am180x-evm = "setup-uboot-env-am18x.sh"
 UBOOT_ENV_am181x-evm = "setup-uboot-env-am18x.sh"
 UBOOT_ENV_am389x-evm = "setup-uboot-env-am389x.sh"
+UBOOT_ENV_ti33x = "setup-uboot-env-am335x.sh"
 
 SRC_URI = "\
 	file://setup.sh \
@@ -29,7 +30,7 @@ SRC_URI = "\
     file://${UBOOT_ENV} \
 "
 
-PR = "r29"
+PR = "r37"
 
 do_install () {
     install -m 0755 ${WORKDIR}/setup.sh ${D}/

@@ -1,0 +1,113 @@
+From a8baf60ad527513de2a6c6c7b269566e51dec780 Mon Sep 17 00:00:00 2001
+From: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
+Date: Sat, 10 Sep 2011 22:40:30 +0300
+Subject: [PATCH 5/9] P2P: Remove CCK supported rates when running P2P scan
+
+This allows drivers to disable CCK rates from Probe Request frames.
+For nl80211, this is currently applying only to the supported rates
+element(s), but this mechanism could be extended to address TX rate
+control masking, too, to lessen need for global rate disabling.
+
+Signed-off-by: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
+Signed-off-by: Guy Eilam <guy@wizery.com>
+---
+ src/drivers/driver.h            |    9 +++++++++
+ src/drivers/driver_nl80211.c    |   19 +++++++++++++++++--
+ wpa_supplicant/p2p_supplicant.c |    2 ++
+ 3 files changed, 28 insertions(+), 2 deletions(-)
+
+diff --git a/src/drivers/driver.h b/src/drivers/driver.h
+index 295fe26..453948f 100644
+--- a/src/drivers/driver.h
++++ b/src/drivers/driver.h
+@@ -264,6 +264,15 @@ struct wpa_driver_scan_params {
+ 	 * num_filter_ssids - Number of entries in filter_ssids array
+ 	 */
+ 	size_t num_filter_ssids;
++
++	/**
++	 * p2p_probe - Used to disable CCK (802.11b) rates for P2P probes
++	 *
++	 * When set, the driver is expected to remove rates 1, 2, 5.5, and 11
++	 * Mbps from the support rates element(s) in the Probe Request frames
++	 * and not to transmit the frames at any of those rates.
++	 */
++	u8 p2p_probe;
+ };
+ 
+ /**
+diff --git a/src/drivers/driver_nl80211.c b/src/drivers/driver_nl80211.c
+index 85498a2..a515b7b 100644
+--- a/src/drivers/driver_nl80211.c
++++ b/src/drivers/driver_nl80211.c
+@@ -2255,16 +2255,18 @@ static int wpa_driver_nl80211_scan(void *priv,
+ 	struct i802_bss *bss = priv;
+ 	struct wpa_driver_nl80211_data *drv = bss->drv;
+ 	int ret = 0, timeout;
+-	struct nl_msg *msg, *ssids, *freqs;
++	struct nl_msg *msg, *ssids, *freqs, *rates;
+ 	size_t i;
+ 
+ 	msg = nlmsg_alloc();
+ 	ssids = nlmsg_alloc();
+ 	freqs = nlmsg_alloc();
+-	if (!msg || !ssids || !freqs) {
++	rates = nlmsg_alloc();
++	if (!msg || !ssids || !freqs || !rates) {
+ 		nlmsg_free(msg);
+ 		nlmsg_free(ssids);
+ 		nlmsg_free(freqs);
++		nlmsg_free(rates);
+ 		return -1;
+ 	}
+ 
+@@ -2304,6 +2306,18 @@ static int wpa_driver_nl80211_scan(void *priv,
+ 		nla_put_nested(msg, NL80211_ATTR_SCAN_FREQUENCIES, freqs);
+ 	}
+ 
++	if (params->p2p_probe) {
++		/*
++		 * Remove 2.4 GHz rates 1, 2, 5.5, 11 Mbps from supported rates
++		 * by masking out everything else apart from the OFDM rates 6,
++		 * 9, 12, 18, 24, 36, 48, 54 Mbps from non-MCS rates. All 5 GHz
++		 * rates are left enabled.
++		 */
++		NLA_PUT(rates, NL80211_BAND_2GHZ, 8,
++			"\x0c\x12\x18\x24\x30\x48\x60\x6c");
++		nla_put_nested(msg, NL80211_ATTR_SCAN_SUPP_RATES, rates);
++	}
++
+ 	ret = send_and_recv_msgs(drv, msg, NULL, NULL);
+ 	msg = NULL;
+ 	if (ret) {
+@@ -2356,6 +2370,7 @@ nla_put_failure:
+ 	nlmsg_free(ssids);
+ 	nlmsg_free(msg);
+ 	nlmsg_free(freqs);
++	nlmsg_free(rates);
+ 	return ret;
+ }
+ 
+diff --git a/wpa_supplicant/p2p_supplicant.c b/wpa_supplicant/p2p_supplicant.c
+index 3234c2c..bd35ee1 100644
+--- a/wpa_supplicant/p2p_supplicant.c
++++ b/wpa_supplicant/p2p_supplicant.c
+@@ -118,6 +118,7 @@ static int wpas_p2p_scan(void *ctx, enum p2p_scan_type type, int freq,
+ 
+ 	p2p_scan_ie(wpa_s->global->p2p, ies);
+ 
++	params.p2p_probe = 1;
+ 	params.extra_ies = wpabuf_head(ies);
+ 	params.extra_ies_len = wpabuf_len(ies);
+ 
+@@ -2769,6 +2770,7 @@ static void wpas_p2p_join_scan(void *eloop_ctx, void *timeout_ctx)
+ 
+ 	p2p_scan_ie(wpa_s->global->p2p, ies);
+ 
++	params.p2p_probe = 1;
+ 	params.extra_ies = wpabuf_head(ies);
+ 	params.extra_ies_len = wpabuf_len(ies);
+ 
+-- 
+1.7.0.4
+

@@ -1,0 +1,52 @@
+From 22fe3eed65e0bea4edc23bef35167966a7d7cc3b Mon Sep 17 00:00:00 2001
+From: Guy Eilam <guy@wizery.com>
+Date: Tue, 4 Oct 2011 03:38:09 +0200
+Subject: [PATCH 8/9] nl80211: fix the "not disabled" case in disable_11b_rates()
+
+the NL80211_ATTR_TX_RATES attribute should always be part
+of a NL80211_CMD_SET_TX_BITRATE_MASK command.
+
+In case the disabled parameter in the nl80211_disable_11b_rates()
+is false, the attribute that should be left out of the command
+message is NL80211_TXRATE_LEGACY - this way, the bitrate mask
+will be reset to its default.
+
+Signed-off-by: Guy Eilam <guy@wizery.com>
+---
+ src/drivers/driver_nl80211.c |   10 ++++------
+ 1 files changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/src/drivers/driver_nl80211.c b/src/drivers/driver_nl80211.c
+index 69093b4..4dc45df 100644
+--- a/src/drivers/driver_nl80211.c
++++ b/src/drivers/driver_nl80211.c
+@@ -6364,9 +6364,6 @@ static int nl80211_disable_11b_rates(struct wpa_driver_nl80211_data *drv,
+ 		    NL80211_CMD_SET_TX_BITRATE_MASK, 0);
+ 	NLA_PUT_U32(msg, NL80211_ATTR_IFINDEX, ifindex);
+ 
+-	if (!disabled)
+-		goto nla_send;
+-
+ 	bands = nla_nest_start(msg, NL80211_ATTR_TX_RATES);
+ 	if (!bands)
+ 		goto nla_put_failure;
+@@ -6379,12 +6376,13 @@ static int nl80211_disable_11b_rates(struct wpa_driver_nl80211_data *drv,
+ 	band = nla_nest_start(msg, NL80211_BAND_2GHZ);
+ 	if (!band)
+ 		goto nla_put_failure;
+-	NLA_PUT(msg, NL80211_TXRATE_LEGACY, 8,
+-		"\x0c\x12\x18\x24\x30\x48\x60\x6c");
++	if (disabled)
++		NLA_PUT(msg, NL80211_TXRATE_LEGACY, 8,
++			    "\x0c\x12\x18\x24\x30\x48\x60\x6c");
+ 	nla_nest_end(msg, band);
+ 
+ 	nla_nest_end(msg, bands);
+-nla_send:
++
+ 	ret = send_and_recv_msgs(drv, msg, NULL, NULL);
+ 	msg = NULL;
+ 	if (ret) {
+-- 
+1.7.0.4
+

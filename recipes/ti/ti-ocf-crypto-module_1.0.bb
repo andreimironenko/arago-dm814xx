@@ -7,7 +7,7 @@ COMPATIBLE_MACHINE = "am37x-evm"
 SRC_URI = "svn://gforge.ti.com/svn/arm_crypto/;module=trunk;proto=https;user=anonymous;pswd=''"
 
 #gforge source revision
-SRCREV = "11"
+SRCREV = "13"
 
 PACKAGE_STRIP = "no"
 

@@ -1,6 +1,6 @@
 DESCRIPTION = "Target packages for a standalone Arago SDK or external toolchain"
 ALLOW_EMPTY = "1"
-PR = "r7"
+PR = "r10"
 
 PACKAGES = "${PN}"
 
@@ -10,6 +10,17 @@ PACKAGES = "${PN}"
 # Also feel free to remove stuff that's silly.
 
 RDEPENDS_${PN} = "\
+    glibc \
+    glibc-dbg \
+    virtual-libc-dev \
+    glibc-utils \
+    libsegfault \
+    glibc-thread-db \
+    libgcc \
+    libstdc++ \
+    libstdc++-dev \
+    linux-libc-headers-dev \
+    gdbserver \
     alsa-dev \
     alsa-lib-dev \
     alsa-utils-dev \
@@ -27,7 +38,6 @@ RDEPENDS_${PN} = "\
     libusb1-dev \
     libvolume-id-dev \
     zlib-dev \
-    mtd-utils-dev \
     ncurses-dev \
     opkg-dev \
 #    sysvinit-dev \

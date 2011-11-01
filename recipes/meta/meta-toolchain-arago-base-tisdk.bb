@@ -3,8 +3,7 @@ TOOLCHAIN_TARGET_TASK ?= "task-arago-toolchain-base-tisdk-target"
 
 require meta-toolchain-arago.bb
 
-PR = "r2"
-SDK_SUFFIX = "sdk"
+PR = "r3"
 
 do_populate_sdk_append() {
     script="${SDK_OUTPUT}/${SDKPATH}/environment-setup"
@@ -47,5 +46,5 @@ do_populate_sdk_append() {
 
     # Repack SDK with new environment-setup and licenses
     cd ${SDK_OUTPUT}
-    fakeroot tar cfz ${SDK_DEPLOY}/${TOOLCHAIN_OUTPUTNAME}.tar.gz .
+    fakeroot tar cfj ${SDK_DEPLOY}/${TOOLCHAIN_OUTPUTNAME}.tar.bz2 .
 }

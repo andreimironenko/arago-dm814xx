@@ -41,7 +41,7 @@ echo "This step will set up the tftp server in the $tftproot directory."
 echo
 echo "Note! This command requires you to have administrator priviliges (sudo access) "
 echo "on your host."
-read -p "Press return to continue"
+read -p "Press return to continue" REPLY
 
 if [ -d $tftproot ]; then
     echo
@@ -55,11 +55,12 @@ else
     check_status
 fi
 
-uimagesrc=`ls -1 $cwd/../board-support/prebuilt-images/uImage*.bin`
-uimage=`basename $uimagesrc`
+platform=`cat $cwd/../Rules.make | grep -e "^PLATFORM=" | cut -d= -f2`
+uimage="uImage-""$platform"".bin"
+uimagesrc=`ls -1 $cwd/../board-support/prebuilt-images/$uimage`
 if [ -f $tftproot/$uimage ]; then
     echo
-    echo "$tftproot/$uimage already exists. The new installed file can be renamed and saved under the new name."
+    echo "$tftproot/$uimage already exists. The existing installed file can be renamed and saved under the new name."
     echo "(r) rename (o) overwrite (s) skip copy "
     read -p "[r] " exists
     case "$exists" in
@@ -71,12 +72,14 @@ if [ -f $tftproot/$uimage ]; then
          echo "Successfully overwritten $uimage in tftp root directory $tftproot"
          ;;
       *) dte="`date +%m%d%Y`_`date +%H`.`date +%M`"
-         echo "Name of new uimage: "
+         echo "New name for existing uImage: "
          read -p "[ $uimage.$dte ]" newname
          if [ ! -n "$newname" ]; then
              newname="$uimage.$dte"
          fi
-         sudo cp $uimagesrc $tftproot/$newname 
+         sudo mv "$tftproot/$uimage" "$tftproot/$newname"
+         check_status
+         sudo cp $uimagesrc $tftproot 
          check_status
          echo
          echo "Successfully copied $uimage to tftp root directory $tftproot as $newname"
@@ -93,8 +96,9 @@ echo
 if [ -f $tftpcfg ]; then
     echo "$tftpcfg already exists.."
 
+    #Use = instead of == for POSIX and dash shell compliance
     if [ "`cat $tftpcfg | grep server_args | cut -d= -f2 | sed 's/^[ ]*//'`" \
-          == "$tftproot" ]; then
+          = "$tftproot" ]; then
         echo "$tftproot already exported for TFTP, skipping.."
     else
         echo "Copying old $tftpcfg to $tftpcfg.old"

@@ -43,7 +43,7 @@ else
     echo
 fi
 
-uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*.bin`
+uimagesrc=`ls -1 $cwd/../board-support/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
 baseargs="console=ttyO0,115200n8 rw mem=99M@0x80000000 mpurate=720"

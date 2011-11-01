@@ -1,0 +1,33 @@
+From d971bf9959357e4fec90c3601d749e2cdee68b63 Mon Sep 17 00:00:00 2001
+From: Guy Eilam <guy@wizery.com>
+Date: Sun, 17 Jul 2011 19:44:43 +0300
+Subject: [PATCH 24/32] wpa_supplicant: fix call to preauth candidate list generation
+
+Moved the call to the processing of the scan results for
+RSN pre-authentication candidates to an earlier position.
+This call was ignored most of the times due to a skip that
+is issues whenever the supplicant decides that there is no
+need to roam.
+---
+ wpa_supplicant/events.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/wpa_supplicant/events.c b/wpa_supplicant/events.c
+index b1e78b7..de68b13 100644
+--- a/wpa_supplicant/events.c
++++ b/wpa_supplicant/events.c
+@@ -949,10 +949,10 @@ static int _wpa_supplicant_event_scan_results(struct wpa_supplicant *wpa_s,
+ 		skip = !wpa_supplicant_need_to_roam(wpa_s, selected, ssid,
+ 						    scan_res);
+ 		wpa_scan_results_free(scan_res);
++		wpa_supplicant_rsn_preauth_scan_results(wpa_s);
+ 		if (skip)
+ 			return 0;
+ 		wpa_supplicant_connect(wpa_s, selected, ssid);
+-		wpa_supplicant_rsn_preauth_scan_results(wpa_s);
+ 	} else {
+ 		wpa_scan_results_free(scan_res);
+ 		wpa_dbg(wpa_s, MSG_DEBUG, "No suitable network found");
+-- 
+1.7.0.4
+

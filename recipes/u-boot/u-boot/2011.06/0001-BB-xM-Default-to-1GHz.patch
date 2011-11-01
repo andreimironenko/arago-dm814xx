@@ -1,0 +1,97 @@
+From 4defbf490d99de742c99e94fb9bd0fc9b2f1a143 Mon Sep 17 00:00:00 2001
+From: Greg Guyotte <gguyotte@ti.com>
+Date: Thu, 30 Jun 2011 16:30:51 -0500
+Subject: [PATCH] BB xM Default to 1GHz
+
+Change default CPU rate to 1GHz on BB xM (rev C only).  Bump voltage to 1.35V.
+
+Upstream-Status:Pending
+Signed-off-by: Greg Guyotte <gguyotte@ti.com>
+---
+ arch/arm/cpu/armv7/omap3/clock.c |   15 +++++++++++++++
+ board/ti/beagle/beagle.c         |    4 ++++
+ drivers/power/twl4030.c          |   13 +++++++++++++
+ include/twl4030.h                |    2 ++
+ 4 files changed, 34 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/cpu/armv7/omap3/clock.c b/arch/arm/cpu/armv7/omap3/clock.c
+index 6a9edcf..9a49245 100644
+--- a/arch/arm/cpu/armv7/omap3/clock.c
++++ b/arch/arm/cpu/armv7/omap3/clock.c
+@@ -690,3 +690,18 @@ void per_clocks_enable(void)
+
+	sdelay(1000);
+ }
++
++/*
++ * For Beagle XM, we can go up to 1000MHz, but VDD1_VSEL should be
++ * raised to 1.35V.
++ */
++void set_mpu_clk(int speed)
++{
++        struct prcm *prcm_base = (struct prcm *)PRCM_BASE;
++
++        /* Set M */
++        sr32(&prcm_base->clksel1_pll_mpu, 8, 11, speed);
++
++        /* lock mode */
++        sr32(&prcm_base->clken_pll_mpu, 0, 3, PLL_LOCK);
++}
+diff --git a/board/ti/beagle/beagle.c b/board/ti/beagle/beagle.c
+index 4798194..ee280d5 100644
+--- a/board/ti/beagle/beagle.c
++++ b/board/ti/beagle/beagle.c
+@@ -52,6 +52,8 @@ extern volatile struct ehci_hcor *hcor;
+ #include "beagle.h"
+ #include <command.h>
+
++extern void set_mpu_clk(int speed);
++
+ #define pr_debug(fmt, args...) debug(fmt, ##args)
+
+ #define TWL4030_I2C_BUS			0
+@@ -248,6 +250,8 @@ int misc_init_r(void)
+					TWL4030_PM_RECEIVER_VAUX2_VSEL_18,
+					TWL4030_PM_RECEIVER_VAUX2_DEV_GRP,
+					TWL4030_PM_RECEIVER_DEV_GRP_P1);
++		twl4030_power_mpu_init();
++                set_mpu_clk(1000);
+		break;
+	default:
+		printf("Beagle unknown 0x%02x\n", get_board_revision());
+diff --git a/drivers/power/twl4030.c b/drivers/power/twl4030.c
+index 5a7323a..ad54b67 100644
+--- a/drivers/power/twl4030.c
++++ b/drivers/power/twl4030.c
+@@ -103,3 +103,16 @@ void twl4030_power_mmc_init(void)
+				TWL4030_PM_RECEIVER_VMMC1_DEV_GRP,
+				TWL4030_PM_RECEIVER_DEV_GRP_P1);
+ }
++
++#define VDD1_VSEL_14     0x3C
++
++void twl4030_power_mpu_init(void)
++{
++        unsigned char byte;
++
++        /* 1.4 Volts */
++        byte = VDD1_VSEL_14;
++        twl4030_i2c_write_u8(TWL4030_CHIP_PM_RECEIVER,
++                             byte,
++                             TWL4030_PM_RECEIVER_VDD1_VSEL);
++}
+diff --git a/include/twl4030.h b/include/twl4030.h
+index 930c285..f72e589 100644
+--- a/include/twl4030.h
++++ b/include/twl4030.h
+@@ -518,6 +518,8 @@ void twl4030_pmrecv_vsel_cfg(u8 vsel_reg, u8 vsel_val,
+ void twl4030_power_init(void);
+ /* For initializing mmc power */
+ void twl4030_power_mmc_init(void);
++/* For increasing MPU voltage */
++void twl4030_power_mpu_init(void);
+
+ /*
+  * LED
+--
+1.7.0.4

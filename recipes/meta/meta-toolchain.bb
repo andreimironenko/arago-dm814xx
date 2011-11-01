@@ -131,12 +131,7 @@ do_populate_sdk() {
 
 	# Fix or remove broken .la files
 	for i in `find ${SDK_OUTPUT}/${SDKPATH}/${TARGET_SYS} -name \*.la`; do
-		sed -i 	-e "/^dependency_libs=/s,\([[:space:]']\)${base_libdir},\1\$SDK_PATH/\$TARGET_SYS${base_libdir},g" \
-			-e "/^dependency_libs=/s,\([[:space:]']\)${libdir},\1\$SDK_PATH/\$TARGET_SYS${libdir},g" \
-			-e "/^dependency_libs=/s,\-\([LR]\)${base_libdir},-\1\$SDK_PATH/\$TARGET_SYS${base_libdir},g" \
-			-e "/^dependency_libs=/s,\-\([LR]\)${libdir},-\1\$SDK_PATH/\$TARGET_SYS${libdir},g" \
-			-e "/^dependency_libs=/s,${TOOLCHAIN_SYSPATH},\$TOOLCHAIN_PATH/\$TARGET_SYS,g" \
-			-e 's/^installed=yes$/installed=no/' $i
+		rm -f $i
 	done
 	rm -f ${SDK_OUTPUT}/${SDKPATH}/lib/*.la
 
@@ -150,8 +145,18 @@ do_populate_sdk() {
 	# Create environment setup script
 	script=${SDK_OUTPUT}/${SDKPATH}/environment-setup
 	touch $script
-	echo 'export SDK_PATH=${SDKPATH}' >> $script
-	echo 'export TOOLCHAIN_PATH=${TOOLCHAIN_PATH}' >> $script
+	echo 'SDK_PATH="${SDKPATH}"' >> $script
+	echo 'if [ -z "$ZSH_NAME" ] && [ "x$0" = "x./environment-setup" ]; then' >> $script
+	echo '    echo "Error: This script needs to be sourced. Please run as \". ./environment-setup\""' >> $script
+	echo '    exit 1' >> $script
+	echo 'else' >> $script
+	echo '    if [ -n "$BASH_SOURCE" ]; then' >> $script
+	echo '        SDK_PATH="`dirname $BASH_SOURCE`"' >> $script
+	echo '    fi' >> $script
+	echo '    SDK_PATH=`readlink -f "$SDK_PATH"`' >> $script
+	echo '    export SDK_PATH' >> $script
+	echo 'fi' >> $script
+	echo '${@base_conditional('TOOLCHAIN_INCLUDE_IN_SDK', '1', 'export TOOLCHAIN_PATH=$SDK_PATH', 'export TOOLCHAIN_PATH=${TOOLCHAIN_PATH}', d)}' >> $script
 	echo 'export TARGET_SYS=${TARGET_SYS}' >> $script
 	echo 'export CC=${TARGET_PREFIX}gcc' >> $script	
 	echo 'export CPP="${TARGET_PREFIX}gcc -E"' >> $script	
@@ -179,6 +184,15 @@ do_populate_sdk() {
 	echo 'Distro Version: ${DISTRO_VERSION}' >> $versionfile
 	echo 'Metadata Revision: ${METADATA_REVISION}' >> $versionfile
 	echo 'Timestamp: ${DATETIME}' >> $versionfile
+
+	# Add README file
+	readmefile=${SDK_OUTPUT}/${SDKPATH}/README
+	touch $readmefile
+	echo 'For best results in using this cross-compilation toolchain,' >> $readmefile
+	echo 'please source the "environment-setup" script as follows:' >> $readmefile
+	echo '  $ . ./environment-setup' >> $readmefile
+	echo 'or:' >> $readmefile
+	echo '  $ . /installed/path/environment-setup' >> $readmefile
 
 	modify_opkg_conf
 

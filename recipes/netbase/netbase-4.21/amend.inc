@@ -3,4 +3,4 @@
 # only provide own version of interfaces file
 
 # Set the suffix to specify amended packages
-PR_append = "-arago2"
+PR_append = "-arago3"

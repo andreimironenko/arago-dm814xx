@@ -3,8 +3,9 @@ DESCRIPTION = "Linux kernel for DaVinci EVM from PSP, based on linux-davinci ker
 LICENSE = "GPLv2"
 KERNEL_IMAGETYPE = "uImage"
 
-#require recipes/linux/multi-kernel.inc
-inherit kernel 
+require recipes/linux/multi-kernel.inc
+require copy-defconfig.inc
+require setup-defconfig.inc
 
 BRANCH ?= "master"
 
@@ -19,9 +20,3 @@ MULTI_CONFIG_BASE_SUFFIX = ""
 
 KERNEL_IMAGE_BASE_NAME = "${KERNEL_IMAGETYPE}-${PV}-${MACHINE}"
 MODULES_IMAGE_BASE_NAME = "modules-${PV}-${MACHINE}"
-
-# Do not include generic linux.inc, but copy defconfig in place
-addtask setup_defconfig before do_configure after do_patch
-do_setup_defconfig() {
-	cp ${WORKDIR}/defconfig ${S}/.config
-}

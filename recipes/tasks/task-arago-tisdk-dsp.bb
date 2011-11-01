@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install dsp binaries on ${MACHINE}"
-PR = "r16"
+PR = "r18"
 LICENSE="MIT"
 ALLOW_EMPTY = "1"
 
@@ -75,10 +75,13 @@ DSP_COMPONENTS_dm814x-evm = "\
 DSP_COMPONENTS_am180x-evm = ""
 DSP_COMPONENTS_am181x-evm = ""
 DSP_COMPONENTS_am37x-evm = ""
+DSP_COMPONENTS_beagleboard = ""
 DSP_COMPONENTS_am3517-evm = ""
 DSP_COMPONENTS_am389x-evm = ""
 DSP_COMPONENTS_am387x-evm = ""
 DSP_COMPONENTS_am45x-evm = ""
+DSP_COMPONENTS_am335x-evm = ""
+DSP_COMPONENTS_am3359-evm = ""
 
 DSP_COMPONENTS = ""
 

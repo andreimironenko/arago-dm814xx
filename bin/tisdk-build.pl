@@ -503,7 +503,7 @@ sub copy_output
     }
 
     print "\nCopying sdk tarball  ...";
-    $cmd = "cp $arago_dir/arago-tmp/deploy/glibc/sdk/arago*$march-*sdk.tar.gz $sdkpath/devel/ ";    
+    $cmd = "cp $arago_dir/arago-tmp/deploy/glibc/sdk/arago*$march-*sdk.tar.bz2 $sdkpath/devel/ ";    
     $result = system($cmd);
     if ($result) {
         print "\nERROR: Failed to execute command $cmd\n";

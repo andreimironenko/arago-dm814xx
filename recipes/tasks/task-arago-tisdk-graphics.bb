@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r12"
+PR = "r19"
 LICENSE = "MIT"
 
 inherit task
@@ -11,19 +11,48 @@ QTWIDGET_DEMO_omapl138 = "qt-embedded-widgets-demo"
 
 FFT_DEMO = ""
 FFT_DEMO_ti816x = "\
-    qwt \
     "
 
 FFT_DEMO_ti814x = "\
     qwt \
     "
 
-MATRIX_APPS = "\
+MATRIX_APPS_COMMON = "matrix-gui-coming-soon \
+                      matrix-gui-crypto-demos \
+                      matrix-gui-qt4-demos \
+                      "
+MATRIX_APPS_COMMON_dm816x-evm = "\
     libxml2 \
     matrix-gui-e \
-    ${QTWIDGET_DEMO} \
-    ${FFT_DEMO} \
-    "
+    qwt \
+"
+
+MATRIX_APPS_COMMON_dm814x-evm = "\
+    libxml2 \
+    matrix-gui-e \
+    qwt \
+"
+
+MATRIX_APPS = ""
+MATRIX_APPS_omap3 = "matrix-gui-clocks-300mhz \
+                     matrix-gui-clocks-600mhz \
+                     matrix-gui-clocks-800mhz \
+                     matrix-gui-clocks-1ghz \
+                     matrix-gui-wifi-demos \
+                     matrix-gui-3d-demos \
+                     matrix-gui-display-control \
+                     matrix-gui-pm-demos \
+                     "
+
+# For now add some explicit submenus to get a consistent look and feel
+MATRIX_APPS_ti33x = "matrix-gui-3d-demos \
+                     matrix-gui-submenus-wifi \
+                     matrix-gui-submenus-multimedia \
+                     matrix-gui-submenus-usb \
+                     matrix-gui-submenus-ethernet \
+                     matrix-gui-submenus-power \
+                     matrix-gui-submenus-pru \
+                     "
 
 # Install 3D graphics for all omap3 SOC_FAMILY devices
 GRAPHICS_3D = ""
@@ -37,6 +66,7 @@ RDEPENDS_${PN} = "\
     qt4-embedded-plugin-imageformat-gif \
     qt4-embedded-plugin-imageformat-jpeg \
     libxml2 \
+    ${MATRIX_APPS_COMMON} \
     ${MATRIX_APPS} \
     ${QTWIDGET_DEMO} \
     ${GRAPHICS_3D} \

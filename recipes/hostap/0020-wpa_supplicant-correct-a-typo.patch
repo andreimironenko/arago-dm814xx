@@ -1,0 +1,25 @@
+From 7b40276f77d14ece1bda7e5b82a957f919371034 Mon Sep 17 00:00:00 2001
+From: Guy Eilam <guy@wizery.com>
+Date: Thu, 7 Jul 2011 20:28:45 +0300
+Subject: [PATCH 20/32] wpa_supplicant: correct a typo
+
+---
+ wpa_supplicant/ctrl_iface.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/wpa_supplicant/ctrl_iface.c b/wpa_supplicant/ctrl_iface.c
+index 8586f91..7ec2053 100644
+--- a/wpa_supplicant/ctrl_iface.c
++++ b/wpa_supplicant/ctrl_iface.c
+@@ -40,7 +40,7 @@
+ #include "ctrl_iface.h"
+ #ifdef ANDROID
+ #include "blacklist.h"
+-#endif /* ANDROIRD */
++#endif /* ANDROID */
+ 
+ extern struct wpa_driver_ops *wpa_drivers[];
+ 
+-- 
+1.7.0.4
+

@@ -45,6 +45,8 @@ ES3LOCATION ?= "${S}/gfx_rel_es3.x"
 ES5LOCATION ?= "${S}/gfx_rel_es5.x"
 ES6LOCATION ?= "${S}/gfx_rel_es6.x"
 
+LIBGLESWINDOWSYSTEM ?= "libpvrPVR2D_FRONTWSEGL.so.1"
+
 do_configure() {
 	# Attempt to fix up the worst offenders for file permissions
 	for i in $(find ${S} -name "*.h") $(find ${S} -name "*.c") $(find ${S} -name "Make*") ; do
@@ -102,7 +104,7 @@ do_compile() {
 		for demo in ${S}/GFX_Linux_SDK/OGLES2/SDKPackage/Demos/* ; do
 			cd $demo/OGLES2/Build/LinuxGeneric
 			oe_runmake Common=1 PLATFORM=$PLATFORM X11BUILD=$X11BUILD  
-			rm $demo/OGLES2/Build/LinuxOMAP3/Release*/*.o
+			rm -f $demo/OGLES2/Build/LinuxOMAP3/Release*/*.o
 			install -m 0755 $demo/OGLES2/Build/LinuxOMAP3/ReleaseX11/* ${S}/demos/x11 || true
 			sed -e s:NAME:$(basename $demo): \
 			    -e s:EXEC:${bindir}/SGX/demos/X11/$(basename $demo/OGLES2/Build/LinuxOMAP3/ReleaseX11/*): \
@@ -113,6 +115,8 @@ do_compile() {
 
 	mkdir -p ${S}/trainingcourses/raw
 	mkdir -p ${S}/trainingcourses/x11
+
+	find ${S} -name "*_org" -delete
 
 	# Build OGLES2 Trainingcourses for both Raw and X11
 	for X11BUILD in 0 1 ; do
@@ -126,7 +130,7 @@ do_compile() {
 			fi			
 
 			oe_runmake Common=1 PLATFORM=$PLATFORM X11BUILD=$X11BUILD  
-			rm $training/OGLES2/Build/LinuxOMAP3/Release*/*.o
+			rm -f $training/OGLES2/Build/LinuxOMAP3/Release*/*.o
 			install -m 0755 $training/OGLES2/Build/LinuxOMAP3/ReleaseX11/* ${S}/trainingcourses/x11 || true
 			install -m 0755 $training/OGLES2/Build/LinuxOMAP3/ReleaseRaw/* ${S}/trainingcourses/raw || true	
 		done
@@ -160,14 +164,14 @@ do_install () {
 	cp -pPr ${S}/GFX_Linux_SDK/OVG/SDKPackage/Builds/OVG/Include/v* ${D}${includedir}/ || true
 	cp -pPr ${S}/GFX_Linux_SDK/OVG/SDKPackage/Builds/OVG/Include/V* ${D}${includedir}/ || true
 	cp -pPr ${S}/include/*.h ${D}${includedir} || true
+	cp -pPr ${S}/include/wsegl/*.h ${D}${includedir} || true
 	
 	install -d ${D}${sysconfdir}/init.d/
 	cp -pP ${WORKDIR}/rc.pvr ${D}${sysconfdir}/init.d/pvr-init
 
 	install -d ${D}${sysconfdir}
 	echo "[default]" > ${D}${sysconfdir}/powervr.ini
-	echo "#WindowSystem=libpvrPVR2D_FRONTWSEGL.so.1" >> ${D}${sysconfdir}/powervr.ini
-	echo "WindowSystem=libpvrPVR2D_FLIPWSEGL.so.1" >> ${D}${sysconfdir}/powervr.ini
+	echo "WindowSystem=${LIBGLESWINDOWSYSTEM}" >> ${D}${sysconfdir}/powervr.ini
 
 	# The ES2.x, ES3.x, ES5.x and ES6.x CPUs have different SGX hardware, so we need to install multiple sets of userspace
 
@@ -267,14 +271,12 @@ RDEPENDS_${PN} += "fbset devmem2"
 
 #HACK! These are binaries, so we can't guarantee that LDFLAGS match :(
 INSANE_SKIP_${PN} = True
-INSANE_SKIP_${PN}-dev = True
 INSANE_SKIP_${PN}-blitwsegl = True
 INSANE_SKIP_${PN}-flipwsegl = True
 INSANE_SKIP_${PN}-frontwsegl = True
 INSANE_SKIP_${PN}-linuxfbwsegl = True
 INSANE_SKIP_${PN}-x11wsegl = True
 INSANE_SKIP_${PN}-tests = True
-INSANE_SKIP_${PN}-rawtrainingcourses = True
 INSANE_SKIP_xserver-kdrive-powervrsgx = True
 
 # Quality control is really poor on these SDKs, so hack around the latest madness:

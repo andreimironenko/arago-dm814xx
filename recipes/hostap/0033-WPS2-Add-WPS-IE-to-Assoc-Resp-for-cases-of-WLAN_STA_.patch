@@ -1,0 +1,41 @@
+From efbb7dde3a2999202894a7ba84dc5ccb620c527c Mon Sep 17 00:00:00 2001
+From: Guy Eilam <guy@wizery.com>
+Date: Sun, 14 Aug 2011 20:12:17 +0300
+Subject: [PATCH 1/9] WPS2: Add WPS IE to Assoc Resp for cases of WLAN_STA_MAYBE_WPS
+
+Add a WPS IE to the Association Response even when
+the STA is only maybe trying to connect using WPS.
+This change is needed according to test 4.2.12 in the WSC 2.0
+Testplan.
+A WPS IE is needed even in cases that a station which supports
+WPS1 tries to connect and doesn't have any WPS IE, RSN IE and WPA IE.
+
+This change might cause the WPS IE to be sent also in an Association
+Response when a STA tries to connect to an Open Network AP (which
+is configured to WPS).
+---
+ src/ap/ieee802_11.c |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
+
+diff --git a/src/ap/ieee802_11.c b/src/ap/ieee802_11.c
+index a34a891..0ed29b1 100644
+--- a/src/ap/ieee802_11.c
++++ b/src/ap/ieee802_11.c
+@@ -929,7 +929,14 @@ static void send_assoc_resp(struct hostapd_data *hapd, struct sta_info *sta,
+ 		p = hostapd_eid_wmm(hapd, p);
+ 
+ #ifdef CONFIG_WPS
++#ifdef CONFIG_WPS2
++	/* WPS2 must have a WPS IE in the Assoc Resp
++	 * even if there's only a small chance that the STA
++	 * tries to connect using WPS */
++	if (sta->flags & (WLAN_STA_WPS | WLAN_STA_MAYBE_WPS)) {
++#else /* CONFIG_WPS2 */
+ 	if (sta->flags & WLAN_STA_WPS) {
++#endif /* CONFIG_WPS2 */
+ 		struct wpabuf *wps = wps_build_assoc_resp_ie();
+ 		if (wps) {
+ 			os_memcpy(p, wpabuf_head(wps), wpabuf_len(wps));
+-- 
+1.7.0.4
+

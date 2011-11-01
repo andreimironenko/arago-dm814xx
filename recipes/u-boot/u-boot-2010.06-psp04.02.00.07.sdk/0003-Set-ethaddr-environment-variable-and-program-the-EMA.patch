@@ -1,0 +1,77 @@
+From 64aecbfc38f7dec6b3a4d47d214c3f6d2c338d42 Mon Sep 17 00:00:00 2001
+From: Steve Kipisz <s-kipisz2@ti.com>
+Date: Tue, 28 Jun 2011 13:23:13 -0500
+Subject: [PATCH 3/3] Set ethaddr environment variable and program the EMAC with the MAC address read from AM35xx.
+
+Signed-off-by: Steve Kipisz <s-kipisz2@ti.com>
+---
+ arch/arm/include/asm/arch-omap3/emac_defs.h |    3 ++
+ board/logicpd/am3517evm/am3517evm.c         |   37 ++++++++++++++++++++++++--
+ 2 files changed, 37 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/include/asm/arch-omap3/emac_defs.h b/arch/arm/include/asm/arch-omap3/emac_defs.h
+index 7f9b194..80309fa 100644
+--- a/arch/arm/include/asm/arch-omap3/emac_defs.h
++++ b/arch/arm/include/asm/arch-omap3/emac_defs.h
+@@ -42,6 +42,9 @@
+ #define EMAC_MDIO_BASE_ADDR            0x5C030000
+ #define EMAC_HW_RAM_ADDR               0x01E20000
+ 
++#define EMAC_MACADDR_LSB	       0x48002380
++#define EMAC_MACADDR_MSB	       0x48002384
++
+ #define EMAC_MDIO_BUS_FREQ             166000000       /* 166 MHZ check */
+ #define EMAC_MDIO_CLOCK_FREQ           1000000         /* 2.0 MHz */
+ 
+diff --git a/board/logicpd/am3517evm/am3517evm.c b/board/logicpd/am3517evm/am3517evm.c
+index ecf1236..52e6dba 100644
+--- a/board/logicpd/am3517evm/am3517evm.c
++++ b/board/logicpd/am3517evm/am3517evm.c
+@@ -115,10 +115,41 @@ int misc_init_r(void)
+ int cpu_eth_init(bd_t *bis)
+ {
+ #if defined(CONFIG_DRIVER_TI_EMAC)
+-       printf("davinci_emac_initialize\n");
+-       davinci_emac_initialize();
++	char mac_buf_msb[9], mac_buf_lsb[9];
++	char mac_id[20];
++	u_int8_t macaddr[6];
++	int      i;
++	unsigned long  msb, lsb;
++
++	msb = readl(EMAC_MACADDR_MSB);
++	lsb = readl(EMAC_MACADDR_LSB);
++	sprintf(mac_buf_msb, "%8.8x", msb);
++	sprintf(mac_buf_lsb, "%8.8x", lsb);
++	memset(mac_id, '\0', sizeof(mac_id));
++	sprintf(mac_id, "%c%c:%c%c:%c%c:%c%c:%c%c:%c%c",
++		mac_buf_msb[2], mac_buf_msb[3],
++		mac_buf_msb[4], mac_buf_msb[5],
++		mac_buf_msb[6], mac_buf_msb[7],
++		mac_buf_lsb[2], mac_buf_lsb[3],
++		mac_buf_lsb[4], mac_buf_lsb[5],
++		mac_buf_lsb[6], mac_buf_lsb[7]);
++
++	setenv("ethaddr", mac_id);
++
++	for (i=0; i<3; i++) {
++		macaddr[5-i] = lsb & 0xFF;
++		lsb >>= 8;
++	}	
++	for (i=0; i<3; i++) {
++		macaddr[2-i] = msb & 0xFF;
++		msb >>= 8;
++	}	
++	davinci_eth_set_mac_addr(macaddr);
++
++	printf("davinci_emac_initialize\n");
++	davinci_emac_initialize();
+ #endif
+-       return 0;
++	return 0;
+  }
+ 
+ 
+-- 
+1.7.0.4
+

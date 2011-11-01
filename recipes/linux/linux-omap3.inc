@@ -4,6 +4,8 @@ LICENSE = "GPLv2"
 KERNEL_IMAGETYPE = "uImage"
 
 inherit kernel
+require copy-defconfig.inc
+require setup-defconfig.inc
 
 SRC_URI = "git://arago-project.org/git/projects/linux-omap3.git;protocol=git;branch=ti81xx-master \
 	file://defconfig"
@@ -12,9 +14,3 @@ SRC_URI = "git://arago-project.org/git/projects/linux-omap3.git;protocol=git;bra
 COMPATIBLE_MACHINE = "omap3"
 
 S = "${WORKDIR}/git"
-
-# Do not include generic linux.inc, but copy defconfig in place
-addtask setup_defconfig before do_configure after do_patch
-do_setup_defconfig() {
-	cp ${WORKDIR}/defconfig ${S}/.config
-}

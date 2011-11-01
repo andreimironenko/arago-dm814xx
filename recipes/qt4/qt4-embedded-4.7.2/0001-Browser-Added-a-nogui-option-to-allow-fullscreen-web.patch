@@ -1,0 +1,119 @@
+From 20cfcf6d4ff8ecbe378d7c5af304ecd665c844f1 Mon Sep 17 00:00:00 2001
+From: Thomas Potthast <tpotthast@ti.com>
+Date: Mon, 25 Jul 2011 10:39:50 -0500
+Subject: [PATCH] Browser: Added a -nogui option to allow fullscreen web apps.
+
+*When run with the nogui option, all window decoration is removed
+and the background is set to black.
+	*This is useful to allow web apps to give the same user
+	experience as a native app without the distraction of
+	toolbars or the URL bar.
+	*It also allows a fullscreen web app to be the primary
+	user interface on a device, which may be useful in areas
+	where a fullblown desktop environment is not as well suited.
+*Additionally, it preserves screen space when used on very small
+screens (eg 640 x 480 and smaller).
+	*Previously, window decoration took up a significant portion
+	of the screen and greatly reduced usability.
+*With this option, the browser cannot be stopped via the GUI and
+must be stopped from the command line.
+*Usage ./browser [-nogui] [url]
+
+Upstream-Status: Submitted
+
+Signed-off-by: Thomas Potthast <tpotthast@ti.com>
+---
+ demos/browser/browserapplication.cpp |   10 ++++++++--
+ demos/browser/browsermainwindow.cpp  |   14 +++++++++++++-
+ demos/browser/browsermainwindow.h    |    2 +-
+ demos/browser/tabwidget.cpp          |    4 +++-
+ demos/browser/tabwidget.h            |    1 +
+ 5 files changed, 26 insertions(+), 5 deletions(-)
+
+diff --git a/demos/browser/browserapplication.cpp b/demos/browser/browserapplication.cpp
+index f6f2aa0..aa95ce5 100644
+--- a/demos/browser/browserapplication.cpp
++++ b/demos/browser/browserapplication.cpp
+@@ -214,10 +214,16 @@ void BrowserApplication::postLaunch()
+     // newMainWindow() needs to be called in main() for this to happen
+     if (m_mainWindows.count() > 0) {
+         QStringList args = QCoreApplication::arguments();
+-        if (args.count() > 1)
++	if(args.contains("-nogui")){
++           mainWindow()->kioskMode();
++           if(args.count() > 1){
++              mainWindow()->loadPage(args.last());
++           }
++        }else if(args.count() >= 1){
+             mainWindow()->loadPage(args.last());
+-        else
++        }else{
+             mainWindow()->slotHome();
++        }
+     }
+     BrowserApplication::historyManager();
+ }
+diff --git a/demos/browser/browsermainwindow.cpp b/demos/browser/browsermainwindow.cpp
+index 0b6db0c..37cd0aa 100644
+--- a/demos/browser/browsermainwindow.cpp
++++ b/demos/browser/browsermainwindow.cpp
+@@ -481,7 +481,19 @@ void BrowserMainWindow::setupToolBar()
+     m_chaseWidget = new ChaseWidget(this);
+     m_navigationBar->addWidget(m_chaseWidget);
+ }
+-
++void BrowserMainWindow::kioskMode(){
++     menuBar()->hide();
++     m_navigationBar->hide();
++     m_bookmarksToolbar->hide();
++     m_tabWidget->hideTaskBar();
++     this->resize(QApplication::desktop()->size());
++     this->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
++     this->setWindowFlags(Qt::FramelessWindowHint);
++     this->show();
++     this->setStyleSheet("background-color: black");
++    connect(m_tabWidget, SIGNAL(lastTabClosed()),
++            this, SLOT(close()));
++}
+ void BrowserMainWindow::slotShowBookmarksDialog()
+ {
+     BookmarksDialog *dialog = new BookmarksDialog(this);
+diff --git a/demos/browser/browsermainwindow.h b/demos/browser/browsermainwindow.h
+index 0080d88..cee43f4 100644
+--- a/demos/browser/browsermainwindow.h
++++ b/demos/browser/browsermainwindow.h
+@@ -72,7 +72,7 @@ public:
+     WebView *currentTab() const;
+     QByteArray saveState(bool withTabs = true) const;
+     bool restoreState(const QByteArray &state);
+-
++    void kioskMode();
+ public slots:
+     void loadPage(const QString &url);
+     void slotHome();
+diff --git a/demos/browser/tabwidget.cpp b/demos/browser/tabwidget.cpp
+index 6fa1d25..b6e58b7 100644
+--- a/demos/browser/tabwidget.cpp
++++ b/demos/browser/tabwidget.cpp
+@@ -830,4 +830,6 @@ void WebActionMapper::updateCurrent(QWebPage *currentParent)
+     connect(m_currentParent, SIGNAL(destroyed(QObject*)),
+             this, SLOT(currentDestroyed()));
+ }
+-
++void TabWidget::hideTaskBar(){
++    m_tabBar->hide();
++}
+diff --git a/demos/browser/tabwidget.h b/demos/browser/tabwidget.h
+index 296655e..2a33490 100644
+--- a/demos/browser/tabwidget.h
++++ b/demos/browser/tabwidget.h
+@@ -174,6 +174,7 @@ public:
+
+     QByteArray saveState() const;
+     bool restoreState(const QByteArray &state);
++    void hideTaskBar();
+
+ protected:
+     void mouseDoubleClickEvent(QMouseEvent *event);
+--
+1.7.0.4

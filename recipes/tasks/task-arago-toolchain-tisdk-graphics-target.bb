@@ -20,7 +20,6 @@ RDEPENDS_${PN} = "\
     qt4-embedded-mkspecs \
     libqt-embeddedphonon4-dev \
     libqt-embedded3support4-dev \
-    libqt-embeddedassistantclient4-dev \
     libqt-embeddedclucene4-dev \
     libqt-embeddedcore4-dev \
     libqt-embeddeddbus4-dev \

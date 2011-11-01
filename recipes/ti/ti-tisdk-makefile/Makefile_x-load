@@ -1,0 +1,15 @@
+# x-load make targets
+xload:
+	$(MAKE) -C $(TI_SDK_PATH)/board-support/x-load-* CROSS_COMPILE=$(CROSS_COMPILE) ARCH=arm distclean
+	$(MAKE) -C $(TI_SDK_PATH)/board-support/x-load-* CROSS_COMPILE=$(CROSS_COMPILE) ARCH=arm __XLOAD_MACHINE__
+	$(MAKE) -C $(TI_SDK_PATH)/board-support/x-load-* CROSS_COMPILE=$(CROSS_COMPILE) ARCH=arm
+	$(LINUX_DEVKIT_PATH)/bin/signGP $(TI_SDK_PATH)/board-support/x-load-*/x-load.bin
+
+xload_clean:
+	$(MAKE) -C $(TI_SDK_PATH)/board-support/x-load-* CROSS_COMPILE=$(CROSS_COMPILE) ARCH=arm clean
+
+xload_install:
+	install -d $(DESTDIR)/boot
+	install $(TI_SDK_PATH)/board-support/x-load-*/x-load.bin $(DESTDIR)/boot
+	install $(TI_SDK_PATH)/board-support/x-load-*/x-load.bin.ift $(DESTDIR)/boot
+

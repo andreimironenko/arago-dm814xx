@@ -45,7 +45,6 @@ ARAGO_UTILS = "\
     fbset \
     usbutils \
     i2c-tools \
-    gdbserver \
     iproute2 \
     "
 

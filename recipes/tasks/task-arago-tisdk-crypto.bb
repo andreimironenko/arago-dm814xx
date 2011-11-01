@@ -2,7 +2,7 @@
 #       that require filing for a TSU exemption or applications
 #       that depend on TSU exempt code.
 DESCRIPTION = "Task to install crypto packages into target FS"
-PR = "r10"
+PR = "r15"
 LICENSE = "MIT"
 
 inherit task
@@ -33,9 +33,7 @@ CRYPTO_SUPPORT_TSU = "\
 # Name: 0001-linux-omap3-PSP-3.0.1.6-kernel-with-OCF-Linux.patch
 # md5sum: 00bb20f2f33a37489d8c52212933368d
 # sha256sum: 1fea8323d12cf1ee4f743f0f1c82d7f3821a7d9b7996c44b17d7761579bb090d
-# Comment out the OCF crypto support until the new version can be implemented
-# based on the 2.6.37 kernel.
-# CRYPTO_SUPPORT_TSU_append_am37x-evm = " ti-ocf-crypto-module"
+CRYPTO_SUPPORT_TSU_append_am37x-evm = " ti-ocf-crypto-module"
 ################################################################################
 
 
@@ -55,22 +53,30 @@ CRYPTO_SUPPORT = "\
 # WLAN support packages.  These are added here because they depend on
 # crypto packages and are grouped with the crypto task to avoid confusion.
 
-WLAN_WL1271 = "hostap-daemon \
+# These are the packages that all platforms use for WLAN support
+WLAN_COMMON = "hostap-daemon \
                ti-wifi-utils \
                wireless-tools \
-               ti-compat-wireless-wl12xx \
-               wl1271-bluetooth \
                htop \
                netperf \
                iw \
                linux-firmware-wl12xx \
                wpa-gui-e \
+               crda \
+               softap-udhcpd-config \
+              "
+
+# These are the WLAN packages that are used for compatibility with the
+# 2.6.37 kernel used by some devices
+WLAN_COMPAT = "ti-compat-wireless-wl12xx \
+               wl1271-bluetooth \
               "
 
 # Base WLAN value is blank set
 WLAN = ""
-WLAN_am180x-evm = "${WLAN_WL1271}"
-WLAN_am37x-evm = "${WLAN_WL1271}"
+WLAN_am180x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
+WLAN_am37x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
+WLAN_beagleboard = "${WLAN_COMMON}"
 
 RDEPENDS_${PN} = "\
     ${CRYPTO_SUPPORT} \

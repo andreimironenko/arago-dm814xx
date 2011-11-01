@@ -1,0 +1,246 @@
+From 6e33c3dde60f0cc9775866fe0932ca5aeb0c2709 Mon Sep 17 00:00:00 2001
+From: Guy Eilam <guy@wizery.com>
+Date: Sun, 26 Jun 2011 00:17:14 +0300
+Subject: [PATCH 08/32] cli/ctrl_iface - added blacklist and log_level commands
+
+Added a blacklist and log_level commands for Android
+---
+ wpa_supplicant/ctrl_iface.c |  124 +++++++++++++++++++++++++++++++++++++++++++
+ wpa_supplicant/wpa_cli.c    |   65 ++++++++++++++++++++++
+ 2 files changed, 189 insertions(+), 0 deletions(-)
+
+diff --git a/wpa_supplicant/ctrl_iface.c b/wpa_supplicant/ctrl_iface.c
+index 7a34584..8586f91 100644
+--- a/wpa_supplicant/ctrl_iface.c
++++ b/wpa_supplicant/ctrl_iface.c
+@@ -38,6 +38,9 @@
+ #include "bss.h"
+ #include "scan.h"
+ #include "ctrl_iface.h"
++#ifdef ANDROID
++#include "blacklist.h"
++#endif /* ANDROIRD */
+ 
+ extern struct wpa_driver_ops *wpa_drivers[];
+ 
+@@ -912,6 +915,110 @@ static int wpa_supplicant_ctrl_iface_bssid(struct wpa_supplicant *wpa_s,
+ }
+ 
+ 
++#ifdef ANDROID
++static int wpa_supplicant_ctrl_iface_blacklist(
++		struct wpa_supplicant *wpa_s, char *cmd, char *buf, size_t buflen)
++{
++	u8 bssid[ETH_ALEN];
++	struct wpa_blacklist *e;
++	char *pos, *end;
++	int ret;
++
++	/* cmd: "BLACKLIST [<BSSID>]" */
++	if (*cmd == '\0') {
++		pos = buf;
++		end = buf + buflen;
++
++		e = wpa_s->blacklist;
++		while (e) {
++			ret = os_snprintf(pos, end-pos, MACSTR"\n", MAC2STR(e->bssid));
++			if (ret < 0 || ret >= end - pos)
++				return pos - buf;
++			pos += ret;
++			e = e->next;
++		}
++		return pos - buf;
++	}
++
++	++cmd;
++	if (os_strncmp(cmd, "clear", 5) == 0) {
++		wpa_blacklist_clear(wpa_s);
++		os_memcpy(buf, "OK\n", 3);
++		return 3;
++	}
++
++	wpa_printf(MSG_DEBUG, "CTRL_IFACE: BLACKLIST bssid='%s'", cmd);
++	if (hwaddr_aton(cmd, bssid)) {
++		wpa_printf(MSG_DEBUG ,"CTRL_IFACE: invalid BSSID '%s'", cmd);
++		return -1;
++	}
++
++	/*
++	 * Add the BSSID twice, so its count will be 2, causing it to be
++	 * skipped when processing scan results.
++	 */
++	ret = wpa_blacklist_add(wpa_s, bssid);
++	if (ret != 0)
++		return -1;
++	ret = wpa_blacklist_add(wpa_s, bssid);
++	if (ret != 0)
++		return -1;
++	os_memcpy(buf, "OK\n", 3);
++	return 3;
++}
++
++
++extern int wpa_debug_level;
++extern int wpa_debug_timestamp;
++static int wpa_supplicant_ctrl_iface_log_level(
++		struct wpa_supplicant *wpa_s, char *cmd, char *buf, size_t buflen)
++{
++	char *pos, *end, *stamp;
++	int ret;
++
++	if (cmd == NULL) {
++		return -1;
++	}
++
++	/* cmd: "LOG_LEVEL [<level>]" */
++	if (*cmd == '\0') {
++		pos = buf;
++		end = buf + buflen;
++		ret = os_snprintf(pos, end-pos, "Current level: %d\n"
++			"{0-MSGDUMP, 1-DEBUG, 2-INFO, 3-WARNING, 4-ERROR}\n"
++			"Timestamp: %d\n", wpa_debug_level, wpa_debug_timestamp);
++		if (ret < 0 || ret >= end - pos)
++			ret = 0;
++
++		return ret;
++	}
++
++	while (*cmd == ' ') {
++		cmd++;
++	}
++
++	stamp = os_strchr(cmd, ' ');
++	if (stamp) {
++		*stamp++ = '\0';
++		while (*stamp == ' ') {
++			stamp++;
++		}
++	}
++
++	if (cmd && os_strlen(cmd)) {
++		wpa_debug_level = atoi(cmd);
++	}
++
++	if (stamp && os_strlen(stamp)) {
++		wpa_debug_timestamp = atoi(stamp);
++	}
++
++	os_memcpy(buf, "OK\n", 3);
++	return 3;
++}
++#endif /* ANDROID */
++
++
+ static int wpa_supplicant_ctrl_iface_list_networks(
+ 	struct wpa_supplicant *wpa_s, char *buf, size_t buflen)
+ {
+@@ -3188,6 +3295,23 @@ char * wpa_supplicant_ctrl_iface_process(struct wpa_supplicant *wpa_s,
+ 	} else if (os_strncmp(buf, "BSSID ", 6) == 0) {
+ 		if (wpa_supplicant_ctrl_iface_bssid(wpa_s, buf + 6))
+ 			reply_len = -1;
++#ifdef ANDROID
++	} else if (os_strncmp(buf, "BLACKLIST", 9) == 0) {
++		reply_len = wpa_supplicant_ctrl_iface_blacklist(
++				wpa_s, buf + 9, reply, reply_size);
++		if (os_strlen(buf) > 10 && reply_len == 0) {
++			struct wpa_blacklist *bl = wpa_s->blacklist;
++			if (os_strncmp(buf+10, "clear", 5) == 0 ||
++			    (bl != NULL && os_memcmp(bl->bssid, wpa_s->bssid, ETH_ALEN) == 0)) {
++				wpa_s->disconnected = 0;
++				wpa_s->reassociate = 1;
++				wpa_supplicant_req_scan(wpa_s, 0, 0);
++			}
++		}
++	} else if (os_strncmp(buf, "LOG_LEVEL", 9) == 0) {
++		reply_len = wpa_supplicant_ctrl_iface_log_level(
++				wpa_s, buf + 9, reply, reply_size);
++#endif /* ANDROID */
+ 	} else if (os_strcmp(buf, "LIST_NETWORKS") == 0) {
+ 		reply_len = wpa_supplicant_ctrl_iface_list_networks(
+ 			wpa_s, reply, reply_size);
+diff --git a/wpa_supplicant/wpa_cli.c b/wpa_supplicant/wpa_cli.c
+index a1db53a..ffc79df 100644
+--- a/wpa_supplicant/wpa_cli.c
++++ b/wpa_supplicant/wpa_cli.c
+@@ -1220,6 +1220,60 @@ static int wpa_cli_cmd_bssid(struct wpa_ctrl *ctrl, int argc, char *argv[])
+ }
+ 
+ 
++#ifdef ANDROID
++static int wpa_cli_cmd_blacklist(struct wpa_ctrl *ctrl, int argc, char *argv[])
++{
++	char cmd[256], *pos, *end;
++	int i, ret;
++
++	end = cmd + sizeof(cmd);
++	pos = cmd;
++	ret = os_snprintf(pos, end - pos, "BLACKLIST");
++	if (ret < 0 || ret >= end - pos) {
++		printf("Too long BLACKLIST command.\n");
++		return -1;
++	}
++	pos += ret;
++	for (i = 0; i < argc; i++) {
++		ret = os_snprintf(pos, end - pos, " %s", argv[i]);
++		if (ret < 0 || ret >= end - pos) {
++			printf("Too long BLACKLIST command.\n");
++			return -1;
++		}
++		pos += ret;
++	}
++
++	return wpa_ctrl_command(ctrl, cmd);
++}
++
++
++static int wpa_cli_cmd_log_level(struct wpa_ctrl *ctrl, int argc, char *argv[])
++{
++	char cmd[256], *pos, *end;
++	int i, ret;
++
++	end = cmd + sizeof(cmd);
++	pos = cmd;
++	ret = os_snprintf(pos, end - pos, "LOG_LEVEL");
++	if (ret < 0 || ret >= end - pos) {
++		printf("Too long LOG_LEVEL command.\n");
++		return -1;
++	}
++	pos += ret;
++	for (i = 0; i < argc; i++) {
++		ret = os_snprintf(pos, end - pos, " %s", argv[i]);
++		if (ret < 0 || ret >= end - pos) {
++			printf("Too long LOG_LEVEL command.\n");
++			return -1;
++		}
++		pos += ret;
++	}
++
++	return wpa_ctrl_command(ctrl, cmd);
++}
++#endif /* ANDROID */
++
++
+ static int wpa_cli_cmd_list_networks(struct wpa_ctrl *ctrl, int argc,
+ 				     char *argv[])
+ {
+@@ -2388,6 +2442,17 @@ static struct wpa_cli_cmd wpa_cli_commands[] = {
+ 	{ "bssid", wpa_cli_cmd_bssid,
+ 	  cli_cmd_flag_none,
+ 	  "<network id> <BSSID> = set preferred BSSID for an SSID" },
++#ifdef ANDROID
++	{ "blacklist", wpa_cli_cmd_blacklist,
++	  cli_cmd_flag_none,
++	  "<BSSID> = add a BSSID to the blacklist\n"
++	  "blacklist clear = clear the blacklist\n"
++	  "blacklist = display the blacklist" },
++	{ "log_level", wpa_cli_cmd_log_level,
++	  cli_cmd_flag_none,
++	  "<level> [<timestamp>] = update the log level/timestamp of wpa_supplicant\n"
++	  "log_level = display the current log level and log options" },
++#endif /* ANDROID */
+ 	{ "list_networks", wpa_cli_cmd_list_networks,
+ 	  cli_cmd_flag_none,
+ 	  "= list configured networks" },
+-- 
+1.7.0.4
+

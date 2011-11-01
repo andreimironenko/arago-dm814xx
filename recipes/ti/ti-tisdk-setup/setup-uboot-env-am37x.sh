@@ -31,11 +31,12 @@ else
     echo
 fi
 
-uimagesrc=`ls -1 $cwd/../psp/prebuilt-images/uImage*`
+uimage="uImage-""$platform"".bin"
+uimagesrc=`ls -1 $cwd/../board-support/prebuilt-images/$uimage`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyO0,115200n8 rw noinitrd mpurate=1000"
-videoargs=""
+baseargs="console=ttyO0,115200n8 rw noinitrd"
+videoargs="omap_vout.vid1_static_vrfb_alloc=y"
 fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3 rootwait"
 fsnfsargs1="root=/dev/nfs nfsroot="
 fsnfsargs2="$ip:"
@@ -181,9 +182,11 @@ if [ "$minicom" = "y" ]; then
         printf "send \"$fsnfsargs2\c\"\n" >> $minicomfilepath
         printf "send \"$fsnfsargs3\c\"\n" >> $minicomfilepath
         printf "send \"$fsnfsargs4 \c\"\n" >> $minicomfilepath
+        printf "send \"$videoargs \c\"\n" >> $minicomfilepath
         echo "send \"ip=dhcp\"" >> $minicomfilepath
     else
         printf "send \"$fssdargs \c\"\n" >> $minicomfilepath
+        printf "send \"$videoargs \c\"\n" >> $minicomfilepath
         echo "send \"ip=off\"" >> $minicomfilepath
     fi
     if [ "$kernel" -eq "1" ]; then

@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support Package sources (or development header) packages on host"
-PR = "r37"
+PR = "r44"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -41,8 +41,14 @@ BSP_COMPONENTS_dm6467 = "\
     "
 
 BSP_COMPONENTS_append_omap3 = "\
-    linux-omap3-src \
     x-load-src \
+    "
+
+BSP_COMPONENTS_append_ti33x = "\
+    linux-am335x-src \
+    ti-tisdk-setup \
+    pinmux-utility \
+    bootcamp-lects \
     "
 
 BSP_COMPONENTS_append_omap4 = "\
@@ -51,6 +57,7 @@ BSP_COMPONENTS_append_omap4 = "\
 
 # Add components to omap3 components
 BSP_COMPONENTS_append_omap3evm = "\
+    linux-omap3-src \
     ti-tisdk-setup \
     ti-tisdk-mksdboot \
     flash-utility \
@@ -64,6 +71,7 @@ BSP_COMPONENTS_append_omap3evm = "\
     "
 
 BSP_COMPONENTS_append_dm37x-evm = "\
+    linux-omap3-src \
     ti-tisdk-setup \
     ti-tisdk-mksdboot \
     flash-utility \
@@ -77,21 +85,36 @@ BSP_COMPONENTS_append_dm37x-evm = "\
 
 # Add components to omap3 components
 BSP_COMPONENTS_append_am37x-evm = "\
+    linux-omap3-src \
     ti-tisdk-setup \
     flash-utility \
     pinmux-utility \
+    av-examples-src \
+    bootcamp-lects \
+    "
+
+BSP_COMPONENTS_append_beagleboard = "\
+    linux-omap-src \
+    ti-tisdk-setup \
+    flash-utility \
+    pinmux-utility \
+    bootcamp-lects \
     "
 
 BSP_COMPONENTS_append_am3517-evm = "\
+    linux-omap3-src \
     ti-tisdk-setup \
     flash-utility \
     pinmux-utility \
+    av-examples-src \
+    bootcamp-lects \
     "
 
 BSP_COMPONENTS_append_am389x-evm = "\
     ti-tisdk-setup \
     flash-utility \
     pinmux-utility \
+    bootcamp-lects \
     "
 
 BSP_COMPONENTS_omapl138 = "\
@@ -134,6 +157,14 @@ BSP_COMPONENTS_ti814x = "\
     pinmux-utility \
     ti-docs-linux-devkit \
     ti-docs-dsp-devkit \
+    "
+
+BSP_COMPONENTS_append_am180x-evm = "\
+    bootcamp-lects \
+    "
+
+BSP_COMPONENTS_append_am181x-evm = "\
+    bootcamp-lects \
     "
 
 RRECOMMENDS_${PN} = "\

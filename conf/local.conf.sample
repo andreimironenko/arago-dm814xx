@@ -16,6 +16,9 @@ DL_DIR = "${SCRATCH}/downloads"
 # Default TMPDIR is safe for multi-user environment
 TMPDIR = "${SCRATCH}/arago-tmp"
 
+# Use toolchain-unique TMPDIR when switching toolchain often
+#TMPDIR = "${SCRATCH}/arago-tmp-${TOOLCHAIN_BRAND}"
+
 # Select the machine platform to build for
 # The default value is "arago", which is a unified armv5te MACHINE
 # to build filesystem images for OMAP3 and DaVinci
@@ -27,6 +30,9 @@ MACHINE ?= "arago"
 # For now Arago is not big enough to warrant a separate distribution,
 # reuse Angstrom, but set the name to Arago
 DISTRO = "arago"
+
+# What toolchain to use (csl, arago, angstrom etc.)
+TOOLCHAIN_BRAND ?= "csl"
 
 # So far, angstrom.conf sets ENABLE_BINARY_LOCALE_GENERATION
 # to generate binary locale packages at build time using qemu-native and

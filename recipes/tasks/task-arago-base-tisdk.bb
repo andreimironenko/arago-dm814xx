@@ -22,5 +22,6 @@ RDEPENDS_${PN} = "\
     iperf \
     psplash-ti \
     u-boot \
+    arago-gpl-notice \
     ${SECONDARY_BOOTLOADER} \
     "

@@ -1,6 +1,6 @@
 DESCRIPTION = "Extended task to get System Test specific apps"
 LICENSE = "MIT"
-PR = "r1"
+PR = "r3"
 
 inherit task
 
@@ -8,7 +8,6 @@ inherit task
 MACHINE_ESSENTIAL_EXTRA_RDEPENDS ?= ""
 MACHINE_ESSENTIAL_EXTRA_RRECOMMENDS ?= ""
 
-# TODO add lmbench after conflict with line binary gets resolved
 ARAGO_TEST = "\
     bonnie++ \
     hdparm \
@@ -16,10 +15,12 @@ ARAGO_TEST = "\
     iperf \
     lmbench \
     rt-tests \
+    evtest \
+    bc \
     "
 
 ARAGO_TI_TEST = "\
-#    ltp-ddt \
+    ltp-ddt \
     "
 
 RDEPENDS_${PN} = "\

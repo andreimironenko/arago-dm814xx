@@ -1,0 +1,12 @@
+# u-boot-min-sd build targets
+u-boot-min-sd:
+	$(MAKE) -C $(TI_SDK_PATH)/board-support/u-boot-* CROSS_COMPILE=$(CROSS_COMPILE) __UBOOT_MIN_SD_MACHINE__
+	$(MAKE) -C $(TI_SDK_PATH)/board-support/u-boot-* CROSS_COMPILE=$(CROSS_COMPILE) u-boot.ti
+
+u-boot-min-sd_clean: 
+	$(MAKE) -C $(TI_SDK_PATH)/board-support/u-boot-* CROSS_COMPILE=$(CROSS_COMPILE) clean
+
+u-boot-min-sd_install:
+	install -d $(DESTDIR)/boot
+	install $(TI_SDK_PATH)/board-support/u-boot-*/u-boot.min.sd $(DESTDIR)/boot/MLO
+

@@ -1,0 +1,144 @@
+From b407647a86a886e1ebd717d1f5b8f4af3733b292 Mon Sep 17 00:00:00 2001
+From: Guy Eilam <guy@wizery.com>
+Date: Thu, 7 Jul 2011 20:29:32 +0300
+Subject: [PATCH 21/32] hostapd: add support for android created sockets (/dev/socket/)
+
+Add the same support that wpa_supplicant has with sockets created
+by the Android system using the init.rc services options
+Just as the supplicant, if the ctrl_iface is a name and not a path
+(i.e. doesn't start with '/') the hostapd will assume that this is
+an Android created socket named wpa_$(ctrl_iface) which is opened
+in /dev/socket/
+hostapd_cli sockets will be created in /data/misc/wifi/sockets
+The hardcoded configuration is set in the Android.mk of hostapd
+just like it is with the supplicant.
+
+In addition, the hostapd_cli needs an Android property by the name
+ap.interface to hold the ctrl_iface name to connect to the hostapd's
+socket.
+---
+ hostapd/Android.mk    |    3 +++
+ hostapd/ctrl_iface.c  |   14 ++++++++++++++
+ hostapd/hostapd_cli.c |   34 ++++++++++++++++++++++++++++------
+ 3 files changed, 45 insertions(+), 6 deletions(-)
+
+diff --git a/hostapd/Android.mk b/hostapd/Android.mk
+index 699736b..cbe37d4 100644
+--- a/hostapd/Android.mk
++++ b/hostapd/Android.mk
+@@ -13,6 +13,9 @@ include $(LOCAL_PATH)/config-android
+ # To ignore possible wrong network configurations
+ L_CFLAGS = -DWPA_IGNORE_CONFIG_ERRORS
+ 
++# Use Android specific directory for control interface sockets
++L_CFLAGS += -DCONFIG_CTRL_IFACE_CLIENT_DIR=\"/data/misc/wifi/sockets\"
++
+ # To force sizeof(enum) = 4
+ ifeq ($(TARGET_ARCH),arm)
+ L_CFLAGS += -mabi=aapcs-linux
+diff --git a/hostapd/ctrl_iface.c b/hostapd/ctrl_iface.c
+index 195b8a7..af165d1 100644
+--- a/hostapd/ctrl_iface.c
++++ b/hostapd/ctrl_iface.c
+@@ -19,6 +19,9 @@
+ #include <sys/un.h>
+ #include <sys/stat.h>
+ #include <stddef.h>
++#ifdef ANDROID
++#include <cutils/sockets.h>
++#endif /* ANDROID */
+ 
+ #include "utils/common.h"
+ #include "utils/eloop.h"
+@@ -944,6 +947,14 @@ int hostapd_ctrl_iface_init(struct hostapd_data *hapd)
+ 	if (hapd->conf->ctrl_interface == NULL)
+ 		return 0;
+ 
++#ifdef ANDROID
++	os_snprintf(addr.sun_path, sizeof(addr.sun_path), "wpa_%s",
++		    hapd->conf->ctrl_interface);
++	s = android_get_control_socket(addr.sun_path);
++	if (s >= 0)
++		goto havesock;
++#endif /* ANDROID */
++
+ 	if (mkdir(hapd->conf->ctrl_interface, S_IRWXU | S_IRWXG) < 0) {
+ 		if (errno == EEXIST) {
+ 			wpa_printf(MSG_DEBUG, "Using existing control "
+@@ -1024,6 +1035,9 @@ int hostapd_ctrl_iface_init(struct hostapd_data *hapd)
+ 	}
+ 	os_free(fname);
+ 
++#ifdef ANDROID
++havesock:
++#endif /* ANDROID */
+ 	hapd->ctrl_sock = s;
+ 	eloop_register_read_sock(s, hostapd_ctrl_iface_receive, hapd,
+ 				 NULL);
+diff --git a/hostapd/hostapd_cli.c b/hostapd/hostapd_cli.c
+index a48d773..8abba5a 100644
+--- a/hostapd/hostapd_cli.c
++++ b/hostapd/hostapd_cli.c
+@@ -18,6 +18,9 @@
+ #include "common/wpa_ctrl.h"
+ #include "common.h"
+ #include "common/version.h"
++#ifdef ANDROID
++#include <cutils/properties.h>
++#endif /* ANDROID */
+ 
+ 
+ static const char *hostapd_cli_version =
+@@ -143,17 +146,27 @@ static void usage(void)
+ 
+ static struct wpa_ctrl * hostapd_cli_open_connection(const char *ifname)
+ {
+-	char *cfile;
++	char *cfile = NULL;
+ 	int flen;
+ 
+ 	if (ifname == NULL)
+ 		return NULL;
+ 
+-	flen = strlen(ctrl_iface_dir) + strlen(ifname) + 2;
+-	cfile = malloc(flen);
+-	if (cfile == NULL)
+-		return NULL;
+-	snprintf(cfile, flen, "%s/%s", ctrl_iface_dir, ifname);
++#ifdef ANDROID
++	if (access(ctrl_iface_dir, F_OK) < 0) {
++		cfile = os_strdup(ifname);
++		if (cfile == NULL)
++			return NULL;
++	}
++#endif /* ANDROID */
++
++	if (cfile == NULL) {
++		flen = strlen(ctrl_iface_dir) + strlen(ifname) + 2;
++		cfile = malloc(flen);
++		if (cfile == NULL)
++			return NULL;
++		snprintf(cfile, flen, "%s/%s", ctrl_iface_dir, ifname);
++	}
+ 
+ 	ctrl_conn = wpa_ctrl_open(cfile);
+ 	free(cfile);
+@@ -992,6 +1005,15 @@ int main(int argc, char *argv[])
+ 				}
+ 				closedir(dir);
+ 			}
++#ifdef ANDROID
++			else {
++				char ifprop[PROPERTY_VALUE_MAX];
++				if (property_get("ap.interface", ifprop, NULL) != 0) {
++					ctrl_ifname = os_strdup(ifprop);
++					printf("Using interface '%s'\n", ctrl_ifname);
++				}
++			}
++#endif /* ANDROID */
+ 		}
+ 		ctrl_conn = hostapd_cli_open_connection(ctrl_ifname);
+ 		if (ctrl_conn) {
+-- 
+1.7.0.4
+

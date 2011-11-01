@@ -1,15 +1,20 @@
-PR = "r1"
+require external-toolchain-arago.inc
+
+PR = "r10"
 
 INHIBIT_DEFAULT_DEPS = "1"
 
 PACKAGE_NO_GCONV = "1"
 PACKAGE_NO_LOCALE = "1"
 
+ALLOW_EMPTY_libgcc = "1"
+ALLOW_EMPTY_libstdc++ = "1"
+
 INSANE_SKIP_libgcc = "True"
 INSANE_SKIP_libstdc++ = "True"
 INSANE_SKIP_glibc-utils = "True"
 INSANE_SKIP_glibc-dev = "True"
-#INSANE_SKIP_gdbserver = "True"
+INSANE_SKIP_gdbserver = "True"
 
 SRC_URI = "file://SUPPORTED"
 
@@ -25,8 +30,9 @@ PROVIDES = "\
 	virtual/libintl \
 	virtual/libiconv \
 	glibc-thread-db \
-	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', 'linux-libc-headers', '', d)} \
+	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', 'linux-libc-headers linux-libc-headers-dev', '', d)} \
 	${@base_conditional('PREFERRED_PROVIDER_gdbserver', 'external-toolchain-arago', 'gdbserver', '', d)} \
+	${@base_conditional('PREFERRED_PROVIDER_binutils-dev', 'external-toolchain-arago', 'binutils-dev', '', d)} \
 "
 
 DEPENDS = "${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', '', 'linux-libc-headers', d)}"
@@ -41,8 +47,9 @@ PACKAGES = "\
 	libgcc-dev \
 	libstdc++ \
 	libstdc++-dev \
-	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', 'linux-libc-headers', '', d)} \
+	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', 'linux-libc-headers-dev', '', d)} \
 	${@base_conditional('PREFERRED_PROVIDER_gdbserver', 'external-toolchain-arago', 'gdbserver', '', d)} \
+	${@base_conditional('PREFERRED_PROVIDER_binutils-dev', 'external-toolchain-arago', 'binutils-dev', '', d)} \
 	glibc-dbg \
 	glibc \
 	catchsegv \
@@ -108,8 +115,21 @@ FILES_libstdc++-dev = "\
 	${libdir}/libsupc++.a \
 "
 
-FILES_linux-libc-headers = "\
+FILES_binutils-dev = "\
+	${includedir}/ansidecl.h \
+	${includedir}/dis-asm.h \
+	${includedir}/bfdlink.h \
+	${includedir}/libiberty.h \
+	${includedir}/symcat.h \
+	${includedir}/bfd.h \
+	${libdir}/libbfd* \
+	${libdir}/libopcodes* \
+	${libdir}/libiberty* \
+"
+
+FILES_linux-libc-headers-dev = "\
 	${includedir}/asm* \
+	${includedir}/drm \
 	${includedir}/linux \
 	${includedir}/mtd \
 	${includedir}/rdma \
@@ -134,75 +154,8 @@ DESCRIPTION_ldd = "glibc: print shared library dependencies"
 DESCRIPTION_nscd = "glibc: name service cache daemon for passwd, group, and hosts"
 DESCRIPTION_sln = "glibc: create symbolic links between files"
 DESCRIPTION_localedef = "glibc: compile locale definition files"
-DESCRIPTION_gdbserver = "gdb - GNU debugger"
-
-def arg_get_main_version(d):
-	import os,bb
-	if os.path.exists(bb.data.getVar('TOOLCHAIN_PATH', d, 1)+'/version'):
-		f = open(bb.data.getVar('TOOLCHAIN_PATH', d, 1)+'/version', 'r')
-		l = f.readlines();
-		f.close();
-		for s in l:
-			if s.find('Version') > 0:
-				ver = s.split()[2]
-				return ver
-		return None
-
-def arg_get_gcc_version(d):
-	import subprocess,os,bb
-	if os.path.exists(bb.data.getVar('TOOLCHAIN_PATH', d, 1)+'/bin/'+bb.data.getVar('TARGET_PREFIX', d, 1)+'gcc'):
-		return subprocess.Popen([bb.data.getVar('TOOLCHAIN_PATH', d, 1)+'/bin/'+bb.data.getVar('TARGET_PREFIX', d, 1)+'gcc', '-v'], stderr=subprocess.PIPE).communicate()[1].splitlines()[-1].split()[2]
-
-def arg_get_libc_version(d):
-	import os,bb
-	if os.path.exists(bb.data.getVar('TOOLCHAIN_SYSPATH', d, 1)+'/lib/'):
-		for file in os.listdir(bb.data.getVar('TOOLCHAIN_SYSPATH', d, 1)+'/lib/'):
-			if file.find('libc-') == 0:
-				return file[5:-3]
-		return None
-
-def arg_get_kernel_version(d):
-	import os,bb
-	if os.path.exists(bb.data.getVar('TOOLCHAIN_SYSPATH', d, 1)+'/usr/include/linux/'):
-		f = open(bb.data.getVar('TOOLCHAIN_SYSPATH', d, 1)+'/usr/include/linux/version.h', 'r')
-		l = f.readlines();
-		f.close();
-		for s in l:
-			if s.find('LINUX_VERSION_CODE') > 0:
-				ver = int(s.split()[2])
-				maj = ver / 65536
-				ver = ver % 65536
-				min = ver / 256
-				ver = ver % 256
-				return str(maj)+'.'+str(min)+'.'+str(ver)
-		return None
-
-def arg_get_gdb_version(d):
-	import subprocess,os,bb
-	if os.path.exists(bb.data.getVar('TOOLCHAIN_PATH', d, 1)+'/bin/'+bb.data.getVar('TARGET_PREFIX', d, 1)+'gdb'):
-		return subprocess.Popen([bb.data.getVar('TOOLCHAIN_PATH', d, 1)+'/bin/'+bb.data.getVar('TARGET_PREFIX', d, 1)+'gdb', '-v'],stdout=subprocess.PIPE).communicate()[0].splitlines()[0].split()[-1]
-
-ARG_VER_MAIN := "${@arg_get_main_version(d)}"
-ARG_VER_GCC := "${@arg_get_gcc_version(d)}"
-ARG_VER_LIBC := "${@arg_get_libc_version(d)}"
-ARG_VER_KERNEL := "${@arg_get_kernel_version(d)}"
-ARG_VER_GDBSERVER := "${@arg_get_gdb_version(d)}"
-
-# Licenses set for main components of the toolchain:
-# (g)libc is always LGPL version 2 (or later)
-# gcc has switched from GPL version 2 (or later) to version 3 (or later) after 4.2.1,
-#    see this announcement - http://gcc.gnu.org/ml/gcc-announce/2007/msg00003.html
-# libgcc and libstdc++ always had exceptions to GPL called Runtime Library Exception, but
-#    it was based on GPL version 2 (or later), until new GPL version 3 (or later) exception
-#    was introduced on 27 Jan 2009 - http://gcc.gnu.org/ml/gcc-announce/2009/msg00000.html
-#    and http://www.gnu.org/licenses/gcc-exception.html, which was several days after
-#    gcc 4.3.3 was released - http://gcc.gnu.org/releases.html
-# gdb/gdbserver version 6.6 was the last one under GPL version 2 (or later), according
-#    to the release schedule - http://www.gnu.org/software/gdb/schedule/
-ARG_LIC_LIBC := "LGPLv2.1+"
-ARG_LIC_GCC := "${@["GPLv3+", "GPLv2+"][arg_get_gcc_version(d) <= "4.2.1"]}"
-ARG_LIC_RLE := "${@["GPLv3+ with GCC RLE", "GPLv2+ with GCC RLE"][arg_get_gcc_version(d) <= "4.3.3"]}"
-ARG_LIC_GDB := "${@["GPLv3+", "GPLv2+"][arg_get_gdb_version(d) <= "6.6"]}"
+DESCRIPTION_gdbserver = "gdb: GNU debugger"
+DESCRIPTION_binutils-dev = "binutils: GNU collection of binary utilities"
 
 LICENSE = "${ARG_LIC_LIBC}"
 LICENSE_ldd = "${ARG_LIC_LIBC}"
@@ -213,6 +166,7 @@ LICENSE_libgcc-dev = "${ARG_LIC_RLE}"
 LICENSE_libstdc++ = "${ARG_LIC_RLE}"
 LICENSE_libstdc++-dev = "${ARG_LIC_RLE}"
 LICENSE_gdbserver = "${ARG_LIC_GDB}"
+LICENSE_binutils-dev = "${ARG_LIC_BFD}"
 
 PKGV = "${ARG_VER_MAIN}"
 PKGV_libgcc = "${ARG_VER_GCC}"
@@ -234,8 +188,17 @@ PKGV_nscd = "${ARG_VER_LIBC}"
 PKGV_ldd = "${ARG_VER_LIBC}"
 PKGV_localedef = "${ARG_VER_LIBC}"
 PKGV_libsegfault = "${ARG_VER_LIBC}"
-PKGV_linux-libc-headers = "${ARG_VER_KERNEL}"
-PKGV_gdbserver = "${ARG_VER_GDBSERVER}"
+PKGV_linux-libc-headers-dev = "${ARG_VER_KERNEL}"
+PKGV_gdbserver = "${ARG_VER_GDB}"
+PKGV_binutils-dev = "${ARG_VER_BFD}"
+
+do_int_binutils() {
+	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${libdir}/{libbfd*,libopcodes*,libiberty*} ${D}${libdir}
+}
+
+do_ext_binutils() {
+	rm -rf ${D}${includedir}/{ansidecl.h,dis-asm.h,bfdlink.h,libiberty.h,symcat.h,bfd.h}
+}
 
 do_install() {
 	install -d ${D}${sysconfdir}
@@ -250,17 +213,20 @@ do_install() {
 
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${base_libdir}/{lib*,ld*} ${D}${base_libdir}
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${base_sbindir}/ldconfig ${D}${base_sbindir}
-	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${bindir}/{gencat,getconf,getent,iconv,locale,mtrace,pcprofiledump,rpcgen,sprof,tzselect,xtrace} ${D}${bindir}
+	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${bindir}/{gdbserver,gencat,getconf,getent,iconv,locale,mtrace,pcprofiledump,rpcgen,sprof,tzselect,xtrace} ${D}${bindir}
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${sbindir}/{iconvconfig,rpcinfo,zdump,zic} ${D}${sbindir}
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${includedir}/{arpa,asm*,bits,drm,gnu,linux,mtd,net*,nfs,protocols,rdma,rpc*,scsi,sound,sys*,video,*.h} ${D}${includedir}
-	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${libdir}/{?crt1.o,crt?.o,libBrokenLocale*,libanl*,libc.*,libc_*,libcrypt.*,libcidn.*,libdl.*,libg.*,libieee.*,libm.*,libmcheck.*,libnsl*,libnss*,libpthread*,libresolv*,librt*,libstdc*,libthread*,libutil*} ${D}${libdir}
+	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}${libdir}/{?crt1.o,crt?.o,libBrokenLocale*,libanl*,libc.*,libc_*,libcrypt.*,libcidn.*,libdl.*,libg.*,libieee.*,libm.*,libmcheck.*,libnsl*,libnss*,libpthread*,libresolv*,librt*,libstdc*,libsupc*,libthread*,libutil*} ${D}${libdir}
 	rm -rf ${D}${base_libdir}/*.la
 	rm -rf ${D}${libdir}/*.la
+	rm -rf ${D}${includedir}/{zconf,zlib}.h
 
-	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', '', 'rm -rf ${D}/usr/include/linux', d)}
+	${@base_conditional('PREFERRED_PROVIDER_linux-libc-headers', 'external-toolchain-arago', '', 'rm -rf ${D}${includedir}/linux', d)}
 
 	cp -a ${TOOLCHAIN_PATH}/${TARGET_SYS}/include/* ${D}${includedir}
-	${@base_conditional('PREFERRED_PROVIDER_gdbserver', 'external-toolchain-arago', '', 'rm -rf ${D}/usr/bin/gdbserver', d)}
+	${@base_conditional('PREFERRED_PROVIDER_gdbserver', 'external-toolchain-arago', '', 'rm -rf ${D}${bindir}/gdbserver', d)}
+
+	${@base_conditional('PREFERRED_PROVIDER_binutils-dev', 'external-toolchain-arago', 'do_int_binutils', 'do_ext_binutils', d)}
 
 	sed -e "s# /lib# ../../lib#g" -e "s# /usr/lib# .#g" ${D}${libdir}/libc.so > ${D}${libdir}/temp
 	mv ${D}${libdir}/temp ${D}${libdir}/libc.so

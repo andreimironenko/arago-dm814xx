@@ -1,0 +1,172 @@
+From f2a540353642db009a2c833b127fe187cddbef36 Mon Sep 17 00:00:00 2001
+From: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
+Date: Sat, 3 Sep 2011 22:21:50 +0530
+Subject: [PATCH 7/9] p2p: disable 11b rates only on p2p interface creation
+
+11b rates are disabled blindly during p2p init based on driver
+capability. This prevents use of CCK rates where p2p is not in
+use. This patch disables 11b rates during the p2p interface
+setup and also removes the disable_11b from global.
+
+Signed-off-by: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
+Signed-off-by: Guy Eilam <guy@wizery.com>
+---
+ src/drivers/driver.h            |   13 -------------
+ src/drivers/driver_nl80211.c    |   29 +++++++++++++----------------
+ wpa_supplicant/driver_i.h       |    9 ---------
+ wpa_supplicant/p2p_supplicant.c |    5 -----
+ 4 files changed, 13 insertions(+), 43 deletions(-)
+
+diff --git a/src/drivers/driver.h b/src/drivers/driver.h
+index 453948f..e6e1b72 100644
+--- a/src/drivers/driver.h
++++ b/src/drivers/driver.h
+@@ -1876,19 +1876,6 @@ struct wpa_driver_ops {
+ 	int (*probe_req_report)(void *priv, int report);
+ 
+ 	/**
+-	 * disable_11b_rates - Set whether IEEE 802.11b rates are used for TX
+-	 * @priv: Private driver interface data
+-	 * @disabled: Whether IEEE 802.11b rates are disabled
+-	 * Returns: 0 on success, -1 on failure (or if not supported)
+-	 *
+-	 * This command is used to disable IEEE 802.11b rates (1, 2, 5.5, and
+-	 * 11 Mbps) as TX rates for data and management frames. This can be
+-	 * used to optimize channel use when there is no need to support IEEE
+-	 * 802.11b-only devices.
+-	 */
+-	int (*disable_11b_rates)(void *priv, int disabled);
+-
+-	/**
+ 	 * deinit_ap - Deinitialize AP mode
+ 	 * @priv: Private driver interface data
+ 	 * Returns: 0 on success, -1 on failure (or if not supported)
+diff --git a/src/drivers/driver_nl80211.c b/src/drivers/driver_nl80211.c
+index 27f20d1..69093b4 100644
+--- a/src/drivers/driver_nl80211.c
++++ b/src/drivers/driver_nl80211.c
+@@ -160,7 +160,6 @@ struct wpa_driver_nl80211_data {
+ 
+ 	int monitor_sock;
+ 	int monitor_ifidx;
+-	int disable_11b_rates;
+ 
+ 	unsigned int pending_remain_on_chan:1;
+ 
+@@ -2190,8 +2189,7 @@ static void wpa_driver_nl80211_deinit(void *priv)
+ 		os_free(drv->if_indices);
+ #endif /* HOSTAPD */
+ 
+-	if (drv->disable_11b_rates)
+-		nl80211_disable_11b_rates(drv, drv->ifindex, 0);
++	nl80211_disable_11b_rates(drv, drv->ifindex, 0);
+ 
+ 	netlink_send_oper_ifla(drv->netlink, drv->ifindex, 0, IF_OPER_UP);
+ 	netlink_deinit(drv->netlink);
+@@ -4028,7 +4026,9 @@ static int nl80211_create_iface(struct wpa_driver_nl80211_data *drv,
+ 						wds);
+ 	}
+ 
+-	if (ret >= 0 && drv->disable_11b_rates)
++	if (ret >= 0 &&
++	    (iftype == NL80211_IFTYPE_P2P_CLIENT ||
++	     iftype == NL80211_IFTYPE_P2P_GO))
+ 		nl80211_disable_11b_rates(drv, ret, 1);
+ 
+ 	return ret;
+@@ -4957,8 +4957,12 @@ static int nl80211_set_mode(struct wpa_driver_nl80211_data *drv,
+ 	NLA_PUT_U32(msg, NL80211_ATTR_IFTYPE, mode);
+ 
+ 	ret = send_and_recv_msgs(drv, msg, NULL, NULL);
+-	if (!ret)
++	if (!ret) {
++		if (mode == NL80211_IFTYPE_P2P_CLIENT ||
++		     mode == NL80211_IFTYPE_P2P_GO)
++			nl80211_disable_11b_rates(drv, ifindex, 1);
+ 		return 0;
++	}
+ nla_put_failure:
+ 	wpa_printf(MSG_DEBUG, "nl80211: Failed to set interface %d to mode %d:"
+ 		   " %d (%s)", ifindex, mode, ret, strerror(-ret));
+@@ -6360,6 +6364,9 @@ static int nl80211_disable_11b_rates(struct wpa_driver_nl80211_data *drv,
+ 		    NL80211_CMD_SET_TX_BITRATE_MASK, 0);
+ 	NLA_PUT_U32(msg, NL80211_ATTR_IFINDEX, ifindex);
+ 
++	if (!disabled)
++		goto nla_send;
++
+ 	bands = nla_nest_start(msg, NL80211_ATTR_TX_RATES);
+ 	if (!bands)
+ 		goto nla_put_failure;
+@@ -6377,7 +6384,7 @@ static int nl80211_disable_11b_rates(struct wpa_driver_nl80211_data *drv,
+ 	nla_nest_end(msg, band);
+ 
+ 	nla_nest_end(msg, bands);
+-
++nla_send:
+ 	ret = send_and_recv_msgs(drv, msg, NULL, NULL);
+ 	msg = NULL;
+ 	if (ret) {
+@@ -6393,15 +6400,6 @@ nla_put_failure:
+ }
+ 
+ 
+-static int wpa_driver_nl80211_disable_11b_rates(void *priv, int disabled)
+-{
+-	struct i802_bss *bss = priv;
+-	struct wpa_driver_nl80211_data *drv = bss->drv;
+-	drv->disable_11b_rates = disabled;
+-	return nl80211_disable_11b_rates(drv, drv->ifindex, disabled);
+-}
+-
+-
+ static int wpa_driver_nl80211_deinit_ap(void *priv)
+ {
+ 	struct i802_bss *bss = priv;
+@@ -6783,7 +6781,6 @@ const struct wpa_driver_ops wpa_driver_nl80211_ops = {
+ 	.cancel_remain_on_channel =
+ 	wpa_driver_nl80211_cancel_remain_on_channel,
+ 	.probe_req_report = wpa_driver_nl80211_probe_req_report,
+-	.disable_11b_rates = wpa_driver_nl80211_disable_11b_rates,
+ 	.deinit_ap = wpa_driver_nl80211_deinit_ap,
+ 	.resume = wpa_driver_nl80211_resume,
+ 	.send_ft_action = nl80211_send_ft_action,
+diff --git a/wpa_supplicant/driver_i.h b/wpa_supplicant/driver_i.h
+index ba1d54b..6e9f145 100644
+--- a/wpa_supplicant/driver_i.h
++++ b/wpa_supplicant/driver_i.h
+@@ -467,15 +467,6 @@ static inline int wpa_drv_probe_req_report(struct wpa_supplicant *wpa_s,
+ 	return -1;
+ }
+ 
+-static inline int wpa_drv_disable_11b_rates(struct wpa_supplicant *wpa_s,
+-					    int disabled)
+-{
+-	if (wpa_s->driver->disable_11b_rates)
+-		return wpa_s->driver->disable_11b_rates(wpa_s->drv_priv,
+-							disabled);
+-	return -1;
+-}
+-
+ static inline int wpa_drv_deinit_ap(struct wpa_supplicant *wpa_s)
+ {
+ 	if (wpa_s->driver->deinit_ap)
+diff --git a/wpa_supplicant/p2p_supplicant.c b/wpa_supplicant/p2p_supplicant.c
+index bd35ee1..26ad5c4 100644
+--- a/wpa_supplicant/p2p_supplicant.c
++++ b/wpa_supplicant/p2p_supplicant.c
+@@ -2344,11 +2344,6 @@ int wpas_p2p_init(struct wpa_global *global, struct wpa_supplicant *wpa_s)
+ 	}
+ #endif /* CONFIG_CLIENT_MLME */
+ 
+-	if (wpa_drv_disable_11b_rates(wpa_s, 1) < 0) {
+-		wpa_printf(MSG_DEBUG, "P2P: Failed to disable 11b rates");
+-		/* Continue anyway; this is not really a fatal error */
+-	}
+-
+ 	if (global->p2p)
+ 		return 0;
+ 
+-- 
+1.7.0.4
+

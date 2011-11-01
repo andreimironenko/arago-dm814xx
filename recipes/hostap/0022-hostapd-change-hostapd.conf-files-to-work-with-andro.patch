@@ -1,0 +1,39 @@
+From 88e63aa5f629a2f1d5c0941bcdc50cd167aa8272 Mon Sep 17 00:00:00 2001
+From: Guy Eilam <guy@wizery.com>
+Date: Thu, 7 Jul 2011 20:51:57 +0300
+Subject: [PATCH 22/32] hostapd: change hostapd.conf files to work with android created sockets
+
+---
+ android_hostapd_11a.conf |    2 +-
+ android_hostapd_11g.conf |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/android_hostapd_11a.conf b/android_hostapd_11a.conf
+index c9b851f..95a453f 100644
+--- a/android_hostapd_11a.conf
++++ b/android_hostapd_11a.conf
+@@ -4,7 +4,7 @@ logger_syslog_level=2
+ logger_stdout=-1
+ logger_stdout_level=2
+ dump_file=/data/misc/wifi/hostapd.dump
+-ctrl_interface=/data/misc/wifi/sockets
++ctrl_interface=wlan1
+ hw_mode=a
+ channel=36
+ beacon_int=100
+diff --git a/android_hostapd_11g.conf b/android_hostapd_11g.conf
+index 728ca20..46d420a 100644
+--- a/android_hostapd_11g.conf
++++ b/android_hostapd_11g.conf
+@@ -4,7 +4,7 @@ logger_syslog_level=2
+ logger_stdout=-1
+ logger_stdout_level=2
+ dump_file=/data/misc/wifi/hostapd.dump
+-ctrl_interface=/data/misc/wifi/sockets
++ctrl_interface=wlan1
+ hw_mode=g
+ channel=11
+ beacon_int=100
+-- 
+1.7.0.4
+

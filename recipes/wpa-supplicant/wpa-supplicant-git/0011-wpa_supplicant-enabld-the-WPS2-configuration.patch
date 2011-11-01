@@ -1,0 +1,25 @@
+From 89c04be660e1446d321a40c433f695c7daefacfb Mon Sep 17 00:00:00 2001
+From: Guy Eilam <guy@wizery.com>
+Date: Sun, 26 Jun 2011 09:18:22 +0300
+Subject: [PATCH 11/32] wpa_supplicant - enabld the WPS2 configuration
+
+---
+ wpa_supplicant/.config |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/wpa_supplicant/.config b/wpa_supplicant/.config
+index 24396e6..07f0115 100644
+--- a/wpa_supplicant/.config
++++ b/wpa_supplicant/.config
+@@ -195,7 +195,7 @@ CONFIG_EAP_LEAP=y
+ # Wi-Fi Protected Setup (WPS)
+ CONFIG_WPS=y
+ # Enable WSC 2.0 support
+-#CONFIG_WPS2=y
++CONFIG_WPS2=y
+ 
+ # EAP-IKEv2
+ #CONFIG_EAP_IKEV2=y
+-- 
+1.7.0.4
+

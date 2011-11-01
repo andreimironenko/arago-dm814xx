@@ -1,0 +1,60 @@
+#! /bin/sh
+
+matrixgui="/usr/bin/matrix_browser"
+GUI_OPTS="-qws http://localhost:8080/"
+PIDFILE="/var/run/matrix-gui-2.0.pid"
+
+test -x "$matrixgui" || exit 0
+
+export TSLIB_TSDEVICE=/dev/input/touchscreen0
+export QWS_MOUSE_PROTO=Tslib:/dev/input/touchscreen0
+
+case "$1" in
+  start)
+    chvt 4
+
+    # Do not try to calibrate the touchscreen if it doesn't exist.
+    if [ -e /dev/input/touchscreen0 ]
+    then
+        if [ ! -f /etc/pointercal ] ; then
+            echo -n "Calibrating touchscreen (first time only)"
+            ts_calibrate
+            echo "."
+        fi
+    fi
+
+    # Check if json.txt file needs to be generated
+    cd __MATRIX_WEB_DIR__
+    if [ ! -f ./json.txt ]
+    then
+        php generate.php
+    fi
+    cd -
+
+	if [ -e $PIDFILE ]; then
+      PIDDIR=/proc/$(cat $PIDFILE)
+      if [ -d ${PIDDIR} -a  "$(readlink -f ${PIDDIR}/exe)" = "${matrixgui}" ]; then
+        echo "$DESC already started; not starting."
+      else
+        echo "Removing stale PID file $PIDFILE."
+        rm -f $PIDFILE
+      fi
+    fi
+
+    echo -n "Starting Matrix GUI application"
+    start-stop-daemon --start --quiet --background --exec $matrixgui -- $GUI_OPTS
+	pidof ${matrixgui} > $PIDFILE
+    echo "."
+    ;;
+
+  stop)
+    echo -n "Stopping Matrix GUI application"
+    start-stop-daemon --stop --quiet --pidfile /var/run/matrix-gui-2.0.pid
+    echo "."
+    ;;
+  *)
+    echo "Usage: /etc/init.d/matrix-gui-2.0 {start|stop}"
+    exit 1
+esac
+
+exit 0

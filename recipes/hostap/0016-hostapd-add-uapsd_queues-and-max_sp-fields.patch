@@ -1,0 +1,125 @@
+From 1b3c0668e94ab51a70b04d5cfe6b2c8f70d29cf3 Mon Sep 17 00:00:00 2001
+From: Eliad Peller <eliad@wizery.com>
+Date: Thu, 23 Jun 2011 19:23:06 +0300
+Subject: [PATCH 16/32] hostapd: add uapsd_queues and max_sp fields
+
+Add uapsd_queues and max_sp fields to sta_info struct,
+and pass them to the sta_add callback.
+
+These values are determined by the WME ie in the assoc request.
+---
+ src/ap/ap_drv_ops.c  |    4 +++-
+ src/ap/ap_drv_ops.h  |    2 +-
+ src/ap/ieee802_11.c  |   20 ++++++++++++++++----
+ src/ap/sta_info.h    |    3 +++
+ src/drivers/driver.h |    2 ++
+ 5 files changed, 25 insertions(+), 6 deletions(-)
+
+diff --git a/src/ap/ap_drv_ops.c b/src/ap/ap_drv_ops.c
+index 7129644..fda65cd 100644
+--- a/src/ap/ap_drv_ops.c
++++ b/src/ap/ap_drv_ops.c
+@@ -315,7 +315,7 @@ int hostapd_sta_add(struct hostapd_data *hapd,
+ 		    const u8 *supp_rates, size_t supp_rates_len,
+ 		    u16 listen_interval,
+ 		    const struct ieee80211_ht_capabilities *ht_capab,
+-		    u32 flags)
++		    u32 flags, u8 uapsd_queues, u8 max_sp)
+ {
+ 	struct hostapd_sta_add_params params;
+ 
+@@ -333,6 +333,8 @@ int hostapd_sta_add(struct hostapd_data *hapd,
+ 	params.listen_interval = listen_interval;
+ 	params.ht_capabilities = ht_capab;
+ 	params.flags = hostapd_sta_flags_to_drv(flags);
++	params.uapsd_queues = uapsd_queues;
++	params.max_sp = max_sp;
+ 	return hapd->driver->sta_add(hapd->drv_priv, &params);
+ }
+ 
+diff --git a/src/ap/ap_drv_ops.h b/src/ap/ap_drv_ops.h
+index 6f947f9..eb70019 100644
+--- a/src/ap/ap_drv_ops.h
++++ b/src/ap/ap_drv_ops.h
+@@ -37,7 +37,7 @@ int hostapd_sta_add(struct hostapd_data *hapd,
+ 		    const u8 *supp_rates, size_t supp_rates_len,
+ 		    u16 listen_interval,
+ 		    const struct ieee80211_ht_capabilities *ht_capab,
+-		    u32 flags);
++		    u32 flags, u8 uapsd_queues, u8 max_sp);
+ int hostapd_set_privacy(struct hostapd_data *hapd, int enabled);
+ int hostapd_set_generic_elem(struct hostapd_data *hapd, const u8 *elem,
+ 			     size_t elem_len);
+diff --git a/src/ap/ieee802_11.c b/src/ap/ieee802_11.c
+index 227a0a5..a34a891 100644
+--- a/src/ap/ieee802_11.c
++++ b/src/ap/ieee802_11.c
+@@ -593,14 +593,26 @@ static u16 check_wmm(struct hostapd_data *hapd, struct sta_info *sta,
+ {
+ 	sta->flags &= ~WLAN_STA_WMM;
+ 	if (wmm_ie && hapd->conf->wmm_enabled) {
+-		if (hostapd_eid_wmm_valid(hapd, wmm_ie, wmm_ie_len))
++		struct wmm_information_element *wmm;
++		u8 qos_info;
++
++		if (hostapd_eid_wmm_valid(hapd, wmm_ie, wmm_ie_len)) {
+ 			hostapd_logger(hapd, sta->addr,
+ 				       HOSTAPD_MODULE_WPA,
+ 				       HOSTAPD_LEVEL_DEBUG,
+ 				       "invalid WMM element in association "
+ 				       "request");
+-		else
+-			sta->flags |= WLAN_STA_WMM;
++			return WLAN_STATUS_UNSPECIFIED_FAILURE;
++		}
++
++		sta->flags |= WLAN_STA_WMM;
++		wmm = (struct wmm_information_element *) wmm_ie;
++		qos_info = wmm->qos_info;
++		sta->uapsd_queues = qos_info & 0xf;
++		sta->max_sp = qos_info >> 5;
++		
++		wpa_printf(MSG_DEBUG, "EPBUG: queues=0x%x, max_sp=%d",
++			   sta->uapsd_queues, sta->max_sp);
+ 	}
+ 	return WLAN_STATUS_SUCCESS;
+ }
+@@ -1706,7 +1718,7 @@ static void handle_assoc_cb(struct hostapd_data *hapd,
+ 			    sta->supported_rates, sta->supported_rates_len,
+ 			    sta->listen_interval,
+ 			    sta->flags & WLAN_STA_HT ? &ht_cap : NULL,
+-			    sta->flags)) {
++			    sta->flags, sta->uapsd_queues, sta->max_sp)) {
+ 		hostapd_logger(hapd, sta->addr, HOSTAPD_MODULE_IEEE80211,
+ 			       HOSTAPD_LEVEL_NOTICE,
+ 			       "Could not add STA to kernel driver");
+diff --git a/src/ap/sta_info.h b/src/ap/sta_info.h
+index 9ec4fe3..4fe2117 100644
+--- a/src/ap/sta_info.h
++++ b/src/ap/sta_info.h
+@@ -58,6 +58,9 @@ struct sta_info {
+ 	unsigned int ht_20mhz_set:1;
+ 	unsigned int no_p2p_set:1;
+ 
++	u8 uapsd_queues;
++	u8 max_sp;
++
+ 	u16 auth_alg;
+ 	u8 previous_ap[6];
+ 
+diff --git a/src/drivers/driver.h b/src/drivers/driver.h
+index 25a3cc1..295fe26 100644
+--- a/src/drivers/driver.h
++++ b/src/drivers/driver.h
+@@ -609,6 +609,8 @@ struct hostapd_sta_add_params {
+ 	u16 listen_interval;
+ 	const struct ieee80211_ht_capabilities *ht_capabilities;
+ 	u32 flags;
++	u8 uapsd_queues;
++	u8 max_sp;
+ };
+ 
+ struct hostapd_freq_params {
+-- 
+1.7.0.4
+

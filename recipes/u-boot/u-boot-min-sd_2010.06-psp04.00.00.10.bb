@@ -1,6 +1,6 @@
 require u-boot_${PV}.inc
 
-PR = "${INC_PR}.1"
+PR = "${INC_PR}.2"
 
 # Set PROVIDES so that we don't define virtual/bootloader for this recipe.
 # This causes a non-critical parsing error about multiple providers which
@@ -10,8 +10,8 @@ PROVIDES = "u-boot-min-sd"
 
 UBOOT_MACHINE = "ti8168_evm_min_sd"
 UBOOT_BINARY = "u-boot.min.sd"
-# UBOOT_SYMLINK = "MLO"
-UBOOT_IMAGE = "MLO"
+UBOOT_SYMLINK = "MLO-${MACHINE}"
+UBOOT_IMAGE = "MLO-${MACHINE}-${PV}-${PR}"
 
 # Look to the base recipes directory to find files as well.
 FILESDIR = "${@os.path.dirname(bb.data.getVar('FILE',d,1))}/u-boot-${PV}"
