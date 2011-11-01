@@ -58,8 +58,8 @@ update_rules_make ()
 {
   echo "Updating Rules.make"
 
-  sed -i -e s:EZSDK_INSTALL_DIR=.*:EZSDK_INSTALL_DIR=$install_dir: $install_dir/Rules.make 
-  sed -i -e s:CSTOOL_DIR=.*:CSTOOL_DIR=$toolchain_dir: $install_dir/Rules.make 
+  sed -i -e s:^EZSDK_INSTALL_DIR=.*:EZSDK_INSTALL_DIR=$install_dir: $install_dir/Rules.make 
+  sed -i -e s:^CSTOOL_DIR=.*:CSTOOL_DIR=$toolchain_dir: $install_dir/Rules.make 
 }
 
 #
