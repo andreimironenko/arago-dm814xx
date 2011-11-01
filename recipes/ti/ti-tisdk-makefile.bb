@@ -12,7 +12,9 @@ require ti-paths.inc
 # fetched, but only the listed ones will be used to build the final Makefile
 MAKEFILES_COMMON = "linux matrix-gui am-benchmarks am-sysinfo"
 
-# Blank the MAKEFILES_COMMON for DM devices for legacy support
+# Blank the MAKEFILES_COMMON for devices that don't use the component flow
+MAKEFILES_COMMON_dm816x-evm = ""
+MAKEFILES_COMMON_dm814x-evm = ""
 MAKEFILES_COMMON_c6a816x-evm = ""
 MAKEFILES_COMMON_da830-omapl137-evm = ""
 MAKEFILES_COMMON_da850-omapl138-evm = ""
@@ -47,7 +49,7 @@ SRC_URI = "\
     file://Makefile_u-boot-spl \
 "
 
-PR = "r84"
+PR = "r85"
 
 do_configure_prepend_dm37x-evm () { 
          sed -i -e 's:OMAPES=3.x:OMAPES=5.x:g' ${WORKDIR}/Makefile
