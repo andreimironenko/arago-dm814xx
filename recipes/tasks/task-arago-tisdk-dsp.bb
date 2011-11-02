@@ -18,7 +18,7 @@ DSP_EZSDK_COMMON = " \
     ti-dsp-benchmark-apps \
     ti-uia \
     ti-media-controller-utils \
-    ti-media-controller-hdvpss-loader \
+    ti-media-controller-loader \
 "
 
 DSP_COMPONENTS_dm6446 = "\
