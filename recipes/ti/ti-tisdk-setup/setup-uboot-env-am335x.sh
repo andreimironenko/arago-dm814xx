@@ -95,7 +95,8 @@ hasFTDI=`lsusb | grep "0403:a6d0"`
 
 if [ -n "$hasFTDI" ]; then
 #The BeagleBone has been detected, write information to uEnv.txt
-	 
+
+
 	if [ "$kernel" -eq "1" ]; then	   
 		 if [ "$fs" -eq "1" ]; then
 			#TFTP and NFS Boot
@@ -134,10 +135,24 @@ if [ -n "$hasFTDI" ]; then
 	if [ ! -d /media/boot ]; then
 		echo "The boot partition doesn't appear to be mounted on the host."
 		echo "If you're using a virtual machine, please ensure it has been imported to Linux"
-		read -p "" pressEnter
+		echo "Please ensure the boot partition is mounted and run setup.sh again."
+		read -p "Press Enter to exit" pressEnter
+		exit
 	fi
 	
 	echo "Copying uEnv.txt to boot partition, then unmounting drives...."
+
+	#Let's check to make sure it's /media/boot/ and not /media/boot_
+	boots=`ls -1 /media/ | grep boot`
+	start_heres=`ls -1 /media/ | grep START_HERE`
+	if [ ! "$boots" = "boot" -o ! "$start_heres" = "START_HERE" ]; then
+		echo "There are multiple boot and/or START_HERE partions mounted in /media/."
+		echo "Please unmount these partitions, reset the board, and run setup.sh again."
+		read -p "Press Enter to exit" pressEnter
+		exit
+	fi
+
+
 	cp uEnv.txt /media/boot/
 	sync
 	sync
@@ -209,7 +224,11 @@ if [ -n "$hasFTDI" ]; then
 		do_expect "\"am335x-evm login: \"" "send \"root\"" $cwd/resetBoard.minicom
 		echo "send \"init 6\""  >> $cwd/resetBoard.minicom
 		do_expect "\"Restarting system.\"" "! killall -s SIGHUP minicom" $cwd/resetBoard.minicom
-		minicom -w -S $cwd/resetBoard.minicom
+        # Change directory into cwd because minicom does not like . in the
+        # path to the script
+        cd $cwd
+		minicom -w -S resetBoard.minicom
+        cd -
 		
 	fi
 
@@ -269,10 +288,13 @@ else
 	echo "The NAND on the AM335x EVM will be flashed with the previous settings. Please "
 	echo "press enter to begin the flashing process."
 	read -p "" restartNow
+    # Change directory into cwd because minicom does not like . in the
+    # path to the script
+    cd $cwd
 	minicom -w -S $cwd/setupBoard.minicom
+    cd -
 	minicom -w
 	echo "--------------------------------------------------------------------------------"
-	minicom -w
 	
 
 fi
