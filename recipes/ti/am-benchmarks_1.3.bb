@@ -9,10 +9,10 @@ SECTION = "system"
 PRIORITY = "optional"
 
 SRCREV = "71"
-PR = "r6+svnr${SRCPV}"
+PR = "r7+svnr${SRCPV}"
 
 SRC_URI = "svn://gforge.ti.com/svn/am_benchmarks/;module=trunk;proto=https;user=anonymous;pswd='' \
-           https://gforge.ti.com/gf/download/frsrelease/691/5118/armbenchmarks_1.2.tar.gz;name=benchmarkstarball"
+           https://gforge.ti.com/gf/download/frsrelease/710/5165/armbenchmarks_1.3.tar.gz;name=benchmarkstarball"
 
 S = "${WORKDIR}/trunk"
 
@@ -38,5 +38,5 @@ RDEPENDS += matrix-gui-submenus-arm
 # Add the matrix directory to the list of FILES
 FILES_${PN} += "${MATRIX_BASE_DIR}/*"
 
-SRC_URI[benchmarkstarball.md5sum] = "ba9c6ea496a9687d00fa515c1a7ae046"
-SRC_URI[benchmarkstarball.sha256sum] = "c0d1081996be045286a25bd1f770f8e990c37122d26264798015e81478464b72"
+SRC_URI[benchmarkstarball.md5sum] = "65ecfd05f70de222ef11820819f86dab"
+SRC_URI[benchmarkstarball.sha256sum] = "3ec16422575b7a08bb0816e8d80e43395361825d01802b2384b378a7af6c147d"
