@@ -100,32 +100,32 @@ if [ -n "$hasFTDI" ]; then
 	if [ "$kernel" -eq "1" ]; then	   
 		 if [ "$fs" -eq "1" ]; then
 			#TFTP and NFS Boot
-			echo "serverip=$ip" > uEnv.txt
-			echo "rootpath=$rootpath" >> uEnv.txt
-			echo "bootfile=$uimage" >> uEnv.txt
-			echo "ip_method=dhcp" >> uEnv.txt
-			echo "tftp_nfs_boot=echo Booting from network...; setenv autoload no; dhcp \${bootfile}; tftp \${loadaddr} \${bootfile}; run net_args; bootm \${loadaddr}" >> uEnv.txt
-			echo "uenvcmd=run tftp_nfs_boot" >> uEnv.txt
+			echo "serverip=$ip" > $cwd/uEnv.txt
+			echo "rootpath=$rootpath" >> $cwd/uEnv.txt
+			echo "bootfile=$uimage" >> $cwd/uEnv.txt
+			echo "ip_method=dhcp" >> $cwd/uEnv.txt
+			echo "tftp_nfs_boot=echo Booting from network...; setenv autoload no; dhcp \${bootfile}; tftp \${loadaddr} \${bootfile}; run net_args; bootm \${loadaddr}" >> $cwd/uEnv.txt
+			echo "uenvcmd=run tftp_nfs_boot" >> $cwd/uEnv.txt
 		    else
 			#TFTP and SD Boot  
-			echo "serverip=$ip" > uEnv.txt 
-			echo "bootfile=$uimage" >> uEnv.txt
-			echo "ip_method=dhcp" >> uEnv.txt
-			echo "tftp_sd_boot=run bootargs_defaults; setenv autoload no; dhcp \${bootfile}; tftp \${loadaddr} \${bootfile}; run mmc_args; bootm \${loadaddr}" >> uEnv.txt
-			echo "uenvcmd=run tftp_sd_boot" >> uEnv.txt     
+			echo "serverip=$ip" > $cwd/uEnv.txt 
+			echo "bootfile=$uimage" >> $cwd/uEnv.txt
+			echo "ip_method=dhcp" >> $cwd/uEnv.txt
+			echo "tftp_sd_boot=run bootargs_defaults; setenv autoload no; dhcp \${bootfile}; tftp \${loadaddr} \${bootfile}; run mmc_args; bootm \${loadaddr}" >> $cwd/uEnv.txt
+			echo "uenvcmd=run tftp_sd_boot" >> $cwd/uEnv.txt     
 
 		    fi
 		else
 		    if [ "$fs" -eq "1" ]; then
 			#SD and NFS Boot
-			echo "serverip=$ip" > uEnv.txt
-			echo "rootpath=$rootpath" >> uEnv.txt
-			echo "ip_method=dhcp" >> uEnv.txt
-			echo "uenvcmd=setenv autoload no; run mmc_load_uimage; run net_args; bootm \${loadaddr}" >> uEnv.txt
+			echo "serverip=$ip" > $cwd/uEnv.txt
+			echo "rootpath=$rootpath" >> $cwd/uEnv.txt
+			echo "ip_method=dhcp" >> $cwd/uEnv.txt
+			echo "uenvcmd=setenv autoload no; run mmc_load_uimage; run net_args; bootm \${loadaddr}" >> $cwd/uEnv.txt
 		    else
 			#SD and SD boot
-			echo "ip_method=dhcp" > uEnv.txt
-			echo "uenvcmd=run mmc_boot" >> uEnv.txt
+			echo "ip_method=dhcp" > $cwd/uEnv.txt
+			echo "uenvcmd=run mmc_boot" >> $cwd/uEnv.txt
 		    fi
 	fi
 
@@ -153,11 +153,11 @@ if [ -n "$hasFTDI" ]; then
 	fi
 
 
-	cp uEnv.txt /media/boot/
+	cp $cwd/uEnv.txt /media/boot/
 	sync
 	sync
-	umount /media/START_HERE
-	umount /media/boot
+
+
 
 	ftdiInstalled=`lsmod | grep ftdi_sio`
 	if [ -z "$ftdiInstalled" ]; then
@@ -207,7 +207,7 @@ if [ -n "$hasFTDI" ]; then
 	echo
 	echo "--------------------------------------------------------------------------------"
 	echo "uEnv.text has been saved to the boot partition. uEnv.txt contains:"
-	cat uEnv.txt
+	cat $cwd/uEnv.txt
 	echo
 	echo "On the next boot, the BeagleBone will boot with these settings." 
 	echo "Would you like to restart now (y/n)?"
@@ -224,12 +224,13 @@ if [ -n "$hasFTDI" ]; then
 		do_expect "\"am335x-evm login: \"" "send \"root\"" $cwd/resetBoard.minicom
 		echo "send \"init 6\""  >> $cwd/resetBoard.minicom
 		do_expect "\"Restarting system.\"" "! killall -s SIGHUP minicom" $cwd/resetBoard.minicom
-        # Change directory into cwd because minicom does not like . in the
-        # path to the script
-        cd $cwd
+
+	        # Change directory into cwd because minicom does not like . in the
+	        # path to the script
+	        cd $cwd
 		minicom -w -S resetBoard.minicom
-        cd -
-		
+	        cd -
+	
 	fi
 
 	echo "--------------------------------------------------------------------------------"
@@ -291,7 +292,7 @@ else
     # Change directory into cwd because minicom does not like . in the
     # path to the script
     cd $cwd
-	minicom -w -S $cwd/setupBoard.minicom
+	minicom -w -S setupBoard.minicom
     cd -
 	minicom -w
 	echo "--------------------------------------------------------------------------------"
@@ -299,7 +300,7 @@ else
 
 fi
 
-rm $cwd/*.minicom
+
 
 
 
