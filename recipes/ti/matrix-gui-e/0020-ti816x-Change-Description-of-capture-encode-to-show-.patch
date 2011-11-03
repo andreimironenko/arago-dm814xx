@@ -1,0 +1,27 @@
+From a36268f1dc201c75ac1254b3b2fb95ac73722938 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Thu, 3 Nov 2011 17:07:41 +0530
+Subject: [PATCH] ti816x: Change Description of capture/encode to show preview on component.
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ trunk/ti816x/html/desc_1080p_capture_encode.html |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/trunk/ti816x/html/desc_1080p_capture_encode.html b/trunk/ti816x/html/desc_1080p_capture_encode.html
+index bac8f05..cddcdf6 100644
+--- a/trunk/ti816x/html/desc_1080p_capture_encode.html
++++ b/trunk/ti816x/html/desc_1080p_capture_encode.html
+@@ -66,7 +66,7 @@
+ 
+ <h2> Description: </h2>
+ <p> This demo uses TI OpenMax to capture video and encode it to a file. A preview
+-of the video being captured is shown on HDMI.
++of the video being captured is shown on Component Out.
+ </p>
+ 
+ <div class="run">
+-- 
+1.7.0.4
+

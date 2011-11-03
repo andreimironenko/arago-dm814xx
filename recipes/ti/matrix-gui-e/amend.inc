@@ -20,6 +20,7 @@ SRC_URI += "file://0001-ti814x-Add-Description-Pages-for-DSP-Menu.patch;striplev
             file://0017-ti816x-Update-runOMTB-for-new-version.patch;striplevel=2 \
             file://0018-ti814x-Add-h264-parameter-for-decode.patch;striplevel=2 \
             file://0019-ti816x-Add-h.264-parameter-for-Decode.patch;striplevel=2 \
+            file://0020-ti816x-Change-Description-of-capture-encode-to-show-.patch;striplevel=2 \
 "
 
 INITSCRIPT_PARAMS = "defaults 99 05"
