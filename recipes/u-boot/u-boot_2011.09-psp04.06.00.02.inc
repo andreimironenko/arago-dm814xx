@@ -15,8 +15,8 @@ S = "${WORKDIR}/git"
 
 SRC_URI = "git://arago-project.org/git/projects/u-boot-am33x.git;protocol=git;branch=${BRANCH}"
 
-SRCREV = "f63b270e47f62f4d1a05b2001357e215966c6f5a"
-PR = "r7"
+SRCREV = "3e3b06070c32395108af17869b8a443ea9824135"
+PR = "r8"
 PR_append = "+gitr${SRCPV}"
 
 UVER = "2011.09"
