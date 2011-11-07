@@ -2,7 +2,7 @@
 #       that require filing for a TSU exemption or applications
 #       that depend on TSU exempt code.
 DESCRIPTION = "Task to install crypto packages into target FS"
-PR = "r15"
+PR = "r16"
 LICENSE = "MIT"
 
 inherit task
@@ -77,6 +77,7 @@ WLAN = ""
 WLAN_am180x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
 WLAN_am37x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
 WLAN_beagleboard = "${WLAN_COMMON}"
+WLAN_am335x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
 
 RDEPENDS_${PN} = "\
     ${CRYPTO_SUPPORT} \
