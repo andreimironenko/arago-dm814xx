@@ -13,6 +13,8 @@ SRC_URI = "http://bangsdowebsvr01.india.ti.com:8090/DM81xx-OMX/${PV}/exports/omx
 SRC_URI[omx.md5sum] = "9de7e838b22063c50e4809b68a5f0df2"
 SRC_URI[omx.sha256sum] = "bd95215ed11280f9929d26a127b17fd20e7d800d881ddce6bc68e9087ec09c3f"
 
+DEFAULT_PREFERENCE_ti814x = "-1"
+
 do_prepsources() {
     cp ${WORKDIR}/sdk.mk ${S}
 }
