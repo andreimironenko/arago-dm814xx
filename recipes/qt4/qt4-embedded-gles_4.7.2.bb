@@ -1,11 +1,11 @@
 require recipes/qt4/qt4-embedded.inc
-PR = "${INC_PR}.11"
+PR = "${INC_PR}.12"
 
 PROVIDES += "qt4-embedded"
 RPROVIDES_${PN} += "qt4-embedded"
 RPROVIDES_${PN}-dev += "qt4-embedded-dev"
 
-QT_GLFLAGS = "-opengl es2 -depths 16,24,32 -plugin-gfx-powervr"
+QT_GLFLAGS = "-opengl es2 -depths 16,24,32 -plugin-gfx-powervr -D QT_QWS_CLIENTBLIT"
 
 require recipes/qt4/qt-${PV}.inc
 
