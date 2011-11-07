@@ -27,7 +27,6 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-osal-src \
     ti-ipc-src \
     ti-syslink-src \
-    ti-syslink-dev \
     ti-codec-engine-src \
     ti-slog-src \
     ti-uia-src \
