@@ -9,7 +9,7 @@ PR = "r2"
 
 S = "${WORKDIR}/omtb_${PV}${PVExtra}"
 
-SRC_URI = "http://bangsdowebsvr01.india.ti.com:8090/OMTB/${PV}/exports/omtb_${PV}.tar.gz;name=omtb \
+SRC_URI = "http://software-dl.ti.com:82/dsps/dsps_public_sw/omtb/${PV}/exports/omtb_${PV}.tar.gz;name=omtb \
 "
 
 DEPENDS = "ti-omx alsa-lib ti-uia"
