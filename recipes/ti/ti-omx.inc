@@ -1,44 +1,27 @@
 DESCRIPTION = "TI OMX Components"
 SECTION = "devel"
-LICENSE = "TI"
+LICENSE = "BSD"
 
 require ti-paths.inc
 require ti-staging.inc
 
-PR = "r1"
+PR = "r2"
 
-S = "${WORKDIR}/omx_${PV}${PVExtra}"
+COMPATIBLE_MACHINE = "ti816x|ti814x"
 
-SRC_URI = "http://install.source.dir.local/omx_${PV}${PVExtra}.tar.gz;name=omx"
+S = "${WORKDIR}/omx-ti81xx_${PV}"
 
-SYSLINK_ROOT = "${WORKDIR}/syslink_${SYSLINKPV}${SYSLINKPVextra}"
-export SYSLINK_ROOT
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/omx/${PV}/exports/omx-ti81xx_${PV}.tar.gz;name=omx \
+"
 
-DEPENDS_ti816x = "ti-sysbios ti-xdctools ti-ipc ti-cgt470 ti-osal ti-syslink"
-DEPENDS_ti816x += "ti-ivahd-hdvicp20api ti-codecs-dm816x"
-DEPENDS_ti816x += "ti-xdais ti-codec-engine ti-framework-components"
-DEPENDS_ti816x += "ti-hdvpss"
-DEPENDS_ti816x += "ortp alsa-lib"
+DEPENDS = "ti-sysbios ti-xdctools ti-ipc ti-osal ti-syslink"
+DEPENDS += "ti-c674x-aaclcdec ti-xdais ti-codec-engine ti-framework-components"
+DEPENDS += "ti-uia ti-slog"
 
-DEPENDS_ti814x = "ti-sysbios ti-xdctools ti-ipc ti-cgt470 ti-osal ti-syslink"
-DEPENDS_ti814x += "ti-ivahd-hdvicp20api ti-codecs-dm814x"
-DEPENDS_ti814x += "ti-xdais ti-codec-engine ti-framework-components"
-DEPENDS_ti814x += "ti-hdvpss"
-DEPENDS_ti814x += "ortp alsa-lib"
-
-VCTARGET_ti816x = "vc3"
-VCTARGET_ti814x = "vc"
-VCTARGET = "<UNDEFINED>"
-VSTARGET_ti816x = "vs2"
-VSTARGET_ti814x = "vs"
-VSTARGET = "<UNDEFINED>"
-
-do_compile_dm816x-custom() {
-    # Build VC3 (Video Conference)
-    cd ${S}/packages && make ${VCTARGET} \
-        ROOTDIR=${S}/packages \
-        INTERNAL_SW_ROOT=${S}/packages \
+EXTRA_OEMAKE = "ROOTDIR=${S} \
+        INTERNAL_SW_ROOT=${S}/src \
         EXTERNAL_SW_ROOT=${DVSDK_INSTALL_DIR} \
+        kernel_PATH=${STAGING_KERNEL_DIR} \
         bios_PATH=${SYSBIOS_INSTALL_DIR} \
         fc_PATH=${FC_INSTALL_DIR} \
         osal_PATH=${OSAL_INSTALL_DIR} \
@@ -47,141 +30,44 @@ do_compile_dm816x-custom() {
         ce_PATH=${CE_INSTALL_DIR} \
         h264enc_PATH=${CODEC_INSTALL_DIR} \
         h264dec_PATH=${CODEC_INSTALL_DIR} \
+        aaclcdec_PATH=${CODEC_INSTALL_DIR} \
         hdvicp20api_PATH=${HDVICP20_INSTALL_DIR} \
         ipc_PATH=${IPC_INSTALL_DIR} \
-        syslink_PATH=${SYSLINK_ROOT} \
+        syslink_PATH=${SYSLINK_INSTALL_DIR} \
         xdc_PATH=${XDC_INSTALL_DIR} \
         hdvpss_PATH=${HDVPSS_INSTALL_DIR} \
+        uia_PATH=${UIA_INSTALL_DIR} \
+        slog_PATH=${SLOG_INSTALL_DIR} \
         lindevkit_PATH=${STAGING_DIR_TARGET}/usr \
         rtp_PATH=${STAGING_DIR_TARGET}/usr \
+        CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR} \
         CODEGEN_PATH_M3=${CODEGEN_ARM_INSTALL_DIR} \
         CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
-        DEST_ROOT=${S}/rebuilt-binaries
+"
 
-    # Clean before building next target
-    cd ${S}/packages && make cleanall \
-        ROOTDIR=${S}/packages \
-        INTERNAL_SW_ROOT=${S}/packages \
-        EXTERNAL_SW_ROOT=${DVSDK_INSTALL_DIR} \
-        bios_PATH=${SYSBIOS_INSTALL_DIR} \
-        fc_PATH=${FC_INSTALL_DIR} \
-        osal_PATH=${OSAL_INSTALL_DIR} \
-        xdais_PATH=${XDAIS_INSTALL_DIR} \
-        linuxutils_PATH=${LINUXUTILS_INSTALL_DIR} \
-        ce_PATH=${CE_INSTALL_DIR} \
-        h264enc_PATH=${CODEC_INSTALL_DIR} \
-        h264dec_PATH=${CODEC_INSTALL_DIR} \
-        hdvicp20api_PATH=${HDVICP20_INSTALL_DIR} \
-        ipc_PATH=${IPC_INSTALL_DIR} \
-        syslink_PATH=${SYSLINK_ROOT} \
-        xdc_PATH=${XDC_INSTALL_DIR} \
-        hdvpss_PATH=${HDVPSS_INSTALL_DIR} \
-        CODEGEN_PATH_M3=${CODEGEN_ARM_INSTALL_DIR} \
-        CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
-        DEST_ROOT=${S}/rebuilt-binaries
+PARALLEL_MAKE = ""
 
-    # Build VS2 {Video Surveillance}
-    cd ${S}/packages && make ${VSTARGET}  \
-        ROOTDIR=${S}/packages \
-        INTERNAL_SW_ROOT=${S}/packages \
-        EXTERNAL_SW_ROOT=${DVSDK_INSTALL_DIR} \
-        bios_PATH=${SYSBIOS_INSTALL_DIR} \
-        fc_PATH=${FC_INSTALL_DIR} \
-        osal_PATH=${OSAL_INSTALL_DIR} \
-        xdais_PATH=${XDAIS_INSTALL_DIR} \
-        linuxutils_PATH=${LINUXUTILS_INSTALL_DIR} \
-        ce_PATH=${CE_INSTALL_DIR} \
-        h264enc_PATH=${CODEC_INSTALL_DIR} \
-        h264dec_PATH=${CODEC_INSTALL_DIR} \
-        hdvicp20api_PATH=${HDVICP20_INSTALL_DIR} \
-        ipc_PATH=${IPC_INSTALL_DIR} \
-        syslink_PATH=${SYSLINK_ROOT} \
-        xdc_PATH=${XDC_INSTALL_DIR} \
-        hdvpss_PATH=${HDVPSS_INSTALL_DIR} \
-        CODEGEN_PATH_M3=${CODEGEN_ARM_INSTALL_DIR} \
-        CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
-        DEST_ROOT=${S}/rebuilt-binaries \
-        PROFILE_m3video=whole_program_debug \
-        PROFILE_m3vpss=whole_program_debug
+PLATFORM_ti816x = "ti816x-evm"
+PLATFORM_ti814x = "ti814x-evm"
 
-}
+do_compile() {
+    cd ${S}/src
 
-do_compile_dm814x-custom() {
-    # Build VC3 (Video Conference)
-    cd ${S}/packages && make ${VCTARGET} \
-        ROOTDIR=${S}/packages \
-        INTERNAL_SW_ROOT=${S}/packages \
-        EXTERNAL_SW_ROOT=${DVSDK_INSTALL_DIR} \
-        bios_PATH=${SYSBIOS_INSTALL_DIR} \
-        fc_PATH=${FC_INSTALL_DIR} \
-        osal_PATH=${OSAL_INSTALL_DIR} \
-        xdais_PATH=${XDAIS_INSTALL_DIR} \
-        linuxutils_PATH=${LINUXUTILS_INSTALL_DIR} \
-        ce_PATH=${CE_INSTALL_DIR} \
-        h264enc_PATH=${CODEC_INSTALL_DIR} \
-        h264dec_PATH=${CODEC_INSTALL_DIR} \
-        hdvicp20api_PATH=${HDVICP20_INSTALL_DIR} \
-        ipc_PATH=${IPC_INSTALL_DIR} \
-        syslink_PATH=${SYSLINK_ROOT} \
-        xdc_PATH=${XDC_INSTALL_DIR} \
-        hdvpss_PATH=${HDVPSS_INSTALL_DIR} \
-        lindevkit_PATH=${STAGING_DIR_TARGET}/usr \
-        rtp_PATH=${STAGING_DIR_TARGET}/usr \
-        CODEGEN_PATH_M3=${CODEGEN_ARM_INSTALL_DIR} \
-        CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
-        DEST_ROOT=${S}/rebuilt-binaries
-
-    # Clean before building next target
-    cd ${S}/packages && make cleanall \
-        BUILD=make \
-        ROOTDIR=${S}/packages \
-        INTERNAL_SW_ROOT=${S}/packages \
-        EXTERNAL_SW_ROOT=${DVSDK_INSTALL_DIR} \
-        bios_PATH=${SYSBIOS_INSTALL_DIR} \
-        fc_PATH=${FC_INSTALL_DIR} \
-        osal_PATH=${OSAL_INSTALL_DIR} \
-        xdais_PATH=${XDAIS_INSTALL_DIR} \
-        linuxutils_PATH=${LINUXUTILS_INSTALL_DIR} \
-        ce_PATH=${CE_INSTALL_DIR} \
-        h264enc_PATH=${CODEC_INSTALL_DIR} \
-        h264dec_PATH=${CODEC_INSTALL_DIR} \
-        hdvicp20api_PATH=${HDVICP20_INSTALL_DIR} \
-        ipc_PATH=${IPC_INSTALL_DIR} \
-        syslink_PATH=${SYSLINK_ROOT} \
-        xdc_PATH=${XDC_INSTALL_DIR} \
-        hdvpss_PATH=${HDVPSS_INSTALL_DIR} \
-        CODEGEN_PATH_M3=${CODEGEN_ARM_INSTALL_DIR} \
-        CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
-        DEST_ROOT=${S}/rebuilt-binaries
-
-    # Build VS2 {Video Surveillance}
-    cd ${S}/packages && make ${VSTARGET}  \
-        ROOTDIR=${S}/packages \
-        INTERNAL_SW_ROOT=${S}/packages \
-        EXTERNAL_SW_ROOT=${DVSDK_INSTALL_DIR} \
-        bios_PATH=${SYSBIOS_INSTALL_DIR} \
-        fc_PATH=${FC_INSTALL_DIR} \
-        osal_PATH=${OSAL_INSTALL_DIR} \
-        xdais_PATH=${XDAIS_INSTALL_DIR} \
-        linuxutils_PATH=${LINUXUTILS_INSTALL_DIR} \
-        ce_PATH=${CE_INSTALL_DIR} \
-        h264enc_PATH=${CODEC_INSTALL_DIR} \
-        h264dec_PATH=${CODEC_INSTALL_DIR} \
-        hdvicp20api_PATH=${HDVICP20_INSTALL_DIR} \
-        ipc_PATH=${IPC_INSTALL_DIR} \
-        syslink_PATH=${SYSLINK_ROOT} \
-        xdc_PATH=${XDC_INSTALL_DIR} \
-        hdvpss_PATH=${HDVPSS_INSTALL_DIR} \
-        CODEGEN_PATH_M3=${CODEGEN_ARM_INSTALL_DIR} \
-        CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
-        DEST_ROOT=${S}/rebuilt-binaries \
-        PROFILE_m3video=whole_program_debug \
-        PROFILE_m3vpss=whole_program_debug
-
+    oe_runmake CORE=a8host PLATFORM=${PLATFORM} libs 
+    oe_runmake CORE=a8host PLATFORM=${PLATFORM} EXAMPLES_ROOT=${S}/examples DEST_ROOT=${S}/bin examples
 }
 
 do_install() {
     install -d ${D}${OMX_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${OMX_INSTALL_DIR_RECIPE}
+ 
+    cd ${S}/bin
+    install -d ${D}/${installdir}/ti-omx
+    for i in `find . -name "*.xv5T"`
+    do
+        install $i ${D}/${installdir}/ti-omx
+    done
 }
 
+FILES_${PN} = "${installdir}/ti-omx/*"
+INSANE_SKIP_${PN} = True
