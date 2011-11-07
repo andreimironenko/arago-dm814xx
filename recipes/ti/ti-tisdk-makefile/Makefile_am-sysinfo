@@ -5,7 +5,7 @@ am-sysinfo:
 	@echo =============================
 	@cd example-applications; cd `find . -name "*am-sysinfo*"`; make
 
-am_sysinfo_clean:
+am-sysinfo_clean:
 	@echo =============================
 	@echo    Cleaning AM Sysinfo
 	@echo =============================
