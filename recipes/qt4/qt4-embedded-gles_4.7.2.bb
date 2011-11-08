@@ -1,5 +1,5 @@
 require recipes/qt4/qt4-embedded.inc
-PR = "${INC_PR}.12"
+PR = "${INC_PR}.13"
 
 PROVIDES += "qt4-embedded"
 RPROVIDES_${PN} += "qt4-embedded"
