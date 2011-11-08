@@ -5,7 +5,7 @@ PSPREL = "04.02.00.07.sdk"
 
 SRCREV= "v2.6.37_OMAPPSP_04.02.00.07"
 
-COMPATIBLE_MACHINE = "am37x-evm"
+COMPATIBLE_MACHINE = "am37x-evm|am3517-evm"
 
 # The following patches below have been upstreamed to linux kernel 2.6.39 tree
 # and will not be needed once we move to this kernel.
