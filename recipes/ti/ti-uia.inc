@@ -12,7 +12,7 @@ PVExtra = ""
 
 S = "${WORKDIR}/uia_${PV}${PVExtra}"
 
-SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/UIA/${PV}/exports/uia_${PV}${PVExtra}.zip;name=uia"
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/uia/${PV}/exports/uia_${PV}${PVExtra}.zip;name=uia"
 
 DEPENDS = "ti-syslink ti-ipc"
 
