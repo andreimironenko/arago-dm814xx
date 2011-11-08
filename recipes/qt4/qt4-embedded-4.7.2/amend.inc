@@ -36,10 +36,5 @@ QT_CONFIG_FLAGS := "${@oe_filter_out('-plugin-decoration-windows', bb.data.getVa
 # For our distribution purposes we only use LGPLv2.1
 LICENSE = "LGPLv2.1"
 
-# Add patches required for matrix 2.0 to display properly.
-SRC_URI += "file://0001-Browser-Added-a-nogui-option-to-allow-fullscreen-web.patch \
-            file://0001-Browser-Added-an-option-to-force-a-new-main-window.patch \
-           "
-
 # Set the suffix to specify amended packages
-PR_append = "-arago5"
+PR_append = "-arago6"
