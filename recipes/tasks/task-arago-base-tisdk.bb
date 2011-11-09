@@ -1,13 +1,14 @@
 DESCRIPTION = "Additional packages beyond console packages shared by TI SDKs"
 LICENSE = "MIT"
-PR = "r6"
+PR = "r7"
 
 inherit task
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 SECONDARY_BOOTLOADER = ""
-SECONDARY_BOOTLOADER_omap3 = "x-load"
+SECONDARY_BOOTLOADER_omap3 = "u-boot-spl"
+SECONDARY_BOOTLOADER_dm37x-evm = "x-load"
 
 RDEPENDS_${PN} = "\
     dbus \

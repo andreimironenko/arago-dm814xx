@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install Board Support Package binaries on ${MACHINE}"
-PR = "r25"
+PR = "r26"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -10,6 +10,10 @@ BSP_COMPONENTS = ""
 
 BSP_COMPONENTS_dm355 = "\
     ti-linux-driver-examples \
+    "
+
+BSP_COMPONENTS_dm37x-evm = "\
+    x-load \
     "
 
 BSP_COMPONENTS_dm365 = "\
@@ -24,16 +28,16 @@ BSP_COMPONENTS_dm6467 = "\
     ti-linux-driver-examples \
     "
 
-BSP_COMPONENTS_am37x-evm = "\
+BSP_COMPONENTS_append_am37x-evm = "\
     av-examples \
     "
 
-BSP_COMPONENTS_am3517-evm = "\
+BSP_COMPONENTS_append_am3517-evm = "\
     av-examples \
     "
 
-BSP_COMPONENTS_omap3 = "\
-    x-load \
+BSP_COMPONENTS_append_omap3 = "\
+    u-boot-spl \
     "
 
 BSP_COMPONENTS_ti33x = "\
