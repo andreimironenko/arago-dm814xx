@@ -4,7 +4,7 @@
 
 # If Qt is built with OpenGLES, set the window system library to
 # libpvrQWSWSEGL.so.1. Otherwise use the default
-WS_LIBRARY := "${@base_conditional('ARAGO_QT_PROVIDER', 'qt4-embedded-gles', 'libpvrPVR2D_FRONTWSEGL.so.1', '${LIBGLESWINDOWSYSTEM}', d)}"
+WS_LIBRARY := "${@base_conditional('ARAGO_QT_PROVIDER', 'qt4-embedded-gles', 'libpvrPVR2D_FLIPWSEGL.so.1', '${LIBGLESWINDOWSYSTEM}', d)}"
 
 LIBGLESWINDOWSYSTEM_armv7a = "${WS_LIBRARY}"
 
