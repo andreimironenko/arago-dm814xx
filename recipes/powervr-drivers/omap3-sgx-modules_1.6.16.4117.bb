@@ -19,9 +19,11 @@ BINFILE = "Graphics_SDK_setuplinux_${SGXPV}.bin"
 
 inherit module
 
-MACHINE_KERNEL_PR_append = "c"
+MACHINE_KERNEL_PR_append = "d"
 
-SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/gfxsdk/${SGXPV}/exports/Graphics_SDK_setuplinux_${SGXPV}.bin"
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/gfxsdk/${SGXPV}/exports/Graphics_SDK_setuplinux_${SGXPV}.bin \
+           file://0001-omaplfb_linux-add-support-for-later-kernels.patch \
+          "
 
 SRC_URI[md5sum] = "710f397849c3d1fbc7ec84a0cba980f5"
 SRC_URI[sha256sum] = "0625308c31e32eadd5fa48e760d1b18305aa3d8b89375be8cfb29dd4f222c1d6"
