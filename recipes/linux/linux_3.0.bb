@@ -5,16 +5,16 @@ KERNEL_IMAGETYPE = "uImage"
 
 COMPATIBLE_MACHINE = "(beagleboard)"
 
-PV = "3.0.4"
-# v3.0.4 tag
-SRCREV_pn-${PN} = "04aa37b5f943920017ad094e776cd5514b1a9246"
+PV = "3.0.8"
+# v3.0.8 tag
+SRCREV_pn-${PN} = "97596c34030ed28657ccafddb67e17a03890b90a"
 
 # The main PR is now using MACHINE_KERNEL_PR, for omap3 see conf/machine/include/omap3.inc
-MACHINE_KERNEL_PR_append = "b"
+MACHINE_KERNEL_PR_append = "a"
 
 FILESPATH =. "${FILE_DIRNAME}/linux-3.0:${FILE_DIRNAME}/linux-3.0/${MACHINE}:"
 
-SRC_URI += "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-3.0.y.git;protocol=git \
+SRC_URI += "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git;branch=linux-3.0.y;protocol=git \
             file://pm-wip/voltdm/0001-cleanup-regulator-supply-definitions-in-mach-omap2.patch \
             file://pm-wip/voltdm/0002-Remove-old-style-supply.dev-assignments-common-in-hs.patch \
             file://pm-wip/voltdm/0003-omap-Use-separate-init_irq-functions-to-avoid-cpu_is.patch \
@@ -189,7 +189,11 @@ SRC_URI += "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-3.0.y.git
             file://beagle/0003-HACK-OMAP3-beagle-switch-to-GPTIMER1.patch \
             file://beagle/0004-OMAP3-beagle-HACK-add-in-1GHz-OPP.patch \
             file://beagle/0005-omap3-Add-basic-support-for-720MHz-part.patch \
-            file://beagle/0006-omap-mmc-Adjust-dto-to-eliminate-timeout-errors.patch \
+            file://beagle/0006-ARM-OMAP2-beagleboard-make-wilink-init-look-more-lik.patch \
+            file://beagle/0007-omap_hsmmc-Set-dto-to-max-value-of-14-to-avoid-SD-Ca.patch \
+            file://beagle/0008-OMAP2-add-cpu-id-register-to-MAC-address-helper.patch \
+            file://beagle/0009-HACK-OMAP2-BeagleBoard-Fix-up-random-or-missing-MAC-.patch \
+            file://beagle/0010-ARM-OMAP2-beagleboard-fix-mmc-write-protect-pin-when.patch \
             file://madc/0001-Enabling-Hwmon-driver-for-twl4030-madc.patch \
             file://madc/0002-mfd-twl-core-enable-madc-clock.patch \
             \
@@ -201,8 +205,8 @@ SRC_URI += "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-3.0.y.git
             file://sakoman/0006-drivers-net-smsc911x-return-ENODEV-if-device-is-not-.patch \
             file://sakoman/0007-drivers-input-touchscreen-ads7846-return-ENODEV-if-d.patch \
             file://sakoman/0008-Revert-omap2_mcspi-Flush-posted-writes.patch \
-            file://sakoman/0009-rtc-twl-Switch-to-using-threaded-irq.patch \
-            file://sakoman/0010-fix-registration-vs-init-order.patch \
+            file://sakoman/0009-rtc-twl-Use-threaded-IRQ-remove-IRQ-enable-in-interr.patch \
+            file://sakoman/0010-rtc-twl-Fix-registration-vs.-init-order.patch \
             file://sakoman/0011-soc-codecs-Enable-audio-capture-by-default-for-twl40.patch \
             file://sakoman/0012-soc-codecs-twl4030-Turn-on-mic-bias-by-default.patch \
             file://sakoman/0013-omap-mmc-twl4030-move-clock-input-selection-prior-to.patch \
@@ -210,10 +214,10 @@ SRC_URI += "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-3.0.y.git
             \
             file://sgx/0001-ARM-L2-Add-and-export-outer_clean_all.patch \
             \
-            file://ulcd/0001-omap2-displays-Add-support-for-ThreeFiveCorp-S9700-D.patch \
-            file://ulcd/0002-omap3-beagle-added-lcd-driver.patch \
-            file://ulcd/0003-lcd-Set-LCD-power-enable-GPIO-in-board-file.patch \
-            file://ulcd/0004-Make-fbset-show-correct-timing-values.patch \
+            file://ulcd/0001-OMAP_VOUT-Fix-build-break-caused-by-update_mode-remo.patch \
+            file://ulcd/0002-WIP-omap-beagleboard-add-bbtoys-ulcd-lite-support.patch \
+            file://ulcd/0003-ARM-OMAP2-beagleboard-add-support-for-loopthrough-ex.patch \
+            file://ulcd/0004-LEDS-add-initial-support-for-WS2801-controller.patch \
             \
             file://omap4/0001-OMAP-Fix-linking-error-in-twl-common.c-for-OMAP2-3-4.patch \
             \
@@ -223,3 +227,4 @@ SRC_URI_append_beagleboard = " file://logo_linux_clut224.ppm \
 "
 
 S = "${WORKDIR}/git"
+

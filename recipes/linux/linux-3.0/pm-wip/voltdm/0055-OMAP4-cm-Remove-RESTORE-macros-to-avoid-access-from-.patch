@@ -1,4 +1,4 @@
-From 64ec35c01d7cdada40434a306c73fab45b94a941 Mon Sep 17 00:00:00 2001
+From 1994f34158452f8040f0fa1acd22475948912800 Mon Sep 17 00:00:00 2001
 From: Benoit Cousson <b-cousson@ti.com>
 Date: Sat, 9 Jul 2011 19:15:05 -0600
 Subject: [PATCH 055/149] OMAP4: cm: Remove RESTORE macros to avoid access from SW
@@ -1520,3 +1520,4 @@ index 8036a16..b9de72d 100644
  extern void omap4_cm2_write_inst_reg(u32 val, s16 inst, u16 idx);
 --
 1.6.6.1
+
