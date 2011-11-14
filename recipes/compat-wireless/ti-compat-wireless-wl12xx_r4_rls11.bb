@@ -13,12 +13,11 @@
 
 include ti-compat-wireless.inc
 
-PR = "r0"
-COMPAT_WIRELESS_VERSION = "2011-10-10-r4-11"
+PR = "r1"
+COMPAT_WIRELESS_VERSION = "2011-11-01-r4-11"
 
-SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/659/5061/ti-compat-wireless-wl12xx-${COMPAT_WIRELESS_VERSION}.tgz \
+SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/719/5185/ti-compat-wireless-wl12xx-${COMPAT_WIRELESS_VERSION}.tgz \
 	"
 
-SRC_URI[md5sum] = "eb47c5ea801e0002db244a9d4cae071e"
-SRC_URI[sha256sum] = "8d62b774bda090f5e72e8ee397011d049f6e7fded3057b72961b3545a334822f"
-
+SRC_URI[md5sum] = "6024aed75f36f0cc380c93e747d7761c"
+SRC_URI[sha256sum] = "2c5369f396641e97697558fd0812cc8c4dfa99ca22f2306c7cebd2cfcc76e0a1"
