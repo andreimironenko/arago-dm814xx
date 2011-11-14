@@ -7,6 +7,9 @@ inherit task
 EZSDK_MULTIMEDIA_COMMON = "\
     gstreamer-dev \
     gst-plugins-base-dev \
+    gst-plugins-good-dev \
+    gst-plugins-ugly-dev \
+    gst-plugins-bad-dev \
     ortp-dev \
 "
 

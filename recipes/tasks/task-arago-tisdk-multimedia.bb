@@ -25,6 +25,8 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-data \
     ti-omtb \
     ti-omx \
+    task-arago-gst \
+    gst-ffmpeg \
 "
 
 MULTIMEDIA_dm365 = " \
