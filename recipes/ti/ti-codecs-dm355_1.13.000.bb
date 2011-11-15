@@ -21,7 +21,7 @@ PROVIDES += "ti-codecs-dm355-server"
 S = "${WORKDIR}/dm355_codecs_${PV}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/dvsdk/codecs/${BINFILE};name=dm355codecsbin \
-	   file://dm355mm.patch;patch=1 \
+	   file://dm355mm.patch \
            file://mapdmaq \
 "
 
