@@ -34,6 +34,17 @@ DISTRO = "arago"
 # What toolchain to use (csl, arago, angstrom etc.)
 TOOLCHAIN_BRAND ?= "csl"
 
+# Set Matrix to older version
+PREFERRED_VERSION_matrix-gui-e = "1.3"
+PREFERRED_VERSION_matrix-gui-common = "1.4"
+
+# Update GStreamer Versions from what's defined in Arago.conf
+PREFERRED_VERSION_gstreamer = "0.10.32"
+PREFERRED_VERSION_gst-plugins-base = "0.10.32"
+PREFERRED_VERSION_gst-plugins-good = "0.10.28"
+PREFERRED_VERSION_gst-plugins-bad = "0.10.21"
+PREFERRED_VERSION_gst-plugins-ugly = "0.10.17"
+
 # So far, angstrom.conf sets ENABLE_BINARY_LOCALE_GENERATION
 # to generate binary locale packages at build time using qemu-native and
 # thereby guarantee i18n support on all devices. If your build breaks on 
