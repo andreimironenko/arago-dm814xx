@@ -8,6 +8,7 @@ test -x "$matrixgui" || exit 0
 
 export TSLIB_TSDEVICE=/dev/input/touchscreen0
 export QWS_MOUSE_PROTO=Tslib:/dev/input/touchscreen0
+tsfile=/etc/pointercal
 
 case "$1" in
   start)
@@ -16,7 +17,18 @@ case "$1" in
     # Do not try to calibrate the touchscreen if it doesn't exist.
     if [ -e /dev/input/touchscreen0 ]
     then
-        if [ ! -f /etc/pointercal ] ; then
+        # Check if the SD card is mounted and the first partition is
+        # vfat.  If so let's write the pointercal file there so that if
+        # someone messes up calibration they can just delete the file from
+        # any system and reboot the board.
+        mount | grep /media/mmcblk0p1 | grep vfat > /dev/null 2>&1
+        if [ "$?" = "0" ]
+        then
+            tsfile=/media/mmcblk0p1/pointercal
+            export TSLIB_CALIBFILE=$tsfile
+        fi
+
+        if [ ! -f $tsfile ] ; then
             echo -n "Calibrating touchscreen (first time only)"
             ts_calibrate
             echo "."

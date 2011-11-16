@@ -4,10 +4,10 @@ LICENSE = "BSD MIT Apache"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-PR = "r17"
+PR = "r18"
 
 INITSCRIPT_NAME = "matrix-gui-2.0"
-INITSCRIPT_PARAMS = "defaults 99"
+INITSCRIPT_PARAMS = "defaults 97"
 
 PACKAGE_ARCH = "all"
 
