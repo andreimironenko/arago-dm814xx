@@ -55,3 +55,10 @@ SRC_URI += "file://0001-omap3evm-add-wake-on-wlan-support.patch \
     file://0006-revert-duplicate-insertion-of-mmc_card_keep_power-fu.patch \
 "
 
+# The following patches allow for NOR to be enabled and built
+# easily.
+SRC_URI += " \
+    file://0001-omap3-am3517evm-Allow-for-NAND-to-really-be-disabled.patch \
+    file://0002-omap3-am3517evm-Update-NOR-partition-table.patch \
+    file://0003-AM3517-Add-am3517_evn_nor_defconfig.patch \
+"
