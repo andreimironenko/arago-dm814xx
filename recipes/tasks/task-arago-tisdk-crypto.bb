@@ -2,7 +2,7 @@
 #       that require filing for a TSU exemption or applications
 #       that depend on TSU exempt code.
 DESCRIPTION = "Task to install crypto packages into target FS"
-PR = "r18"
+PR = "r19"
 LICENSE = "MIT"
 
 inherit task
@@ -63,6 +63,11 @@ WLAN_COMMON = "hostap-daemon \
                softap-udhcpd-config \
               "
 
+BLUETOOTH = ""
+BLUETOOTH_am37x-evm = "bluetooth-gui"
+BLUETOOTH_omapl138 = "bluetooth-gui"
+BLUETOOTH_ti33x = "bluetooth-gui"
+
 # These are the WLAN packages that are used for compatibility with the
 # 2.6.37 kernel used by some devices
 WLAN_COMPAT = "ti-compat-wireless-wl12xx \
@@ -80,4 +85,5 @@ WLAN_am335x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
 RDEPENDS_${PN} = "\
     ${CRYPTO_SUPPORT} \
     ${WLAN} \
+    ${BLUETOOTH} \
     "
