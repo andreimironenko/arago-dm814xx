@@ -52,6 +52,7 @@ BSP_COMPONENTS_ti816x = "\
 
 BSP_COMPONENTS_ti814x = "\
     u-boot-min-sd \
+    u-boot-min-nand \
     "
 
 BLUETOOTH_STACK = "\
