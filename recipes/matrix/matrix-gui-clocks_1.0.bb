@@ -3,11 +3,11 @@ HOMEPAGE = "https://gforge.ti.com/gf/project/matrixguiv2apps/"
 LICENSE = "CC-BY-SA"
 PRIORITY = "optional"
 
-PR = "r1"
+PR = "r2"
 
 PACKAGE_ARCH = "all"
 
-SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/673/5096/clocks_1.1.tar.gz"
+SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/729/5213/clocks_1.2.tar.gz"
 
 S = ${WORKDIR}/clocks
 
@@ -33,5 +33,5 @@ FILES_${PN}-600mhz += "${bindir}/setopp3.sh"
 FILES_${PN}-800mhz += "${bindir}/setopp4.sh"
 FILES_${PN}-1ghz += "${bindir}/setopp1.sh"
 
-SRC_URI[md5sum] = "6d50592e364f39d7ed3b2805e6c227cb"
-SRC_URI[sha256sum] = "ab51df1651a391e3f6a947faccf45354ef187508c65cb3de92cc9fef88206e65"
+SRC_URI[md5sum] = "cb225b9f1c24a4f13cb1a127d91be060"
+SRC_URI[sha256sum] = "8b5ece45f975d213c963471f8d3ec9d2ab8244f44a4420bb99f408488767dc0c"
