@@ -7,4 +7,17 @@ DEPENDS := "${@oe_filter_out('opencv', bb.data.getVar('DEPENDS', d, 1), d)}"
 DEPENDS := "${@oe_filter_out('libcdio', bb.data.getVar('DEPENDS', d, 1), d)}"
 
 # Set the suffix to specify amended packages
-PR_append = "-arago3"
+PR_append = "-arago4"
+
+EXTRA_OECONF += "--disable-vp8 \
+"
+
+SRC_URI = "http://gstreamer.freedesktop.org/src/${PN}/${PN}-${PV}.tar.bz2;name=archive \
+           file://0001-freeze-Add-timeout-property.patch \
+           file://0002-fixes-to-mux-h264-stream-utilizing-ctts.patch \
+           file://0003-ugly-hack-to-avoid-a-memcpy.patch \
+           file://0004-h264parse-Add-workaround-for-separate-codec_config-a.patch \
+           file://0005-jpegparse-ignore-unhandled-application-markers.patch \
+           file://0006-mpegvideoparse-merge-sequence-header.patch \
+           file://0007-h264parse-fix-boundary-condition.patch \
+"
