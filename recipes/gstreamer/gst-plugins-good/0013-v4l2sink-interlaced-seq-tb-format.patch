@@ -1,0 +1,38 @@
+diff -Npru gst-plugins-good-0.10.27.orig/sys/v4l2/gstv4l2object.c gst-plugins-good-0.10.27/sys/v4l2/gstv4l2object.c
+--- gst-plugins-good-0.10.27.orig/sys/v4l2/gstv4l2object.c	2011-11-04 16:37:53.000000000 +0530
++++ gst-plugins-good-0.10.27/sys/v4l2/gstv4l2object.c	2011-10-25 15:48:58.000000000 +0530
+@@ -1741,7 +1741,7 @@ return_data:
+   s = gst_structure_copy (template);
+   gst_structure_set (s, "width", G_TYPE_INT, (gint) width,
+       "height", G_TYPE_INT, (gint) height,
+-      "interlaced", G_TYPE_BOOLEAN, interlaced, NULL);
++      /* "interlaced", G_TYPE_BOOLEAN, interlaced, */ NULL);
+ 
+   if (G_IS_VALUE (&rates)) {
+     /* only change the framerate on the template when we have a valid probed new
+@@ -1999,7 +1999,7 @@ default_frame_sizes:
+     else
+       gst_structure_set (tmp, "height", GST_TYPE_INT_RANGE, min_h, max_h, NULL);
+ 
+-    gst_structure_set (tmp, "interlaced", G_TYPE_BOOLEAN, interlaced, NULL);
++    // gst_structure_set (tmp, "interlaced", G_TYPE_BOOLEAN, interlaced, NULL);
+ 
+     gst_caps_append_structure (ret, tmp);
+ 
+@@ -2038,7 +2038,7 @@ gst_v4l2_object_get_nearest_size (GstV4l
+     fmt.fmt.pix.width = *width;
+     fmt.fmt.pix.height = *height;
+     fmt.fmt.pix.pixelformat = pixelformat;
+-    fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
++    fmt.fmt.pix.field = V4L2_FIELD_SEQ_TB;
+     r = v4l2_ioctl (fd, VIDIOC_TRY_FMT, &fmt);
+   }
+ 
+@@ -2084,6 +2084,7 @@ gst_v4l2_object_get_nearest_size (GstV4l
+     case V4L2_FIELD_NONE:
+       *interlaced = FALSE;
+       break;
++    case V4L2_FIELD_SEQ_TB:
+     case V4L2_FIELD_INTERLACED:
+     case V4L2_FIELD_INTERLACED_TB:
+     case V4L2_FIELD_INTERLACED_BT:
