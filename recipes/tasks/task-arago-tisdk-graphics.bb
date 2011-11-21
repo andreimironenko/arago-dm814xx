@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r25"
+PR = "r26"
 LICENSE = "MIT"
 
 inherit task
@@ -37,7 +37,6 @@ MATRIX_APPS_append_ti33x = "matrix-gui-3d-demos \
                             matrix-gui-wifi-demos \
                             matrix-gui-submenus-multimedia \
                             matrix-gui-submenus-power \
-                            matrix-gui-submenus-pru \
                            "
 
 RDEPENDS_${PN} = "\
