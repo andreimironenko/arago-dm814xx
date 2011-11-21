@@ -62,3 +62,9 @@ SRC_URI += " \
     file://0002-omap3-am3517evm-Update-NOR-partition-table.patch \
     file://0003-AM3517-Add-am3517_evn_nor_defconfig.patch \
 "
+
+# The following patch sets the dto timeout for SD cards to the max of 14.
+# This has been found to make SD cards work more reliably in the omap3 systems
+SRC_URI += " \
+    file://0001-omap_hsmmc-make-default-dto-value-14.patch \
+"
