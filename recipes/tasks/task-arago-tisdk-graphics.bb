@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r26"
+PR = "r27"
 LICENSE = "MIT"
 
 inherit task
@@ -10,7 +10,6 @@ QTWIDGET_DEMO = ""
 QTWIDGET_DEMO_omapl138 = "qt-embedded-widgets-demo"
 
 MATRIX_APPS = "matrix-gui \
-               matrix-gui-coming-soon \
                matrix-gui-crypto-demos \
                matrix-gui-qt4-demos \
                matrix-gui-usb-demos \
