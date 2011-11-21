@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support Package sources (or development header) packages on host"
-PR = "r46"
+PR = "r47"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -84,7 +84,6 @@ BSP_COMPONENTS_append_am37x-evm = "\
 BSP_COMPONENTS_append_beagleboard = "\
     linux-src \
     ti-tisdk-setup \
-    flash-utility \
     pinmux-utility \
     bootcamp-lects \
     "
