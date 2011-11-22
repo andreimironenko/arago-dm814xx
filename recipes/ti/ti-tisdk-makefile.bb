@@ -32,6 +32,7 @@ MAKEFILES_ti33x = "u-boot-spl"
 MAKEFILES_am389x-evm = "u-boot-min-sd u-boot-legacy"
 MAKEFILES_am387x-evm = "u-boot-min-sd u-boot-legacy"
 MAKEFILES_beagleboard = "x-load u-boot-legacy"
+MAKEFILES_am180x-evm = "pru"
 
 
 
@@ -48,9 +49,10 @@ SRC_URI = "\
     file://Makefile_u-boot-min-sd \
     file://Makefile_u-boot-spl \
     file://Makefile_matrix-gui-browser \
+    file://Makefile_pru \
 "
 
-PR = "r88"
+PR = "r89"
 
 do_configure_prepend_dm37x-evm () { 
          sed -i -e 's:OMAPES=3.x:OMAPES=5.x:g' ${WORKDIR}/Makefile
