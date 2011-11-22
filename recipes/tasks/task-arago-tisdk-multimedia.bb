@@ -27,6 +27,7 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-omx \
     task-arago-gst \
     gst-ffmpeg \
+    gstreamer-ti-dm81xx \
 "
 
 MULTIMEDIA_dm365 = " \
