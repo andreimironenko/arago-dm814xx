@@ -9,7 +9,7 @@ COMPATIBLE_MACHINE = "omapl138|am180x-evm"
 SRC_URI = "svn://gforge.ti.com/svn/pru_sw/;module=trunk;proto=https;user=anonymous;pswd='' \
            https://gforge.ti.com/gf/download/frsrelease/727/5211/prudemos_1.1.tar.gz"
 
-SRCREV = "31"
+SRCREV = "33"
 S = "${WORKDIR}/trunk"
 
 MATRIX_FILES_DIR = "${WORKDIR}/prudemos"

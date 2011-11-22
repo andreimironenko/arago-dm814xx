@@ -11,7 +11,7 @@ COMPATIBLE_MACHINE = "omapl138|am180x-evm|am181x-evm"
 
 SRC_URI = "svn://gforge.ti.com/svn/pru_sw/;module=trunk;proto=https;user=anonymous;pswd=''"
 
-SRCREV = "31"
+SRCREV = "33"
 S = "${WORKDIR}/trunk/peripheral_lib/edma_driver/interface"
 
 do_compile () {
