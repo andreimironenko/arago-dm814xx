@@ -20,7 +20,8 @@ echo
 echo "--------------------------------------------------------------------------------"
 echo "This step will set up the u-boot variables for booting the EVM."
 echo "Becuase the not all AM335x devices have a NAND, the u-boot variables will"
-echo "be stored in uEnv.txt on the boot partition. U-boot will read this" echo "file on boot."
+echo "be stored in uEnv.txt on the boot partition. U-boot will read this"
+echo "file on boot."
 echo
 
 ipdefault=`ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1 }'`
@@ -92,8 +93,20 @@ if [ "$kernel" -eq "1" ]; then
 fi
 
 hasFTDI=`lsusb | grep "0403:a6d0"`
+configBB="n"
 
-if [ -n "$hasFTDI" ]; then
+if [ -n "$hasFTDI" ]
+then
+    echo ""
+    echo ""
+    echo "This SDK supports both the AM335x EVM as well as the BeagleBone."
+    echo "A BeagleBone has been detected as attached to your host system"
+    echo "Are you wanting to configure u-boot for this BeagleBone?  An"
+    echo "answer of 'n' will configure u-boot for the AM335x EVM instead"
+    read -p "(y/n) " configBB
+fi
+
+if [ "$configBB" = "y" ]; then
 #The BeagleBone has been detected, write information to uEnv.txt
 
 
@@ -163,7 +176,7 @@ if [ -n "$hasFTDI" ]; then
 	if [ -z "$ftdiInstalled" ]; then
 	#Add the ability to regconize the BeagleBone as two serial ports
 		echo "Finishing install by adding drivers for Beagle Bone..."
-		modprobe -q ftdi_sio vendor=0x0403 product=0xa6d0
+		sudo modprobe -q ftdi_sio vendor=0x0403 product=0xa6d0
 
 		#Create uDev rule
 		echo "# Load ftdi_sio driver including support for XDS100v2." > $cwd/99-custom.rules
@@ -299,10 +312,3 @@ else
 	
 
 fi
-
-
-
-
-
-
-

@@ -24,24 +24,18 @@ echo "on your setup."
 echo "--------------------------------------------------------------------------------"
 echo
 
-hasFTDI=`lsusb | grep "0403:a6d0"`
 portdefault=/dev/ttyS0
 
-if [ -n "$hasFTDI" ]; then
-	echo "The BeagleBone has been detected!"
-	echo "Adding capability to recognize BeagleBone serial port to the host..."
-	port=/dev/ttyUSB1 #Set as default, will be overwritten later.
-	#Note this is changed later in uboot-setup. The mass storage is removed when a modprobe is perfomed.
-	echo "Press enter to automatically setup minicom for the BeagleBone."
-	read -p "" pressEnter
-else
-	echo "A built in USB-to-Serial device was not detected."
-	echo "Which serial port do you want to use with minicom?"
-	read -p "[ $portdefault ] " port
+echo ""
+echo "NOTE: For boards with a built-in USB to Serial adapter please press"
+echo "      ENTER at the prompt below.  The correct port will be determined"
+echo "      automatically at a later step.  For all other boards select"
+echo "      the serial port that the board is connected to"
+echo "Which serial port do you want to use with minicom?"
+read -p "[ $portdefault ] " port
 
-	if [ ! -n "$port" ]; then
-	    port=$portdefault
-	fi
+if [ ! -n "$port" ]; then
+    port=$portdefault
 fi
 
 if [ -f $minicomcfg ]; then
