@@ -10,7 +10,7 @@ PROVIDES = "u-boot-min-nand"
 
 UBOOT_MACHINE = "ti8148_evm_min_nand"
 UBOOT_BINARY = "u-boot.min.nand"
-UBOOT_IMAGE = "u-boo.min.nand.bin"
+UBOOT_IMAGE = "u-boot.min.nand.bin"
 
 # Look to the base recipes directory to find files as well.
 FILESDIR = "${@os.path.dirname(bb.data.getVar('FILE',d,1))}/u-boot-${PV}"
