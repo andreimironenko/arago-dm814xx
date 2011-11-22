@@ -9,7 +9,7 @@ UBOOT_ENV_da850-omapl138-evm = "setup-uboot-env-omapl138.sh"
 UBOOT_ENV_dm37x-evm = "setup-uboot-env-dm3730.sh"
 UBOOT_ENV_omap3evm = "setup-uboot-env-omap3530.sh"
 UBOOT_ENV_am37x-evm = "setup-uboot-env-am37x.sh"
-UBOOT_ENV_beagleboard = "setup-uboot-env-am37x.sh"
+UBOOT_ENV_beagleboard = "setup-uboot-env-beagleboard.sh"
 UBOOT_ENV_am3517-evm = "setup-uboot-env-am3517.sh"
 UBOOT_ENV_am180x-evm = "setup-uboot-env-am18x.sh"
 UBOOT_ENV_am181x-evm = "setup-uboot-env-am18x.sh"
@@ -27,7 +27,7 @@ SRC_URI = "\
     file://${UBOOT_ENV} \
 "
 
-PR = "r42"
+PR = "r43"
 
 do_install () {
     install -m 0755 ${WORKDIR}/setup.sh ${D}/

@@ -35,7 +35,7 @@ uimage="uImage-""$platform"".bin"
 uimagesrc=`ls -1 $cwd/../board-support/prebuilt-images/$uimage`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyO0,115200n8 rw noinitrd"
+baseargs="console=ttyO2,115200n8 rw noinitrd"
 videoargs="omap_vout.vid1_static_vrfb_alloc=y"
 fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3 rootwait"
 fsnfsargs1="root=/dev/nfs nfsroot="
@@ -232,7 +232,7 @@ if [ "$minicom" = "y" ]; then
         cd $savedir
         check_status
     fi
-    
+
     echo "You can manually run minicom in the future with this setup script using: minicom -S $minicomfile"
 fi
 echo "--------------------------------------------------------------------------------"
