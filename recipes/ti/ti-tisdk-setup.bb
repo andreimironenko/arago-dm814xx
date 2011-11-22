@@ -19,6 +19,9 @@ UBOOT_ENV_am181x-evm = "setup-uboot-env-am18x.sh"
 UBOOT_ENV_am389x-evm = "setup-uboot-env-am389x.sh"
 UBOOT_ENV_ti33x = "setup-uboot-env-am335x.sh"
 
+SETUP_NAND_ti816x = "setup-nand-images-dm816x.sh"
+SETUP_NAND_ti814x = "setup-nand-images-dm814x.sh"
+
 SRC_URI = "\
 	file://setup.sh \
   	file://common.sh \
@@ -28,9 +31,10 @@ SRC_URI = "\
   	file://setup-targetfs-nfs.sh \
   	file://setup-tftp.sh \
     file://${UBOOT_ENV} \
+    file://${SETUP_NAND} \
 "
 
-PR = "r37"
+PR = "r38"
 
 do_install () {
     install -m 0755 ${WORKDIR}/setup.sh ${D}/
@@ -42,6 +46,7 @@ do_install () {
     install -m 0755 ${WORKDIR}/setup-targetfs-nfs.sh ${D}/bin
     install -m 0755 ${WORKDIR}/setup-tftp.sh ${D}/bin
     install -m 0755 ${WORKDIR}/${UBOOT_ENV} ${D}/bin/setup-uboot-env.sh
+    install -m 0755 ${WORKDIR}/${SETUP_NAND} ${D}/bin/setup-nand-images.sh
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
