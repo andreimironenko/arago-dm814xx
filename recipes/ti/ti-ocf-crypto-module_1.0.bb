@@ -4,10 +4,12 @@ LICENSE = "BSD GPLv2"
 
 COMPATIBLE_MACHINE = "am37x-evm|am3517-evm"
 
+DEPENDS += "virtual/kernel"
+
 SRC_URI = "svn://gforge.ti.com/svn/arm_crypto/;module=trunk;proto=https;user=anonymous;pswd=''"
 
 #gforge source revision
-SRCREV = "14"
+SRCREV = "15"
 
 PACKAGE_STRIP = "no"
 
@@ -15,7 +17,7 @@ S = "${WORKDIR}/trunk"
 
 inherit module
 
-PR = "${MACHINE_KERNEL_PR}+svnr${SRCPV}-r3"
+MACHINE_KERNEL_PR_append = "+svnr${SRCPV}"
 
 do_compile_prepend () {
 	sed -i "s/arm-none-linux-gnueabi-/${TARGET_PREFIX}/g" ${S}/Makefile
