@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r27"
+PR = "r28"
 LICENSE = "MIT"
 
 inherit task
@@ -18,7 +18,6 @@ MATRIX_APPS = "matrix-gui \
               "
 
 MATRIX_APPS_append_omap3 = "matrix-gui-3d-demos \
-                            matrix-gui-display-control \
                            "
 
 MATRIX_APPS_append_am37x-evm = "matrix-gui-clocks-300mhz \
@@ -27,6 +26,7 @@ MATRIX_APPS_append_am37x-evm = "matrix-gui-clocks-300mhz \
                                 matrix-gui-clocks-1ghz \
                                 matrix-gui-wifi-demos \
                                 matrix-gui-pm-demos \
+                                matrix-gui-display-control \
                                "
 
 MATRIX_APPS_append_am180x-evm = "matrix-gui-wifi-demos"
