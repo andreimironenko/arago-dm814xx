@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r28"
+PR = "r29"
 LICENSE = "MIT"
 
 inherit task
@@ -13,7 +13,7 @@ MATRIX_APPS = "matrix-gui \
                matrix-gui-crypto-demos \
                matrix-gui-qt4-demos \
                matrix-gui-usb-demos \
-               matrix-gui-submenus-oprofile \
+               matrix-gui-oprofile-demos \
                matrix-gui-submenus-ethernet \
               "
 
