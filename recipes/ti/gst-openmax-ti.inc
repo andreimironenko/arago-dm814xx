@@ -1,4 +1,4 @@
-DESCRIPTION = "GSTREAMER DM81xx Plugin (gstreamer-ti-dm81xx) for TI DM81xx ARM/DSP processors"
+DESCRIPTION = "GST OpenMax DM81xx Plugin for TI DM81xx ARM/DSP processors"
 HOMEPAGE = "https://gforge.ti.com/gf/project/gstreamer_ti/"
 SECTION = "multimedia"
 LICENSE = "LGPL"
@@ -11,10 +11,10 @@ INC_PR = "r1"
 
 DEPENDS = "ti-omx gstreamer gst-plugins-base"
 
-S = "${WORKDIR}/gstreamer_ti_dm81xx/ti_build/gst-openmax"
-
-SRC_URI = "svn://gforge.ti.com/svn/gstreamer_ti/trunk;module=gstreamer_ti_dm81xx/ti_build/gst-openmax;proto=https;user=anonymous;pswd='' \
+SRC_URI = "http://install.source.dir.local/gst-openmax-${PV}.tar.gz\
 "
+
+S = ${WORKDIR}/gst-openmax-${PV}
 
 COMPATIBLE_MACHINE = "dm816x-evm|dm814x-evm"
 
@@ -23,8 +23,6 @@ GSTPLATFORM_ti816x = "Platform_dm816x"
 
 OMXPLATFORM_ti814x = "ti814x-evm"
 OMXPLATFORM_ti816x = "ti816x-evm"
-
-EXTRA_OECONF = CFLAGS="-D${GSTPLATFORM} -DUSE_OMXTICORE"
 
 EXTRA_OEMAKE = BIOS_INSTALL_DIR="${SYSBIOS_INSTALL_DIR}" \
          IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
@@ -48,5 +46,10 @@ do_install_append() {
 FILES_${PN}     += "${libdir} ${libdir}/gstreamer-0.10/*.so ${sysconfdir} ${installdir}"
 FILES_${PN}-dev += "${libdir}/gstreamer-0.10/*.a ${libdir}/gstreamer-0.10/*.la"
 FILES_${PN}-dbg += "${libdir}/gstreamer-0.10/.debug"
+
+pkg_postinst_${PN} () {
+#!/bin/sh
+	/sbin/ldconfig
+}
 
 INSANE_SKIP_${PN} = True

@@ -35,7 +35,7 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-omtb-src \
     ti-c674x-aaclcdec-src \
     ti-cgt6x-src \
-    gstreamer-ti-dm81xx-src \
+    gst-openmax-ti-src \
 "
 
 MULTIMEDIA_SOURCETREE_am37x-evm = ""
