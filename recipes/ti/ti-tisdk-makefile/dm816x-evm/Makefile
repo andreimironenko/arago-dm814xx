@@ -117,6 +117,10 @@ help:
 	@echo "    sgx-driver_clean               : Remove SGX generated files"
 	@echo "    sgx-driver_install             : Install SGX kernel module"
 	@echo
+	@echo "    gstomx                         : Build TI GST OpenMax Plugin"
+	@echo "    gstomx_clean                   : Remove TI GST OpenMax generated files"
+	@echo "    gstomx_install                 : Install TI GST OpenMax Plugin"
+	@echo
 	@echo "    all                            : Rebuild everything"
 	@echo "    clean                          : Remove all generated files"
 	@echo
@@ -379,6 +383,27 @@ edma3lld:
 
 edma3lld_clean:
 	make -C $(EDMA3_LLD_INSTALL_DIR)/packages $(EDMA3_LLD_BUILD_VARS) cleanall
+
+
+###################################################################################
+# build GST OMX Plugin
+##################################################################################
+gstomx_configure:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; \
+		cd $(GST_OMX_INSTALL_DIR)/; \
+		./configure --host=arm-none-linux-gnueabi 
+
+gstomx: gstomx_configure
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; \
+		make -C $(GST_OMX_INSTALL_DIR) $(GST_OMX_BUILD_VARS)
+
+gstomx_clean:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; \
+		make -C $(GST_OMX_INSTALL_DIR) $(GST_OMX_BUILD_VARS) clean
+
+gstomx_install:
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; \
+		make -C $(GST_OMX_INSTALL_DIR) $(GST_OMX_BUILD_VARS) install prefix=$(EXEC_DIR)/usr
 
 ###############################################################################
 # Build the DSP devkit
