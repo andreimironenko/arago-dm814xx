@@ -7,19 +7,26 @@ prompt="TI8168_EVM#"
 #Memory address for loading the images
 loadaddr=0x81000000
 
+#offset to partition for u-boot.noxip.bin in NAND 
+uboot_noxip_offset=0x0
+
 #offset to partition for kernel in NAND
 kernel_offset=0x00280000
 
 #size of the partition for uboot.noxip.bin
-partition0=0x00260000
+partition_uboot_noxip=0x00260000
 
 #size of the partition for kernel
-partition2=0x00440000
+partition_kernel=0x00440000
 
-#size of the defaault uImage
-kernel_size=0x00251000
+#size of the u-boot.noxip.bin with a buffer of 4KB along the size of default image
+uboot_noxip_size=0x0002e800
 
-do_expect() {
+#size of the linux image with a buffer of 4KB along the size of default image
+kernel_size=0x00252000
+
+do_expect() 
+{
     echo "expect {" >> $3
     check_status
     echo "    $1" >> $3
@@ -61,20 +68,21 @@ if [ -f $flashfilepath ]; then
 fi
 
 timeout=300
-echo "timeout $timeout" >> $flashfilepath  echo "verbose on" >> $flashfilepath
+echo "timeout $timeout" >> $flashfilepath
+echo "verbose on" >> $flashfilepath
 echo >> $flashfilepath
 do_expect "\"$prompt\"" "send \"mmc rescan 0\"" $flashfilepath   
-do_expect "\"$prompt\"" "send \"mw.b $loadaddr 0xFF $partition0\"" $flashfilepath
+do_expect "\"$prompt\"" "send \"mw.b $loadaddr 0xFF $partition_uboot_noxip\"" $flashfilepath
 do_expect "\"$prompt\"" "send \"fatload mmc 0 $loadaddr u-boot.noxip.bin\"" $flashfilepath
 do_expect "\"$prompt\"" "send \"nandecc hw 2\"" $flashfilepath
-do_expect "\"$prompt\"" "send \"nand erase 0x0 $partition0\"" $flashfilepath
-do_expect "\"$prompt\"" "send \"nand write.i $loadaddr 0x0 $partition0\"" $flashfilepath
+do_expect "\"$prompt\"" "send \"nand erase $uboot_noxip_offset $partition_uboot_noxip\"" $flashfilepath
+do_expect "\"$prompt\"" "send \"nand write $loadaddr $uboot_noxip_offset $uboot_noxip_size\"" $flashfilepath
 do_expect "\"$prompt\"" "send \"nandecc hw 0\"" $flashfilepath
 
 if [ "$kernel" = "y" ]; then 
-    do_expect "\"$prompt\"" "send \"mw.b $loadaddr 0xFF $partition2\"" $flashfilepath
+    do_expect "\"$prompt\"" "send \"mw.b $loadaddr 0xFF $partition_kernel\"" $flashfilepath
     do_expect "\"$prompt\"" "send \"fatload mmc 0 $loadaddr uImage\"" $flashfilepath
-    do_expect "\"$prompt\"" "send \"nand erase $kernel_offset $partition2\"" $flashfilepath
+    do_expect "\"$prompt\"" "send \"nand erase $kernel_offset $partition_kernel\"" $flashfilepath
     do_expect "\"$prompt\"" "send \"nand write $loadaddr $kernel_offset $kernel_size\"" $flashfilepath
 fi
 
