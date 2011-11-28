@@ -16,22 +16,11 @@ SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/ui
 
 DEPENDS = "ti-syslink ti-ipc"
 
-EXTRA_OEMAKE = "SYSLINK_INSTALL_DIR=${SYSLINK_INSTALL_DIR}/packages \
-        IPC_INSTALL_DIR=${IPC_INSTALL_DIR}/packages \
-        CC='${CC}' \
-        RANLIB='${RANLIB}' \
-"
-
 UIAPLATFORM_ti816x = "evmti816x"
 UIAPLATFORM_ti814x = "evmti816x"
-UIAPLATFORM        = "<Undefined Platform>"
 
 do_compile() {
-    cd ${S}/packages/ti/uia/linux
-    oe_runmake
-
-    cd ${S}/packages/ti/uia/examples/${UIAPLATFORM}
-    oe_runmake
+    :
 }
 
 do_install() {
