@@ -109,6 +109,9 @@ update_rules_make()
       "omtb")
         real_name="omtb"
         ;;
+      "gst-openmax-ti")
+        real_name="gst-openmax"
+        ;;
       "sysbios")
         real_name="bios"
         ;;
