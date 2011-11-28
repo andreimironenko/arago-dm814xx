@@ -4,7 +4,7 @@ LICENSE = "BSD MIT Apache"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-PR = "r21"
+PR = "r22"
 
 INITSCRIPT_NAME = "matrix-gui-2.0"
 INITSCRIPT_PARAMS = "defaults 97"
@@ -27,6 +27,7 @@ S = "${WORKDIR}/git"
 MATRIX_CONFIG = "800x480_config.ini"
 MATRIX_CONFIG_am3517-evm = "480x272_config.ini"
 MATRIX_CONFIG_am180x-evm = "480x272_config.ini"
+MATRIX_CONFIG_am37x-evm = "640x480_config.ini"
 
 MATRIX_ROT = ""
 MATRIX_ROT_am37x-evm = "-display transformed:Rot90"
