@@ -3,11 +3,11 @@ HOMEPAGE = "https://gforge.ti.com/gf/project/matrixguiv2apps/"
 LICENSE = "CC-BY-SA"
 PRIORITY = "optional"
 
-PR = "r2"
+PR = "r3"
 
 PACKAGE_ARCH = "all"
 
-SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/696/5123/usbdemos_1.3.tar.gz"
+SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/732/5235/usbdemos_1.4.tar.gz"
 
 S = ${WORKDIR}/usbdemos
 
@@ -18,5 +18,5 @@ RDEPENDS +=  "matrix-gui-submenus-usb bonnie++"
 
 FILES_${PN} += "${MATRIX_BASE_DIR}/*"
 
-SRC_URI[md5sum] = "f2b5519099ca491126d6c60f26a20239"
-SRC_URI[sha256sum] = "fbae40a980fb365631b0009f3f7e2e16ca7b7f1746845caf64f9612adbf6ded4"
+SRC_URI[md5sum] = "f4e3f6b2e8757145bb6a2f1f56d6e75a"
+SRC_URI[sha256sum] = "49c298bca0a1507ce01cc54a048afaadff69888e8bd54fcf9abeb64f88340d46"
