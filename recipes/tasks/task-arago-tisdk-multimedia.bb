@@ -26,6 +26,7 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-omtb \
     ti-omx \
     task-arago-gst \
+    ti-omx-core \
     gst-ffmpeg \
     gst-openmax-ti \
 "
