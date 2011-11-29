@@ -11,45 +11,6 @@ index fab05eb..3b0dff9 100644
 			src/dbus-common.c src/dbus-common.h \
 			src/event.h src/event.c \
 			src/oob.h src/oob.c src/eir.h src/eir.c
-diff --git a/audio/audio.conf b/audio/audio.conf
-index 302e046..121e7f7 100644
---- a/audio/audio.conf
-+++ b/audio/audio.conf
-@@ -2,10 +2,14 @@
-
- # This section contains options which are not specific to any
- # particular interface
-+# NOTE: Enable=Sink means that bluetoothd exposes Sink interface for remote
-+# devices, and the local device is a Source
- [General]
-
-+Enable=Sink,Control
-+Disable=Headset,Gateway,Source
- # Switch to master role for incoming connections (defaults to true)
--#Master=true
-+Master=false
-
- # If we want to disable support for specific services
- # Defaults to supporting all implemented services
-@@ -30,7 +34,7 @@
- HFP=true
-
- # Maximum number of connected HSP/HFP devices per adapter. Defaults to 1
--MaxConnected=1
-+#MaxConnected=1
-
- # Set to true to enable use of fast connectable mode (faster page scanning)
- # for HFP when incomming call starts. Default settings are restored after
-@@ -40,6 +44,6 @@ MaxConnected=1
- FastConnectable=false
-
- # Just an example of potential config options for the other interfaces
--#[A2DP]
--#SBCSources=1
--#MPEG12Sources=0
-+[A2DP]
-+SBCSources=1
-+MPEG12Sources=0
 diff --git a/input/device.c b/input/device.c
 index aa593e0..8d008a4 100644
 --- a/input/device.c

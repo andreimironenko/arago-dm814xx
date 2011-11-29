@@ -14,7 +14,7 @@ FILESPATHBASE .= ":${OEBASE}/arago-oe-dev/recipes/bluez"
 
 DEPENDS += "libsndfile1"
 
-PR = "${INC_PR}.1"
+PR = "${INC_PR}.2"
 
 # Not all distros have a recent enough udev
 BTUDEV = " --disable-udevrules"
