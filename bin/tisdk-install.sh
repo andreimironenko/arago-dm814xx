@@ -86,7 +86,7 @@ update_rules_make()
   for i in ${control_files}; do
     name="`cat $i | grep Package | awk {'print $2'}`"
     
-    echo $name | grep ti-*  >/dev/null
+    echo $name | grep "^ti-*"  >/dev/null
     # if package contain ti- prefix then remove it
     if [ $? -eq 0 ]; then
       name="`echo $name | cut -f2-5 -d-`"
