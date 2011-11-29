@@ -39,7 +39,5 @@ do_install() {
 FILES_${PN}     += "${libdir}"
 
 pkg_postinst_${PN} () {
-if [ x"$D" = "x" ]; then
-	[ -x /sbin/ldconfig ] && /sbin/ldconfig
-fi
+    ln -sf /usr/lib/libOMX_Core.so /usr/lib/libOMX_Core
 }
