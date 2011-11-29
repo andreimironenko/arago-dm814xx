@@ -3,11 +3,11 @@ HOMEPAGE = "https://gforge.ti.com/gf/project/matrixguiv2apps/"
 LICENSE = "CC-BY-SA"
 PRIORITY = "optional"
 
-PR = "r1"
+PR = "r2"
 
 PACKAGE_ARCH = "all"
 
-SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/733/5222/oprofiledemos_1.1.tar.gz"
+SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/740/5237/oprofiledemos_1.2.tar.gz"
 
 S = ${WORKDIR}/oprofiledemos
 
@@ -18,5 +18,5 @@ RDEPENDS +=  "matrix-gui-submenus-oprofile"
 
 FILES_${PN} += "${MATRIX_BASE_DIR}/*"
 
-SRC_URI[md5sum] = "db25ffb8a90d870e5ff7d5926bde19b7"
-SRC_URI[sha256sum] = "af1af76fd7a118e751fb618226a754db5f6d90d6c8416dc037b45b0b28d94a7d"
+SRC_URI[md5sum] = "56c081ad8f4d301994558b8363055665"
+SRC_URI[sha256sum] = "fa03139120ebbe703d49f3b86a44fdeff190c14dbb3cdbbeca22ac249b0c12e2"
