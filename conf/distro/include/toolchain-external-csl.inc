@@ -17,3 +17,4 @@ TOOLCHAIN_TARGET_EXCLUDE += "\
 PREFERRED_VERSION_gdbserver = "6.6"
 PREFERRED_VERSION_gdb = "6.6"
 PREFERRED_VERSION_gdb-cross-sdk = "6.6"
+PREFERRED_PROVIDER_gdbserver = "gdbserver"
