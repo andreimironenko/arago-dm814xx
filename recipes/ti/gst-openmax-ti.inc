@@ -10,6 +10,7 @@ require ti-staging.inc
 INC_PR = "r1"
 
 DEPENDS = "ti-omx gstreamer gst-plugins-base"
+RDEPENDS = "ti-omx-core"
 
 SRC_URI = "http://install.source.dir.local/gst-openmax-${PV}.tar.gz\
 "
@@ -39,17 +40,6 @@ EXTRA_OEMAKE = BIOS_INSTALL_DIR="${SYSBIOS_INSTALL_DIR}" \
          OMX_PLATFORM="${OMXPLATFORM}" \
          CROSS_COMPILE="${TOOLCHAIN_PATH}/bin/${TARGET_PREFIX}"
 
-do_install_append() {
-    install ${S}/ext/lib/libOMX_Core.so ${D}/${libdir}
-}
-
-FILES_${PN}     += "${libdir} ${libdir}/gstreamer-0.10/*.so ${sysconfdir} ${installdir}"
+FILES_${PN}     += "${libdir}/gstreamer-0.10/*.so ${sysconfdir} ${installdir}"
 FILES_${PN}-dev += "${libdir}/gstreamer-0.10/*.a ${libdir}/gstreamer-0.10/*.la"
 FILES_${PN}-dbg += "${libdir}/gstreamer-0.10/.debug"
-
-pkg_postinst_${PN} () {
-#!/bin/sh
-	/sbin/ldconfig
-}
-
-INSANE_SKIP_${PN} = True
