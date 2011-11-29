@@ -3,11 +3,11 @@ HOMEPAGE = "https://gforge.ti.com/gf/project/matrixguiv2apps/"
 LICENSE = "CC-BY-SA"
 PRIORITY = "optional"
 
-PR = "r1"
+PR = "r2"
 
 PACKAGE_ARCH = "all"
 
-SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/676/5099/pmdemos_1.1.tar.gz"
+SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/742/5239/pmdemos_1.2.tar.gz"
 
 S = ${WORKDIR}/pmdemos
 
@@ -18,5 +18,5 @@ RDEPENDS +=  matrix-gui-submenus-power
 
 FILES_${PN} += "${MATRIX_BASE_DIR}/*"
 
-SRC_URI[md5sum] = "f996f9754c3d140e95501d8b4134f21c"
-SRC_URI[sha256sum] = "229579b71439c0ad4cff60d7ebb4065f6871db57dd5baa4a5983c9f7804655ab"
+SRC_URI[md5sum] = "ac7eea0321a80a3b4ff27fe37d23ec3c"
+SRC_URI[sha256sum] = "163c13e98f94ef55740edbb7fc77e49e708ca0838d5a2015dcdd067b8cac49aa"
