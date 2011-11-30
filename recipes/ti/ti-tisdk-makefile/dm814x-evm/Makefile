@@ -3,7 +3,7 @@ include Rules.make
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	components components_clean components_linux components_dsp all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install syslink syslink_clean syslink_install matrix matrix_clean matrix_install dsp-devkit linux-devkit media-controller-utils_clean media-controller-utils_install edma3lld edma3lld_clean sgx-driver sgx-driver_clean sgx-driver_install
+.PHONY:	components components_clean components_linux components_dsp all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install syslink syslink_clean syslink_install matrix matrix_clean matrix_install dsp-devkit linux-devkit media-controller-utils_clean media-controller-utils_install edma3lld edma3lld_clean sgx-driver sgx-driver_clean sgx-driver_install gstomx gstomx_clean gstomx_install
 
 #==============================================================================
 # Build everything rebuildable.
@@ -30,17 +30,17 @@ components_clean: linux_clean syslink_clean cmem_clean sgx-driver_clean omx_clea
 #==============================================================================
 # Build all Demos, Examples and Applications
 #==============================================================================
-apps: u-boot matrix psp-examples omtb media-controller-utils
+apps: u-boot matrix psp-examples omtb media-controller-utils gstomx
 
 #==============================================================================
 # Install everything
 #==============================================================================
-apps_install: u-boot_install matrix_install psp-examples_install omtb_install media-controller-utils_install
+apps_install: u-boot_install matrix_install psp-examples_install omtb_install media-controller-utils_install gstomx_install
 
 #==============================================================================
 # Clean all Demos, Examples and Applications
 #==============================================================================
-apps_clean: u-boot_clean matrix_clean psp-examples_clean omtb_clean media-controller-utils_clean
+apps_clean: u-boot_clean matrix_clean psp-examples_clean omtb_clean media-controller-utils_clean gstomx_clean
 
 #==============================================================================
 # Install everything
@@ -326,6 +326,29 @@ matrix_install:
 omx:
 	$(MAKE) -C $(OMX_INSTALL_DIR)/src $(OMX_BUILD_VARS) libs
 	$(MAKE) -C $(OMX_INSTALL_DIR)/src $(OMX_BUILD_VARS) DEST_ROOT=$(OMX_INSTALL_DIR)/bin examples 
+	@echo "  CCLD   lib/libtiomx.so"
+	@$(CSTOOL_PREFIX)gcc -Wl,-soname,libOMX_Core -shared -Xlinker --start-group \
+	$(OMX_INSTALL_DIR)/lib/omxcore.av5T \
+	$(OMX_INSTALL_DIR)/lib/domx.av5T \
+    $(OMX_INSTALL_DIR)/lib/memcfg.av5T \
+    $(OMX_INSTALL_DIR)/lib/timmosal.av5T \
+	$(OMX_INSTALL_DIR)/lib/domx_delegates_shmem.av5T \
+	$(OMX_INSTALL_DIR)/lib/omxcfg.av5T \
+	$(SYSLINK_INSTALL_DIR)/packages/ti/syslink/lib/syslink.a_debug \
+	$(FC_INSTALL_DIR)/packages/ti/sdo/rcm/lib/debug/rcm_syslink.av5T \
+	$(FC_INSTALL_DIR)/packages/ti/sdo/fc/memutils/lib/release/memutils.av5T \
+	$(FC_INSTALL_DIR)/packages/ti/sdo/fc/global/lib/debug/fcsettings.av5T \
+	$(OSAL_INSTALL_DIR)/packages/linuxdist/build/lib/osal.a \
+	$(OSAL_INSTALL_DIR)/packages/linuxdist/cstubs/lib/cstubs.a \
+	$(LINUXUTILS_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/lib/cmem.a470MV \
+	$(UIA_INSTALL_DIR)/packages/ti/uia/linux/lib/servicemgr.a -Xlinker --end-group \
+	-Wl,-u,OMX_Init \
+	-Wl,-u,OMX_Deinit \
+	-Wl,-u,OMX_ComponentNameEnum \
+	-Wl,-u,OMX_GetHandle \
+	-Wl,-u,OMX_FreeHandle \
+	-Wl,-u,OMX_GetRolesOfComponent \
+	-pthread -lrt -o $(OMX_INSTALL_DIR)/lib/libtiomx.so.5.2 -Wl,--fix-cortex-a8 $(CFLAGS) $(LDFLAGS)
 
 omx_clean:
 	rm -rf $(OMX_INSTALL_DIR)/bin ${OMX_INSTALL_DIR}/lib
@@ -336,6 +359,12 @@ omx_install:
 	for i in `find ${OMX_INSTALL_DIR}/bin -name "*.xv5T"`; do \
 		install $$i ${EXEC_DIR}/usr/share/ti/ti-omx; \
 	done
+	install -d $(EXEC_DIR)/usr/lib
+	install $(OMX_INSTALL_DIR)/lib/libtiomx.so.5.2 $(EXEC_DIR)/usr/lib/libtiomx.so.5.2
+	ln -sf libtiomx.so.5.2 $(EXEC_DIR)/usr/lib/libtiomx.so.5
+	ln -sf libtiomx.so.5.2 $(EXEC_DIR)/usr/lib/libtiomx.so
+	ln -sf libtiomx.so.5.2 $(EXEC_DIR)/usr/lib/libOMX_Core.so
+	ln -sf libtiomx.so.5.2 $(EXEC_DIR)/usr/lib/libOMX_Core
 
 ################################################################################
 # Build OMTB IL Client Applications 
@@ -519,6 +548,12 @@ linux-devkit:
 	@echo "Installing headers from $(notdir $(LINUXKERNEL_INSTALL_DIR)) to linux-devkit.."
 	@$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR)  headers_install ARCH=arm \
 		INSTALL_HDR_PATH=$(LINUX_DEVKIT_DESTDIR)/usr/src/$(notdir $(LINUXKERNEL_INSTALL_DIR))-headers
+
+	@echo "Installing $(notdir $(GST_OMX_INSTALL_DIR)) to linux-devkit.."
+	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; \
+	$(MAKE) -C $(GST_OMX_INSTALL_DIR) $(GST_OMX_BUILD_VARS) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
+		prefix=/usr install
+	@echo $(notdir $(GST_OMX_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
 
 	@chmod u+w -R $(LINUX_DEVKIT_DESTDIR)/usr
 	@echo "Generating md5sums.."
