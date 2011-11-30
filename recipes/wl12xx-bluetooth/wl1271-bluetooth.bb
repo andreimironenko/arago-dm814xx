@@ -4,15 +4,13 @@ LICENSE = "BSD"
 DEPENDS += "virtual/kernel openobex"
 RDEPENDS += "bluez4 openobex ussp-push obexftp bluez-hcidump"
 
-PR = "r2"
-
 PACKAGE_ARCH = ${MACHINE_ARCH}
 
-MACHINE_KERNEL_PR_append = "a"
+MACHINE_KERNEL_PR_append = "b"
 
 COMPATIBLE_MACHINE = "am37x-evm|am180x-evm|da850-omapl138-evm|am335x-evm"
 
-SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/724/5207/wl1271-bluetooth-2011-11-17.tar"
+SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/746/5242/wl1271-bluetooth-2011-11-30_1.tar"
 
 S = "${WORKDIR}/wl1271-bluetooth"
 
@@ -69,5 +67,5 @@ FILES_${PN}-dbg += "${base_libdir}/modules/${KERNEL_VERSION}/kernel/drivers/bt_e
 
 PACKAGE_STRIP = "no"
 
-SRC_URI[md5sum] = "1e565375ad9d4f11791f7e53835ea128"
-SRC_URI[sha256sum] = "439bff5cfda7469e4ef5904f5def662a0ac935919ebb8125692e053727701269"
+SRC_URI[md5sum] = "90b97582ac56179044024d8d205f4e90"
+SRC_URI[sha256sum] = "6ff6f35b07ae64853ae609a4b356c38aaf845c62a2061cb3f21353675522a5e8"
