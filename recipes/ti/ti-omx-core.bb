@@ -37,7 +37,3 @@ do_install() {
 }
 
 FILES_${PN}     += "${libdir}"
-
-pkg_postinst_${PN} () {
-    ln -sf /usr/lib/libOMX_Core.so /usr/lib/libOMX_Core
-}

@@ -1,13 +1,19 @@
 # Makefile to build shared lib
 -include Rules.make
 
+MAJOR_NUMBER := 5
+MINOR_NUMBER := 2
+
+LIBTARGET := libtiomx.so
+OLDLIBTARGET := libOMX_Core
+
 DESTDIR=.
 prefix=/usr
 libdir=/lib
 
 all:
 	@mkdir -p lib
-	@echo "  CCLD   lib/libOMX_Core.so"
+	@echo "  CCLD   lib/$(LIBTARGET).$(MAJOR_NUMBER).$(MINOR_NUMBER)"
 	@$(CROSS_COMPILE)gcc -Wl,-soname,libOMX_Core -shared -Xlinker --start-group \
 	$(OMX_INSTALL_DIR)/lib/omxcore.av5T \
 	$(OMX_INSTALL_DIR)/lib/domx.av5T \
@@ -29,14 +35,18 @@ all:
 	-Wl,-u,OMX_GetHandle \
 	-Wl,-u,OMX_FreeHandle \
 	-Wl,-u,OMX_GetRolesOfComponent \
-	-pthread -lrt -o lib/libOMX_Core.so -Wl,--fix-cortex-a8 $(CFLAGS) $(LDFLAGS)
+	-pthread -lrt -o lib/$(LIBTARGET).$(MAJOR_NUMBER).$(MINOR_NUMBER) -Wl,--fix-cortex-a8 $(CFLAGS) $(LDFLAGS)
 
 clean:
 	rm -rf lib
 
 install: all
 	install -d $(DESTDIR)$(prefix)$(libdir)
-	install lib/libOMX_Core.so $(DESTDIR)$(prefix)$(libdir)
+	install lib/$(LIBTARGET).$(MAJOR_NUMBER).$(MINOR_NUMBER) $(DESTDIR)$(prefix)$(libdir)/$(LIBTARGET).$(MAJOR_NUMBER).$(MINOR_NUMBER)
+	ln -sf $(LIBTARGET).$(MAJOR_NUMBER).$(MINOR_NUMBER) $(DESTDIR)$(prefix)$(libdir)/$(LIBTARGET).$(MAJOR_NUMBER)
+	ln -sf $(LIBTARGET).$(MAJOR_NUMBER).$(MINOR_NUMBER) $(DESTDIR)$(prefix)$(libdir)/$(LIBTARGET)
+	ln -sf $(LIBTARGET).$(MAJOR_NUMBER).$(MINOR_NUMBER) $(DESTDIR)$(prefix)$(libdir)/$(OLDLIBTARGET).so
+	ln -sf $(LIBTARGET).$(MAJOR_NUMBER).$(MINOR_NUMBER) $(DESTDIR)$(prefix)$(libdir)/$(OLDLIBTARGET)
 
 distdir: 
 	mkdir -p $(distdir)
