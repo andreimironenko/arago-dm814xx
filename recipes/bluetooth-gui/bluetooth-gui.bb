@@ -2,7 +2,7 @@ DESCRIPTION = "Bluetooth GUI Application"
 SECTION = "network"
 LICENSE = "BSD"
 
-PR = "r1"
+PR = "r2"
 
 COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|am335x-evm|am180x-evm)"
 
