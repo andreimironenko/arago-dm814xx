@@ -9,7 +9,7 @@ DEPENDS += "virtual/kernel"
 SRC_URI = "svn://gforge.ti.com/svn/arm_crypto/;module=trunk;proto=https;user=anonymous;pswd=''"
 
 #gforge source revision
-SRCREV = "15"
+SRCREV = "16"
 
 PACKAGE_STRIP = "no"
 
