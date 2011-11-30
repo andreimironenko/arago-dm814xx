@@ -4,9 +4,11 @@ LICENSE = "BSD"
 SECTION = "system"
 PRIORITY = "optional"
 
+PACKAGE_STRIP = no
+
 SRCREV = "16"
 PV = "1.0"
-PR = "r1+svnr${SRCPV}"
+PR = "r2+svnr${SRCPV}"
 
 SRC_URI = "svn://gforge.ti.com/svn/am_sysinfo/;module=trunk;proto=https;user=anonymous;pswd=''"
 
