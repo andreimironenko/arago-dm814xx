@@ -4,8 +4,8 @@ LICENSE = "BSD"
 SECTION = "system"
 PRIORITY = "optional"
 
-SRCREV = "12"
-PR = "r5"
+SRCREV = "13"
+PR = "r6"
 
 DEPENDS += "virtual/kernel"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
