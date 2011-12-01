@@ -1,0 +1,203 @@
+--- gst-plugins-bad-0.10.21.bkp/gst/h264parse/gsth264parse.c	2011-11-28 20:17:08.483609875 +0530
++++ gst-plugins-bad-0.10.21/gst/h264parse/gsth264parse.c	2011-11-30 12:04:48.163610030 +0530
+@@ -38,19 +38,21 @@
+ static GstStaticPadTemplate sinktemplate = GST_STATIC_PAD_TEMPLATE ("sink",
+     GST_PAD_SINK,
+     GST_PAD_ALWAYS,
+-    GST_STATIC_CAPS ("video/x-h264"));
++    GST_STATIC_CAPS ("video/x-h264,"
++                     "framed = (boolean)false"));
+ 
+ static GstStaticPadTemplate srctemplate = GST_STATIC_PAD_TEMPLATE ("src",
+     GST_PAD_SRC,
+     GST_PAD_ALWAYS,
+-    GST_STATIC_CAPS ("video/x-h264"));
++    GST_STATIC_CAPS ("video/x-h264,"
++                     "framed = (boolean)true"));
+ 
+ GST_DEBUG_CATEGORY_STATIC (h264_parse_debug);
+ #define GST_CAT_DEFAULT h264_parse_debug
+ 
+-#define DEFAULT_SPLIT_PACKETIZED     FALSE
+-#define DEFAULT_ACCESS_UNIT          FALSE
+-#define DEFAULT_OUTPUT_FORMAT        GST_H264_PARSE_FORMAT_INPUT
++#define DEFAULT_SPLIT_PACKETIZED     TRUE
++#define DEFAULT_ACCESS_UNIT          TRUE
++#define DEFAULT_OUTPUT_FORMAT        GST_H264_PARSE_FORMAT_BYTE
+ #define DEFAULT_CONFIG_INTERVAL      (0)
+ 
+ enum
+@@ -964,7 +966,7 @@ gst_h264_parse_init (GstH264Parse * h264
+   h264parse->interval = DEFAULT_CONFIG_INTERVAL;
+   h264parse->last_report = GST_CLOCK_TIME_NONE;
+ 
+-  h264parse->format = GST_H264_PARSE_FORMAT_INPUT;
++  h264parse->format = DEFAULT_OUTPUT_FORMAT;
+ 
+   gst_h264_parse_reset (h264parse);
+ }
+@@ -1128,11 +1130,11 @@ gst_h264_parse_make_codec_data (GstH264P
+       num_sps++;
+       /* size bytes also count */
+       sps_size += GST_BUFFER_SIZE (nal) - 4 + 2;
+-      if (GST_BUFFER_SIZE (nal) >= 7) {
++      if (GST_BUFFER_SIZE (nal) >= 8) {
+         found = TRUE;
+-        profile_idc = (GST_BUFFER_DATA (nal))[4];
+-        profile_comp = (GST_BUFFER_DATA (nal))[5];
+-        level_idc = (GST_BUFFER_DATA (nal))[6];
++        profile_idc = (GST_BUFFER_DATA (nal))[5];
++        profile_comp = (GST_BUFFER_DATA (nal))[6];
++        level_idc = (GST_BUFFER_DATA (nal))[7];
+       }
+     }
+   }
+@@ -1307,16 +1309,18 @@ gst_h264_parse_update_src_caps (GstH264P
+     alignment = "au";
+   } else {
+     if (h264parse->packetized) {
+-      /* if packetized input, take upstream alignment if validly provided,
+-       * otherwise assume au aligned ... */
+-      alignment = gst_structure_get_string (structure, "alignment");
+-      if (!alignment || (alignment &&
+-              strcmp (alignment, "au") != 0 &&
+-              strcmp (alignment, "nal") != 0)) {
+-        if (h264parse->split_packetized)
+-          alignment = "nal";
+-        else
++      if (h264parse->split_packetized)
++        alignment = "nal";
++      else {
++        /* if packetized input is not split,
++         * take upstream alignment if validly provided,
++         * otherwise assume au aligned ... */
++        alignment = gst_structure_get_string (structure, "alignment");
++        if (!alignment || (alignment &&
++                strcmp (alignment, "au") != 0 &&
++                strcmp (alignment, "nal") != 0)) {
+           alignment = "au";
++        }
+       }
+     } else {
+       alignment = "nal";
+@@ -1596,7 +1600,7 @@ gst_h264_parse_push_codec_buffer (GstH26
+ static GstFlowReturn
+ gst_h264_parse_push_buffer (GstH264Parse * h264parse, GstBuffer * buf)
+ {
+-  GstFlowReturn ret = GST_FLOW_OK;
++  GstFlowReturn res = GST_FLOW_OK;
+ 
+   /* We can send pending events if this is the first call, since we now have
+    * caps for the srcpad */
+@@ -1615,6 +1619,33 @@ gst_h264_parse_push_buffer (GstH264Parse
+     }
+   }
+ 
++  if (G_UNLIKELY (h264parse->width == 0 || h264parse->height == 0)) {
++    GST_DEBUG ("Delaying actual push until we are configured");
++    h264parse->gather = g_list_append (h264parse->gather, buf);
++    goto beach;
++  }
++
++  if (G_UNLIKELY (h264parse->gather)) {
++    GList *pendingbuffers = h264parse->gather;
++    GList *tmp;
++
++    GST_DEBUG ("Pushing out pending buffers");
++
++    /* Yes, we're recursively calling in... */
++    h264parse->gather = NULL;
++    for (tmp = pendingbuffers; tmp; tmp = tmp->next) {
++      res = gst_h264_parse_push_buffer (h264parse, (GstBuffer *) tmp->data);
++      if (res != GST_FLOW_OK && res != GST_FLOW_NOT_LINKED)
++        break;
++    }
++    g_list_free (pendingbuffers);
++
++    if (res != GST_FLOW_OK && res != GST_FLOW_NOT_LINKED) {
++      gst_buffer_unref (buf);
++      goto beach;
++    }
++  }
++
+   /* start of picture is good time to slip in codec_data NALUs
+    * (when outputting NALS and transforming to bytestream) */
+   if (G_UNLIKELY (h264parse->codec_nals && h264parse->picture_start)) {
+@@ -1626,7 +1657,7 @@ gst_h264_parse_push_buffer (GstH264Parse
+       GST_BUFFER_DURATION (nals->data) = 0;
+ 
+       gst_buffer_set_caps (nals->data, h264parse->src_caps);
+-      ret = gst_pad_push (h264parse->srcpad, nals->data);
++      (void) gst_pad_push (h264parse->srcpad, nals->data);
+       nals = g_slist_delete_link (nals, nals);
+     }
+     h264parse->codec_nals = NULL;
+@@ -1736,7 +1767,10 @@ gst_h264_parse_push_buffer (GstH264Parse
+   }
+ 
+   gst_buffer_set_caps (buf, h264parse->src_caps);
+-  return gst_pad_push (h264parse->srcpad, buf);
++  res = gst_pad_push (h264parse->srcpad, buf);
++
++beach:
++  return res;
+ }
+ 
+ /* takes over ownership of nal and returns fresh buffer */
+@@ -1782,7 +1816,6 @@ gst_h264_parse_push_nal (GstH264Parse * 
+   /* first_mb_in_slice == 0 considered start of frame */
+   start = h264parse->picture_start && (data[nal_length + 1] & 0x80);
+   if (G_UNLIKELY (!next_nal)) {
+-  	printf("Frame complete!!\n");
+     complete = TRUE;
+   } else {
+     /* consider a coded slices (IDR or not) to start a picture,
+@@ -2098,9 +2131,6 @@ gst_h264_parse_chain_forward (GstH264Par
+ 
+       /* packetized will have no next data, which serves fine here */
+       next_data = (guint8 *) gst_adapter_peek (h264parse->adapter, 6);
+-	  GST_DEBUG("next_data:%p",next_data);
+-	  if(next_data == NULL)
+-	  	return GST_FLOW_OK;
+       outbuf = gst_h264_parse_push_nal (h264parse, outbuf, next_data, &start);
+       if (!outbuf) {
+         /* no complete unit yet, go for next round */
+@@ -2110,10 +2140,10 @@ gst_h264_parse_chain_forward (GstH264Par
+       /* Ignore upstream dts that stalls or goes backward. Upstream elements
+        * like filesrc would keep on writing timestamp=0.  XXX: is this correct?
+        * TODO: better way to detect whether upstream timstamps are useful */
+-      if (h264parse->last_outbuf_dts != GST_CLOCK_TIME_NONE
++     /* if (h264parse->last_outbuf_dts != GST_CLOCK_TIME_NONE
+           && outbuf_dts != GST_CLOCK_TIME_NONE
+           && outbuf_dts <= h264parse->last_outbuf_dts)
+-        outbuf_dts = GST_CLOCK_TIME_NONE;
++        outbuf_dts = GST_CLOCK_TIME_NONE;*/
+ 
+       if ((got_frame || delta_unit) && start) {
+         GstH264Sps *sps = h264parse->sps;
+@@ -2445,7 +2475,7 @@ gst_h264_parse_chain_reverse (GstH264Par
+ 
+   /* if we have a discont, move buffers to the decode list */
+   if (G_UNLIKELY (discont)) {
+-    guint start, stop, last;
++    guint start, last;
+     guint32 code;
+     GstBuffer *prev;
+     GstClockTime timestamp;
+@@ -2454,7 +2484,6 @@ gst_h264_parse_chain_reverse (GstH264Par
+         "received discont, copy gathered buffers for decoding");
+ 
+     /* init start code accumulator */
+-    stop = -1;
+     prev = h264parse->prev;
+     h264parse->prev = NULL;
+ 
+@@ -2700,7 +2729,7 @@ static gboolean
+ plugin_init (GstPlugin * plugin)
+ {
+   return gst_element_register (plugin, "h264parse",
+-      GST_RANK_NONE, GST_TYPE_H264PARSE);
++      (GST_RANK_PRIMARY + 1), GST_TYPE_H264PARSE);
+ }
+ 
+ GST_PLUGIN_DEFINE (GST_VERSION_MAJOR,

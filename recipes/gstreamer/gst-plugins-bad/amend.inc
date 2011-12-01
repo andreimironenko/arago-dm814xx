@@ -21,4 +21,5 @@ SRC_URI = "http://gstreamer.freedesktop.org/src/${PN}/${PN}-${PV}.tar.bz2;name=a
            file://0005-jpegparse-ignore-unhandled-application-markers.patch \
            file://0006-mpegvideoparse-merge-sequence-header.patch \
            file://0007-h264parse-fix-boundary-condition.patch \
+           file://0008-h264parse-modifications-for-playbin.patch \
 "
