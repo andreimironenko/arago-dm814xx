@@ -26,13 +26,13 @@ MAKEFILES_COMMON_dm6446-evm = ""
 MAKEFILES_COMMON_dm6467-evm = ""
 
 # Add device specific make targets
-MAKEFILES_am37x-evm = "x-load u-boot-legacy av-examples"
-MAKEFILES_am3517-evm = "x-load u-boot-legacy av-examples"
+MAKEFILES_am37x-evm = "u-boot-spl av-examples"
+MAKEFILES_am3517-evm = "u-boot-spl av-examples"
 MAKEFILES_ti33x = "u-boot-spl"
 MAKEFILES_am389x-evm = "u-boot-min-sd u-boot-legacy"
 MAKEFILES_am387x-evm = "u-boot-min-sd u-boot-legacy"
-MAKEFILES_beagleboard = "x-load u-boot-legacy"
-MAKEFILES_am180x-evm = "pru"
+MAKEFILES_beagleboard = "u-boot-spl"
+MAKEFILES_am180x-evm = "pru u-boot-legacy"
 
 
 
@@ -52,7 +52,7 @@ SRC_URI = "\
     file://Makefile_pru \
 "
 
-PR = "r91"
+PR = "r92"
 
 do_configure_prepend_dm37x-evm () { 
          sed -i -e 's:OMAPES=3.x:OMAPES=5.x:g' ${WORKDIR}/Makefile
