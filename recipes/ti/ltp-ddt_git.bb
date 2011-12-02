@@ -4,7 +4,7 @@ LICENSE = "GPLv2"
 SECTION = "console/utils"
 DEPENDS += "zip-native virtual/kernel alsa-lib"
 PV = "0.0.4"
-PR = "r1"
+PR = "r2"
 PR_append = "+gitr${SRCPV}"
 
 PROVIDES += "ltp"
@@ -62,3 +62,10 @@ do_install() {
 	cp -a ${D}${LTPROOT}/share/* ${D}${datadir}
 	rm -rf ${D}${LTPROOT}/share/
 }
+
+do_compile_kmodules() {
+        unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
+        oe_runmake modules
+}
+
+addtask compile_kmodules after do_compile before do_install
