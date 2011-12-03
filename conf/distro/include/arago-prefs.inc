@@ -35,3 +35,7 @@ ANGSTROM_BINUTILS_VERSION		= "2.20.1"
 ANGSTROM_BINUTILS_VERSION_armv7a	= "2.20.1"
 PREFERRED_VERSION_eglibc		= "2.12"
 PREFERRED_VERSION_eglibc-initial	= "2.12"
+
+# Select newer fakeroot, as others are unfetchable
+PREFERRED_VERSION_fakeroot = "1.15.1"
+PREFERRED_VERSION_fakeroot-native = "1.15.1"
