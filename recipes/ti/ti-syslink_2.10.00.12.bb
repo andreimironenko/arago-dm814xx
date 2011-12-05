@@ -3,9 +3,9 @@ HOMEPAGE = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/s
 SECTION = "devel"
 LICENSE = "BSD"
 
-PV = "2_10_00_04"
-PVwithdots = "2.10.00.04"
-PVExtra = "_eng"
+PV = "2_10_00_12"
+PVwithdots = "2.10.00.12"
+PVExtra = ""
 
 require ti-paths.inc
 require ti-staging.inc
@@ -15,17 +15,17 @@ PROVIDES += "ti-syslink-examples"
 
 # This package builds a kernel module, use kernel PR as base and append a local version
 PR = "${MACHINE_KERNEL_PR}"
-PR_append = "i"
+PR_append = "j"
 
 S = "${WORKDIR}/syslink_${PV}${PVExtra}"
 
-SRC_URI = "http://www.sanb.design.ti.com/tisb_releases/SysLink/${PV}/exports/syslink_${PV}${PVExtra}.tar.gz;name=syslinktarball \
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/syslink/${PV}/exports/syslink_${PV}${PVExtra}.tar.gz;name=syslinktarball \
 "
 #           file://0001-Syslink-Update-Memory-Map-for-EZSDK-5.02.patch \
 #"
 
-SRC_URI[syslinktarball.md5sum] = "76aec33e3b63201641cee15a8e234884"
-SRC_URI[syslinktarball.sha256sum] = "81dc17ddf012be8303600da3c299e9243e8cc39b08971fe6ed6a1e51495ff798"
+SRC_URI[syslinktarball.md5sum] = "a7be3c9f52b77ad6a61077a203299fa7"
+SRC_URI[syslinktarball.sha256sum] = "eaf6d2d37515184e64153181532a7981a0ebeabb58bd309dfe58e9f7e2d7c39b"
 
 DEPENDS = "ti-sysbios ti-xdctools ti-cgt6x ti-ipc"
 # disable M3 compile ti-cgt470"
@@ -34,21 +34,10 @@ DEPENDS += "virtual/kernel"
 SYSLINKHLOSSAMPLES = "procMgr frameq gateMP heapBufMP heapMemMP listMP messageQ notify ringIO ringIO_gpp sharedRegion"
 #SYSLINKRTOSSAMPLES = "frameq gateMP heapBufMP heapMemMP listMP messageQ notify ringIO ringIO_gpp sharedRegion"
 
-SYSLINKDEVICE_ti816x    = "TI816X"
-SYSLINKDEVICE_ti814x    = "TI814X"
-SYSLINKDEVICE_omapl138  = "OMAPL1XX" 
-SYSLINKDEVICE          ?= "<UNDEFINED_SYSLINKDEVICE>"
-
-# These can be removed?
-SYSLINKPLATFORM_ti816x    = "TI81XX"
-SYSLINKPLATFORM_ti814x    = "TI81XX"
-SYSLINKPLATFORM          ?= "<UNDEFINED_SYSLINKPLATFORM>"
-
-# Can these be removed too - replace with DEVICE?
-SYSLINKVARIANT_ti816x    = "TI816X"
-SYSLINKVARIANT_ti814x    = "TI814X"
-SYSLINKVARIANT_omapl138  = "OMAPL1XX"
-SYSLINKVARIANT          ?= "<UNDEFINED_SYSLINKVARIANT>"
+SYSLINKDEVICE_ti816x     = "TI816X"
+SYSLINKDEVICE_ti814x     = "TI814X"
+SYSLINKDEVICE_omapl138   = "OMAPL1XX" 
+SYSLINKDEVICE           ?= "<UNDEFINED_SYSLINKDEVICE>"
 
 SYSLINKSUFFIX            = "xe674"
 SYSLINKLOADER            = "ELF"
@@ -92,11 +81,11 @@ do_install () {
 
     # Install the hlos kernel module
     install -d ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp
-    install -m 0755 ${S}/packages/ti/syslink/bin/${SYSLINKVARIANT}/syslink.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp/
+    install -m 0755 ${S}/packages/ti/syslink/bin/${SYSLINKDEVICE}/syslink.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp/
 
     # Install the hlos example kernel modules and apps
     install -d ${D}/${installdir}/ti-syslink-examples
-    install -m 0755 ${S}/packages/ti/syslink/bin/${SYSLINKVARIANT}/samples/* ${D}/${installdir}/ti-syslink-examples/
+    install -m 0755 ${S}/packages/ti/syslink/bin/${SYSLINKDEVICE}/samples/* ${D}/${installdir}/ti-syslink-examples/
 
     # Install the rtos example apps 
     install -d ${D}/${installdir}/ti-syslink-examples/dsp
