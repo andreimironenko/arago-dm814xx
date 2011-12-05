@@ -116,20 +116,20 @@ install:
 	@echo "Installing libraries.."
 	@mkdir -p $(LIBDIR)
 ifneq ($(LIBSINPACKAGES),)
-	@cd src && cp --parents $(LIBSINPACKAGES) $(LIBDIR)
+	@cd src && cp -f --parents $(LIBSINPACKAGES) $(LIBDIR)
 endif
 ifneq ($(LIBSINBIN),)
-	@cd bin && cp --parents $(LIBSINBIN) $(LIBDIR)
+	@cd bin && cp -f --parents $(LIBSINBIN) $(LIBDIR)
 endif
 ifneq ($(LIBSINLIB),)
-	@cd lib && cp --parents $(LIBSINLIB) $(LIBDIR)
+	@cd lib && cp -f --parents $(LIBSINLIB) $(LIBDIR)
 endif
 	@echo "Installing header files.."
 	@mkdir -p $(INCDIR)
-	@cd src && cp --parents $(HEADERS) $(INCDIR)
+	@cd src && cp -f --parents $(HEADERS) $(INCDIR)
 	@echo "Installing documentation.."
 	@mkdir -p $(DOCDIR)
-	@cp $(DOCS) $(DOCDIR)
+	@cp -f $(DOCS) $(DOCDIR)
 
 help:
 	@echo
