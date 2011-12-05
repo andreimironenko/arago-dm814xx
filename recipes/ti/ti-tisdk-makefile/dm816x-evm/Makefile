@@ -426,7 +426,7 @@ gstomx: gstomx_configure
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; \
 		make -C $(GST_OMX_INSTALL_DIR) $(GST_OMX_BUILD_VARS)
 
-gstomx_clean:
+gstomx_clean: gstomx_configure
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; \
 		make -C $(GST_OMX_INSTALL_DIR) $(GST_OMX_BUILD_VARS) clean
 
