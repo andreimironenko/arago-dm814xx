@@ -68,3 +68,6 @@ SRC_URI += " \
 SRC_URI += " \
     file://0001-omap_hsmmc-make-default-dto-value-14.patch \
 "
+
+# Updated PIO mode for MUSB help description
+SRC_URI_append_am3517-evm = " file://0001-musb-update-PIO-mode-help-information-in-Kconfig.patch"

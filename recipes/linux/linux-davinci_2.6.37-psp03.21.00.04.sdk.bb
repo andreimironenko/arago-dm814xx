@@ -17,6 +17,9 @@ SRC_URI += " \
 	file://0006-Add-wlan-and-BT-config-switches.patch \
 	"
 
+# Updated PIO mode for MUSB help description
+SRC_URI += "file://0001-musb-update-PIO-mode-help-information-in-Kconfig.patch"
+
 SRC_URI_append_am180x-evm = " file://uio_pruss.patch"
 
 SRC_URI_append_da850-omapl138-evm = " file://uio_pruss.patch"
