@@ -1,6 +1,6 @@
 DESCRIPTION = "Task to add base gstreamer and TI plugins"
 LICENSE = "MIT"
-PR = "r21"
+PR = "r22"
 
 inherit task
 PACKAGE_ARCH = "${MACHINE_ARCH}"
@@ -28,4 +28,5 @@ RDEPENDS_${PN} = " \
     gst-plugins-good-meta \
     gst-plugins-bad-meta \
     gst-plugins-ugly-meta \
+    gst-prebuilt-v4l2 \
     "
