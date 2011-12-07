@@ -13,3 +13,6 @@ PSPREL = "04.01.00.06.patch1"
 UBOOT_MAKE_TARGET = "u-boot.ti"
 
 INC_PR = "r1"
+
+SRC_URI += "file://0001-ti814x-changes-for-u-boot-color-bar.patch \
+"
