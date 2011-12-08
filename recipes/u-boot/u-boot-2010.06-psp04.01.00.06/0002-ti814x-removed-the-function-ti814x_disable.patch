@@ -1,0 +1,53 @@
+From d698f145938e7634105c710565123b4adfa7d7a4 Mon Sep 17 00:00:00 2001
+From: Amarinder Bindra <a-bindra@ti.com>
+Date: Wed, 7 Dec 2011 21:14:28 +0530
+Subject: [PATCH] ti814x : removed the function ti814x_disable()
+
+
+Signed-off-by: Amarinder Bindra <a-bindra@ti.com>
+---
+ common/cmd_logo.c |   14 --------------
+ common/cmd_logo.h |    2 +-
+ 2 files changed, 1 insertions(+), 15 deletions(-)
+
+diff --git a/common/cmd_logo.c b/common/cmd_logo.c
+index 05862f9..7e96d1e 100644
+--- a/common/cmd_logo.c
++++ b/common/cmd_logo.c
+@@ -36,23 +36,9 @@ int display_color_bar()
+ 		return -1;
+ 	}
+ 
+-	ti814x_disable();
+ 	return 0;
+ }
+ 
+-void ti814x_disable()
+-{
+-        int val;
+-      	uint32_t rd_osc_src;
+-        for(val=0;val<1000;val++)
+-        {
+-                udelay(8000);
+-        }
+-        rd_osc_src = pll_read32(PLL_VIDEO2_PINMUX);
+-        rd_osc_src &= 0xFFFFFFFE; 
+-        pll_write32(PLL_VIDEO2_PINMUX,rd_osc_src);
+-}
+-
+ int ti814x_prcm_init()
+ {
+ 	if (ti814x_prcm_enable_vps_power_and_clock()<0)
+diff --git a/common/cmd_logo.h b/common/cmd_logo.h
+index c91fb9e..9fe10f8 100644
+--- a/common/cmd_logo.h
++++ b/common/cmd_logo.h
+@@ -148,4 +148,4 @@ int ti814x_prcm_init();
+ int ti814x_pll_init();
+ int ti814x_vps_init();
+ int ti814x_set_mode(int ,int , int);
+-void ti814x_disable();
++
+-- 
+1.7.1
+

@@ -15,4 +15,5 @@ UBOOT_MAKE_TARGET = "u-boot.ti"
 INC_PR = "r1"
 
 SRC_URI += "file://0001-ti814x-changes-for-u-boot-color-bar.patch \
+            file://0002-ti814x-removed-the-function-ti814x_disable.patch \
 "
