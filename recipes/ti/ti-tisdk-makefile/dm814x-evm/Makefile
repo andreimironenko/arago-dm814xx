@@ -228,6 +228,7 @@ psp-examples_install:
 	install $(PSP_EXAMPLES_INSTALL_DIR)/audio/bin/minimal_capture $(EXEC_DIR)/usr/share/ti/ti-psp-examples
 	install $(PSP_EXAMPLES_INSTALL_DIR)/audio/bin/minimal_playback $(EXEC_DIR)/usr/share/ti/ti-psp-examples
 	install $(PSP_EXAMPLES_INSTALL_DIR)/edma/edma_test.ko $(EXEC_DIR)/usr/share/ti/ti-psp-examples
+	install $(PSP_EXAMPLES_INSTALL_DIR)/video/bin/* $(EXEC_DIR)/usr/share/ti/ti-psp-examples
 
 #==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the
