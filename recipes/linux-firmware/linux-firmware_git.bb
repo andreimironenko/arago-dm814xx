@@ -1,9 +1,9 @@
 DESCRIPTION = "Firmware files for use with TI wl12xx"
-
+LICENSE = "TI TSPA"
 # This recipe overlays the recipe in OE as the ti wl12xx firmware files are fetched from 
 # a different git in github. 
 
-PR = "r1"
+PR = "r2"
 PR_append = "+gitr${SRCREV}"
 SRCREV = "RLS_R4_11"
 
