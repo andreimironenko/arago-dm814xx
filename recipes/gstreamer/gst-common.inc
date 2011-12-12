@@ -1,6 +1,6 @@
 SECTION = "multimedia"
 PRIORITY = "optional"
-LICENSE = "LGPL"
+LICENSE = "LGPLv2"
 HOMEPAGE = "http://www.gstreamer.net/"
 
 DEFAULT_PREFERENCE = "-1"
