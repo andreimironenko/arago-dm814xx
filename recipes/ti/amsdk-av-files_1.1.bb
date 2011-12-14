@@ -4,7 +4,7 @@ LICENSE = "CC-BY-NC-ND-3.0"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-PR = "r3"
+PR = "r4"
 
 COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|am3517-evm|am389x-evm|beagleboard|am335x-evm)"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
@@ -16,7 +16,7 @@ VIDEO_FILES_append_am3517-evm = "video_wqvga"
 VIDEO_FILES_append_am335x-evm = "video_wvga"
 
 SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/564/5179/amsdk-av-files_${PV}.tar.gz;name=avfilestarball \
-           https://gforge.ti.com/gf/download/frsrelease/738/5227/armmultimedia_1.5.tar.gz;name=matrixfilestarball"
+           https://gforge.ti.com/gf/download/frsrelease/766/5320/armmultimedia_1.6.tar.gz;name=matrixfilestarball"
 
 S = "${WORKDIR}/amsdk-av-files"
 
@@ -48,5 +48,5 @@ FILES_${PN} += "${datadir}/ti/*"
 SRC_URI[avfilestarball.md5sum] = "19d254541f7c050d6220bd11249c1e8c"
 SRC_URI[avfilestarball.sha256sum] = "5b81f49a305c3c88a6e33834d30561e8c16a534f9dcd10d31b348fd0031b2a74"
 
-SRC_URI[matrixfilestarball.md5sum] = "5616fece9d1d45fdc42323595c4ce61d"
-SRC_URI[matrixfilestarball.sha256sum] = "ff1d7eb5d4e6161bdbdf7ea5261e83d3b3398c3364fdceb9465ac6b2aa54305c"
+SRC_URI[matrixfilestarball.md5sum] = "8819d5dac974ef165d41df3f92c62450"
+SRC_URI[matrixfilestarball.sha256sum] = "b0cb700fad75f71994ff62e1488e8cd898dc40d040c2c124024cac072c8628c7"
