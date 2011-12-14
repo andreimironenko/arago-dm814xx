@@ -3,7 +3,9 @@ SECTION = "console/network"
 HOMEPAGE = "http://udhcp.busybox.net/"
 LICENSE = "GPLv2+"
 
-PR = "r0"
+PR = "r1"
+
+PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 S = ${WORKDIR}
 
