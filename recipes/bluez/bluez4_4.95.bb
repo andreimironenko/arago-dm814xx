@@ -4,6 +4,7 @@ SRC_URI = "\
   ${KERNELORG_MIRROR}/pub/linux/bluetooth/bluez-${PV}.tar.gz \
   file://bluetooth.conf \
   file://bluez-4.95-certification.patch \
+  file://bluez4-fix-synchronization-between-bluetoothd-and-dr.patch \
 "
 
 SRC_URI[md5sum] = "341294b2849a04a4afff5c96bfbf30b2"
@@ -14,7 +15,7 @@ FILESPATHBASE .= ":${OEBASE}/arago-oe-dev/recipes/bluez"
 
 DEPENDS += "libsndfile1"
 
-PR = "${INC_PR}.2"
+PR = "${INC_PR}.3"
 
 # Not all distros have a recent enough udev
 BTUDEV = " --disable-udevrules"
