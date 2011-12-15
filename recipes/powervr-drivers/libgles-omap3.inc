@@ -1,7 +1,7 @@
 DESCRIPTION = "libGLES for the omap3"
 LICENSE = "proprietary-binary"
 
-PR = "r23"
+PR = "r25"
 
 COMPATIBLE_MACHINE = "(omap3|ti816x|ti33x)"
 
@@ -206,8 +206,11 @@ do_install () {
         cp ${ES2LOCATION}/p[dv]* ${D}${bindir}/ES2.0/
     fi
 
-	cp -pPR ${D}${libdir}/lib*${IMGPV} ${D}${libdir}/ES3.0/
-	cp ${D}${bindir}/p[dv]* ${D}${bindir}/ES3.0
+    if [ -e ${ES3LOCATION} ]
+    then
+        cp -pPR ${ES3LOCATION}/lib*${IMGPV} ${D}${libdir}/ES3.0/
+        cp ${ES3LOCATION}/p[dv]* ${D}${bindir}/ES3.0/
+    fi
 
 	if [ -e ${ES5LOCATION} ] ; then
 		cp -pPR ${ES5LOCATION}/lib*${IMGPV} ${D}${libdir}/ES5.0/
