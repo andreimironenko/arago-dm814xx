@@ -37,5 +37,5 @@ PREFERRED_VERSION_eglibc		= "2.12"
 PREFERRED_VERSION_eglibc-initial	= "2.12"
 
 # Select newer fakeroot, as others are unfetchable
-PREFERRED_VERSION_fakeroot = "1.15.1"
-PREFERRED_VERSION_fakeroot-native = "1.15.1"
+PREFERRED_VERSION_fakeroot = "1.14.5"
+PREFERRED_VERSION_fakeroot-native = "1.14.5"
