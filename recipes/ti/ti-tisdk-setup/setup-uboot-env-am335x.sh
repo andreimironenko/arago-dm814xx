@@ -117,14 +117,14 @@ if [ "$configBB" = "y" ]; then
 			echo "rootpath=$rootpath" >> $cwd/uEnv.txt
 			echo "bootfile=$uimage" >> $cwd/uEnv.txt
 			echo "ip_method=dhcp" >> $cwd/uEnv.txt
-			echo "tftp_nfs_boot=echo Booting from network...; setenv autoload no; dhcp \${bootfile}; tftp \${loadaddr} \${bootfile}; run net_args; bootm \${loadaddr}" >> $cwd/uEnv.txt
+			echo "tftp_nfs_boot=echo Booting from network...; dhcp \${loadaddr} \${bootfile}; run net_args; bootm \${loadaddr}" >> $cwd/uEnv.txt
 			echo "uenvcmd=run tftp_nfs_boot" >> $cwd/uEnv.txt
 		    else
 			#TFTP and SD Boot  
 			echo "serverip=$ip" > $cwd/uEnv.txt 
 			echo "bootfile=$uimage" >> $cwd/uEnv.txt
 			echo "ip_method=dhcp" >> $cwd/uEnv.txt
-			echo "tftp_sd_boot=run bootargs_defaults; setenv autoload no; dhcp \${bootfile}; tftp \${loadaddr} \${bootfile}; run mmc_args; bootm \${loadaddr}" >> $cwd/uEnv.txt
+			echo "tftp_sd_boot=run bootargs_defaults; dhcp \${loadaddr} \${bootfile}; run mmc_args; bootm \${loadaddr}" >> $cwd/uEnv.txt
 			echo "uenvcmd=run tftp_sd_boot" >> $cwd/uEnv.txt     
 
 		    fi
@@ -134,11 +134,11 @@ if [ "$configBB" = "y" ]; then
 			echo "serverip=$ip" > $cwd/uEnv.txt
 			echo "rootpath=$rootpath" >> $cwd/uEnv.txt
 			echo "ip_method=dhcp" >> $cwd/uEnv.txt
-			echo "uenvcmd=setenv autoload no; run mmc_load_uimage; run net_args; bootm \${loadaddr}" >> $cwd/uEnv.txt
+			echo "uenvcmd=setenv autoload no; mmc rescan 0; run mmc_load_uimage; run net_args; bootm \${kloadaddr}" >> $cwd/uEnv.txt
 		    else
 			#SD and SD boot
 			echo "ip_method=dhcp" > $cwd/uEnv.txt
-			echo "uenvcmd=run mmc_boot" >> $cwd/uEnv.txt
+			echo "uenvcmd=mmc rescan 0; run mmc_boot" >> $cwd/uEnv.txt
 		    fi
 	fi
 
@@ -153,7 +153,7 @@ if [ "$configBB" = "y" ]; then
 		exit
 	fi
 	
-	echo "Copying uEnv.txt to boot partition, then unmounting drives...."
+	echo "Copying uEnv.txt to boot partition..."
 
 	#Let's check to make sure it's /media/boot/ and not /media/boot_
 	boots=`ls -1 /media/ | grep boot`
@@ -164,7 +164,6 @@ if [ "$configBB" = "y" ]; then
 		read -p "Press Enter to exit" pressEnter
 		exit
 	fi
-
 
 	cp $cwd/uEnv.txt /media/boot/
 	sync
@@ -237,7 +236,6 @@ if [ "$configBB" = "y" ]; then
 		do_expect "\"am335x-evm login: \"" "send \"root\"" $cwd/resetBoard.minicom
 		echo "send \"init 6\""  >> $cwd/resetBoard.minicom
 		do_expect "\"Restarting system.\"" "! killall -s SIGHUP minicom" $cwd/resetBoard.minicom
-
 	        # Change directory into cwd because minicom does not like . in the
 	        # path to the script
 	        cd $cwd
@@ -255,9 +253,6 @@ else
 
 	echo "timeout 300" > $cwd/setupBoard.minicom
 	echo "verbose on" >> $cwd/setupBoard.minicom
-	echo "send \"\""  >> $cwd/setupBoard.minicom
-	do_expect "\"am335x-evm login: \"" "send \"root\"" $cwd/setupBoard.minicom
-	echo "send \"init 6\""  >> $cwd/setupBoard.minicom
 	do_expect "\"stop autoboot:\"" "send \" \"" $cwd/setupBoard.minicom
 	if [ "$kernel" -eq "1" ]; then	
 	    	if [ "$fs" -eq "1" ]; then
@@ -274,7 +269,7 @@ else
 			do_expect "\"U-Boot#\"" "send \"setenv serverip $ip\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"setenv bootfile $uimage\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"setenv ip_method dhcp\"" $cwd/setupBoard.minicom
-			do_expect "\"U-Boot#\"" "send \"setenv bootcmd 'run bootargs_defaults; setenv autoload no; dhcp \"\$\{bootfile\}\"; tftp \"\${\loadaddr\}\" \"\$\{bootfile\}\"; run mmc_args; bootm \"\$\{loadaddr\}\"'\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv bootcmd 'run bootargs_defaults; setenv autoload no; dhcp \"\$\{bootfile\}\"; tftp \"\$\{loadaddr\}\" \"\$\{bootfile\}\"; run mmc_args; bootm \"\$\{loadaddr\}\"'\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"boot\"" $cwd/setupBoard.minicom
 		fi    
@@ -283,14 +278,17 @@ else
 			#SD and NFS Boot
 			do_expect "\"U-Boot#\"" "send \"setenv serverip $ip\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"setenv rootpath $rootpath\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv bootfile uImage\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"setenv ip_method dhcp\"" $cwd/setupBoard.minicom
-			do_expect "\"U-Boot#\"" "send \"setenv bootcmd 'setenv autoload no; run mmc_load_uimage; run net_args; bootm \"\${loadaddr}\"'\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv mmc_load_uimage 'mmc rescan; fatload mmc \"\$\{mmc_dev\}\" \"\$\{kloadaddr\}\" \"$\{bootfile\}\"'\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv bootcmd 'setenv autoload no; run mmc_load_uimage; run net_args; bootm \"\$\{kloadaddr\}\"'\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"boot\"" $cwd/setupBoard.minicom
 		    else
 			#SD and SD boot.	
 			do_expect "\"U-Boot#\"" "send \"setenv ip_method dhcp\"" $cwd/setupBoard.minicom
-			do_expect "\"U-Boot#\"" "send \"setenv bootcmd 'run mmc_boot'\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv bootfile uImage\"" $cwd/setupBoard.minicom
+			do_expect "\"U-Boot#\"" "send \"setenv bootcmd 'mmc rescan 0; run mmc_boot'\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"saveenv\"" $cwd/setupBoard.minicom
 			do_expect "\"U-Boot#\"" "send \"boot\"" $cwd/setupBoard.minicom
 		    
@@ -299,16 +297,44 @@ else
 	echo "! killall -s SIGHUP minicom" >> $cwd/setupBoard.minicom
 
 	echo "--------------------------------------------------------------------------------"
-	echo "The NAND on the AM335x EVM will be flashed with the previous settings. Please "
-	echo "press enter to begin the flashing process."
-	read -p "" restartNow
-    # Change directory into cwd because minicom does not like . in the
-    # path to the script
-    cd $cwd
-	minicom -w -S setupBoard.minicom
-    cd -
-	minicom -w
-	echo "--------------------------------------------------------------------------------"
-	
+	echo "Would you like to create a minicom script with the above parameters (y/n)?"
+	read -p "[ y ] " minicom
+	echo
 
+	if [ ! -n "$minicom" ]; then
+	    minicom="y"
+	fi	
+	
+	if [ "$minicom" = "y" ]; then
+	
+	    echo -n "Successfully wrote "
+    	    readlink -m $cwd/setupBoard.minicom
+	
+	    echo "Would you like to run the setup script now (y/n)? This requires you to connect"
+	    echo "the RS-232 cable between your host and EVM as well as your ethernet cable as"
+	    echo "described in the Quick Start Guide. Once answering 'y' on the prompt below"
+	    echo "you will have 300 seconds to connect the board and power cycle it"
+	    echo "before the setup times out"
+	    echo
+	    echo "After successfully executing this script, your EVM will be set up. You will be "
+	    echo "able to connect to it by executing 'minicom -w' or if you prefer a windows host"
+	    echo "you can set up Tera Term as explained in the Software Developer's Guide."
+	    echo "If you connect minicom or Tera Term and power cycle the board Linux will boot."
+	    echo
+	    read -p "[ y ] " minicomsetup
+
+            if [ ! -n "$minicomsetup" ]; then
+               minicomsetup="y"
+            fi
+      
+            if [ "$minicomsetup" = "y" ]; then
+              cd $cwd
+	      minicom -w -S setupBoard.minicom
+              cd -
+	    fi
+
+            echo "You can manually run minicom in the future with this setup script using: minicom -S $cwd/setupBoard.minicom"
+            echo "--------------------------------------------------------------------------------"
+
+      fi
 fi
