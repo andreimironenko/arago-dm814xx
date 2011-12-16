@@ -43,6 +43,12 @@ case "$1" in
             echo -n "Calibrating touchscreen (first time only)"
             ts_calibrate
             echo "."
+            # If we create a pointercal file and it was not in /etc/pointercal
+            # let's copy it there as well if it does not already exist.
+            if [ ! -f /etc/pointercal -a -f $tsfile ]
+            then
+                cp $tsfile /etc/pointercal
+            fi
         fi
     fi
 
