@@ -1,4 +1,5 @@
 require recipes/linux/multi-kernel.inc
+require copy-defconfig.inc
 
 DESCRIPTION = "Linux kernel for TI processors"
 KERNEL_IMAGETYPE = "uImage"
@@ -10,7 +11,7 @@ PV = "3.0.8"
 SRCREV_pn-${PN} = "97596c34030ed28657ccafddb67e17a03890b90a"
 
 # The main PR is now using MACHINE_KERNEL_PR, for omap3 see conf/machine/include/omap3.inc
-MACHINE_KERNEL_PR_append = "a"
+MACHINE_KERNEL_PR_append = "b"
 
 FILESPATH =. "${FILE_DIRNAME}/linux-3.0:${FILE_DIRNAME}/linux-3.0/${MACHINE}:"
 
