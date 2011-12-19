@@ -9,7 +9,7 @@ echo "This step will set up the u-boot variables for booting the EVM."
 
 ipdefault=`ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1 }'`
 platform=`grep PLATFORM= $cwd/../Rules.make | cut -d= -f2`
-prompt="EVM #"
+prompt="OMAP3 beagleboard.org #"
 
 echo "Autodetected the following ip address of your host, correct it if necessary"
 read -p "[ $ipdefault ] " ip
@@ -80,7 +80,7 @@ if [ "$kernel" -eq "1" ]; then
         uimage=$uimagedefault
     fi
 
-    bootcmd="setenv bootcmd 'dhcp;setenv serverip $ip;tftpboot;bootm'"
+    bootcmd="setenv bootcmd 'dcache off;usb start;dhcp;setenv serverip $ip;tftpboot;bootm'"
     serverip="setenv serverip $ip"
     bootfile="setenv bootfile $uimage"
 
