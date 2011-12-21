@@ -1,0 +1,93 @@
+From e4f34c3bda25d9d53d2a1ac3e7f00f227f1d259e Mon Sep 17 00:00:00 2001
+From: Eyal Shapira <eyal@wizery.com>
+Date: Sun, 4 Dec 2011 06:11:51 +0200
+Subject: [PATCH 21/29] sched scan: Update scan according to changes in network list
+
+sched scan wasn't updated according to changes in the network list
+(enable/disable/remove). This caused the FW to continue scanning
+with the wrong list configured which triggered problems.
+
+Signed-off-by: Eyal Shapira <eyal@wizery.com>
+---
+ wpa_supplicant/ctrl_iface.c     |    4 +++-
+ wpa_supplicant/scan.c           |    4 ++--
+ wpa_supplicant/wpa_supplicant.c |    7 ++++++-
+ 3 files changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/wpa_supplicant/ctrl_iface.c b/wpa_supplicant/ctrl_iface.c
+index 7ec2053..f2e2a43 100644
+--- a/wpa_supplicant/ctrl_iface.c
++++ b/wpa_supplicant/ctrl_iface.c
+@@ -1500,7 +1500,7 @@ static int wpa_supplicant_ctrl_iface_remove_network(
+ 			wpa_supplicant_disassociate(wpa_s,
+ 				                    WLAN_REASON_DEAUTH_LEAVING);
+ 		}
+-		return 0;
++		goto req_sched_scan;
+ 	}
+ 
+ 	id = atoi(cmd);
+@@ -1524,6 +1524,8 @@ static int wpa_supplicant_ctrl_iface_remove_network(
+ 		wpa_supplicant_disassociate(wpa_s, WLAN_REASON_DEAUTH_LEAVING);
+ 	}
+ 
++req_sched_scan:
++	wpa_supplicant_req_sched_scan(wpa_s);
+ 	return 0;
+ }
+ 
+diff --git a/wpa_supplicant/scan.c b/wpa_supplicant/scan.c
+index 1019a7b..2b3e5aa 100644
+--- a/wpa_supplicant/scan.c
++++ b/wpa_supplicant/scan.c
+@@ -633,8 +633,8 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 		return -EOPNOTSUPP;
+ 
+ 	if (wpa_s->sched_scanning) {
+-		wpa_dbg(wpa_s, MSG_DEBUG, "Already sched scanning");
+-		return 0;
++		wpa_dbg(wpa_s, MSG_DEBUG, "Cancel previous sched scan");
++		wpa_supplicant_cancel_sched_scan(wpa_s);
+ 	}
+ 
+ 	if (!wpa_supplicant_enabled_networks(wpa_s->conf))
+diff --git a/wpa_supplicant/wpa_supplicant.c b/wpa_supplicant/wpa_supplicant.c
+index ccf03b3..9fd062f 100644
+--- a/wpa_supplicant/wpa_supplicant.c
++++ b/wpa_supplicant/wpa_supplicant.c
+@@ -1545,12 +1545,14 @@ void wpa_supplicant_enable_network(struct wpa_supplicant *wpa_s,
+ 				wpas_notify_network_enabled_changed(
+ 					wpa_s, other_ssid);
+ 		}
+-		if (wpa_s->reassociate)
++		if (wpa_s->reassociate) {
++			wpa_supplicant_req_sched_scan(wpa_s);
+ #ifdef ANDROID
+ 			wpa_supplicant_req_scan(wpa_s, 2, 0);
+ #else /* ANDROID */
+ 			wpa_supplicant_req_scan(wpa_s, 0, 0);
+ #endif /* ANDROID */
++		}
+ 	} else if (ssid->disabled && ssid->disabled != 2) {
+ 		if (wpa_s->current_ssid == NULL) {
+ 			/*
+@@ -1558,6 +1560,7 @@ void wpa_supplicant_enable_network(struct wpa_supplicant *wpa_s,
+ 			 * configuration and a new network was made available.
+ 			 */
+ 			wpa_s->reassociate = 1;
++			wpa_supplicant_req_sched_scan(wpa_s);
+ #ifdef ANDROID
+ 			wpa_supplicant_req_scan(wpa_s, 2, 0);
+ #else /* ANDROID */
+@@ -1617,6 +1620,8 @@ void wpa_supplicant_disable_network(struct wpa_supplicant *wpa_s,
+ 		if (was_disabled != ssid->disabled)
+ 			wpas_notify_network_enabled_changed(wpa_s, ssid);
+ 	}
++
++	wpa_supplicant_req_sched_scan(wpa_s);
+ }
+ 
+ 
+-- 
+1.7.0.4
+

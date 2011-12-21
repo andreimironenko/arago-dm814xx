@@ -1,0 +1,34 @@
+From 483a62b2078b4d7d00edb87e52a149227b330c85 Mon Sep 17 00:00:00 2001
+From: Eliad Peller <eliad@wizery.com>
+Date: Wed, 7 Dec 2011 19:23:30 +0200
+Subject: [PATCH 27/29] update nl80211_copy.h
+
+for NL80211_STA_FLAG_PRE_ASSOC
+---
+ src/drivers/nl80211_copy.h |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/src/drivers/nl80211_copy.h b/src/drivers/nl80211_copy.h
+index 0234570..49c2b91 100644
+--- a/src/drivers/nl80211_copy.h
++++ b/src/drivers/nl80211_copy.h
+@@ -1408,6 +1408,7 @@ enum nl80211_iftype {
+  * @NL80211_STA_FLAG_MFP: station uses management frame protection
+  * @NL80211_STA_FLAG_AUTHENTICATED: station is authenticated
+  * @NL80211_STA_FLAG_MAX: highest station flag number currently defined
++ * @NL80211_STA_FLAG_PRE_ASSOC: station is pre-associated
+  * @__NL80211_STA_FLAG_AFTER_LAST: internal use
+  */
+ enum nl80211_sta_flags {
+@@ -1417,6 +1418,8 @@ enum nl80211_sta_flags {
+ 	NL80211_STA_FLAG_WME,
+ 	NL80211_STA_FLAG_MFP,
+ 	NL80211_STA_FLAG_AUTHENTICATED,
++	NL80211_STA_FLAG_TDLS_PEER,
++	NL80211_STA_FLAG_PRE_ASSOC,
+ 
+ 	/* keep last */
+ 	__NL80211_STA_FLAG_AFTER_LAST,
+-- 
+1.7.0.4
+

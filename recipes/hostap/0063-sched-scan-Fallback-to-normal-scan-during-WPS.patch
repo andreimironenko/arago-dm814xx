@@ -1,0 +1,43 @@
+From f691c4ae4107ddab5fbac3d55730f66e2c88b932 Mon Sep 17 00:00:00 2001
+From: Eyal Shapira <eyal@wizery.com>
+Date: Sun, 4 Dec 2011 06:11:52 +0200
+Subject: [PATCH 22/29] sched scan: Fallback to normal scan during WPS
+
+This is a fix for the WPS problem where WPS
+session wasn't initiated until an manual scan was triggered.
+During WPS session we need a periodic broadcast scan
+to occur so that APs will see that we're in WPS session.
+
+Signed-off-by: Eyal Shapira <eyal@wizery.com>
+---
+ wpa_supplicant/scan.c |    7 ++++++-
+ 1 files changed, 6 insertions(+), 1 deletions(-)
+
+diff --git a/wpa_supplicant/scan.c b/wpa_supplicant/scan.c
+index 2b3e5aa..b2ac587 100644
+--- a/wpa_supplicant/scan.c
++++ b/wpa_supplicant/scan.c
+@@ -632,6 +632,12 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 	if (!wpa_s->sched_scan_supported)
+ 		return -EOPNOTSUPP;
+ 
++	if (wpas_wps_in_progress(wpa_s)) {
++		wpa_dbg(wpa_s, MSG_DEBUG,
++			"WPS in progress. Falling back to normal scan");
++		return -EBUSY;
++	}
++
+ 	if (wpa_s->sched_scanning) {
+ 		wpa_dbg(wpa_s, MSG_DEBUG, "Cancel previous sched scan");
+ 		wpa_supplicant_cancel_sched_scan(wpa_s);
+@@ -729,7 +735,6 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 	if (ret)
+ 		return ret;
+ 
+-
+ 	/* If we have more SSIDs to scan, add a timeout so we scan them too */
+ 	if (ssid || !wpa_s->first_sched_scan) {
+ 		wpa_s->sched_scan_timed_out = 0;
+-- 
+1.7.0.4
+
