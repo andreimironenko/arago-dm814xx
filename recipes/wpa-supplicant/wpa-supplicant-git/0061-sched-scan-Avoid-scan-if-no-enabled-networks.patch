@@ -1,0 +1,48 @@
+From 0cc62bb9e8c493eb8946232b297f8f7c91205837 Mon Sep 17 00:00:00 2001
+From: Eyal Shapira <eyal@wizery.com>
+Date: Sun, 4 Dec 2011 06:11:50 +0200
+Subject: [PATCH 20/29] sched scan: Avoid scan if no enabled networks
+
+There's no point to sched scan when there's no enabled networks.
+This also fixes a bug where the supplicant would reset
+its scan results in case such a sched scan was initiated
+and therefore would cause a "flickering" network list effect on Android.
+(For a moment you see the network list and the next it's empty)
+
+Signed-off-by: Eyal Shapira <eyal@wizery.com>
+---
+ wpa_supplicant/scan.c |   13 ++++++++-----
+ 1 files changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/wpa_supplicant/scan.c b/wpa_supplicant/scan.c
+index b7f965a..1019a7b 100644
+--- a/wpa_supplicant/scan.c
++++ b/wpa_supplicant/scan.c
+@@ -632,16 +632,19 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 	if (!wpa_s->sched_scan_supported)
+ 		return -EOPNOTSUPP;
+ 
+-	if (wpa_s->max_sched_scan_ssids > WPAS_MAX_SCAN_SSIDS)
+-		max_sched_scan_ssids = WPAS_MAX_SCAN_SSIDS;
+-	else
+-		max_sched_scan_ssids = wpa_s->max_sched_scan_ssids;
+-
+ 	if (wpa_s->sched_scanning) {
+ 		wpa_dbg(wpa_s, MSG_DEBUG, "Already sched scanning");
+ 		return 0;
+ 	}
+ 
++	if (!wpa_supplicant_enabled_networks(wpa_s->conf))
++		return 0;
++
++	if (wpa_s->max_sched_scan_ssids > WPAS_MAX_SCAN_SSIDS)
++		max_sched_scan_ssids = WPAS_MAX_SCAN_SSIDS;
++	else
++		max_sched_scan_ssids = wpa_s->max_sched_scan_ssids;
++
+ 	os_memset(&params, 0, sizeof(params));
+ 
+ 	/* if we can't allocate space for the filters, we just don't filter */
+-- 
+1.7.0.4
+

@@ -1,0 +1,82 @@
+From af95b39caeda6adaec1fece9b11c4f0db909d843 Mon Sep 17 00:00:00 2001
+From: Eyal Shapira <eyal@wizery.com>
+Date: Sun, 4 Dec 2011 06:11:49 +0200
+Subject: [PATCH 19/29] sched scan: Avoid changing state to SCANNING
+
+sched scan was indicating to the supplicant that scanning was in progress
+which prevented broadcast scan attempts from cli (or in Android from the
+framework).
+
+Signed-off-by: Eyal Shapira <eyal@wizery.com>
+---
+ wpa_supplicant/events.c |    1 -
+ wpa_supplicant/scan.c   |   18 +++---------------
+ 2 files changed, 3 insertions(+), 16 deletions(-)
+
+diff --git a/wpa_supplicant/events.c b/wpa_supplicant/events.c
+index e022f8e..4844bb5 100644
+--- a/wpa_supplicant/events.c
++++ b/wpa_supplicant/events.c
+@@ -2206,7 +2206,6 @@ void wpa_supplicant_event(void *ctx, enum wpa_event_type event,
+ 		break;
+ 	case EVENT_SCHED_SCAN_STOPPED:
+ 		wpa_s->sched_scanning = 0;
+-		wpa_supplicant_notify_scanning(wpa_s, 0);
+ 
+ 		/* If we timed out, start a new sched scan to continue
+ 		 * searching for more SSIDs */
+diff --git a/wpa_supplicant/scan.c b/wpa_supplicant/scan.c
+index 41fdcc4..b7f965a 100644
+--- a/wpa_supplicant/scan.c
++++ b/wpa_supplicant/scan.c
+@@ -247,11 +247,8 @@ wpa_supplicant_start_sched_scan(struct wpa_supplicant *wpa_s,
+ 	if (wpa_s->drv_flags & WPA_DRIVER_FLAGS_USER_SPACE_MLME)
+ 		return -EOPNOTSUPP;
+ 
+-	wpa_supplicant_notify_scanning(wpa_s, 1);
+ 	ret = wpa_drv_sched_scan(wpa_s, params, interval * 1000);
+-	if (ret)
+-		wpa_supplicant_notify_scanning(wpa_s, 0);
+-	else
++	if (!ret)
+ 		wpa_s->sched_scanning = 1;
+ 
+ 	return ret;
+@@ -627,7 +624,6 @@ int wpa_supplicant_delayed_sched_scan(struct wpa_supplicant *wpa_s,
+ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ {
+ 	struct wpa_driver_scan_params params;
+-	enum wpa_states prev_state;
+ 	struct wpa_ssid *ssid;
+ 	struct wpabuf *wps_ie = NULL;
+ 	int ret;
+@@ -652,11 +648,6 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 	params.filter_ssids = os_zalloc(wpa_s->max_match_sets *
+ 					sizeof(struct wpa_driver_scan_filter));
+ 
+-	prev_state = wpa_s->wpa_state;
+-	if (wpa_s->wpa_state == WPA_DISCONNECTED ||
+-	    wpa_s->wpa_state == WPA_INACTIVE)
+-		wpa_supplicant_set_state(wpa_s, WPA_SCANNING);
+-
+ 	/* Find the starting point from which to continue scanning */
+ 	ssid = wpa_s->conf->ssid;
+ 	if (wpa_s->prev_sched_ssid) {
+@@ -732,12 +723,9 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 	wpabuf_free(wps_ie);
+ 	os_free(params.filter_ssids);
+ 
+-	if (ret) {
+-		wpa_msg(wpa_s, MSG_WARNING, "Failed to initiate sched scan");
+-		if (prev_state != wpa_s->wpa_state)
+-			wpa_supplicant_set_state(wpa_s, prev_state);
++	if (ret)
+ 		return ret;
+-	}
++
+ 
+ 	/* If we have more SSIDs to scan, add a timeout so we scan them too */
+ 	if (ssid || !wpa_s->first_sched_scan) {
+-- 
+1.7.0.4
+

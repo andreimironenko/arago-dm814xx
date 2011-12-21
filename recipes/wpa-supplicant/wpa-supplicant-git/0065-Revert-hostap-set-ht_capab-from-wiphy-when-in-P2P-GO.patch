@@ -1,0 +1,46 @@
+From dc816dd60a3fa0d31cf394bc361d8d5bacdbde1e Mon Sep 17 00:00:00 2001
+From: Ido Reis <idor@ti.com>
+Date: Sun, 4 Dec 2011 16:20:09 +0200
+Subject: [PATCH 24/29] Revert "hostap: set ht_capab from wiphy when in P2P GO mode"
+
+This reverts commit d121f64de2cfe6734e6271e541a7ff11e7316f68.
+
+reverted due to new version of this patch
+Signed-off-by: Ido Reis <idor@ti.com>
+---
+ wpa_supplicant/ap.c |   10 +++-------
+ 1 files changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/wpa_supplicant/ap.c b/wpa_supplicant/ap.c
+index ce3631a..ce7e070 100644
+--- a/wpa_supplicant/ap.c
++++ b/wpa_supplicant/ap.c
+@@ -87,10 +87,9 @@ static int wpa_supplicant_conf_ap(struct wpa_supplicant *wpa_s,
+ 
+ #ifdef CONFIG_IEEE80211N
+ 	/*
+-	 * Enable HT20 if the driver supports it, by setting conf->ieee80211n
+-	 * and conf->ht_capab.
++	 * Enable HT20 if the driver supports it, by setting conf->ieee80211n.
+ 	 * Using default config settings for: conf->ht_op_mode_fixed,
+-	 * conf->secondary_channel, conf->require_ht
++	 * conf->ht_capab, conf->secondary_channel, conf->require_ht
+ 	 */
+ 	modes = wpa_drv_get_hw_feature_data(wpa_s, &num_modes, &flags);
+ 	if (modes) {
+@@ -102,11 +101,8 @@ static int wpa_supplicant_conf_ap(struct wpa_supplicant *wpa_s,
+ 				break;
+ 			}
+ 		}
+-		if (mode && mode->ht_capab) {
+-			bss->wmm_enabled = 1;
++		if (mode && mode->ht_capab)
+ 			conf->ieee80211n = 1;
+-			conf->ht_capab = mode->ht_capab;
+-		}
+ 		ieee80211_sta_free_hw_features(modes, num_modes);
+ 		modes = NULL;
+ 	}
+-- 
+1.7.0.4
+

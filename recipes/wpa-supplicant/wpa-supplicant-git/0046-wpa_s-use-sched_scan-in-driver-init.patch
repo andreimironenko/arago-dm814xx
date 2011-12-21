@@ -1,0 +1,76 @@
+From e0bc973d3dbd109d27edef1bec1e8ed52180931d Mon Sep 17 00:00:00 2001
+From: Luciano Coelho <coelho@ti.com>
+Date: Fri, 30 Sep 2011 16:20:00 +0300
+Subject: [PATCH 05/29] wpa_s: use sched_scan in driver init
+
+This patch uses sched_scan, if available, when the driver is
+initialized.  It also adds a couple of cancel operations where
+appropriate.
+
+Signed-off-by: Luciano Coelho <coelho@ti.com>
+---
+ wpa_supplicant/events.c         |    8 ++++++--
+ wpa_supplicant/sme.c            |    1 +
+ wpa_supplicant/wpa_supplicant.c |    6 +++++-
+ 3 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/wpa_supplicant/events.c b/wpa_supplicant/events.c
+index 43e9ae3..e022f8e 100644
+--- a/wpa_supplicant/events.c
++++ b/wpa_supplicant/events.c
+@@ -972,10 +972,14 @@ static int _wpa_supplicant_event_scan_results(struct wpa_supplicant *wpa_s,
+ 				 */
+ 				timeout_sec = 0;
+ 				timeout_usec = 250000;
++				wpa_supplicant_req_new_scan(wpa_s, timeout_sec,
++							    timeout_usec);
++				return 0;
+ 			}
+ #endif /* CONFIG_P2P */
+-			wpa_supplicant_req_new_scan(wpa_s, timeout_sec,
+-						    timeout_usec);
++			if(wpa_supplicant_req_sched_scan(wpa_s))
++				wpa_supplicant_req_new_scan(wpa_s, timeout_sec,
++							    timeout_usec);
+ 		}
+ 	}
+ 	return 0;
+diff --git a/wpa_supplicant/sme.c b/wpa_supplicant/sme.c
+index 86d6b6a..9498f57 100644
+--- a/wpa_supplicant/sme.c
++++ b/wpa_supplicant/sme.c
+@@ -238,6 +238,7 @@ void sme_authenticate(struct wpa_supplicant *wpa_s,
+ 	}
+ #endif /* CONFIG_P2P */
+ 
++	wpa_supplicant_cancel_sched_scan(wpa_s);
+ 	wpa_supplicant_cancel_scan(wpa_s);
+ 
+ 	wpa_msg(wpa_s, MSG_INFO, "SME: Trying to authenticate with " MACSTR
+diff --git a/wpa_supplicant/wpa_supplicant.c b/wpa_supplicant/wpa_supplicant.c
+index 9054b30..363a300 100644
+--- a/wpa_supplicant/wpa_supplicant.c
++++ b/wpa_supplicant/wpa_supplicant.c
+@@ -1158,6 +1158,7 @@ void wpa_supplicant_associate(struct wpa_supplicant *wpa_s,
+ 			wpa_ssid_txt(ssid->ssid, ssid->ssid_len));
+ 		os_memset(wpa_s->pending_bssid, 0, ETH_ALEN);
+ 	}
++	wpa_supplicant_cancel_sched_scan(wpa_s);
+ 	wpa_supplicant_cancel_scan(wpa_s);
+ 
+ 	/* Starting new association, so clear the possibly used WPA IE from the
+@@ -2069,7 +2070,10 @@ int wpa_supplicant_driver_init(struct wpa_supplicant *wpa_s)
+ 
+ 	wpa_s->prev_scan_ssid = WILDCARD_SSID_SCAN;
+ 	if (wpa_supplicant_enabled_networks(wpa_s->conf)) {
+-		wpa_supplicant_req_scan(wpa_s, interface_count, 100000);
++		int ret;
++		ret = wpa_supplicant_req_sched_scan(wpa_s);
++		if (ret)
++			wpa_supplicant_req_scan(wpa_s, interface_count, 100000);
+ 		interface_count++;
+ 	} else
+ 		wpa_supplicant_set_state(wpa_s, WPA_INACTIVE);
+-- 
+1.7.0.4
+

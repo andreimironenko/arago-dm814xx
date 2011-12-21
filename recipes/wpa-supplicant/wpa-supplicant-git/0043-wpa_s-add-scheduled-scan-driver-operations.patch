@@ -1,0 +1,424 @@
+From 9a377ade6e4dfc4ceaefd85449c54b22517fdc1f Mon Sep 17 00:00:00 2001
+From: Luciano Coelho <coelho@ti.com>
+Date: Fri, 30 Sep 2011 16:19:57 +0300
+Subject: [PATCH 02/29] wpa_s: add scheduled scan driver operations
+
+In new kernel versions (>=3.0), NL80211 adds scheduled scan
+capability.  In order to use this feature to its full extent, we need
+to support it in the wpa_supplicant core, so that it can also be used
+by other drivers.
+
+This commit adds initial scheduled scan support operations and events.
+
+Signed-off-by: Luciano Coelho <coelho@ti.com>
+---
+ src/drivers/driver.h              |   38 ++++++++-
+ wpa_supplicant/driver_i.h         |   17 ++++
+ wpa_supplicant/events.c           |    9 ++
+ wpa_supplicant/scan.c             |  181 ++++++++++++++++++++++++++++++++++++-
+ wpa_supplicant/scan.h             |    2 +
+ wpa_supplicant/wpa_supplicant.c   |    2 +
+ wpa_supplicant/wpa_supplicant_i.h |    8 ++
+ 7 files changed, 253 insertions(+), 4 deletions(-)
+
+diff --git a/src/drivers/driver.h b/src/drivers/driver.h
+index e6e1b72..d86cbb1 100644
+--- a/src/drivers/driver.h
++++ b/src/drivers/driver.h
+@@ -195,7 +195,7 @@ struct wpa_interface_info {
+ 	const char *drv_name;
+ };
+ 
+-#define WPAS_MAX_SCAN_SSIDS 4
++#define WPAS_MAX_SCAN_SSIDS 10
+ 
+ /**
+  * struct wpa_driver_scan_params - Scan parameters
+@@ -581,6 +581,7 @@ struct wpa_driver_capa {
+ 	unsigned int flags;
+ 
+ 	int max_scan_ssids;
++	int max_sched_scan_ssids;
+ 
+ 	/**
+ 	 * max_remain_on_chan - Maximum remain-on-channel duration in msec
+@@ -1287,6 +1288,37 @@ struct wpa_driver_ops {
+ 	int (*scan2)(void *priv, struct wpa_driver_scan_params *params);
+ 
+ 	/**
++	 * sched_scan - Request the driver to initiate scheduled scan
++	 * @priv: private driver interface data
++	 * @params: Scan parameters
++	 * @interval: interval between scan cycles
++	 *
++	 * Returns: 0 on success, -1 on failure
++	 *
++	 * This operation should be used for scheduled scan offload to
++	 * the hardware.  Every time scan results are available, the
++	 * driver should report scan results event for wpa_supplicant
++	 * which will eventually request the results with
++	 * wpa_driver_get_scan_results2().  This operation is optional
++	 * and if not provided or if it returns -1, we fall back to
++	 * normal host-scheduled scans.
++	 */
++	int (*sched_scan)(void *priv, struct wpa_driver_scan_params *params,
++			  u32 interval);
++
++	/**
++	 * stop_sched_scan - Request the driver to stop a scheduled scan
++	 * @priv: private driver interface data
++	 *
++	 * Returns: 0 on success, -1 on failure
++	 *
++	 * This should cause the scheduled scan to be stopped and
++	 * results should stop being sent.  Must be supported if
++	 * sched_scan is supported.
++	 */
++	int (*stop_sched_scan)(void *priv);
++
++	/**
+ 	 * authenticate - Request driver to authenticate
+ 	 * @priv: private driver interface data
+ 	 * @params: authentication parameters
+@@ -2674,7 +2706,9 @@ enum wpa_event_type {
+ 	/**
+ 	 * EVENT_IBSS_PEER_LOST - IBSS peer not reachable anymore
+ 	 */
+-	EVENT_IBSS_PEER_LOST
++	EVENT_IBSS_PEER_LOST,
++
++	EVENT_SCHED_SCAN_STOPPED,
+ };
+ 
+ 
+diff --git a/wpa_supplicant/driver_i.h b/wpa_supplicant/driver_i.h
+index 6e9f145..9c51a65 100644
+--- a/wpa_supplicant/driver_i.h
++++ b/wpa_supplicant/driver_i.h
+@@ -79,6 +79,23 @@ static inline int wpa_drv_scan(struct wpa_supplicant *wpa_s,
+ 	return -1;
+ }
+ 
++static inline int wpa_drv_sched_scan(struct wpa_supplicant *wpa_s,
++				     struct wpa_driver_scan_params *params,
++				     u32 interval)
++{
++	if (wpa_s->driver->sched_scan)
++		return wpa_s->driver->sched_scan(wpa_s->drv_priv,
++						 params, interval);
++	return -1;
++}
++
++static inline int wpa_drv_stop_sched_scan(struct wpa_supplicant *wpa_s)
++{
++	if (wpa_s->driver->stop_sched_scan)
++		return wpa_s->driver->stop_sched_scan(wpa_s->drv_priv);
++	return -1;
++}
++
+ static inline struct wpa_scan_results * wpa_drv_get_scan_results2(
+ 	struct wpa_supplicant *wpa_s)
+ {
+diff --git a/wpa_supplicant/events.c b/wpa_supplicant/events.c
+index de68b13..43e9ae3 100644
+--- a/wpa_supplicant/events.c
++++ b/wpa_supplicant/events.c
+@@ -2200,6 +2200,15 @@ void wpa_supplicant_event(void *ctx, enum wpa_event_type event,
+ 		ibss_rsn_stop(wpa_s->ibss_rsn, data->ibss_peer_lost.peer);
+ #endif /* CONFIG_IBSS_RSN */
+ 		break;
++	case EVENT_SCHED_SCAN_STOPPED:
++		wpa_s->sched_scanning = 0;
++		wpa_supplicant_notify_scanning(wpa_s, 0);
++
++		/* If we timed out, start a new sched scan to continue
++		 * searching for more SSIDs */
++		if (wpa_s->sched_scan_timed_out)
++			wpa_supplicant_req_sched_scan(wpa_s);
++		break;
+ 	default:
+ 		wpa_msg(wpa_s, MSG_INFO, "Unknown event %d", event);
+ 		break;
+diff --git a/wpa_supplicant/scan.c b/wpa_supplicant/scan.c
+index 24c21de..81debb5 100644
+--- a/wpa_supplicant/scan.c
++++ b/wpa_supplicant/scan.c
+@@ -215,6 +215,52 @@ int wpa_supplicant_trigger_scan(struct wpa_supplicant *wpa_s,
+ }
+ 
+ 
++static void
++wpa_supplicant_sched_scan_timeout(void *eloop_ctx, void *timeout_ctx)
++{
++	struct wpa_supplicant *wpa_s = eloop_ctx;
++
++	wpa_dbg(wpa_s, MSG_DEBUG, "Sched scan timeout - stopping it");
++
++	wpa_s->sched_scan_timed_out = 1;
++	wpa_supplicant_cancel_sched_scan(wpa_s);
++}
++
++static int
++wpa_supplicant_start_sched_scan(struct wpa_supplicant *wpa_s,
++				struct wpa_driver_scan_params *params,
++				int interval)
++{
++	int ret;
++
++	if (wpa_s->drv_flags & WPA_DRIVER_FLAGS_USER_SPACE_MLME)
++		return -EOPNOTSUPP;
++
++	wpa_supplicant_notify_scanning(wpa_s, 1);
++	ret = wpa_drv_sched_scan(wpa_s, params, interval * 1000);
++	if (ret)
++		wpa_supplicant_notify_scanning(wpa_s, 0);
++	else
++		wpa_s->sched_scanning = 1;
++
++	return ret;
++}
++
++
++static int wpa_supplicant_stop_sched_scan(struct wpa_supplicant *wpa_s)
++{
++	int ret;
++
++	ret = wpa_drv_stop_sched_scan(wpa_s);
++	if (ret) {
++		wpa_dbg(wpa_s, MSG_DEBUG, "stopping sched_scan failed!");
++		/* TODO: what to do if stopping fails? */
++		return -1;
++	}
++
++	return ret;
++}
++
+ static struct wpa_driver_scan_filter *
+ wpa_supplicant_build_filter_ssids(struct wpa_config *conf, size_t *num_ssids)
+ {
+@@ -421,8 +467,6 @@ static void wpa_supplicant_scan(void *eloop_ctx, void *timeout_ctx)
+ 			ssid = wpa_s->conf->ssid;
+ 		while (ssid) {
+ 			if (!ssid->disabled && ssid->scan_ssid) {
+-				wpa_hexdump_ascii(MSG_DEBUG, "Scan SSID",
+-						  ssid->ssid, ssid->ssid_len);
+ 				params.ssids[params.num_ssids].ssid =
+ 					ssid->ssid;
+ 				params.ssids[params.num_ssids].ssid_len =
+@@ -540,6 +584,122 @@ void wpa_supplicant_req_scan(struct wpa_supplicant *wpa_s, int sec, int usec)
+ 	eloop_register_timeout(sec, usec, wpa_supplicant_scan, wpa_s, NULL);
+ }
+ 
++/**
++ * wpa_supplicant_req_sched_scan - Start a periodic scheduled scan
++ * @wpa_s: Pointer to wpa_supplicant data
++ *
++ * This function is used to schedule periodic scans for neighboring
++ * access points repeating the scan continuously.
++ */
++int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
++{
++	struct wpa_driver_scan_params params;
++	enum wpa_states prev_state;
++	struct wpa_ssid *ssid;
++	int ret;
++	int use_wildcard = 0;
++	int max_sched_scan_ssids;
++
++	if (wpa_s->max_sched_scan_ssids > WPAS_MAX_SCAN_SSIDS)
++		max_sched_scan_ssids = WPAS_MAX_SCAN_SSIDS;
++	else
++		max_sched_scan_ssids = wpa_s->max_sched_scan_ssids;
++
++	/* TODO: Add WPS and P2P support */
++
++	if (wpa_s->sched_scanning)
++		return 0;
++
++	os_memset(&params, 0, sizeof(params));
++
++	prev_state = wpa_s->wpa_state;
++	if (wpa_s->wpa_state == WPA_DISCONNECTED ||
++	    wpa_s->wpa_state == WPA_INACTIVE)
++		wpa_supplicant_set_state(wpa_s, WPA_SCANNING);
++
++	/* Find the starting point from which to continue scanning */
++	ssid = wpa_s->conf->ssid;
++	if (wpa_s->prev_sched_ssid) {
++		while (ssid) {
++			if (ssid == wpa_s->prev_sched_ssid) {
++				ssid = ssid->next;
++				break;
++			}
++			ssid = ssid->next;
++		}
++	}
++
++	if (!ssid || !wpa_s->prev_sched_ssid) {
++		wpa_dbg(wpa_s, MSG_DEBUG, "Beginning of SSID list");
++
++		wpa_s->sched_scan_interval = 2;
++		wpa_s->sched_scan_timeout = max_sched_scan_ssids * 2;
++		wpa_s->first_sched_scan = 1;
++		ssid = wpa_s->conf->ssid;
++		wpa_s->prev_sched_ssid = ssid;
++	}
++
++	while (ssid) {
++		if (ssid->disabled) {
++			wpa_s->prev_sched_ssid = ssid;
++			ssid = ssid->next;
++			continue;
++		}
++
++		if (!ssid->scan_ssid)
++			use_wildcard = 1;
++		else {
++			params.ssids[params.num_ssids].ssid =
++				ssid->ssid;
++			params.ssids[params.num_ssids].ssid_len =
++				ssid->ssid_len;
++			params.num_ssids++;
++			if (params.num_ssids + 1 >= max_sched_scan_ssids) {
++				wpa_s->prev_sched_ssid = ssid;
++				break;
++			}
++		}
++		wpa_s->prev_sched_ssid = ssid;
++		ssid = ssid->next;
++	}
++
++	if (ssid || use_wildcard) {
++		wpa_dbg(wpa_s, MSG_DEBUG, "Include wildcard SSID in "
++			"the sched scan request");
++		params.num_ssids++;
++	} else {
++		wpa_dbg(wpa_s, MSG_DEBUG, "ssid %p - list ended", ssid);
++	}
++
++	if (!params.num_ssids)
++		return 0;
++
++	wpa_dbg(wpa_s, MSG_DEBUG, "Starting sched scan: interval %d timeout %d",
++		wpa_s->sched_scan_interval, wpa_s->sched_scan_timeout);
++
++	ret = wpa_supplicant_start_sched_scan(wpa_s, &params,
++					      wpa_s->sched_scan_interval);
++	if (ret) {
++		wpa_msg(wpa_s, MSG_WARNING, "Failed to initiate sched scan");
++		if (prev_state != wpa_s->wpa_state)
++			wpa_supplicant_set_state(wpa_s, prev_state);
++		return ret;
++	}
++
++	/* If we have more SSIDs to scan, add a timeout so we scan them too */
++	if (ssid || !wpa_s->first_sched_scan) {
++		wpa_s->sched_scan_timed_out = 0;
++		eloop_register_timeout(wpa_s->sched_scan_timeout, 0,
++				       wpa_supplicant_sched_scan_timeout,
++				       wpa_s, NULL);
++		wpa_s->first_sched_scan = 0;
++		wpa_s->sched_scan_timeout /= 2;
++		wpa_s->sched_scan_interval *= 2;
++	}
++
++	return 0;
++}
++
+ 
+ /**
+  * wpa_supplicant_cancel_scan - Cancel a scheduled scan request
+@@ -555,6 +715,23 @@ void wpa_supplicant_cancel_scan(struct wpa_supplicant *wpa_s)
+ }
+ 
+ 
++/**
++ * wpa_supplicant_cancel_sched_scan - Stop running scheduled scans
++ * @wpa_s: Pointer to wpa_supplicant data
++ *
++ * This function is used to stop a periodic scheduled scan.
++ */
++void wpa_supplicant_cancel_sched_scan(struct wpa_supplicant *wpa_s)
++{
++	if (!wpa_s->sched_scanning)
++		return;
++
++	wpa_dbg(wpa_s, MSG_DEBUG, "Cancelling sched scan");
++	eloop_cancel_timeout(wpa_supplicant_sched_scan_timeout, wpa_s, NULL);
++	wpa_supplicant_stop_sched_scan(wpa_s);
++}
++
++
+ void wpa_supplicant_notify_scanning(struct wpa_supplicant *wpa_s,
+ 				    int scanning)
+ {
+diff --git a/wpa_supplicant/scan.h b/wpa_supplicant/scan.h
+index 025b815..f9d21b0 100644
+--- a/wpa_supplicant/scan.h
++++ b/wpa_supplicant/scan.h
+@@ -17,7 +17,9 @@
+ 
+ int wpa_supplicant_enabled_networks(struct wpa_config *conf);
+ void wpa_supplicant_req_scan(struct wpa_supplicant *wpa_s, int sec, int usec);
++int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s);
+ void wpa_supplicant_cancel_scan(struct wpa_supplicant *wpa_s);
++void wpa_supplicant_cancel_sched_scan(struct wpa_supplicant *wpa_s);
+ void wpa_supplicant_notify_scanning(struct wpa_supplicant *wpa_s,
+ 				    int scanning);
+ struct wpa_driver_scan_params;
+diff --git a/wpa_supplicant/wpa_supplicant.c b/wpa_supplicant/wpa_supplicant.c
+index b86016a..9054b30 100644
+--- a/wpa_supplicant/wpa_supplicant.c
++++ b/wpa_supplicant/wpa_supplicant.c
+@@ -2096,6 +2096,7 @@ static struct wpa_supplicant * wpa_supplicant_alloc(void)
+ 	wpa_s->scan_interval = 5;
+ 	wpa_s->new_connection = 1;
+ 	wpa_s->parent = wpa_s;
++	wpa_s->sched_scanning = 0;
+ 
+ 	return wpa_s;
+ }
+@@ -2260,6 +2261,7 @@ next_driver:
+ 				return -1;
+ 		}
+ 		wpa_s->max_scan_ssids = capa.max_scan_ssids;
++		wpa_s->max_sched_scan_ssids = capa.max_sched_scan_ssids;
+ 		wpa_s->max_remain_on_chan = capa.max_remain_on_chan;
+ 		wpa_s->max_stations = capa.max_stations;
+ 	}
+diff --git a/wpa_supplicant/wpa_supplicant_i.h b/wpa_supplicant/wpa_supplicant_i.h
+index 281c5f6..67e4407 100644
+--- a/wpa_supplicant/wpa_supplicant_i.h
++++ b/wpa_supplicant/wpa_supplicant_i.h
+@@ -378,6 +378,12 @@ struct wpa_supplicant {
+ 					  */
+ #define WILDCARD_SSID_SCAN ((struct wpa_ssid *) 1)
+ 
++	struct wpa_ssid *prev_sched_ssid; /* last SSID used in sched scan */
++	int sched_scan_timeout;
++	int sched_scan_interval;
++	int first_sched_scan;
++	int sched_scan_timed_out;
++
+ 	void (*scan_res_handler)(struct wpa_supplicant *wpa_s,
+ 				 struct wpa_scan_results *scan_res);
+ 	struct dl_list bss; /* struct wpa_bss::list */
+@@ -396,6 +402,7 @@ struct wpa_supplicant {
+ 
+ 	enum wpa_states wpa_state;
+ 	int scanning;
++	int sched_scanning;
+ 	int new_connection;
+ 	int reassociated_connection;
+ 
+@@ -419,6 +426,7 @@ struct wpa_supplicant {
+ 	struct wpa_client_mlme mlme;
+ 	unsigned int drv_flags;
+ 	int max_scan_ssids;
++	int max_sched_scan_ssids;
+ 	unsigned int max_remain_on_chan;
+ 	unsigned int max_stations;
+ 
+-- 
+1.7.0.4
+

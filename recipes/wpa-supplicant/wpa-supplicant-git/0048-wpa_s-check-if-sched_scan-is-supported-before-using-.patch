@@ -1,0 +1,74 @@
+From ee7a356d2979f814e5c1738a8eeb6e452136343d Mon Sep 17 00:00:00 2001
+From: Luciano Coelho <coelho@ti.com>
+Date: Fri, 30 Sep 2011 16:20:02 +0300
+Subject: [PATCH 07/29] wpa_s: check if sched_scan is supported before using it
+
+Previously, we were trying to use scheduled scan without checking
+whether the driver supports it.  This is okay, but it is not efficient
+because we need to go all the way down to the kernel driver before we
+find out it is not supported.
+
+This patch adds a capability flag in wpa_supplicant that is used to
+check whether sched_scan is supported or not.
+
+Signed-off-by: Luciano Coelho <coelho@ti.com>
+---
+ src/drivers/driver.h              |    1 +
+ wpa_supplicant/scan.c             |    3 +++
+ wpa_supplicant/wpa_supplicant.c   |    1 +
+ wpa_supplicant/wpa_supplicant_i.h |    1 +
+ 4 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/src/drivers/driver.h b/src/drivers/driver.h
+index 19e8007..bffa0bb 100644
+--- a/src/drivers/driver.h
++++ b/src/drivers/driver.h
+@@ -582,6 +582,7 @@ struct wpa_driver_capa {
+ 
+ 	int max_scan_ssids;
+ 	int max_sched_scan_ssids;
++	int sched_scan_supported;
+ 
+ 	/**
+ 	 * max_remain_on_chan - Maximum remain-on-channel duration in msec
+diff --git a/wpa_supplicant/scan.c b/wpa_supplicant/scan.c
+index 81debb5..a4a5bb3 100644
+--- a/wpa_supplicant/scan.c
++++ b/wpa_supplicant/scan.c
+@@ -600,6 +600,9 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 	int use_wildcard = 0;
+ 	int max_sched_scan_ssids;
+ 
++	if (!wpa_s->sched_scan_supported)
++		return -EOPNOTSUPP;
++
+ 	if (wpa_s->max_sched_scan_ssids > WPAS_MAX_SCAN_SSIDS)
+ 		max_sched_scan_ssids = WPAS_MAX_SCAN_SSIDS;
+ 	else
+diff --git a/wpa_supplicant/wpa_supplicant.c b/wpa_supplicant/wpa_supplicant.c
+index 363a300..4269ef0 100644
+--- a/wpa_supplicant/wpa_supplicant.c
++++ b/wpa_supplicant/wpa_supplicant.c
+@@ -2266,6 +2266,7 @@ next_driver:
+ 		}
+ 		wpa_s->max_scan_ssids = capa.max_scan_ssids;
+ 		wpa_s->max_sched_scan_ssids = capa.max_sched_scan_ssids;
++		wpa_s->sched_scan_supported = capa.sched_scan_supported;
+ 		wpa_s->max_remain_on_chan = capa.max_remain_on_chan;
+ 		wpa_s->max_stations = capa.max_stations;
+ 	}
+diff --git a/wpa_supplicant/wpa_supplicant_i.h b/wpa_supplicant/wpa_supplicant_i.h
+index 67e4407..4f9c19a 100644
+--- a/wpa_supplicant/wpa_supplicant_i.h
++++ b/wpa_supplicant/wpa_supplicant_i.h
+@@ -427,6 +427,7 @@ struct wpa_supplicant {
+ 	unsigned int drv_flags;
+ 	int max_scan_ssids;
+ 	int max_sched_scan_ssids;
++	int sched_scan_supported;
+ 	unsigned int max_remain_on_chan;
+ 	unsigned int max_stations;
+ 
+-- 
+1.7.0.4
+
