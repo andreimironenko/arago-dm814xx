@@ -1,20 +1,18 @@
 DESCRIPTION = "Clock setting descriptions for Matrix v2"
-HOMEPAGE = "https://gforge.ti.com/gf/project/matrixguiv2apps/"
+HOMEPAGE = "https://gitorious.org/matrix-gui-v2/matrix-gui-v2-apps"
 LICENSE = "CC-BY-SA"
 PRIORITY = "optional"
 
-PR = "r2"
+require matrix-gui-apps.inc
+
+PR = "${INC_PR}.3"
 
 PACKAGE_ARCH = "all"
 
-SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/729/5213/clocks_1.2.tar.gz"
+S = ${WORKDIR}/git/clocks_apps
 
-S = ${WORKDIR}/clocks
-
-require matrix-gui-apps.inc
-
-# Make sure power submenu has been installed
-RDEPENDS +=  matrix-gui-submenus-power
+# Make sure power submenu and app images has been installed
+RDEPENDS +=  matrix-gui-apps-images matrix-gui-submenus-power
 
 # Break out the individual files into separate packages.  That way only the
 # clocks supported for each device can be installed.  Prepend the list so
@@ -32,6 +30,3 @@ FILES_${PN}-300mhz += "${bindir}/setopp2.sh"
 FILES_${PN}-600mhz += "${bindir}/setopp3.sh"
 FILES_${PN}-800mhz += "${bindir}/setopp4.sh"
 FILES_${PN}-1ghz += "${bindir}/setopp1.sh"
-
-SRC_URI[md5sum] = "cb225b9f1c24a4f13cb1a127d91be060"
-SRC_URI[sha256sum] = "8b5ece45f975d213c963471f8d3ec9d2ab8244f44a4420bb99f408488767dc0c"

@@ -17,5 +17,5 @@ inherit qt4e
 
 do_install() {
 	install -d ${D}/${bindir}
-    install -m 0755 ${S}/matrix_browser ${D}/${bindir}
+	install -m 0755 ${S}/matrix_browser ${D}/${bindir}
 }

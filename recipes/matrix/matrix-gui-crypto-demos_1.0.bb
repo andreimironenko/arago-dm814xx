@@ -1,22 +1,17 @@
 DESCRIPTION = "Cryptography demo descriptions for Matrix v2"
-HOMEPAGE = "https://gforge.ti.com/gf/project/arm_crypto/"
+HOMEPAGE = "https://gitorious.org/matrix-gui-v2/matrix-gui-v2-apps"
 LICENSE = "CC-BY-SA"
 PRIORITY = "optional"
 
-PR = "r4"
+require matrix-gui-apps.inc
+
+PR = "${INC_PR}.5"
 
 PACKAGE_ARCH = "all"
 
-SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/736/5225/cryptodemos_1.4.tar.gz"
+S = ${WORKDIR}/git/cryptos_apps
 
-S = ${WORKDIR}/cryptodemos
-
-require matrix-gui-apps.inc
-
-# Make sure crypto submenu has been installed and openssl is available
-RDEPENDS +=  "matrix-gui-submenus-cryptos openssl"
+# Make sure crypto submenu and app images has been installed. Also make sure openssl is available
+RDEPENDS +=  "matrix-gui-apps-images matrix-gui-submenus-cryptos openssl"
 
 FILES_${PN} += "${MATRIX_BASE_DIR}/*"
-
-SRC_URI[md5sum] = "7d2764ae6e4e0d019786cc55b246cc4a"
-SRC_URI[sha256sum] = "3a52dd4000f58be66c63c06d7139ff8eaee35f543ca34fa0b8ec4c4d4008ca6d"
