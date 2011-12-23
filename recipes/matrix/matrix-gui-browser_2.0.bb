@@ -4,9 +4,9 @@ LICENSE = "BSD"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-PR = "r3"
+PR = "r4"
 
-SRCREV = "8f50865be383e2b3b77704544924939e5a095056"
+SRCREV = "5857a24ef0eaa0835f9e9c5a5f80ce681a1e801e"
 BRANCH ?= "master"
 
 SRC_URI = "git://gitorious.org/matrix-gui-v2/matrix_browser.git;protocol=git;branch=${BRANCH}"
