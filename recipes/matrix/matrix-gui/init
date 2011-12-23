@@ -37,16 +37,6 @@ case "$1" in
         fi
     fi
 
-    # Check if json.txt file needs to be generated
-    cd __MATRIX_WEB_DIR__
-    if [ ! -f ./json.txt ]
-    then
-	rm -rf cache/* 
-        php generate.php
-	
-    fi
-    cd -
-
     #Clear out the the tmp and lock directory
     cd __MATRIX_WEB_DIR__
     rm -rf tmp/* 
