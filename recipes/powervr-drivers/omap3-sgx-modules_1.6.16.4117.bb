@@ -13,13 +13,13 @@ require ../ti/ti-eula-unpack.inc
 # For accessing SUPPORT_XORG value
 require powervr.inc
 
-SGXPV = "4_05_00_02"
+SGXPV = "4_05_00_03"
 IMGPV = "1.6.16.4117"
 BINFILE = "Graphics_SDK_setuplinux_${SGXPV}.bin"
 
 inherit module
 
-MACHINE_KERNEL_PR_append = "d"
+MACHINE_KERNEL_PR_append = "e"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/gfxsdk/${SGXPV}/exports/Graphics_SDK_setuplinux_${SGXPV}.bin \
            file://0001-omaplfb_linux-add-support-for-later-kernels.patch \
@@ -38,10 +38,12 @@ export SUPPORT_XORG
 
 TI_PLATFORM_omap3 = "omap3630"
 TI_PLATFORM_ti816x = "ti81xx"
+TI_PLATFORM_ti814x = "ti81xx"
 TI_PLATFORM_ti33x = "ti335x"
 
 MODULESLOCATION_omap3 = "dc_omapfb3_linux"
 MODULESLOCATION_ti816x = "dc_ti81xx_linux"
+MODULESLOCATION_ti814x = "dc_ti81xx_linux"
 MODULESLOCATION_ti33x = "dc_ti335x_linux"
 
 MAKE_TARGETS = " BUILD=${PVRBUILD} TI_PLATFORM=${TI_PLATFORM} SUPPORT_XORG=${SUPPORT_XORG}"
