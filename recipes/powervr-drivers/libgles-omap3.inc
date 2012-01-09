@@ -3,7 +3,7 @@ LICENSE = "proprietary-binary"
 
 PR = "r25"
 
-COMPATIBLE_MACHINE = "(omap3|ti816x|ti33x)"
+COMPATIBLE_MACHINE = "(omap3|ti814x|ti816x|ti33x)"
 
 DEPENDS = "virtual/libx11 libxau libxdmcp"
 
