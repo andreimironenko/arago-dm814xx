@@ -16,7 +16,7 @@ SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/omx/${PV}/exports/omx-t
 
 DEPENDS = "ti-sysbios ti-xdctools ti-ipc ti-osal ti-syslink"
 DEPENDS += "ti-c674x-aaclcdec ti-xdais ti-codec-engine ti-framework-components"
-DEPENDS += "ti-uia ti-slog"
+DEPENDS += "ti-uia ti-slog alsa-lib"
 
 EXTRA_OEMAKE = "ROOTDIR=${S} \
         INTERNAL_SW_ROOT=${S}/src \
