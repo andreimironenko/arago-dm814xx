@@ -4,7 +4,7 @@ LICENSE = "BSD"
 
 PR = "r2"
 
-COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|am335x-evm|am180x-evm)"
+COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|am335x-evm|am180x-evm|am181x-evm)"
 
 SRC_URI = "https://gforge.ti.com/gf/download/frsrelease/735/5224/bluetooth-gui-2011-11-20_v2.tar.gz \
            file://bluetooth-icon.png \
