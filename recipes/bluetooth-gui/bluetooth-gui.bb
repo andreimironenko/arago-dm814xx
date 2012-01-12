@@ -2,7 +2,7 @@ DESCRIPTION = "Bluetooth GUI Application"
 SECTION = "network"
 LICENSE = "BSD"
 
-PR = "r2"
+PR = "r3"
 
 COMPATIBLE_MACHINE = "(omap3evm|am37x-evm|am335x-evm|am180x-evm|am181x-evm)"
 
@@ -17,8 +17,7 @@ S = "${WORKDIR}/BT_Demo"
 inherit qt4e
 
 PLATFORM_am37x-evm = "omap3evm"
-PLATFORM_am180x-evm = "am1808"
-PLATFORM_da850-omapl138-evm = "am1808"
+PLATFORM_omapl138 = "am1808"
 PLATFORM_am335x-evm = "am335x"
 PLATFORM ?= "UNKNOWN"
 
