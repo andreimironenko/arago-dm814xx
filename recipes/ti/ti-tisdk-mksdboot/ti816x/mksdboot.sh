@@ -139,7 +139,7 @@ fi
 # creating boot.scr
 execute "mkdir -p /tmp/sdk"
 cat <<EOF >/tmp/sdk/boot.cmd
-setenv bootargs 'console=ttyO2,115200n8 rootwait root=/dev/mmcblk0p2 rw mem=256M earlyprintk notifyk.vpssm3_sva=0xBF900000 vram=50M ti816xfb.vram=0:16M,1:16M,2:6M ip=off noinitrd'
+setenv bootargs 'console=ttyO2,115200n8 rootwait root=/dev/mmcblk0p2 rw mem=364M@0x80000000 mem=324M@0x9F900000 notifyk.vpssm3_sva=0xBF900000 ip=off noinitrd'
 fatload mmc 0 0x80009000 uImage
 bootm 0x80009000
 EOF
