@@ -34,10 +34,8 @@ fi
 uimagesrc=`ls -1 $cwd/../board-support/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyO0,115200n8 rootwait rw mem=256M earlyprintk"
-videoargs1="notifyk.vpssm3_sva=0xBF900000 vram=50M"
-videoargs2="ti814xfb.vram=0:16M,1:16M,2:6M"
-videoargs="$videoargs1 $videoargs2"
+baseargs="console=ttyO0,115200n8 rootwait rw mem=364M@0x80000000 mem=324M@0x9F900000"
+videoargs="notifyk.vpssm3_sva=0xBF900000"
 fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3"
 fsnfsargs="root=/dev/nfs nfsroot=$ip"
 
