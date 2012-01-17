@@ -1,0 +1,1043 @@
+From 5ad32d56dec3b6a755b976ad5b9fa869792dfb49 Mon Sep 17 00:00:00 2001
+From: Amarinder Bindra <a-bindra@ti.com>
+Date: Mon, 16 Jan 2012 21:08:46 +0530
+Subject: [PATCH 5/6] ti816x: header files for hdmi settings
+
+
+Signed-off-by: Amarinder Bindra <a-bindra@ti.com>
+---
+ include/hdmi_cfg.h   |  613 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/regoffsets.h |  401 +++++++++++++++++++++++++++++++++
+ 2 files changed, 1014 insertions(+), 0 deletions(-)
+ create mode 100644 include/hdmi_cfg.h
+ create mode 100644 include/regoffsets.h
+
+diff --git a/include/hdmi_cfg.h b/include/hdmi_cfg.h
+new file mode 100644
+index 0000000..576b74a
+--- /dev/null
++++ b/include/hdmi_cfg.h
+@@ -0,0 +1,613 @@
++/*******************************************************************************
++ *                                                                             *
++ * Copyright (c) 2009 Texas Instruments Incorporated - http://www.ti.com/      *
++ *                        ALL RIGHTS RESERVED                                  *
++ *                                                                             *
++ ******************************************************************************/
++
++#ifndef _VPS_HDMICFG_H
++#define _VPS_HDMICFG_H
++#include<common.h>
++
++	typedef unsigned int Bool;
++	typedef unsigned char UInt8;
++	typedef unsigned short UInt16;
++
++#define TRUE    1
++#define FALSE   0
++
++#define VPS_SOK                 (0x0u)
++#define VPS_EBADARGS            (-1)
++#define VPS_EUNSUPPORTED_CMD    (-2)
++#define VPS_EFAIL               (-3)
++#define VPS_ETIMEOUT            (-4)
++#define VPS_EUNSUPPORTED_OPS    (-5)
++#define VPS_EALLOC              (-6)
++#define VPS_EDRIVER_INUSE       (-7)
++#define VPS_EOUT_OF_RANGE       (-8)
++#define VPS_EDEVICE_INUSE       (-9)
++
++#define HDMI_GT_ENTER           0
++#define HDMI_GT_DEBUG           1
++#define HDMI_GT_LEAVE           2
++#define HDMI_GT_ERR             3
++#define HDMI_GT_INFO            4
++
++/* ========================================================================== */
++/*                    HDMI Silicon dependecy Do Not Alter                     */
++/* ========================================================================== */
++#define HDMI_PER_CNT		(1u)
++#define HDMI_CORE_0_REGS	(0x46c00400u)
++#define HDMI_WP_0_REGS		(0x46c00000u)
++#define HDMI_PHY_0_REGS		(0x48122000u)
++#define HDMI_PLLCTRL_0_REGS	(0x46c00600u)
++
++/* IOCLT Supported by this driver */
++#define IOCTL_HDMI_START      		(0)
++#define IOCTL_HDMI_STOP       		(1)
++#define IOCTL_HDMI_GET_STATUS 		(2)
++#define IOCTL_HDMI_READ_EDID  		(3)
++/* Use this command only when hdmi is streaming video to a sink */
++#define IOCTL_HDMI_GET_CONFIG 		(4)
++#define IOCTL_HDMI_SET_CONFIG 		(5)
++
++/* Supported resolutions */
++enum hdmi_resolution {
++	hdmi_ntsc_mode = 0,
++	hdmi_pal_mode,
++	hdmi_1080P_60_mode,
++	hdmi_720P_60_mode,
++	hdmi_1080I_60_mode,
++	hdmi_1080P_30_mode,
++	hdmi_max_mode
++};
++
++/* Width of R/G/B or Y/Cb/Cr channels */
++enum hdmi_bits_per_chan {
++	hdmi_8_bits_chan_width = 0x0,
++	hdmi_10_bits_chan_width,
++	hdmi_12_bits_chan_width,
++	hdmi_max_bits_chan_width
++};
++
++/* Syncs configurations */
++enum hdmi_core_sync_gen {
++	hdmi_extract_syncs = 0x0,
++	/* Use extracted hSync, vSync and DE from input */
++	hdmi_generate_de,
++	/* Use incoming (from wrapper/hdvenc) vSync and hSync but generate DE */
++	hdmi_source_syncs,
++	/* Use incoming (from wrapper/hdvenc) vSync, hSync and DE */
++	hdmi_max_syncs
++};
++
++/* Packing mode that wrappers supports */
++enum hdmi_wp_packmode {
++	hdmi_wp_30bit_RGB_YUV444 = 0x0,
++	hdmi_wp_24bit_RGB_YUV444_YUV422,
++	hdmi_wp_20bit_YUV444,
++	hdmi_wp_16bit_YUV422,
++	hdmi_wp_no_pack = 0x7
++};
++
++/*  YCbCr to RGB CSC coefficients */
++struct hdmi_csc_YCbCr_2_RGB_coeff {
++	uint32_t Y2RCOEFF_L;
++	uint32_t Y2RCOEFF_H;
++	uint32_t CR2RCOEFF_L;
++	uint32_t CR2RCOEFF_H;
++	uint32_t CB2BCOEFF_L;
++	uint32_t CB2BCOEFF_H;
++	uint32_t CR2GCOEFF_L;
++	uint32_t CR2GCOEFF_H;
++	uint32_t YOFFS1_L;
++	uint32_t YOFFS1_U;
++	uint32_t OFFS1_L;
++	uint32_t OFFS1_M;
++	uint32_t OFFS1_H;
++	uint32_t OFFS2_L;
++	uint32_t OFFS2_H;
++	uint32_t DC_LEV_L;
++	uint32_t DC_LEV_H;
++};
++
++/* Control options for YCbCr to RGB CSC */
++struct hdmi_csc_YCbCr_2_RGB_ctrl {
++	uint32_t enableRngExp;
++	uint32_t enableFullRngExp;
++	uint32_t customCoEff;
++	uint32_t srcCsSel;
++	/*  Select source color space - xvYCC if non-zero, YCbCr otherwise */
++	struct hdmi_csc_YCbCr_2_RGB_coeff coEff;
++};
++
++/* Dithering control options */
++struct hdmi_dither_cfg {
++	uint32_t M_D2;
++	uint32_t UP2;
++	uint32_t STR_422_EN;
++	uint32_t D_BC_EN;
++	uint32_t D_GC_EN;
++	uint32_t D_RC_EN;
++	uint32_t DRD;
++};
++
++/*
++ *  Defines the configurable parameters of in data path of HDMI block.
++ *  For enabled sub-block might require additional configurations
++ */
++struct hdmi_core_data_path {
++	uint32_t up_sampler_enable;
++	/*  422 to 444 */
++	uint32_t csc_YCbCr_2_RGB_enable;
++	struct hdmi_csc_YCbCr_2_RGB_ctrl csc_YCbCr_2_RGB_config;
++	uint32_t range_exp_RGB_enable;
++	uint32_t cscRGB_2_YCbCr_enable;
++	uint32_t csc_convert_standard;
++	/*  Specifies the color space standard to be used for color space
++	   conversions. non-zero value would configure to use BT.709,
++	   BT.601 otherwise. */
++	uint32_t range_comp_enable;
++	uint32_t down_sampler_enable;
++	/*  444 to 422 */
++	uint32_t range_clip_enable;
++	uint32_t clip_color_space;
++	/*  Specifies output color space of the clipper, non-zero value for 
++	   YCbCr, RGB otherwise */
++	uint32_t dither_enable;
++	struct hdmi_dither_cfg dither_config;
++	enum hdmi_bits_per_chan output_width;
++	/*  Specifies the number of bits per channel that would sent out.
++	   If dithering is not enabled, the output would be truncated to the
++	   width specified here. */
++};
++
++/* Control DE generation */
++struct hdmi_core_de_dly_cfg {
++	uint32_t DE_DLY;
++	uint32_t DE_TOP;
++	uint32_t DE_CNTL;
++	uint32_t DE_CNTH;
++	uint32_t DE_LINL;
++	uint32_t DE_LINH;
++};
++
++/* Core input control configurations */
++struct hdmi_core_input_cfg {
++	enum hdmi_bits_per_chan data_bus_width;
++	enum hdmi_core_sync_gen sync_gen_cfg;
++	struct hdmi_core_de_dly_cfg de_delay_cfg;
++	/* when configured to generate DE - would require to provide this */
++	uint32_t edge_pol;
++	/* A non-zero value configure to latch input on rising edge, falling 
++	   edge otherwise */
++};
++
++/* Wrapper control configuration */
++struct hdmi_wp_config {
++	uint32_t debounce_rcv_detect;
++	uint32_t debounce_rcv_sens;
++	uint32_t is_slave_mode;
++	/* Should be TRUE / positive for this TI 816X device */
++	enum hdmi_wp_packmode pack_mode;
++	uint32_t is_vSync_pol_inv;
++	uint32_t is_hSync_pol_inv;
++	enum hdmi_bits_per_chan width;
++	uint32_t vSync_pol;
++	uint32_t hSync_pol;
++	uint32_t hbp;
++	/* Not Supported - for TI 816X */
++	uint32_t hfp;
++	/*  Not Supported - for TI 816X */
++	uint32_t hsw;
++	/* Not Supported - for TI 816X */
++	uint32_t vbp;
++	/* Not Supported - for TI 816X */
++	uint32_t vfp;
++	/* Not Supported - for TI 816X */
++	uint32_t vsw;
++	/* Not Supported - for TI 816X */
++};
++
++/* Transmitted color space values */
++enum hdmi_avi_op_cs {
++	hdmi_avi_RGB_op_cs = 0x0,
++	hdmi_avi_YCbCr_422_op_cs = 0x1,
++	hdmi_avi_YCbCr_444_op_cs = 0x2,
++	hdmi_avi_max_op_cs
++};
++
++enum hdmi_avi_activ_ratio {
++	hdmi_avi_no_aspect_ratio = 0x0,
++	hdmi_avi_active_aspect_ratio,
++	hdmi_avi_max_aspect_ratio
++};
++
++struct hdmi_avi_bar_info {
++	uint32_t barInfoValid;
++	/* Specify if the BAR information is valid or not.
++	   0x01 - Vertical Bar Info is valid
++	   0x02 - Horizontal Bar Info is valid
++	   0x03 - Both Vertical & Horizontal is valid */
++	uint32_t topBar;
++	uint32_t bottomBar;
++	uint32_t leftBar;
++	uint32_t rightBar;
++};
++
++enum hdmi_avi_scan_info {
++	hdmi_avi_none_scan_info = 0x0,
++	hdmi_avi_over_scan,
++	hdmi_avi_under_scan,
++	hdmi_avi_max_scan
++};
++
++enum hdmi_avi_colorimetry {
++	hdmi_avi_none_colorimetry = 0x0,
++	hdmi_avi_BT601_colorimetry,
++	hdmi_avi_BT709_colorimetry,
++	hdmi_avi_max_colorimetry
++};
++
++enum hdmi_avi_aspectratio {
++	hdmi_avi_aspect_ratio_none = 0x0,
++	hdmi_avi_4_3_aspect_ratio,
++	hdmi_avi_16_9_aspect_ratio,
++	hdmi_avi_aspect_ratio_max
++};
++
++enum hdmi_avi_active_aspectratio {
++	/* Do not modify these values - would be used to program directly */
++	hdmi_avi_active_aspect_ratio_same = 0x8,
++	hdmi_avi_4_3_active_aspect_ratio = 0x9,
++	hdmi_avi_16_9_active_aspect_ratio = 0xA,
++	hdmi_avi_14_9_active_aspect_ratio = 0xB,
++	hdmi_avi_active_aspect_ratio_max = 0xC
++};
++
++enum hdmi_avi_non_uniform_sc {
++	hdmi_avi_non_uniform_scaling_none = 0x0,
++	hdmi_avi_horizontal_non_uniform_scaling = 0x1,
++	hdmi_avi_vertical_non_uniform_scaling = 0x2,
++	hdmi_avi_non_uniform_scaling_max = 0x3
++};
++
++struct hdmi_avi_frame_cfg {
++	uint32_t output_cs;
++	enum hdmi_avi_activ_ratio use_active_aspect_ratio;
++	struct hdmi_avi_bar_info bar_info;
++	enum hdmi_avi_scan_info scan_info;
++	enum hdmi_avi_colorimetry colorimetry_info;
++	enum hdmi_avi_aspectratio aspect_ratio;
++	enum hdmi_avi_active_aspectratio active_aspect_ratio;
++	uint32_t it_content_present;
++	uint32_t ext_colorimetry;
++	uint32_t quantization_range;
++	enum hdmi_avi_non_uniform_sc non_uniform_sc;
++	uint32_t format_identier;
++};
++
++struct hdmi_info_frame_cfg {
++	uint32_t use_avi_info_data;
++	struct hdmi_avi_frame_cfg aviData;
++	/* When audio, GAMUT is supported, add audio info packet data, GAMUT 
++	   packet data, SPD packet (Source Product Description ) here */
++};
++
++struct hdmi_cfg_params {
++	uint32_t use_display_mode;
++	enum hdmi_resolution display_mode;
++	uint32_t use_wp_config;
++	struct hdmi_wp_config wp_config;
++	uint32_t use_core_config;
++	struct hdmi_core_input_cfg core_config;
++	uint32_t use_core_path_config;
++	struct hdmi_core_data_path core_path_config;
++	uint32_t use_info_frame_config;
++	struct hdmi_info_frame_cfg info_frame_config;
++};
++
++struct hdmi_edid_read_params {
++	uint32_t slave_address;
++	uint32_t segment_ptr;
++	uint32_t offset;
++	uint32_t no_of_bytes;
++	void *buffer_ptr;
++	uint32_t no_of_bytes_read;
++	uint32_t timeout;
++	uint32_t use_eddc_read;
++};
++
++struct ti816x_hdmi_init_params {
++	uint32_t wp_base_addr;
++	uint32_t core_base_addr;
++	uint32_t phy_base_addr;
++};
++
++/* ========================================================================== */
++/*                          Function Declarations                             */
++/* ========================================================================== */
++
++int ti816x_hdmi_lib_init(struct ti816x_hdmi_init_params *initParams);
++
++int ti816x_hdmi_lib_deinit(void *args);
++
++void *ti816x_hdmi_lib_open(uint32_t instance, 
++			struct hdmi_cfg_params *config, int *status,
++			void *args);
++int ti816x_hdmi_lib_close(void *handle, void *args);
++
++int ti816x_hdmi_lib_start(void *handle, void *args);
++
++int ti816x_hdmi_lib_stop(void *handle, void *args);
++
++int ti816x_hdmi_lib_control(void *handle, uint32_t cmd, void *cmdArgs,
++			void *additionalArgs);
++
++/* ========================================================================== */
++/*                 Defaults used to initialize different modes                */
++/* ========================================================================== */
++#define TI816x_HDMIWPCONFIG_10BIT_IF_SALVE {\
++                                    0x14, \
++                                    0x14, \
++                                    TRUE, \
++                                    hdmi_wp_30bit_RGB_YUV444,\
++                                    FALSE, \
++                                    FALSE, \
++                                    \
++                                    hdmi_10_bits_chan_width, \
++                                    TRUE, TRUE, 0x0, 0x0, 0x0, 0x0, 0x0,\
++                                     0x0 }
++#define TI816x_HDMIWPCONFIG_8BIT_IF_SALVE {\
++                                    0x14, \
++                                    0x14, \
++                                    TRUE, \
++                                    hdmi_wp_24bit_RGB_YUV444_YUV422,\
++                                    FALSE, \
++                                    FALSE, \
++                                    \
++                                    hdmi_8_bits_chan_width, \
++                                    TRUE, TRUE, 0x0, 0x0, 0x0, 0x0, 0x0,\
++                                     0x0}
++
++#define TI816X_HDMICORE_IPCFG_10BIT_IF_SRCD_SYNC {\
++                                       hdmi_10_bits_chan_width,\
++                                       hdmi_source_syncs,\
++                                       {0x0, 0x0, 0x0, 0x0, 0x0, 0x0},\
++                                       TRUE}
++#define TI816X_HDMICORE_IPCFG_8BIT_IF_SRCD_SYNC {\
++                                       hdmi_8_bits_chan_width,\
++                                       hdmi_source_syncs,\
++                                       {0x0, 0x0, 0x0, 0x0, 0x0, 0x0},\
++                                       TRUE}
++#define TI816X_HDMICSC_YCBCR2RGB_COEFF {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,\
++                                        0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,\
++                                        0x0}
++#define TI816X_HDMICSC_YCBCR2RGBCTRL_DISABLED {FALSE, \
++                                              FALSE, \
++                                              FALSE, \
++                                              FALSE, \
++                                              TI816X_HDMICSC_YCBCR2RGB_COEFF}
++
++#define TI816X_HDMIDITHERCONFIG {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}
++
++/*   Defaults to initialize core - by pass all modules, sets outwidth 
++            to 10 bits/channel and BT709 for TV */
++#define TI816X_HDMICOREDATAPATHCONFIG_BYPS_ALL_10BIT_OUTPUT_BT709 {\
++                                               FALSE, \
++                                               FALSE, \
++                                        TI816X_HDMICSC_YCBCR2RGBCTRL_DISABLED,\
++                                               FALSE, \
++                                               FALSE, \
++                                               TRUE, \
++                                               FALSE, \
++                                               FALSE, \
++                                               FALSE, \
++                                               FALSE, \
++                                               FALSE, \
++                                               TI816X_HDMIDITHERCONFIG, \
++                                               hdmi_10_bits_chan_width}
++
++
++#define TI816X_HDMICOREDATAPATHCONFIG_BYPS_ALL_8BIT_OUTPUT_BT709 {\
++                                               FALSE, \
++                                               FALSE, \
++                                        TI816X_HDMICSC_YCBCR2RGBCTRL_DISABLED,\
++                                               FALSE, \
++                                               FALSE, \
++                                               TRUE, \
++                                               FALSE, \
++                                               FALSE, \
++                                               FALSE, \
++                                               FALSE, \
++                                               FALSE, \
++                                               TI816X_HDMIDITHERCONFIG, \
++                                               hdmi_8_bits_chan_width}
++
++#define TI816X_HDMI_AVI_INFOFRAME_BARINFO   {0x0, 0x0, 0x0, 0x0, 0x0}
++
++/*   Configures HDMI AVI Info Frame with following configurations
++            output color space as RGB, Overscan - for TV, colorometry 709-HD TV
++            aspect ration as 16:9 */
++
++#define TI816X_HDMI_AVI_INFOFRAME_RGB_OVERSCAN_BT709_169  {\
++                            hdmi_avi_RGB_op_cs, \
++                            hdmi_avi_no_aspect_ratio, \
++                            TI816X_HDMI_AVI_INFOFRAME_BARINFO, \
++                            hdmi_avi_over_scan, \
++                            hdmi_avi_BT709_colorimetry, \
++                            hdmi_avi_16_9_aspect_ratio, \
++                            hdmi_avi_active_aspect_ratio_same, \
++                            FALSE, \
++                            0x0, \
++                            0x0, \
++                            hdmi_avi_non_uniform_scaling_none, \
++                            0x0}
++
++/*   Configures HDMI AVI Info Frame with following configurations
++            output color space as RGB, Overscan - for TV, colorometry 709-HD TV
++            aspect ration as 4:3 */
++
++#define TI816X_HDMI_AVI_INFOFRAME_RGB_OVERSCAN_BT709_43  {\
++                            hdmi_avi_RGB_op_cs, \
++                            hdmi_avi_no_aspect_ratio, \
++                            TI816X_HDMI_AVI_INFOFRAME_BARINFO, \
++                            hdmi_avi_over_scan, \
++                            hdmi_avi_BT709_colorimetry, \
++                            hdmi_avi_4_3_aspect_ratio, \
++                            hdmi_avi_active_aspect_ratio_same, \
++                            FALSE, \
++                            0x0, \
++                            0x0, \
++                            hdmi_avi_non_uniform_scaling_none, \
++                            0x0}
++/*   Configures HDMI AVI Info Frame with following configurations
++            output color space as RGB, Overscan - for TV, colorometry 601-SD TV
++            aspect ration as 4:3 */
++#define TI816X_HDMI_AVI_INFOFRAME_RGB_OVERSCAN_BT601_43  {\
++                            hdmi_avi_RGB_op_cs, \
++                            hdmi_avi_no_aspect_ratio, \
++                            TI816X_HDMI_AVI_INFOFRAME_BARINFO, \
++                            hdmi_avi_over_scan, \
++                            hdmi_avi_BT601_colorimetry, \
++                            hdmi_avi_4_3_aspect_ratio, \
++                            hdmi_avi_active_aspect_ratio_same, \
++                            FALSE, \
++                            0x0, \
++                            0x0, \
++                            hdmi_avi_non_uniform_scaling_none, \
++                            0x0}
++
++/*   Configures HDMI AVI Info Frame with following configurations
++            output color space as RGB, Overscan - for TV, colorometry 601-SD TV
++            aspect ration as none */
++#define TI816X_HDMI_AVI_INFOFRAME_RGB_OVERSCAN_BT601_NO_ASPECT_RATIO  {\
++                            hdmi_avi_RGB_op_cs, \
++                            hdmi_avi_no_aspect_ratio, \
++                            TI816X_HDMI_AVI_INFOFRAME_BARINFO, \
++                            hdmi_avi_over_scan, \
++                            hdmi_avi_BT601_colorimetry, \
++                            hdmi_avi_aspect_ratio_none, \
++                            hdmi_avi_active_aspect_ratio_same, \
++                            FALSE, \
++                            0x0, \
++                            0x0, \
++                            hdmi_avi_non_uniform_scaling_none, \
++                            0x0}
++
++/*   Configures HDMI Packets that would be sent during data island period
++            Right now, AVI Info packets are supported. For HD Display */
++#define TI816X_HDMIINFOFRAME_CFG_RGB_OVERSCAN_BT709_43   {TRUE, \
++                                TI816X_HDMI_AVI_INFOFRAME_RGB_OVERSCAN_BT709_43}
++#define TI816X_HDMIINFOFRAME_CFG_RGB_OVERSCAN_BT709_169  {TRUE, \
++                                TI816X_HDMI_AVI_INFOFRAME_RGB_OVERSCAN_BT709_169}
++/*   Configures HDMI Packets that would be sent during data island period
++            Right now, AVI Info packets are supported. For NTSC display*/
++#define TI816X_HDMIINFOFRAME_CFG_RGB_OVERSCAN_BT709_NTSC   {TRUE, \
++                TI816X_HDMI_AVI_INFOFRAME_RGB_OVERSCAN_BT601_NO_ASPECT_RATIO}
++/*   Configures HDMI Packets that would be sent during data island period
++            Right now, AVI Info packets are supported. For APL display */
++#define TI816X_HDMIINFOFRAME_CFG_RGB_OVERSCAN_BT709_PAL   {TRUE, \
++                                TI816X_HDMI_AVI_INFOFRAME_RGB_OVERSCAN_BT601_43}
++
++
++/* ========================================================================== */
++/*            Defaults that could be used to initialize HDMI                  */
++/*  Recommended to start with struct hdmi_wp_config, if reading for first time*/
++/*  To understand the configurations paramters for the HDMI                   */
++/* ========================================================================== */
++/*
++ * Defaults that could be used initialize HDMI HAL in 1080 P, 60 FPS, 
++ * 4:3 Aspect Ratio, for HD TV
++ *        Wrapper - confiured as 10 bit interface with HDVENC and SLAVE
++ *        Core input configured as 10 bit interface with syncs sourced from
++ *          wrapper
++ *        Core Data path - All in bypass mode, outwidth set 10 bits/channel
++ *          - In case color space converter is enabled - set to BT709.
++ */
++#define TI816X_HDMI_10BIT_1080p_60_16_9_HD {\
++        TRUE, hdmi_1080P_60_mode,\
++        TRUE, TI816x_HDMIWPCONFIG_10BIT_IF_SALVE,\
++        TRUE, TI816X_HDMICORE_IPCFG_10BIT_IF_SRCD_SYNC,\
++        TRUE, TI816X_HDMICOREDATAPATHCONFIG_BYPS_ALL_10BIT_OUTPUT_BT709,\
++        TRUE, TI816X_HDMIINFOFRAME_CFG_RGB_OVERSCAN_BT709_169}
++
++#define TI816X_HDMI_8BIT_1080p_60_16_9_HD {\
++        TRUE, hdmi_1080P_60_mode,\
++        TRUE, TI816x_HDMIWPCONFIG_8BIT_IF_SALVE,\
++        TRUE, TI816X_HDMICORE_IPCFG_8BIT_IF_SRCD_SYNC,\
++        TRUE, TI816X_HDMICOREDATAPATHCONFIG_BYPS_ALL_8BIT_OUTPUT_BT709,\
++        TRUE, TI816X_HDMIINFOFRAME_CFG_RGB_OVERSCAN_BT709_169}
++
++/*
++ * Defaults that could be used initialize HDMI HAL in 1080 P, 30 FPS,
++ *        4:3 Aspect Ratio, for HD TV
++ *        Wrapper - confiured as 10 bit interface with HDVENC and SLAVE
++ *        Core input configured as 10 bit interface with syncs sourced from
++ *          wrapper
++ *        Core Data path - All in bypass mode, outwidth set 10 bits/channel
++ *          - In case color space converter is enabled - set to BT709.
++ */
++#define TI816X_HDMI_10BIT_1080p_30_16_9_HD {\
++        TRUE, hdmi_1080P_30_mode,\
++        TRUE, TI816x_HDMIWPCONFIG_10BIT_IF_SALVE,\
++        TRUE, TI816X_HDMICORE_IPCFG_10BIT_IF_SRCD_SYNC,\
++        TRUE, TI816X_HDMICOREDATAPATHCONFIG_BYPS_ALL_10BIT_OUTPUT_BT709,\
++        TRUE, TI816X_HDMIINFOFRAME_CFG_RGB_OVERSCAN_BT709_169}
++
++#define TI816X_HDMI_8BIT_1080p_30_16_9_HD {\
++        TRUE, hdmi_1080P_30_mode,\
++        TRUE, TI816x_HDMIWPCONFIG_8BIT_IF_SALVE,\
++        TRUE, TI816X_HDMICORE_IPCFG_8BIT_IF_SRCD_SYNC,\
++        TRUE, TI816X_HDMICOREDATAPATHCONFIG_BYPS_ALL_8BIT_OUTPUT_BT709,\
++        TRUE, TI816X_HDMIINFOFRAME_CFG_RGB_OVERSCAN_BT709_169}
++
++/*
++ * Defaults that could be used initialize HDMI HAL in 1080I P, 60 FPS, 
++ *        4:3 Aspect Ratio, for HD TV
++ *        Wrapper - confiured as 10 bit interface with HDVENC and SLAVE
++ *        Core input configured as 10 bit interface with syncs sourced from
++ *          wrapper
++ *        Core Data path - All in bypass mode, outwidth set 10 bits/channel
++ *          - In case color space converter is enabled - set to BT709.
++ */
++#define TI816X_HDMI_10BIT_1080i_60_16_9_HD {\
++        TRUE, hdmi_1080I_60_mode,\
++        TRUE, TI816x_HDMIWPCONFIG_10BIT_IF_SALVE,\
++        TRUE, TI816X_HDMICORE_IPCFG_10BIT_IF_SRCD_SYNC,\
++        TRUE, TI816X_HDMICOREDATAPATHCONFIG_BYPS_ALL_10BIT_OUTPUT_BT709,\
++        TRUE, TI816X_HDMIINFOFRAME_CFG_RGB_OVERSCAN_BT709_169}
++
++#define TI816X_HDMI_8BIT_1080i_60_16_9_HD {\
++        TRUE, hdmi_1080I_60_mode,\
++        TRUE, TI816x_HDMIWPCONFIG_8BIT_IF_SALVE,\
++        TRUE, TI816X_HDMICORE_IPCFG_8BIT_IF_SRCD_SYNC,\
++        TRUE, TI816X_HDMICOREDATAPATHCONFIG_BYPS_ALL_8BIT_OUTPUT_BT709,\
++        TRUE, TI816X_HDMIINFOFRAME_CFG_RGB_OVERSCAN_BT709_169}
++
++/*
++ * Defaults that could be used initialize HDMI HAL in 720 P, 60 FPS,
++ *        16:9 Aspect Ratio, for HD TV
++ *        Wrapper - confiured as 10 bit interface with HDVENC and SLAVE
++ *        Core input configured as 10 bit interface with syncs sourced from
++ *          wrapper
++ *        Core Data path - All in bypass mode, outwidth set 10 bits/channel
++ *          - In case color space converter is enabled - set to BT709.
++ */
++#define TI816X_HDMI_10BIT_720_60_16_9_HD {\
++        TRUE, hdmi_720P_60_mode,\
++        TRUE, TI816x_HDMIWPCONFIG_10BIT_IF_SALVE,\
++        TRUE, TI816X_HDMICORE_IPCFG_10BIT_IF_SRCD_SYNC,\
++        TRUE, TI816X_HDMICOREDATAPATHCONFIG_BYPS_ALL_10BIT_OUTPUT_BT709,\
++        TRUE, TI816X_HDMIINFOFRAME_CFG_RGB_OVERSCAN_BT709_43}
++
++#define TI816X_HDMI_8BIT_720_60_16_9_HD {\
++        TRUE, hdmi_720P_60_mode,\
++        TRUE, TI816x_HDMIWPCONFIG_8BIT_IF_SALVE,\
++        TRUE, TI816X_HDMICORE_IPCFG_8BIT_IF_SRCD_SYNC,\
++        TRUE, TI816X_HDMICOREDATAPATHCONFIG_BYPS_ALL_8BIT_OUTPUT_BT709,\
++        TRUE, TI816X_HDMIINFOFRAME_CFG_RGB_OVERSCAN_BT709_43}
++
++
++#endif				/* _VPS_HDMICFG_H */
++
+diff --git a/include/regoffsets.h b/include/regoffsets.h
+new file mode 100644
+index 0000000..0ff9f68
+--- /dev/null
++++ b/include/regoffsets.h
+@@ -0,0 +1,401 @@
++/*******************************************************************************
++ *                                                                             *
++ * Copyright (c) 2009 Texas Instruments Incorporated - http://www.ti.com/      *
++ *                        ALL RIGHTS RESERVED                                  *
++ *                                                                             *
++ ******************************************************************************/
++
++//#include <stdio.h>
++
++static inline void __raw_writel(volatile uint32_t val, volatile uint32_t addr)
++{
++	*((int *) (addr)) = val;
++}
++
++static inline void __raw_writec(volatile u8 val, volatile uint32_t addr)
++{
++	*((int *) (addr)) = val;
++}
++
++static inline uint32_t __raw_readl(volatile uint32_t addr)
++{
++	return (uint32_t) (*((int *) (addr)));
++}
++
++/*********************************PHY Registers********************************/
++#define PHY_TMDS_CNTL1_OFFSET			(0x00000000)
++#define PHY_TMDS_CNTL2_OFFSET			(0x00000004)
++#define PHY_TMDS_CNTL3_OFFSET			(0x00000008)
++#define PHY_BIST_CNTL_OFFSET			(0x0000000C)
++#define PHY_BIST_PATTERN_OFFSET			(0x00000010)
++#define PHY_BIST_INST0_OFFSET			(0x00000014)
++#define PHY_BIST_INST1_OFFSET			(0x00000018)
++#define PHY_BIST_CONF0_OFFSET			(0x0000001C)
++#define PHY_TMDS_CNTL9_OFFSET			(0x00000020)
++#define PHY_TMDS_CNTL10_OFFSET			(0x00000024)
++#define PHY_TEST_MUX_CTRL_OFFSET		(0x00000028)
++
++#define HDMI_PHY_TMDS_CNTL3_PDB_MASK			(0x00000001u)
++#define HDMI_PHY_TMDS_CNTL3_DPCOLOR_CTL_MASK		(0x00000006u)
++#define HDMI_PHY_TMDS_CNTL3_CLKMULT_CTL_MASK		(0x00000018u)
++#define HDMI_PHY_TMDS_CNTL3_BIST_SEL_MASK		(0x00000040u)
++#define HDMI_PHY_TMDS_CNTL3_DPCOLOR_CTL_SHIFT		(0x00000001u)
++#define HDMI_PHY_TMDS_CNTL3_DPCOLOR_CTL_NO		(0x00000000u)
++#define HDMI_PHY_TMDS_CNTL3_DPCOLOR_CTL_10BITCHANNEL	(0x00000001u)
++#define HDMI_PHY_TMDS_CNTL3_DPCOLOR_CTL_12BITCHANNEL	(0x00000002u)
++#define HDMI_PHY_TMDS_CNTL3_CLKMULT_CTL_0_5X		(0x00000000u)
++#define HDMI_PHY_TMDS_CNTL3_CLKMULT_CTL_1_0X		(0x00000001u)
++#define HDMI_PHY_TMDS_CNTL3_CLKMULT_CTL_2_0X		(0x00000002u)
++#define HDMI_PHY_TMDS_CNTL3_CLKMULT_CTL_4_0X		(0x00000003u)
++#define HDMI_PHY_TMDS_CNTL3_CLKMULT_CTL_SHIFT		(0x00000003u)
++#define HDMI_PHY_BIST_CNTL_BIST_EN_MASK			(0x00000001u)
++#define HDMI_PHY_BIST_CNTL_BIST_ON_MASK			(0x00000002u)
++#define HDMI_PHY_BIST_CNTL_ENC_BYP_MASK			(0x00000004u)
++#define HDMI_PHY_TMDS_CNTL2_TERM_EN_MASK		(0x00000010u)
++#define HDMI_PHY_TMDS_CNTL2_OE_MASK			(0x00000020u)
++/************************************PHY***************************************/
++
++/************************************WP****************************************/
++#define HDMI_WP_SYSCONFIG_OFFSET			(0x00000008)
++#define HDMI_WP_IRQSTATUS_RAW_OFFSET			(0x00000024)
++#define HDMI_WP_DEBOUNCE_OFFSET				(0x00000044)
++#define HDMI_WP_VIDEO_CFG_OFFSET			(0x00000050)
++#define HDMI_WP_VIDEO_TIMING_H_OFFSET			(0x00000068)
++#define HDMI_WP_VIDEO_TIMING_V_OFFSET			(0x0000006C)
++#define HDMI_WP_CLK_OFFSET				(0x00000070)
++#define HDMI_WP_AUDIO_CFG_OFFSET			(0x00000080)
++#define HDMI_WP_AUDIO_CTRL_OFFSET			(0x00000088)
++
++#define HDMI_WP_SYSCONFIG_SOFTRESET_MASK		(0x00000001u)
++#define HDMI_WP_IRQSTATUS_CORE_INTR_PEND_MASK		(0x00000001u)
++#define HDMI_WP_DEBOUNCE_RXDET_MASK			(0x00003F00u)
++#define HDMI_WP_DEBOUNCE_RXDET_SHIFT                    (0x00000008u)
++#define HDMI_WP_DEBOUNCE_LINE5VSHORT_MASK               (0x0000003Fu)
++#define HDMI_WP_DEBOUNCE_LINE5VSHORT_SHIFT              (0x00000000u)
++#define HDMI_WP_VIDEO_CFG_ENABLE_MASK                   (0x80000000u)
++#define HDMI_WP_VIDEO_CFG_SLAVE_CLOCK_USED_MASK         (0x00020000u)
++#define HDMI_WP_VIDEO_CFG_TMDS_CLOCK_USED_MASK          (0x00010000u)
++#define HDMI_WP_VIDEO_CFG_PACKING_MODE_MASK             (0x00000700u)
++#define HDMI_WP_VIDEO_CFG_PACKING_MODE_SHIFT            (0x00000008u)
++#define HDMI_WP_VIDEO_CFG_VSYNC_POL_MASK                (0x00000080u)
++#define HDMI_WP_VIDEO_CFG_HSYNC_POL_MASK                (0x00000040u)
++#define HDMI_WP_VIDEO_CFG_CORE_VSYNC_INV_MASK           (0x00000020u)
++#define HDMI_WP_VIDEO_CFG_CORE_HSYNC_INV_MASK           (0x00000010u)
++#define HDMI_WP_VIDEO_CFG_PROGRESSIVE_INTERLACE_MASK    (0x00000008u)
++#define HDMI_WP_VIDEO_CFG_MODE_MASK                     (0x00000003u)
++#define HDMI_WP_VIDEO_CFG_MODE_SHIFT                    (0x00000000u)
++#define HDMI_WP_VIDEO_TIMING_H_HBP_MASK                 (0xFFF00000u)
++#define HDMI_WP_VIDEO_TIMING_H_HBP_SHIFT                (0x00000014u)
++#define HDMI_WP_VIDEO_TIMING_H_HFP_MASK                 (0x000FFF00u)
++#define HDMI_WP_VIDEO_TIMING_H_HFP_SHIFT                (0x00000008u)
++#define HDMI_WP_VIDEO_TIMING_H_HSW_MASK                 (0x000000FFu)
++#define HDMI_WP_VIDEO_TIMING_H_HSW_SHIFT                (0x00000000u)
++#define HDMI_WP_VIDEO_TIMING_V_VBP_MASK                 (0xFFF00000u)
++#define HDMI_WP_VIDEO_TIMING_V_VBP_SHIFT                (0x00000014u)
++#define HDMI_WP_VIDEO_TIMING_V_VFP_MASK                 (0x000FFF00u)
++#define HDMI_WP_VIDEO_TIMING_V_VFP_SHIFT                (0x00000008u)
++#define HDMI_WP_VIDEO_TIMING_V_VSW_MASK                 (0x000000FFu)
++#define HDMI_WP_VIDEO_TIMING_V_VSW_SHIFT                (0x00000000u)
++#define HDMI_WP_AUDIO_CTRL_DISABLE_MASK                 (0x80000000u)
++
++/************************************WP****************************************/
++
++/************************************CORE**************************************/
++
++#define HDMI_CORE_SRST_OFFSET                             (0x00000014)
++#define HDMI_CORE_SYS_CTRL1_OFFSET                        (0x00000020)
++#define HDMI_CORE_RI_STAT_OFFSET                          (0x00000098)
++#define HDMI_CORE_DE_DLY_OFFSET                           (0x000000C8)
++#define HDMI_CORE_DE_CTRL_OFFSET                          (0x000000CC)
++#define HDMI_CORE_DE_TOP_OFFSET                           (0x000000D0)
++#define HDMI_CORE_DE_CNTL_OFFSET                          (0x000000D4)
++#define HDMI_CORE_DE_CNTH_OFFSET                          (0x000000D8)
++#define HDMI_CORE_DE_LINL_OFFSET                          (0x000000DC)
++#define HDMI_CORE_DE_LINH_OFFSET                          (0x000000E0)
++#define HDMI_CORE_IADJUST_OFFSET                          (0x000000F8)
++#define HDMI_CORE_VID_CTRL_OFFSET                         (0x00000120)
++#define HDMI_CORE_VID_ACEN_OFFSET                         (0x00000124)
++#define HDMI_CORE_VID_MODE_OFFSET                         (0x00000128)
++#define HDMI_CORE_DC_HEADER_OFFSET                        (0x00000138)
++#define HDMI_CORE_VID_DITHER_OFFSET                       (0x0000013C)
++#define HDMI_CORE_INTR1_OFFSET                            (0x000001C4)
++#define HDMI_CORE_TMDS_CTRL_OFFSET                        (0x00000208)
++#define HDMI_CORE_XVYCC2RGB_CTL_OFFSET                    (0x00000240)
++#define HDMI_CORE_Y2R_COEFF_LOW_OFFSET                    (0x00000244)
++#define HDMI_CORE_DDC_ADDR_OFFSET                         (0x000003B4)
++#define HDMI_CORE_DDC_SEGM_OFFSET                         (0x000003B8)
++#define HDMI_CORE_DDC_OFFSET_OFFSET                       (0x000003BC)
++#define HDMI_CORE_DDC_COUNT1_OFFSET                       (0x000003C0)
++#define HDMI_CORE_DDC_COUNT2_OFFSET                       (0x000003C4)
++#define HDMI_CORE_DDC_STATUS_OFFSET                       (0x000003C8)
++#define HDMI_CORE_DDC_CMD_OFFSET                          (0x000003CC)
++#define HDMI_CORE_DDC_DATA_OFFSET                         (0x000003D0)
++#define HDMI_CORE_DDC_FIFOCNT_OFFSET                      (0x000003D4)
++#define HDMI_CORE_ACR_CTRL_OFFSET                         (0x00000504)
++#define HDMI_CORE_AUD_MODE_OFFSET                         (0x00000550)
++#define HDMI_CORE_HDMI_CTRL_OFFSET                        (0x000005BC)
++#define HDMI_CORE_TEST_TXCTRL_OFFSET                      (0x000005F0)
++#define HDMI_CORE_PB_CTRL1_OFFSET                         (0x000005F8)
++#define HDMI_CORE_PB_CTRL2_OFFSET                         (0x000005FC)
++#define HDMI_CORE_AVI_TYPE_OFFSET                         (0x00000600)
++#define HDMI_CORE_AVI_VERS_OFFSET                         (0x00000604)
++#define HDMI_CORE_AVI_LEN_OFFSET                          (0x00000608)
++#define HDMI_CORE_AVI_CHSUM_OFFSET                        (0x0000060C)
++#define HDMI_CORE_AVI_DBYTE_BASE_OFFSET                   (0x00000610)
++#define HDMI_CORE_CP_BYTE1_OFFSET                         (0x0000087C)
++
++#define HDMI_SRST_FIFORST_MASK       			(0x00000002u)
++#define HDMI_SRST_FIFORST_SHIFT      			(0x00000001u)
++#define HDMI_SRST_SWRST_MASK         			(0x00000001u)
++#define HDMI_SRST_SWRST_SHIFT        			(0x00000000u)
++#define HDMI_SYS_CTRL1_VSYNC_MASK    			(0x00000040u)
++#define HDMI_SYS_CTRL1_VSYNC_SHIFT   			(0x00000006u)
++#define HDMI_SYS_CTRL1_VSYNC_RESETVAL 			(0x00000000u)
++#define HDMI_SYS_CTRL1_VEN_MASK      			(0x00000020u)
++#define HDMI_SYS_CTRL1_VEN_SHIFT     			(0x00000005u)
++#define HDMI_SYS_CTRL1_HEN_MASK      			(0x00000010u)
++#define HDMI_SYS_CTRL1_HEN_SHIFT     			(0x00000004u)
++#define HDMI_SYS_CTRL1_BSEL_MASK     			(0x00000004u)
++#define HDMI_SYS_CTRL1_BSEL_SHIFT    			(0x00000002u)
++#define HDMI_SYS_CTRL1_EDGE_MASK     			(0x00000002u)
++#define HDMI_SYS_CTRL1_EDGE_SHIFT    			(0x00000001u)
++#define HDMI_SYS_CTRL1_PD_MASK       			(0x00000001u)
++#define HDMI_SYS_CTRL1_PD_SHIFT      			(0x00000000u)
++#define HDMI_RI_STAT_RI_STARTED_MASK 			(0x00000001u)
++#define HDMI_RI_STAT_RI_STARTED_SHIFT   		(0x00000000u)
++#define HDMI_DE_DLY_DE_DLY_MASK         		(0x000000FFu)
++#define HDMI_DE_DLY_DE_DLY_SHIFT        		(0x00000000u)
++#define HDMI_DE_CTRL_DE_GEN_MASK 			(0x00000040u)
++#define HDMI_DE_CTRL_DE_GEN_SHIFT 			(0x00000006u)
++#define HDMI_DE_CTRL_VS_POL_MASK 			(0x00000020u)
++#define HDMI_DE_CTRL_VS_POL_SHIFT 			(0x00000005u)
++#define HDMI_DE_CTRL_HS_POL_MASK 			(0x00000010u)
++#define HDMI_DE_CTRL_HS_POL_SHIFT 			(0x00000004u)
++#define HDMI_DE_CTRL_DE_DLY_MASK 			(0x0000000Fu)
++#define HDMI_DE_CTRL_DE_DLY_SHIFT 			(0x00000000u)
++#define HDMI_DE_TOP_DE_TOP_MASK 			(0x0000007Fu)
++#define HDMI_DE_TOP_DE_TOP_SHIFT 			(0x00000000u)
++#define HDMI_DE_TOP_DE_TOP_RESETVAL 			(0x00000000u)
++#define HDMI_DE_CNTL_DE_CNT_MASK     			(0x000000FFu)
++#define HDMI_DE_CNTL_DE_CNT_SHIFT    			(0x00000000u)
++#define HDMI_DE_CNTH_DE_CNT_MASK 			(0x0000000Fu)
++#define HDMI_DE_CNTH_DE_CNT_SHIFT 			(0x00000000u)
++#define HDMI_DE_LINL_DE_LIN_MASK     			(0x000000FFu)
++#define HDMI_DE_LINL_DE_LIN_SHIFT    			(0x00000000u)
++#define HDMI_DE_LINH_DE_LIN_MASK     			(0x00000007u)
++#define HDMI_DE_LINH_DE_LIN_SHIFT    			(0x00000000u)
++#define HDMI_HRES_L_H_RES_MASK       			(0x000000FFu)
++#define HDMI_HRES_L_H_RES_SHIFT      			(0x00000000u)
++#define HDMI_HRES_H_H_RES_MASK       			(0x0000001Fu)
++#define HDMI_HRES_H_H_RES_SHIFT      			(0x00000000u)
++#define HDMI_VRES_L_V_RES_MASK       			(0x000000FFu)
++#define HDMI_VRES_L_V_RES_SHIFT      			(0x00000000u)
++#define HDMI_VRES_H_V_RES_MASK       			(0x00000007u)
++#define HDMI_VRES_H_V_RES_SHIFT      			(0x00000000u)
++#define HDMI_IADJUST_DE_ADJ_MASK     			(0x00000004u)
++#define HDMI_IADJUST_DE_ADJ_SHIFT    			(0x00000002u)
++#define HDMI_IADJUST_F2VADJ_MASK     			(0x00000002u)
++#define HDMI_IADJUST_F2VADJ_SHIFT    			(0x00000001u)
++#define HDMI_IADJUST_F2VOFST_MASK    			(0x00000001u)
++#define HDMI_IADJUST_F2VOFST_SHIFT   			(0x00000000u)
++#define HDMI_IADJUST_RESETVAL        			(0x00000006u)
++#define HDMI_VID_CTRL_IFPOL_MASK     			(0x00000080u)
++#define HDMI_VID_CTRL_IFPOL_SHIFT    			(0x00000007u)
++#define HDMI_VID_CTRL_EXTN_MASK      			(0x00000020u)
++#define HDMI_VID_CTRL_EXTN_SHIFT     			(0x00000005u)
++#define HDMI_VID_CTRL_CSCSEL_MASK    			(0x00000010u)
++#define HDMI_VID_CTRL_CSCSEL_SHIFT   			(0x00000004u)
++#define HDMI_VID_CTRL_ICLK_MASK      			(0x00000003u)
++#define HDMI_VID_CTRL_ICLK_SHIFT     			(0x00000000u)
++#define HDMI_VID_ACEN_WIDE_BUS_MASK  			(0x000000C0u)
++#define HDMI_VID_ACEN_WIDE_BUS_SHIFT 			(0x00000006u)
++#define HDMI_VID_ACEN_CLIP_CS_ID_MASK 			(0x00000010u)
++#define HDMI_VID_ACEN_CLIP_CS_ID_SHIFT 			(0x00000004u)
++#define HDMI_VID_ACEN_RANGE_CLIP_MASK 			(0x00000008u)
++#define HDMI_VID_ACEN_RANGE_CLIP_SHIFT 			(0x00000003u)
++#define HDMI_VID_ACEN_RGB_2_YCBCR_MASK 			(0x00000004u)
++#define HDMI_VID_ACEN_RGB_2_YCBCR_SHIFT 		(0x00000002u)
++#define HDMI_VID_ACEN_RANGE_CMPS_MASK 			(0x00000002u)
++#define HDMI_VID_ACEN_RANGE_CMPS_SHIFT 			(0x00000001u)
++#define HDMI_VID_ACEN_DOWN_SMPL_MASK 			(0x00000001u)
++#define HDMI_VID_ACEN_DOWN_SMPL_SHIFT 			(0x00000000u)
++#define HDMI_VID_MODE_DITHER_MODE_MASK 			(0x000000C0u)
++#define HDMI_VID_MODE_DITHER_MODE_SHIFT 		(0x00000006u)
++#define HDMI_VID_MODE_DITHER_MASK    			(0x00000020u)
++#define HDMI_VID_MODE_DITHER_SHIFT   			(0x00000005u)
++#define HDMI_VID_MODE_RANGE_MASK     			(0x00000010u)
++#define HDMI_VID_MODE_RANGE_SHIFT    			(0x00000004u)
++#define HDMI_VID_MODE_CSC_MASK       			(0x00000008u)
++#define HDMI_VID_MODE_CSC_SHIFT      			(0x00000003u)
++#define HDMI_VID_MODE_UPSMP_MASK     			(0x00000004u)
++#define HDMI_VID_MODE_UPSMP_SHIFT    			(0x00000002u)
++#define HDMI_VID_MODE_DEMUX_MASK     			(0x00000002u)
++#define HDMI_VID_MODE_DEMUX_SHIFT    			(0x00000001u)
++#define HDMI_VID_MODE_SYNCEX_MASK    			(0x00000001u)
++#define HDMI_VID_MODE_SYNCEX_SHIFT   			(0x00000000u)
++#define HDMI_DC_HEADER_DC_HEADER_MASK 			(0x000000FFu)
++#define HDMI_DC_HEADER_DC_HEADER_SHIFT 			(0x00000000u)
++#define HDMI_DC_HEADER_DC_HEADER_RESETVAL 		(0x00000003u)
++#define HDMI_VID_DITHER_M_D2_MASK    			(0x00000040u)
++#define HDMI_VID_DITHER_M_D2_SHIFT   			(0x00000006u)
++#define HDMI_VID_DITHER_UP2_MASK     			(0x00000020u)
++#define HDMI_VID_DITHER_UP2_SHIFT    			(0x00000005u)
++#define HDMI_VID_DITHER_STR_422_EN_MASK 		(0x00000010u)
++#define HDMI_VID_DITHER_STR_422_EN_SHIFT 		(0x00000004u)
++#define HDMI_VID_DITHER_D_BC_EN_MASK 			(0x00000008u)
++#define HDMI_VID_DITHER_D_BC_EN_SHIFT 			(0x00000003u)
++#define HDMI_VID_DITHER_D_GC_EN_MASK 			(0x00000004u)
++#define HDMI_VID_DITHER_D_GC_EN_SHIFT 			(0x00000002u)
++#define HDMI_VID_DITHER_D_RC_EN_MASK 			(0x00000002u)
++#define HDMI_VID_DITHER_D_RC_EN_SHIFT 			(0x00000001u)
++#define HDMI_VID_DITHER_DRD_MASK     			(0x00000001u)
++#define HDMI_VID_DITHER_DRD_SHIFT    			(0x00000000u)
++#define HDMI_INTR1_SOFT_MASK         			(0x00000080u)
++#define HDMI_INTR1_SOFT_SHIFT        			(0x00000007u)
++#define HDMI_INTR1_HPD_MASK          			(0x00000040u)
++#define HDMI_INTR1_HPD_SHIFT         			(0x00000006u)
++#define HDMI_INTR1_RSEN_MASK         			(0x00000020u)
++#define HDMI_INTR1_RSEN_SHIFT        			(0x00000005u)
++#define HDMI_INTR1_DROP_SAMPLE_MASK  			(0x00000010u)
++#define HDMI_INTR1_DROP_SAMPLE_SHIFT 			(0x00000004u)
++#define HDMI_INTR1_BIP_HASE_ERR_MASK 			(0x00000008u)
++#define HDMI_INTR1_BIP_HASE_ERR_SHIFT 			(0x00000003u)
++#define HDMI_INTR1_RI_128_MASK       			(0x00000004u)
++#define HDMI_INTR1_RI_128_SHIFT      			(0x00000002u)
++#define HDMI_INTR1_OVER_RUN_MASK     			(0x00000002u)
++#define HDMI_INTR1_OVER_RUN_SHIFT    			(0x00000001u)
++#define HDMI_INTR1_UNDER_RUN_MASK    			(0x00000001u)
++#define HDMI_INTR1_UNDER_RUN_SHIFT   			(0x00000000u)
++#define HDMI_TMDS_CTRL_TCLKSEL_MASK  			(0x00000060u)
++#define HDMI_TMDS_CTRL_TCLKSEL_SHIFT 			(0x00000005u)
++#define HDMI_TMDS_CTRL_LVBIAS_MASK   			(0x00000004u)
++#define HDMI_TMDS_CTRL_LVBIAS_SHIFT  			(0x00000002u)
++#define HDMI_TMDS_CTRL_STERM_MASK    			(0x00000001u)
++#define HDMI_TMDS_CTRL_STERM_SHIFT   			(0x00000000u)
++#define HDMI_XVYCC2RGB_CTL_EXP_ONLY_MASK 		(0x00000060u)
++#define HDMI_XVYCC2RGB_CTL_EXP_ONLY_SHIFT 		(0x00000005u)
++#define HDMI_XVYCC2RGB_CTL_BYP_ALL_MASK 		(0x00000018u)
++#define HDMI_XVYCC2RGB_CTL_BYP_ALL_SHIFT 		(0x00000003u)
++#define HDMI_XVYCC2RGB_CTL_SW_OVR_MASK 			(0x00000004u)
++#define HDMI_XVYCC2RGB_CTL_SW_OVR_SHIFT 		(0x00000002u)
++#define HDMI_XVYCC2RGB_CTL_FULLRANGE_MASK 		(0x00000002u)
++#define HDMI_XVYCC2RGB_CTL_FULLRANGE_SHIFT 		(0x00000001u)
++#define HDMI_XVYCC2RGB_CTL_XVYCCSEL_MASK 		(0x00000001u)
++#define HDMI_XVYCC2RGB_CTL_XVYCCSEL_SHIFT 		(0x00000000u)
++#define HDMI_Y2R_COEFF_LOW_Y2RCOEFF_L_MASK 		(0x000000FFu)
++#define HDMI_Y2R_COEFF_LOW_Y2RCOEFF_L_SHIFT 		(0x00000000u)
++#define HDMI_DDC_ADDR_DDC_ADDR_MASK  			(0x000000FEu)
++#define HDMI_DDC_ADDR_DDC_ADDR_SHIFT 			(0x00000001u)
++#define HDMI_DDC_SEGM_DDC_SEGM_MASK  			(0x000000FFu)
++#define HDMI_DDC_SEGM_DDC_SEGM_SHIFT 			(0x00000000u)
++#define HDMI_DDC_OFFSET_DDC_OFFSET_MASK 		(0x000000FFu)
++#define HDMI_DDC_OFFSET_DDC_OFFSET_SHIFT 		(0x00000000u)
++#define HDMI_DDC_COUNT1_DDC_COUNT_MASK 			(0x000000FFu)
++#define HDMI_DDC_COUNT1_DDC_COUNT_SHIFT 		(0x00000000u)
++#define HDMI_DDC_COUNT2_DDC_COUNT_MASK 			(0x00000003u)
++#define HDMI_DDC_COUNT2_DDC_COUNT_SHIFT 		(0x00000000u)
++#define HDMI_DDC_STATUS_BUS_LOW_MASK 			(0x00000040u)
++#define HDMI_DDC_STATUS_BUS_LOW_SHIFT 			(0x00000006u)
++#define HDMI_DDC_STATUS_NO_ACK_MASK  			(0x00000020u)
++#define HDMI_DDC_STATUS_NO_ACK_SHIFT 			(0x00000005u)
++#define HDMI_DDC_STATUS_IN_PROG_MASK 			(0x00000010u)
++#define HDMI_DDC_STATUS_IN_PROG_SHIFT 			(0x00000004u)
++#define HDMI_DDC_STATUS_FIFO_FULL_MASK 			(0x00000008u)
++#define HDMI_DDC_STATUS_FIFO_FULL_SHIFT 		(0x00000003u)
++#define HDMI_DDC_STATUS_FIFO_EMP_MASK 			(0x00000004u)
++#define HDMI_DDC_STATUS_FIFO_EMP_SHIFT 			(0x00000002u)
++#define HDMI_DDC_STATUS_FRD_USE_MASK 			(0x00000002u)
++#define HDMI_DDC_STATUS_FRD_USE_SHIFT 			(0x00000001u)
++#define HDMI_DDC_STATUS_FWT_USE_MASK 			(0x00000001u)
++#define HDMI_DDC_STATUS_FWT_USE_SHIFT 			(0x00000000u)
++#define HDMI_DDC_CMD_DDC_FLT_EN_MASK 			(0x00000020u)
++#define HDMI_DDC_CMD_DDC_FLT_EN_SHIFT 			(0x00000005u)
++#define HDMI_DDC_CMD_SDA_DEL_EN_MASK 			(0x00000010u)
++#define HDMI_DDC_CMD_SDA_DEL_EN_SHIFT 			(0x00000004u)
++#define HDMI_DDC_CMD_DDC_CMD_MASK    			(0x0000000Fu)
++#define HDMI_DDC_CMD_DDC_CMD_SHIFT   			(0x00000000u)
++#define HDMI_DDC_CMD_CLOCK_SCL      			(0x0000000Au)
++#define HDMI_DDC_CMD_CLEAR_FIFO     			(0x00000009u)
++#define HDMI_DDC_CMD_SEQ_R_NO_ACK_ON_LAST_BYTE  	(0x00000002u)
++#define HDMI_DDC_CMD_EDDC_R_NO_ACK_ON_LAST_BYTE 	(0x00000004u)
++#define HDMI_DDC_CMD_ABORT          			(0x0000000Fu)
++#define HDMI_DDC_DATA_DDC_DATA_MASK  			(0x000000FFu)
++#define HDMI_ACR_CTRL_NCTSPKT_EN_MASK 			(0x00000030u)
++#define HDMI_ACR_CTRL_NCTSPKT_EN_SHIFT 			(0x00000004u)
++#define HDMI_ACR_CTRL_CTS_SEL_MASK   			(0x0000000Fu)
++#define HDMI_ACR_CTRL_CTS_SEL_SHIFT  			(0x00000000u)
++#define HDMI_AUD_MODE_SD3_EN_MASK    			(0x00000080u)
++#define HDMI_AUD_MODE_SD3_EN_SHIFT   			(0x00000007u)
++#define HDMI_AUD_MODE_SD2_EN_MASK    			(0x00000040u)
++#define HDMI_AUD_MODE_SD2_EN_SHIFT   			(0x00000006u)
++#define HDMI_AUD_MODE_SD1_EN_MASK    			(0x00000020u)
++#define HDMI_AUD_MODE_SD1_EN_SHIFT   			(0x00000005u)
++#define HDMI_AUD_MODE_SD0_EN_MASK    			(0x00000010u)
++#define HDMI_AUD_MODE_SD0_EN_SHIFT   			(0x00000004u)
++#define HDMI_AUD_MODE_DSD_EN_MASK    			(0x00000008u)
++#define HDMI_AUD_MODE_DSD_EN_SHIFT   			(0x00000003u)
++#define HDMI_AUD_MODE_AUD_PAR_EN_MASK 			(0x00000004u)
++#define HDMI_AUD_MODE_AUD_PAR_EN_SHIFT 			(0x00000002u)
++#define HDMI_AUD_MODE_SPDIF_EN_MASK  			(0x00000002u)
++#define HDMI_AUD_MODE_SPDIF_EN_SHIFT 			(0x00000001u)
++#define HDMI_AUD_MODE_AUD_EN_MASK    			(0x00000001u)
++#define HDMI_AUD_MODE_AUD_EN_SHIFT   			(0x00000000u)
++#define HDMI_HDMI_CTRL_DC_EN_MASK    			(0x00000040u)
++#define HDMI_HDMI_CTRL_DC_EN_SHIFT   			(0x00000006u)
++#define HDMI_HDMI_CTRL_PACKET_MODE_MASK 		(0x00000038u)
++#define HDMI_HDMI_CTRL_PACKET_MODE_SHIFT 		(0x00000003u)
++#define HDMI_HDMI_CTRL_LAYOUT_MASK   			(0x00000006u)
++#define HDMI_HDMI_CTRL_LAYOUT_SHIFT  			(0x00000001u)
++#define HDMI_HDMI_CTRL_HDMI_MODE_MASK 			(0x00000001u)
++#define HDMI_HDMI_CTRL_HDMI_MODE_SHIFT 			(0x00000000u)
++#define HDMI_TEST_TXCTRL_DIV_ENC_BYP_MASK 		(0x00000008u)
++#define HDMI_TEST_TXCTRL_DIV_ENC_BYP_SHIFT 		(0x00000003u)
++#define HDMI_TEST_TXCTRL_CORE_ISO_EN_MASK 		(0x00000004u)
++#define HDMI_TEST_TXCTRL_CORE_ISO_EN_SHIFT 		(0x00000002u)
++#define HDMI_PB_CTRL1_MPEG_EN_MASK   			(0x00000080u)
++#define HDMI_PB_CTRL1_MPEG_EN_SHIFT  			(0x00000007u)
++#define HDMI_PB_CTRL1_MPEG_RPT_MASK  			(0x00000040u)
++#define HDMI_PB_CTRL1_MPEG_RPT_SHIFT 			(0x00000006u)
++#define HDMI_PB_CTRL1_AUD_EN_MASK    			(0x00000020u)
++#define HDMI_PB_CTRL1_AUD_EN_SHIFT   			(0x00000005u)
++#define HDMI_PB_CTRL1_AUD_RPT_MASK   			(0x00000010u)
++#define HDMI_PB_CTRL1_AUD_RPT_SHIFT  			(0x00000004u)
++#define HDMI_PB_CTRL1_SPD_EN_MASK    			(0x00000008u)
++#define HDMI_PB_CTRL1_SPD_EN_SHIFT   			(0x00000003u)
++#define HDMI_PB_CTRL1_SPD_RPT_MASK   			(0x00000004u)
++#define HDMI_PB_CTRL1_SPD_RPT_SHIFT  			(0x00000002u)
++#define HDMI_PB_CTRL1_AVI_EN_MASK    			(0x00000002u)
++#define HDMI_PB_CTRL1_AVI_EN_SHIFT   			(0x00000001u)
++#define HDMI_PB_CTRL1_AVI_RPT_MASK   			(0x00000001u)
++#define HDMI_PB_CTRL1_AVI_RPT_SHIFT  			(0x00000000u)
++#define HDMI_PB_CTRL2_GAM_EN_MASK    			(0x00000080u)
++#define HDMI_PB_CTRL2_GAM_EN_SHIFT   			(0x00000007u)
++#define HDMI_PB_CTRL2_GAM_RPT_MASK   			(0x00000040u)
++#define HDMI_PB_CTRL2_GAM_RPT_SHIFT  			(0x00000006u)
++#define HDMI_PB_CTRL2_GEN2_EN_MASK   			(0x00000020u)
++#define HDMI_PB_CTRL2_GEN2_EN_SHIFT  			(0x00000005u)
++#define HDMI_PB_CTRL2_GEN2_RPT_MASK  			(0x00000010u)
++#define HDMI_PB_CTRL2_GEN2_RPT_SHIFT 			(0x00000004u)
++#define HDMI_PB_CTRL2_CP_EN_MASK     			(0x00000008u)
++#define HDMI_PB_CTRL2_CP_EN_SHIFT    			(0x00000003u)
++#define HDMI_PB_CTRL2_CP_RPT_MASK    			(0x00000004u)
++#define HDMI_PB_CTRL2_CP_RPT_SHIFT   			(0x00000002u)
++#define HDMI_PB_CTRL2_GEN_EN_MASK    			(0x00000002u)
++#define HDMI_PB_CTRL2_GEN_EN_SHIFT   			(0x00000001u)
++#define HDMI_PB_CTRL2_GEN_RPT_MASK   			(0x00000001u)
++#define HDMI_PB_CTRL2_GEN_RPT_SHIFT  			(0x00000000u)
++#define HDMI_AVI_TYPE_AVI_TYPE_MASK  			(0x000000FFu)
++#define HDMI_AVI_TYPE_AVI_TYPE_SHIFT 			(0x00000000u)
++#define HDMI_AVI_VERS_AVI_VERS_MASK  			(0x000000FFu)
++#define HDMI_AVI_VERS_AVI_VERS_SHIFT 			(0x00000000u)
++#define HDMI_AVI_LEN_AVI_LEN_MASK    			(0x000000FFu)
++#define HDMI_AVI_LEN_AVI_LEN_SHIFT   			(0x00000000u)
++#define HDMI_AVI_CHSUM_AVI_CHSUM_MASK 			(0x000000FFu)
++#define HDMI_AVI_CHSUM_AVI_CHSUM_SHIFT 			(0x00000000u)
++#define HDMI_AVI_DBYTE_AVI_DATA_MASK 			(0x000000FFu)
++#define HDMI_AVI_DBYTE_AVI_DATA_SHIFT 			(0x00000000u)
++#define HDMI_CP_BYTE1_CLRAVM_MASK    			(0x00000010u)
++#define HDMI_CP_BYTE1_CLRAVM_SHIFT   			(0x00000004u)
++#define HDMI_CP_BYTE1_SETAVM_MASK    			(0x00000010u)
++#define HDMI_CP_BYTE1_SETAVM_SHIFT   			(0x00000004u)
++/************************************CORE**************************************/
+-- 
+1.7.1
+

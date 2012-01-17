@@ -1,0 +1,33 @@
+From abf7dc2ade08f463b5232273e76e9efa214e5ae4 Mon Sep 17 00:00:00 2001
+From: Amarinder Bindra <a-bindra@ti.com>
+Date: Mon, 16 Jan 2012 21:11:55 +0530
+Subject: [PATCH 6/6] ti814x ti816x: changes in Makefile for colorbar ad logo
+
+
+Signed-off-by: Amarinder Bindra <a-bindra@ti.com>
+---
+ common/Makefile |    8 ++++++++
+ 1 files changed, 8 insertions(+), 0 deletions(-)
+
+diff --git a/common/Makefile b/common/Makefile
+index dbf7a05..2328706 100644
+--- a/common/Makefile
++++ b/common/Makefile
+@@ -29,6 +29,14 @@ AOBJS	=
+ 
+ # core
+ COBJS-y += main.o
++COBJS-y += cmd_logo.o
++ifdef CONFIG_TI816X
++COBJS-y += ti816x_lib.o
++COBJS-y += hdmi_lib.o
++endif
++ifdef CONFIG_TI814X
++COBJS-y += ti814x_lib.o
++endif
+ COBJS-y += console.o
+ COBJS-y += command.o
+ COBJS-y += dlmalloc.o
+-- 
+1.7.1
+

@@ -1,0 +1,2402 @@
+From 8b8e76077083a20d98195c632b6a6647319a9118 Mon Sep 17 00:00:00 2001
+From: Amarinder Bindra <a-bindra@ti.com>
+Date: Mon, 16 Jan 2012 19:13:11 +0530
+Subject: [PATCH 3/6] ti816x: files to set the hdmi settings and board for using vpss
+
+
+Signed-off-by: Amarinder Bindra <a-bindra@ti.com>
+---
+ common/hdmi_lib.c   | 2038 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ common/ti816x_lib.c |  335 +++++++++
+ 2 files changed, 2373 insertions(+), 0 deletions(-)
+ create mode 100644 common/hdmi_lib.c
+ create mode 100644 common/ti816x_lib.c
+
+diff --git a/common/hdmi_lib.c b/common/hdmi_lib.c
+new file mode 100644
+index 0000000..0cfd09f
+--- /dev/null
++++ b/common/hdmi_lib.c
+@@ -0,0 +1,2038 @@
++/*******************************************************************************
++ *                                                                             *
++ * Copyright (c) 2009 Texas Instruments Incorporated - http://www.ti.com/      *
++ *                        ALL RIGHTS RESERVED                                  *
++ *                                                                             *
++ ******************************************************************************/
++
++
++/**
++ * Key notes
++ * 1. Wrapper doesn't generate interrupts for all the events, generates for HPD.
++ *    Using core interrupt instead.
++ * 2. DVI mode is not configurable, operates in HDMI mode only, control in
++ *    HDMI_CTRL
++ * 3. The Core system should operate as a SLAVE. MASTER/SLAVE mode depends on
++ *    core/wrapper integration.
++ *
++ */
++
++/*
++ * Open items
++ * 1. Handle DDC bus hangups / lockups during EDID Read [Done]
++ * 2. use copy to user and copy from user
++ */
++
++
++/* ========================================================================== */
++/*                             Include Files                                  */
++/* ========================================================================== */
++
++#include "hdmi_cfg.h"
++#include "regoffsets.h"
++/* #include <arch\arm\include\asm\io.h> */
++
++/* ========================================================================== */
++/*                              Local Configurations                          */
++/* ========================================================================== */
++#define VPS_HAL_HDMI_DDC_CMD_TIMEOUT (0xFFFFFu)
++/* Timeout periods used to wait for a DDC operation to complete */
++#define VPS_HAL_HDMI_WP_RESET_TIMEOUT (0xFFFFFu)
++/* Timeout periods used to wait for a DDC opeation to complete */
++#define VPS_HAL_HDMI_PHY_2_WP_PLL_LOCK_TIMEOUT (0xFFFFFu)
++/* Timeout periods used to wait TCLK to stabilize - TCLK would be generated
++     by PHY to operate wrapper */
++
++/* ========================================================================== */
++/*                              Local Defines                                 */
++/* ========================================================================== */
++
++#define HDMI_CTRL_PACKET_MODE_24BITS_PIXEL  (0x4u)
++/* Defines used to configure the number of bits/pixel that would sent to
++     packetizer */
++#define HDMI_CTRL_PACKET_MODE_30BITS_PIXEL  (0x5u)
++/* Defines used to configure the number of bits/pixel that would sent to
++     packetizer */
++#define HDMI_CTRL_PACKET_MODE_36BITS_PIXEL  (0x6u)
++/* Defines used to configure the number of bits/pixel that would sent to
++     packetizer */
++#define HDMI_VID_MODE_DITHER_TO_24_BITS_MODE (0x0u)
++/* Defines to used to determine the dithering width */
++#define HDMI_VID_MODE_DITHER_TO_30_BITS_MODE (0x1u)
++/* Defines to used to determine the dithering width */
++#define HDMI_VID_MODE_DITHER_TO_36_BITS_MODE (0x2u)
++/* Defines to used to determine the dithering width */
++#define HDMI_TMDS_CTRL_IP_CLOCK_MULTIPLIER_AUDIO	(0x1u)
++/* Defines the multiplier value used to multiply the input clock IDCK, in order
++     to support higher sampling rates / channels audio */
++#define HDMI_AVI_INFOFRAME_PKT_TYPE		(0x82u)
++/* AVI Info frame header - packet type - defined by standard */
++#define HDMI_AVI_INFOFRAME_PKT_VER		(0x02)
++/* AVI Info frame header - packet version - defined by standard */
++#define HDMI_AVI_INFOFRAME_PKT_LEN		(0x0D)
++/* AVI Info frame header - packet version - defined by standard */
++#define HDMI_AVI_INFOFRAME_Y0_Y1_MASK		(0x60u)
++/* Mask to set/extract Y0-1 bit of first byte of AVI info packet */
++#define HDMI_AVI_INFOFRAME_A0_MASK		(0x10u)
++/* Mask to set/extract A0 bit of first byte of AVI info packet */
++#define HDMI_AVI_INFOFRAME_B0_B1_MASK		(0x0Cu)
++/* Mask to set/extract B0-1 bit of first byte of AVI info packet */
++#define HDMI_AVI_INFOFRAME_S0_S1_MASK		(0x03u)
++/* Mask to set/extract S0-1 bit of first byte of AVI info packet */
++#define HDMI_AVI_INFOFRAME_C0_C1_MASK		(0xC0u)
++/* Mask to set/extract C0-1 bit of first byte of AVI info packet */
++#define HDMI_AVI_INFOFRAME_M0_M1_MASK		(0x30u)
++/* Mask to set/extract M0-1 bit of first byte of AVI info packet */
++#define HDMI_AVI_INFOFRAME_R0_R3_MASK		(0x0Fu)
++/* Mask to set/extract R0-3 bit of first byte of AVI info packet */
++#define HDMI_AVI_INFOFRAME_ITC_MASK		(0x80u)
++/* Mask to set/extract ITC bit of first byte of AVI info packet */
++#define HDMI_AVI_INFOFRAME_EC2_EC0_MASK		(0x70u)
++/* Mask to set/extract EC0-3 bit of first byte of AVI info packet */
++#define HDMI_AVI_INFOFRAME_Q1_Q0_MASK		(0x0Cu)
++/* Mask to set/extract Q0-1 bit of first byte of AVI info packet */
++#define HDMI_AVI_INFOFRAME_SC1_SC0_MASK		(0x03u)
++/* Mask to set/extract SC0-1 bit of first byte of AVI info packet */
++#define HDMI_AVI_INFOFRAME_VIC6_VIC0_MASK	(0x7Fu)
++/* Mask to set/extract VIC6-0 bit of first byte of AVI info packet */
++#define HDMI_AVI_INFOFRAME_PR3_PR0_MASK		(0x0Fu)
++/* Mask to set/extract PR3-0 bit of first byte of AVI info packet */
++#define HDMI_AVI_INFOFRAME_CONST_0x100		(0x100u)
++/* Constant used to calculate AVI info frame checksum */
++#define HDMI_MINIMUM_PIXELS_SEC			(25000000u)
++/* HDMI standard Mandates that at a minimum there should be 25 MPixels/sec. */
++#define HDMI_PIXEL_REPLECATED_ONCE		(0x2)
++/* Each pixel would be sent twice */
++#define HDMI_PIXEL_REPLECATED_FOUR_TIMES	(0x4)
++/* Each pixel would be sent four times */
++
++/* Standard resolutions column X row X FPS */
++#define HDMI_VIDEO_STAND_NTSC			(858 * 525 * 30)
++#define HDMI_VIDEO_STAND_PAL			(858 * 625 * 25)
++#define HDMI_VIDEO_STAND_720P60			(1650 * 750 * 60)
++#define HDMI_VIDEO_STAND_1080P60		(2200 * 1125 * 60)
++#define HDMI_VIDEO_STAND_1080I60		(2200 * 1125 * 30)
++#define HDMI_VIDEO_STAND_1080P30		(2200 * 1125 * 30)
++
++/* ========================================================================== */
++/*                              Local Structure                               */
++/* ========================================================================== */
++
++enum hdmi_inst_state {
++	HDMI_INST_UN_INITIALIZED = 0x0,
++	HDMI_INST_INITIALIZED,
++	HDMI_INST_OPENED,
++	HDMI_INST_CLOSED
++};
++
++struct instance_cfg {
++	u32 instance;
++	enum hdmi_inst_state state;
++	u32 core_base_addr;
++	u32 wp_base_addr;
++	u32 phy_base_addr;
++	Bool is_recvr_sensed;
++	Bool is_scl_clocked;
++	Bool is_streaming;
++	struct hdmi_cfg_params config;
++	u32 vSync_counter;
++	Bool is_interlaced;
++};
++
++/* ========================================================================== */
++/*			   Local Function Declarations			      */
++/* ========================================================================== */
++static int configure_phy(struct instance_cfg *inst_context);
++static int configure_wrapper(struct instance_cfg *inst_context);
++static int configure_core_input(struct instance_cfg *inst_context);
++static int configure_core_data_path(struct instance_cfg *inst_context);
++static int configure_core(struct instance_cfg *inst_context);
++static int configure_policies(struct instance_cfg *inst_context);
++static int configure_avi_info_frame(struct instance_cfg *inst_context);
++static int configure_ctrl_packets(struct instance_cfg *inst_context);
++static int configure_csc_ycbcr_rgb(struct instance_cfg *inst_context);
++
++static int validate_info_frame_cfg(struct hdmi_info_frame_cfg *config);
++static int validate_core_config(struct hdmi_core_input_cfg *config);
++static int validate_wp_cfg(struct hdmi_wp_config *config);
++static int validate_path_config(struct hdmi_core_data_path *config);
++static int check_copy_config(struct instance_cfg *inst_cntxt,
++			     struct hdmi_cfg_params *config);
++
++static int determine_pixel_repeatation(struct instance_cfg *inst_context);
++
++
++static int ti816x_hdmi_lib_read_edid(void *handle,
++			       struct hdmi_edid_read_params *r_params,
++			       void *args);
++static int ti816x_hdmi_lib_get_cfg(void *handle,
++				struct hdmi_cfg_params *config,
++				void *args);
++
++static void HDMI_0_TRACE(char *info_string);
++static void HDMI_1_TRACE(char *info_string, u32 val1);
++static void HDMI_ARGS_CHECK(u32 condition);
++
++/* ========================================================================== */
++/*				Global Variables			      */
++/* ========================================================================== */
++static struct instance_cfg hdmi_config;
++/* Pool of HDMI objects */
++static struct hdmi_cfg_params default_config =
++    TI816X_HDMI_8BIT_720_60_16_9_HD;
++/* Default configuration to start with */
++
++/* ========================================================================== */
++/*				Local Functions				      */
++/* ========================================================================== */
++
++/*
++ *     This function is expected to be called when initializing or
++ *     when re-configuring. After re-configuration its recomended to reset the
++ *     core and wrapper. To stabilize the clocks, it recomended to wait for a
++ *     period of time.
++ */
++static int configure_phy(struct instance_cfg *inst_context)
++{
++	int rtn_value = 0x0;
++	int phy_base;
++	volatile u32 temp;
++
++	HDMI_0_TRACE(">>>>configure_phy");
++
++	phy_base = inst_context->phy_base_addr;
++	/* Steps
++	 * 0. Power up if powered down
++	 * 1. Determine the TCLK based in Deep color mode (Dither mode is used
++	 *    to get depth of the color) and Pixel repeatation (depends on deep
++	 *    color / resolution and audio). Turn OFF BIST pattern generator
++	 * 2. Turn OFF BIST and DVI Encoder
++	 * 3. Configure the source termination determination - we would require
++	 *    when the sink terminates the source - recomended by HDMI Spec 1.3A
++	 *    when operating higer frequencies
++	 * 4. Enable the PHY
++	 */
++	temp = __raw_readl((phy_base + PHY_TMDS_CNTL3_OFFSET));
++	if ((temp & HDMI_PHY_TMDS_CNTL3_PDB_MASK) !=
++	    HDMI_PHY_TMDS_CNTL3_PDB_MASK) {
++		temp |= HDMI_PHY_TMDS_CNTL3_PDB_MASK;
++		__raw_writel(temp, (phy_base + PHY_TMDS_CNTL3_OFFSET));
++	}
++	/* BIST Pattern generator is disabled - leave it at that */
++	temp = __raw_readl((phy_base + PHY_TMDS_CNTL3_OFFSET));
++	temp &= (~((HDMI_PHY_TMDS_CNTL3_DPCOLOR_CTL_MASK) |
++		   (HDMI_PHY_TMDS_CNTL3_CLKMULT_CTL_MASK) |
++		   (HDMI_PHY_TMDS_CNTL3_BIST_SEL_MASK)));
++
++	/* Step 1.1 - Output width of the dither module in core, determines
++	 *            deep color or not
++	 */
++	if (inst_context->config.core_path_config.output_width ==
++	    hdmi_10_bits_chan_width) {
++		temp |= (HDMI_PHY_TMDS_CNTL3_DPCOLOR_CTL_10BITCHANNEL <<
++			 HDMI_PHY_TMDS_CNTL3_DPCOLOR_CTL_SHIFT);
++
++	} else if (inst_context->config.core_path_config.output_width ==
++		   hdmi_8_bits_chan_width) {
++		temp |= (HDMI_PHY_TMDS_CNTL3_DPCOLOR_CTL_NO <<
++			 HDMI_PHY_TMDS_CNTL3_DPCOLOR_CTL_SHIFT);
++	} else {
++		temp |= (HDMI_PHY_TMDS_CNTL3_DPCOLOR_CTL_12BITCHANNEL <<
++			 HDMI_PHY_TMDS_CNTL3_DPCOLOR_CTL_SHIFT);
++	}
++
++	rtn_value = determine_pixel_repeatation(inst_context);
++	if (rtn_value == HDMI_PIXEL_REPLECATED_ONCE) {
++		temp |= (HDMI_PHY_TMDS_CNTL3_CLKMULT_CTL_2_0X <<
++			 HDMI_PHY_TMDS_CNTL3_CLKMULT_CTL_SHIFT);
++	} else if (rtn_value == HDMI_PIXEL_REPLECATED_FOUR_TIMES) {
++		temp |= (HDMI_PHY_TMDS_CNTL3_CLKMULT_CTL_4_0X <<
++			 HDMI_PHY_TMDS_CNTL3_CLKMULT_CTL_SHIFT);
++	} else if (rtn_value == 0x0) {
++		temp |= (HDMI_PHY_TMDS_CNTL3_CLKMULT_CTL_1_0X <<
++			 HDMI_PHY_TMDS_CNTL3_CLKMULT_CTL_SHIFT);
++	} else {
++		HDMI_0_TRACE("Could not calc pixel repeatation");
++		HDMI_0_TRACE("that would be required.");
++		goto exit_this_func;
++	}
++	rtn_value = 0x0;
++	__raw_writel(temp, (phy_base + PHY_TMDS_CNTL3_OFFSET));
++
++	temp = __raw_readl((phy_base + PHY_BIST_CNTL_OFFSET));
++	temp &= ~HDMI_PHY_BIST_CNTL_BIST_EN_MASK;
++	temp |= HDMI_PHY_BIST_CNTL_ENC_BYP_MASK;
++	__raw_writel(temp, (phy_base + PHY_BIST_CNTL_OFFSET));
++
++	/* Since the 10bit encode is done by the core, we would require to 
++	   disable 10bit encode in the PHY. Do So */
++	__raw_writel(0xE0, (phy_base + PHY_TMDS_CNTL9_OFFSET));
++
++/************************ PHY BIST Test @ half clock rate *********************/
++
++#if TEST_PHY_SEND_OUT_0xAA_AT_HALF_CLOCK_RATE_ON_ALL_DATA_LINES
++	__raw_writel(0x40, (phy_base + PHY_BIST_CNTL_OFFSET));
++	__raw_writel(0xE9, (phy_base + PHY_TMDS_CNTL3_OFFSET));
++	__raw_writel(0x00, (phy_base + PHY_BIST_PATTERN_OFFSET));
++	/* Program the instruction, pattern, configuration registers */
++	__raw_writel(0x81, (phy_base + PHY_BIST_INST0_OFFSET));
++	__raw_writel(0x00, (phy_base + PHY_BIST_CONF0_OFFSET));
++	__raw_writel(0x20, (phy_base + PHY_BIST_INST1_OFFSET));
++	temp = 0xFF;
++	/* Wait for few clocks (say 20 TMDS clocks) would require this. */
++	while (temp)
++		temp--;
++	__raw_writel(0x41, (phy_base + PHY_BIST_CNTL_OFFSET));
++#endif				/* TEST_PHY_SEND_OUT_0xAA_AT_HALF_CLOCK_RATE_ON_ALL_DATA_LINES */
++/************************PHY BIST Test @ half clock rate***********************/
++
++	/* Step 3 and 4 */
++	temp = __raw_readl((phy_base + PHY_TMDS_CNTL2_OFFSET));
++	temp |=
++	    (HDMI_PHY_TMDS_CNTL2_TERM_EN_MASK |
++	     HDMI_PHY_TMDS_CNTL2_OE_MASK);
++	__raw_writel(temp, (phy_base + PHY_TMDS_CNTL2_OFFSET));
++
++exit_this_func:
++
++	HDMI_0_TRACE("configure_phy<<<<");
++	return (rtn_value);
++}
++
++
++/*
++ * Configure the wrapper with debouce data packing modes, timming
++ *  parameters if operating as a master require timming generator also
++ */
++static int configure_wrapper(struct instance_cfg *inst_context)
++{
++	volatile u32 temp;
++	u32 wp_base_addr = 0x0;
++	int rtn_value = 0x0;
++
++	HDMI_0_TRACE(">>>>configure_wrapper");
++	HDMI_ARGS_CHECK((inst_context != NULL));
++
++	wp_base_addr = inst_context->wp_base_addr;
++	/* Step 0 - Tweak if required */
++	temp = ((inst_context->config.wp_config.debounce_rcv_detect <<
++		 HDMI_WP_DEBOUNCE_RXDET_SHIFT) &
++		HDMI_WP_DEBOUNCE_RXDET_MASK);
++
++	temp |= ((inst_context->config.wp_config.debounce_rcv_sens <<
++		  HDMI_WP_DEBOUNCE_LINE5VSHORT_SHIFT) &
++		 HDMI_WP_DEBOUNCE_LINE5VSHORT_MASK);
++
++	__raw_writel(temp, (wp_base_addr + HDMI_WP_DEBOUNCE_OFFSET));
++
++	/* Dividing the 48MHz clock to 2 MHz for CEC and OCP different dividor */
++	temp = __raw_readl(wp_base_addr + HDMI_WP_CLK_OFFSET);
++	temp |= 0x00000218u;
++	__raw_writel(temp, (wp_base_addr + HDMI_WP_CLK_OFFSET));
++
++	/* Following steps only applicable for a master generating the timmings
++	   signal to core */
++	if (inst_context->config.wp_config.is_slave_mode == 0x0) {
++		HDMI_0_TRACE("Configuring as Master");
++		temp =
++		    ((inst_context->config.wp_config.
++		      hbp << HDMI_WP_VIDEO_TIMING_H_HBP_SHIFT) &
++		     HDMI_WP_VIDEO_TIMING_H_HBP_MASK);
++		temp |=
++		    ((inst_context->config.wp_config.
++		      hfp << HDMI_WP_VIDEO_TIMING_H_HFP_SHIFT) &
++		     HDMI_WP_VIDEO_TIMING_H_HFP_MASK);
++		temp |=
++		    ((inst_context->config.wp_config.
++		      hsw << HDMI_WP_VIDEO_TIMING_H_HSW_SHIFT) &
++		     HDMI_WP_VIDEO_TIMING_H_HSW_MASK);
++
++		__raw_writel(temp,
++			     (wp_base_addr +
++			      HDMI_WP_VIDEO_TIMING_H_OFFSET));
++
++		temp = ((inst_context->config.wp_config.vbp <<
++			 HDMI_WP_VIDEO_TIMING_V_VBP_SHIFT) &
++			HDMI_WP_VIDEO_TIMING_V_VBP_MASK);
++		temp |= ((inst_context->config.wp_config.vfp <<
++			  HDMI_WP_VIDEO_TIMING_V_VFP_SHIFT) &
++			 HDMI_WP_VIDEO_TIMING_V_VFP_MASK);
++		temp |= ((inst_context->config.wp_config.vsw <<
++			  HDMI_WP_VIDEO_TIMING_V_VSW_SHIFT) &
++			 HDMI_WP_VIDEO_TIMING_V_VSW_MASK);
++		__raw_writel(temp,
++			     (wp_base_addr +
++			      HDMI_WP_VIDEO_TIMING_V_OFFSET));
++
++		temp = __raw_readl
++		    (wp_base_addr + HDMI_WP_VIDEO_CFG_OFFSET);
++		if (inst_context->config.wp_config.vSync_pol != 0x0) {
++			temp |= HDMI_WP_VIDEO_CFG_VSYNC_POL_MASK;
++		} else {
++			temp &= ~(HDMI_WP_VIDEO_CFG_VSYNC_POL_MASK);
++		}
++		if (inst_context->config.wp_config.hSync_pol != 0x0) {
++			temp |= HDMI_WP_VIDEO_CFG_HSYNC_POL_MASK;
++		} else {
++			temp &= ~(HDMI_WP_VIDEO_CFG_HSYNC_POL_MASK);
++		}
++		__raw_writel(temp,
++			     (wp_base_addr + HDMI_WP_VIDEO_CFG_OFFSET));
++	}
++
++	temp = __raw_readl(wp_base_addr + HDMI_WP_VIDEO_CFG_OFFSET);
++	temp &= (~(HDMI_WP_VIDEO_CFG_PACKING_MODE_MASK));
++	temp |= ((inst_context->config.wp_config.pack_mode <<
++		  HDMI_WP_VIDEO_CFG_PACKING_MODE_SHIFT) &
++		 HDMI_WP_VIDEO_CFG_PACKING_MODE_MASK);
++
++	/* Invert if required - follows input otherwise */
++	if (inst_context->config.wp_config.is_vSync_pol_inv != 0x0) {
++		temp |= HDMI_WP_VIDEO_CFG_CORE_VSYNC_INV_MASK;
++	} else {
++		temp &= (~(HDMI_WP_VIDEO_CFG_CORE_VSYNC_INV_MASK));
++	}
++	if (inst_context->config.wp_config.is_hSync_pol_inv != 0x0) {
++		temp |= HDMI_WP_VIDEO_CFG_CORE_HSYNC_INV_MASK;
++	} else {
++		temp &= (~(HDMI_WP_VIDEO_CFG_CORE_HSYNC_INV_MASK));
++	}
++
++	if (inst_context->is_interlaced == TRUE) {
++		temp |= HDMI_WP_VIDEO_CFG_PROGRESSIVE_INTERLACE_MASK;
++	} else {
++		temp &= (~(HDMI_WP_VIDEO_CFG_PROGRESSIVE_INTERLACE_MASK));
++	}
++
++	if (inst_context->config.wp_config.is_slave_mode == 0x0) {
++		temp |= (HDMI_WP_VIDEO_CFG_MODE_MASK);
++		temp |= inst_context->config.wp_config.width;
++	} else {
++		temp &= (~(HDMI_WP_VIDEO_CFG_MODE_MASK));
++		HDMI_0_TRACE("Operating as slave");
++	}
++	__raw_writel(temp, (wp_base_addr + HDMI_WP_VIDEO_CFG_OFFSET));
++
++	HDMI_0_TRACE("configure_wrapper<<<<");
++	return (rtn_value);
++}
++
++
++/*
++ * Configures the interface between the wrapper and core.
++ *
++ * The number of lines/channel between in the core and the wrapper is not
++ * configureable option. 
++ */
++static int configure_core_input(struct instance_cfg *inst_context)
++{
++	volatile u32 temp;
++	volatile u32 core_addr;
++	struct hdmi_core_input_cfg *cfg = NULL;
++
++	HDMI_0_TRACE(">>>>configure_core_input");
++	HDMI_ARGS_CHECK((inst_context != NULL));
++	cfg = &(inst_context->config.core_config);
++	core_addr = inst_context->core_base_addr;
++	/*
++	 * Step 1. Configure the width of the input bus.
++	 * Step 2. Configure the sources for sync signals
++	 *         if hdmi_extract_syncs - VID_MODE.SYNCEX = 1
++	 *         if hdmi_generate_de - DE_CTRL.DE_GEN = 1 and de_top
++	 *         de_dly, etc...
++	 *         if hdmi_source_syncs - SYS_CTRL1.VEN/HEN = 1
++	 * Step 3. Configure the edge to latch on.
++	 */
++	temp = __raw_readl(core_addr + HDMI_CORE_VID_ACEN_OFFSET);
++	temp &= (~(HDMI_VID_ACEN_WIDE_BUS_MASK));
++	temp |= ((cfg->data_bus_width << HDMI_VID_ACEN_WIDE_BUS_SHIFT) &
++		 HDMI_VID_ACEN_WIDE_BUS_MASK);
++	__raw_writel(temp, (core_addr + HDMI_CORE_VID_ACEN_OFFSET));
++
++	temp = __raw_readl(core_addr + HDMI_CORE_SYS_CTRL1_OFFSET);
++	temp &= (~(HDMI_SYS_CTRL1_BSEL_MASK | HDMI_SYS_CTRL1_EDGE_MASK));
++	if (cfg->edge_pol != 0x0)
++		temp |= HDMI_SYS_CTRL1_EDGE_MASK;
++
++	temp |= HDMI_SYS_CTRL1_BSEL_MASK;
++	__raw_writel(temp, (core_addr + HDMI_CORE_SYS_CTRL1_OFFSET));
++
++	if (cfg->sync_gen_cfg == hdmi_extract_syncs) {
++		temp = __raw_readl(core_addr + HDMI_CORE_VID_MODE_OFFSET);
++		temp &= (~(HDMI_VID_MODE_SYNCEX_MASK));
++		temp |= HDMI_VID_MODE_SYNCEX_MASK;
++		__raw_writel(temp,
++			     (core_addr + HDMI_CORE_VID_MODE_OFFSET));
++		HDMI_0_TRACE("Embedded syncs \n");
++	} else if (cfg->sync_gen_cfg == hdmi_generate_de) {
++		temp = __raw_readl(core_addr + HDMI_CORE_DE_CTRL_OFFSET);
++		temp &= (~(HDMI_DE_CTRL_DE_GEN_MASK));
++		temp |= HDMI_DE_CTRL_DE_GEN_MASK;
++		__raw_writel(temp, (core_addr + HDMI_CORE_DE_CTRL_OFFSET));
++
++		__raw_writel((cfg->de_delay_cfg.
++			      DE_DLY & HDMI_DE_DLY_DE_DLY_MASK)
++			     , (core_addr + HDMI_CORE_DE_DLY_OFFSET));
++		__raw_writel((cfg->de_delay_cfg.
++			      DE_TOP & HDMI_DE_TOP_DE_TOP_MASK)
++			     , (core_addr + HDMI_CORE_DE_TOP_OFFSET));
++		__raw_writel((cfg->de_delay_cfg.
++			      DE_CNTL & HDMI_DE_CNTL_DE_CNT_MASK)
++			     , (core_addr + HDMI_CORE_DE_CNTL_OFFSET));
++		__raw_writel((cfg->de_delay_cfg.
++			      DE_CNTH & HDMI_DE_CNTH_DE_CNT_MASK)
++			     , (core_addr + HDMI_CORE_DE_CNTH_OFFSET));
++		__raw_writel((cfg->de_delay_cfg.
++			      DE_LINL & HDMI_DE_LINL_DE_LIN_MASK)
++			     , (core_addr + HDMI_CORE_DE_LINL_OFFSET));
++		__raw_writel((cfg->de_delay_cfg.
++			      DE_LINH & HDMI_DE_LINH_DE_LIN_MASK)
++			     , (core_addr + HDMI_CORE_DE_LINH_OFFSET));
++		HDMI_0_TRACE("Sync being generated");
++	} else {
++		__raw_writel(0x1u, (core_addr + HDMI_CORE_DE_CTRL_OFFSET));
++		temp = __raw_readl(core_addr + HDMI_CORE_SYS_CTRL1_OFFSET);
++		temp |= HDMI_SYS_CTRL1_VEN_MASK;
++		temp |= HDMI_SYS_CTRL1_HEN_MASK;
++		__raw_writel(temp,
++			     (core_addr + HDMI_CORE_SYS_CTRL1_OFFSET));
++		HDMI_0_TRACE("Descrete syncs and being sourced");
++	}
++	__raw_writel(0x0u, (core_addr + HDMI_CORE_IADJUST_OFFSET));
++
++	HDMI_0_TRACE("configure_core_input<<<<");
++	return (0x0);
++}
++
++/*
++ *  Configure sub-blocks
++ */
++static int configure_core_data_path(struct instance_cfg *inst_context)
++{
++	int rtn_value = 0x0;
++	volatile u32 tempVidAcen;
++	volatile u32 tempVidMode;
++	volatile u32 tempVidDither;
++	volatile u32 temp;
++	volatile u32 core_addr;
++	struct hdmi_core_data_path *pathCfg = NULL;
++
++	HDMI_0_TRACE(">>>>configure_core_data_path");
++	HDMI_ARGS_CHECK((inst_context != NULL));
++	core_addr = inst_context->core_base_addr;
++
++	tempVidAcen = __raw_readl(core_addr + HDMI_CORE_VID_ACEN_OFFSET);
++	tempVidMode = __raw_readl(core_addr + HDMI_CORE_VID_MODE_OFFSET);
++
++	pathCfg = &(inst_context->config.core_path_config);
++	tempVidMode &= (~(HDMI_VID_MODE_UPSMP_MASK |
++			  HDMI_VID_MODE_CSC_MASK |
++			  HDMI_VID_MODE_RANGE_MASK |
++			  HDMI_VID_MODE_DITHER_MASK));
++
++	tempVidAcen &= (~(HDMI_VID_ACEN_RGB_2_YCBCR_MASK |
++			  HDMI_VID_ACEN_RANGE_CMPS_MASK |
++			  HDMI_VID_ACEN_DOWN_SMPL_MASK |
++			  HDMI_VID_ACEN_RANGE_CLIP_MASK |
++			  HDMI_VID_ACEN_CLIP_CS_ID_MASK));
++	if (pathCfg->up_sampler_enable != 0x0)
++		tempVidMode |= HDMI_VID_MODE_UPSMP_MASK;
++
++	if (pathCfg->csc_YCbCr_2_RGB_enable != 0x0) {
++		tempVidMode |= HDMI_VID_MODE_CSC_MASK;
++		rtn_value = configure_csc_ycbcr_rgb(inst_context);
++		if (rtn_value != 0x0)
++			goto exit_this_func;
++	}
++	temp = __raw_readl(core_addr + HDMI_CORE_VID_CTRL_OFFSET);
++	if (pathCfg->csc_convert_standard != 0x0)
++		temp |= HDMI_VID_CTRL_CSCSEL_MASK;
++	else
++		temp &= (~(HDMI_VID_CTRL_CSCSEL_MASK));
++	__raw_writel(temp, (core_addr + HDMI_CORE_VID_CTRL_OFFSET));
++
++	if (pathCfg->range_exp_RGB_enable != 0x0)
++		tempVidMode |= HDMI_VID_MODE_RANGE_MASK;
++
++	if (pathCfg->dither_enable != 0x0) {
++		tempVidDither =
++		    __raw_readl(core_addr + HDMI_CORE_VID_DITHER_OFFSET);
++		tempVidMode |= HDMI_VID_MODE_DITHER_MASK;
++		tempVidDither &= (~(HDMI_VID_DITHER_M_D2_MASK |
++				    HDMI_VID_DITHER_UP2_MASK |
++				    HDMI_VID_DITHER_STR_422_EN_MASK |
++				    HDMI_VID_DITHER_D_BC_EN_MASK |
++				    HDMI_VID_DITHER_D_GC_EN_MASK |
++				    HDMI_VID_DITHER_D_RC_EN_MASK |
++				    HDMI_VID_DITHER_DRD_MASK));
++		/* Configure dithering parameters */
++		if (pathCfg->dither_config.M_D2 != 0x0)
++			tempVidDither |= HDMI_VID_DITHER_M_D2_MASK;
++		if (pathCfg->dither_config.UP2 != 0x0)
++			tempVidDither |= HDMI_VID_DITHER_UP2_MASK;
++		if (pathCfg->dither_config.STR_422_EN != 0x0)
++			tempVidDither |= HDMI_VID_DITHER_STR_422_EN_MASK;
++		if (pathCfg->dither_config.D_BC_EN != 0x0)
++			tempVidDither |= HDMI_VID_DITHER_D_BC_EN_MASK;
++		if (pathCfg->dither_config.D_GC_EN != 0x0)
++			tempVidDither |= HDMI_VID_DITHER_D_GC_EN_MASK;
++		if (pathCfg->dither_config.D_RC_EN != 0x0)
++			tempVidDither |= HDMI_VID_DITHER_D_RC_EN_MASK;
++		if (pathCfg->dither_config.DRD != 0x0)
++			tempVidDither |= HDMI_VID_DITHER_DRD_MASK;
++		__raw_writel(tempVidDither,
++			     (core_addr + HDMI_CORE_VID_DITHER_OFFSET));
++	}
++
++	tempVidMode |=
++	    ((pathCfg->output_width << HDMI_VID_MODE_DITHER_MODE_SHIFT) &
++	     HDMI_VID_MODE_DITHER_MODE_MASK);
++	__raw_writel(tempVidMode,
++		     (core_addr + HDMI_CORE_VID_MODE_OFFSET));
++
++	if (pathCfg->cscRGB_2_YCbCr_enable != 0x0)
++		tempVidAcen |= HDMI_VID_ACEN_RGB_2_YCBCR_MASK;
++
++	if (pathCfg->range_comp_enable != 0x0)
++		tempVidAcen |= HDMI_VID_ACEN_RANGE_CMPS_MASK;
++
++	if (pathCfg->down_sampler_enable != 0x0)
++		tempVidAcen |= HDMI_VID_ACEN_DOWN_SMPL_MASK;
++
++	if (pathCfg->range_clip_enable != 0x0) {
++		tempVidAcen |= HDMI_VID_ACEN_RANGE_CLIP_MASK;
++		if (pathCfg->clip_color_space != 0x0) {
++			tempVidAcen |= HDMI_VID_ACEN_CLIP_CS_ID_MASK;
++		}
++	}
++	__raw_writel(tempVidAcen, (core_addr + HDMI_CORE_VID_ACEN_OFFSET));
++
++      exit_this_func:
++	HDMI_0_TRACE("configure_core_data_path<<<<");
++	return (rtn_value);
++}
++
++static int configure_core(struct instance_cfg *inst_context)
++{
++	int rtn_value = 0x0;
++	volatile u32 temp;
++	volatile u32 core_addr;
++	HDMI_0_TRACE(">>>>configure_core");
++	HDMI_ARGS_CHECK((inst_context != NULL));
++	core_addr = inst_context->core_base_addr;
++
++	temp = __raw_readl(core_addr + HDMI_CORE_TEST_TXCTRL_OFFSET);
++	temp &= (~(HDMI_TEST_TXCTRL_DIV_ENC_BYP_MASK));
++	__raw_writel(temp, (core_addr + HDMI_CORE_TEST_TXCTRL_OFFSET));
++
++	if (inst_context->config.use_core_config != 0x0) {
++		rtn_value = configure_core_input(inst_context);
++		if (rtn_value != 0x0)
++			goto exit_this_func;
++	}
++	if (inst_context->config.use_core_path_config != 0x0) {
++		rtn_value = configure_core_data_path(inst_context);
++		if (rtn_value != 0x0)
++			goto exit_this_func;
++	}
++	rtn_value = configure_policies(inst_context);
++	if (rtn_value != 0x0)
++		goto exit_this_func;
++
++	__raw_writel(0x0, (core_addr + HDMI_CORE_ACR_CTRL_OFFSET));
++
++      exit_this_func:
++	HDMI_0_TRACE("configure_core<<<<");
++	return (rtn_value);
++}
++
++static int configure_policies(struct instance_cfg *inst_context)
++{
++	int rtn_value = 0x0;
++	volatile u32 temp;
++	volatile u32 dither_mode_val;
++	volatile u32 core_addr;
++
++	HDMI_0_TRACE(">>>>configure_policies");
++	HDMI_ARGS_CHECK((inst_context != NULL));
++	core_addr = inst_context->core_base_addr;
++
++	temp = __raw_readl(core_addr + HDMI_CORE_VID_CTRL_OFFSET);
++
++	/* No pixel repeatation by default */
++	temp &= (~(HDMI_VID_CTRL_ICLK_MASK));
++
++	rtn_value = determine_pixel_repeatation(inst_context);
++	if (rtn_value == HDMI_PIXEL_REPLECATED_ONCE) {
++		temp |= (((0x01u) << HDMI_VID_CTRL_ICLK_SHIFT) &
++			 HDMI_VID_CTRL_ICLK_MASK);
++	} else if (rtn_value == HDMI_PIXEL_REPLECATED_FOUR_TIMES) {
++		temp |= HDMI_VID_CTRL_ICLK_MASK;
++	} else if (rtn_value == 0x0) {
++		HDMI_0_TRACE("No Pixel repeatation required");
++	} else {
++		HDMI_0_TRACE("Could not determine pixel that would be required");
++		rtn_value = VPS_EUNSUPPORTED_OPS;
++		goto exit_this_func;
++	}
++	__raw_writel(temp, (core_addr + HDMI_CORE_VID_CTRL_OFFSET));
++
++
++	temp = __raw_readl(core_addr + HDMI_CORE_HDMI_CTRL_OFFSET);
++
++	temp &=
++	    (~
++	     (HDMI_HDMI_CTRL_DC_EN_MASK |
++	      HDMI_HDMI_CTRL_PACKET_MODE_MASK));
++
++	dither_mode_val =
++	    __raw_readl(core_addr + HDMI_CORE_VID_MODE_OFFSET);
++	dither_mode_val =
++	    ((dither_mode_val & HDMI_VID_MODE_DITHER_MODE_MASK)
++	     >> HDMI_VID_MODE_DITHER_MODE_SHIFT);
++
++	if (dither_mode_val != HDMI_VID_MODE_DITHER_TO_24_BITS_MODE) {
++		temp |= HDMI_HDMI_CTRL_DC_EN_MASK;
++		HDMI_0_TRACE("Deep color mode");
++	}
++	temp |= ((HDMI_CTRL_PACKET_MODE_24BITS_PIXEL) <<
++		 HDMI_HDMI_CTRL_PACKET_MODE_SHIFT);
++	if (dither_mode_val == HDMI_VID_MODE_DITHER_TO_30_BITS_MODE) {
++		temp |= ((HDMI_CTRL_PACKET_MODE_30BITS_PIXEL) <<
++			 HDMI_HDMI_CTRL_PACKET_MODE_SHIFT);
++	}
++	if (dither_mode_val == HDMI_VID_MODE_DITHER_TO_36_BITS_MODE) {
++		temp |= ((HDMI_CTRL_PACKET_MODE_36BITS_PIXEL) <<
++			 HDMI_HDMI_CTRL_PACKET_MODE_SHIFT);
++	}
++	/* TODO DVI mode is required - make this configureable also */
++	temp |= HDMI_HDMI_CTRL_HDMI_MODE_MASK;
++
++	__raw_writel(temp, (core_addr + HDMI_CORE_HDMI_CTRL_OFFSET));
++
++	temp = __raw_readl(core_addr + HDMI_CORE_TMDS_CTRL_OFFSET);
++
++	temp |= (HDMI_TMDS_CTRL_TCLKSEL_MASK &
++		 (HDMI_TMDS_CTRL_IP_CLOCK_MULTIPLIER_AUDIO <<
++		  HDMI_TMDS_CTRL_TCLKSEL_SHIFT));
++	__raw_writel(temp, (core_addr + HDMI_CORE_TMDS_CTRL_OFFSET));
++
++      exit_this_func:
++	HDMI_0_TRACE("configure_policies<<<<");
++	return (rtn_value);
++}
++
++
++static int configure_ctrl_packets(struct instance_cfg *inst_context)
++{
++	volatile u32 temp;
++
++	temp = __raw_readl((inst_context->core_base_addr) +
++			   HDMI_CORE_DC_HEADER_OFFSET);
++	temp = 0x03;
++	__raw_writel(temp,
++		     ((inst_context->core_base_addr) +
++		      HDMI_CORE_DC_HEADER_OFFSET));
++
++	__raw_writel(HDMI_CP_BYTE1_SETAVM_MASK,
++		     ((inst_context->core_base_addr) +
++		      HDMI_CORE_CP_BYTE1_OFFSET));
++
++	return (0x0);
++}
++
++
++static int configure_avi_info_frame(struct instance_cfg *inst_context)
++{
++	int rtn_value = 0x0;
++	UInt8 check_sum = 0x0;
++	UInt8 byte_index = 0x0;
++	volatile UInt8 data_byte = 0x0;
++	volatile u32 dbyte_base;
++	struct hdmi_avi_frame_cfg *infoPkt = NULL;
++	HDMI_0_TRACE(">>>>configure_avi_info_frame");
++	HDMI_ARGS_CHECK((inst_context != NULL));
++
++	infoPkt = &(inst_context->config.info_frame_config.aviData);
++	dbyte_base = (u32) (inst_context->core_base_addr + 
++				HDMI_CORE_AVI_DBYTE_BASE_OFFSET);
++	data_byte = (UInt8)
++	    (HDMI_AVI_TYPE_AVI_TYPE_MASK & HDMI_AVI_INFOFRAME_PKT_TYPE);
++	__raw_writel(data_byte,
++		     ((inst_context->core_base_addr) +
++		      HDMI_CORE_AVI_TYPE_OFFSET));
++	check_sum = HDMI_AVI_INFOFRAME_PKT_TYPE;
++
++	data_byte = (UInt8)
++	    (HDMI_AVI_VERS_AVI_VERS_MASK & HDMI_AVI_INFOFRAME_PKT_VER);
++	__raw_writel(data_byte,
++		     ((inst_context->core_base_addr) +
++		      HDMI_CORE_AVI_VERS_OFFSET));
++	check_sum += HDMI_AVI_INFOFRAME_PKT_VER;
++
++	data_byte = (UInt8)
++	    (HDMI_AVI_LEN_AVI_LEN_MASK & HDMI_AVI_INFOFRAME_PKT_LEN);
++	__raw_writel(data_byte,
++		     ((inst_context->core_base_addr) +
++		      HDMI_CORE_AVI_LEN_OFFSET));
++	check_sum += HDMI_AVI_INFOFRAME_PKT_LEN;
++
++
++	data_byte = (((UInt8) infoPkt->output_cs << 5) &
++		     HDMI_AVI_INFOFRAME_Y0_Y1_MASK);
++	if (infoPkt->use_active_aspect_ratio == TRUE) {
++		data_byte |= HDMI_AVI_INFOFRAME_A0_MASK;
++	}
++	/* Bar information B0 and B1 - if so require to update byte 6-13 */
++	if (infoPkt->bar_info.barInfoValid != 0x0) {
++		data_byte |= ((((UInt8) infoPkt->bar_info.barInfoValid) <<
++			       2) & HDMI_AVI_INFOFRAME_B0_B1_MASK);
++	}
++	data_byte |= (((UInt8) infoPkt->scan_info) &
++		      HDMI_AVI_INFOFRAME_S0_S1_MASK);
++
++	/* First data byte of the packet */
++	__raw_writel(data_byte, (dbyte_base + byte_index));
++	byte_index += 0x4;
++	check_sum += data_byte;
++
++	data_byte = (((UInt8) infoPkt->colorimetry_info << 6) &
++		     HDMI_AVI_INFOFRAME_C0_C1_MASK);
++
++	data_byte |= (((UInt8) infoPkt->aspect_ratio << 4) &
++		      HDMI_AVI_INFOFRAME_M0_M1_MASK);
++	if (infoPkt->use_active_aspect_ratio == TRUE) {
++		data_byte |= (((UInt8) infoPkt->active_aspect_ratio) &
++			      HDMI_AVI_INFOFRAME_R0_R3_MASK);
++	}
++
++	/* Second data byte of the packet */
++	__raw_writel(data_byte, (dbyte_base + byte_index));
++	byte_index += 0x4;
++	check_sum += data_byte;
++
++	data_byte = 0x0;
++	if (infoPkt->it_content_present != 0x0) {
++		data_byte = HDMI_AVI_INFOFRAME_ITC_MASK;
++	}
++	/* Extended colorimetry range EC3 to EC0 */
++	data_byte |= (((UInt8) infoPkt->ext_colorimetry << 4) &
++		      HDMI_AVI_INFOFRAME_EC2_EC0_MASK);
++	/* Quantization range range Q1 to Q0 */
++	data_byte |= (((UInt8) infoPkt->quantization_range << 2)
++		      & HDMI_AVI_INFOFRAME_Q1_Q0_MASK);
++	/* Non-Uniform scaling S0 and S1 */
++	data_byte |= ((UInt8) infoPkt->non_uniform_sc &
++		      HDMI_AVI_INFOFRAME_SC1_SC0_MASK);
++	/* Third data byte of the packet */
++	__raw_writel(data_byte, (dbyte_base + byte_index));
++	byte_index += 0x4;
++	check_sum += data_byte;
++	/* Fourth data byte of the packet */
++	switch (inst_context->config.display_mode) {
++	case hdmi_720P_60_mode:
++		infoPkt->format_identier = 4u;
++		break;
++	case hdmi_1080P_30_mode:
++		infoPkt->format_identier = 34u;
++		break;
++	case hdmi_1080I_60_mode:
++		infoPkt->format_identier = 5u;
++		break;
++	case hdmi_1080P_60_mode:
++		infoPkt->format_identier = 16u;
++		break;
++	default:
++		rtn_value = VPS_EUNSUPPORTED_CMD;
++		goto exit_this_func;
++	}
++
++	data_byte = (UInt8) infoPkt->format_identier;
++
++	__raw_writel(((UInt8) data_byte &
++		      HDMI_AVI_INFOFRAME_VIC6_VIC0_MASK),
++		     (dbyte_base + byte_index));
++	byte_index += 0x4;
++	check_sum += data_byte;
++
++	/* Pixel Repeatation */
++	data_byte = (UInt8) (HDMI_VID_CTRL_ICLK_MASK &
++				__raw_readl(inst_context->core_base_addr + 
++				HDMI_CORE_VID_CTRL_OFFSET));
++
++	/* TODO - Why do we require to up the pixel repeatation when demux is 
++	   is used. */
++	if ((__raw_readl(inst_context->core_base_addr + 
++			HDMI_CORE_VID_MODE_OFFSET) & 
++		HDMI_VID_MODE_DEMUX_MASK) == HDMI_VID_MODE_DEMUX_MASK){
++		/* Do not worry about exceeding the upper limit.
++		   Pixel could be repeated a maximum of 4 times (value 0x03).
++		   The pixel repeatation has 4 bit space in info packet which could
++		   be a maximum of 0x0F, but limited to 0x09 */
++		data_byte++;
++	}
++	__raw_writel((HDMI_AVI_INFOFRAME_PR3_PR0_MASK & data_byte),
++		     (dbyte_base + byte_index));
++	byte_index += 0x4;
++	check_sum += data_byte;
++
++	if (infoPkt->bar_info.barInfoValid != 0x0) {
++		data_byte = (UInt8) (infoPkt->bar_info.topBar & 0xFF);
++		__raw_writel(data_byte, (dbyte_base + byte_index));
++		byte_index += 0x4;
++		check_sum += data_byte;
++		data_byte =
++		    (UInt8) ((infoPkt->bar_info.topBar >> 8) & 0xFF);
++		__raw_writel(data_byte, (dbyte_base + byte_index));
++		byte_index += 0x4;
++		check_sum += data_byte;
++
++		data_byte = (UInt8) (infoPkt->bar_info.bottomBar & 0xFF);
++		__raw_writel(data_byte, (dbyte_base + byte_index));
++		byte_index += 0x4;
++		check_sum += data_byte;
++		data_byte =
++		    (UInt8) ((infoPkt->bar_info.bottomBar >> 8) & 0xFF);
++		__raw_writel(data_byte, (dbyte_base + byte_index));
++		byte_index += 0x4;
++		check_sum += data_byte;
++
++		data_byte = (UInt8) (infoPkt->bar_info.leftBar & 0xFF);
++		__raw_writel(data_byte, (dbyte_base + byte_index));
++		byte_index += 0x4;
++		check_sum += data_byte;
++		data_byte =
++		    (UInt8) ((infoPkt->bar_info.leftBar >> 8) & 0xFF);
++		__raw_writel(data_byte, (dbyte_base + byte_index));
++		byte_index += 0x4;
++		check_sum += data_byte;
++
++		data_byte = (UInt8) (infoPkt->bar_info.rightBar & 0xFF);
++		__raw_writel(data_byte, (dbyte_base + byte_index));
++		byte_index += 0x4;
++		check_sum += data_byte;
++		data_byte =
++		    (UInt8) ((infoPkt->bar_info.rightBar >> 8) & 0xFF);
++		__raw_writel(data_byte, (dbyte_base + byte_index));
++		byte_index += 0x4;
++		check_sum += data_byte;
++	}
++
++	__raw_writec((u8) (HDMI_AVI_INFOFRAME_CONST_0x100 - (UInt16) check_sum), 
++		(inst_context->core_base_addr + HDMI_CORE_AVI_CHSUM_OFFSET));
++	
++	HDMI_1_TRACE("AVI - Computed check sum %d", check_sum);
++	HDMI_1_TRACE("Check sum sent %d",
++			__raw_readl(inst_context->core_base_addr + 
++			HDMI_CORE_AVI_CHSUM_OFFSET));
++	HDMI_0_TRACE("Sent check sum + all bytes should 0x0");
++exit_this_func:
++	HDMI_0_TRACE("configure_avi_info_frame<<<");
++	return (rtn_value);
++}
++
++static int configure_csc_ycbcr_rgb(struct instance_cfg *inst_context)
++{
++	struct hdmi_csc_YCbCr_2_RGB_ctrl *ctrl = NULL;
++	volatile u32 temp;
++	volatile u32 core_addr;
++
++	HDMI_0_TRACE(">>>>configure_csc_ycbcr_rgb");
++	HDMI_ARGS_CHECK((inst_context != NULL));
++
++	core_addr = inst_context->core_base_addr;
++	ctrl =
++	    &(inst_context->config.core_path_config.
++	      csc_YCbCr_2_RGB_config);
++
++	temp = __raw_readl(core_addr + HDMI_CORE_XVYCC2RGB_CTL_OFFSET);
++	temp &= (~(HDMI_XVYCC2RGB_CTL_EXP_ONLY_MASK |
++		   HDMI_XVYCC2RGB_CTL_BYP_ALL_MASK |
++		   HDMI_XVYCC2RGB_CTL_SW_OVR_MASK |
++		   HDMI_XVYCC2RGB_CTL_FULLRANGE_MASK |
++		   HDMI_XVYCC2RGB_CTL_XVYCCSEL_MASK));
++	if (ctrl->enableRngExp != 0x0)
++		temp |= HDMI_XVYCC2RGB_CTL_EXP_ONLY_MASK;
++
++	if (ctrl->enableFullRngExp != 0x0)
++		temp |= HDMI_XVYCC2RGB_CTL_FULLRANGE_MASK;
++
++	if (ctrl->srcCsSel != 0x0)
++		temp |= HDMI_XVYCC2RGB_CTL_XVYCCSEL_MASK;
++
++	if (ctrl->customCoEff != 0x0) {
++		/* Load the custom coefficitents - using memcopy to load as the
++		   structures maps to register */
++		memcpy((void *) (core_addr +
++					  HDMI_CORE_Y2R_COEFF_LOW_OFFSET),
++				((const void *) &(ctrl->coEff)),
++				sizeof(struct hdmi_csc_YCbCr_2_RGB_coeff));
++		HDMI_0_TRACE("Using custom co-effs");
++	}
++	__raw_writel(temp, (core_addr + HDMI_CORE_XVYCC2RGB_CTL_OFFSET));
++
++	HDMI_0_TRACE("configure_csc_ycbcr_rgb<<<<");
++	return (0x0);
++}
++
++static int validate_info_frame_cfg(struct hdmi_info_frame_cfg *config)
++{
++	int rtn_value = VPS_EBADARGS;
++	struct hdmi_avi_frame_cfg *aviData = NULL;
++	HDMI_0_TRACE(">>>>validate_info_frame_cfg");
++
++	if (config == NULL)
++		goto exit_this_func;
++
++	aviData = &(config->aviData);
++	if (aviData->output_cs >= hdmi_avi_max_op_cs) {
++		HDMI_0_TRACE("In correct color space");
++		goto exit_this_func;
++	}
++	if ((aviData->use_active_aspect_ratio != hdmi_avi_no_aspect_ratio)
++	    && (aviData->use_active_aspect_ratio !=
++		hdmi_avi_active_aspect_ratio)) {
++		HDMI_0_TRACE("Wrong aspect ratio");
++		goto exit_this_func;
++	}
++	if (aviData->scan_info >= hdmi_avi_max_scan) {
++		HDMI_0_TRACE("In correct scan info");
++		goto exit_this_func;
++	}
++	if (aviData->colorimetry_info >= hdmi_avi_max_colorimetry) {
++		HDMI_0_TRACE("Wrong colorimetry info");
++		goto exit_this_func;
++	}
++	if (aviData->aspect_ratio >= hdmi_avi_aspect_ratio_max) {
++		HDMI_0_TRACE("Wrong aspect ratio info");
++		goto exit_this_func;
++	}
++	if ((aviData->active_aspect_ratio <
++	     hdmi_avi_active_aspect_ratio_same)
++	    && (aviData->active_aspect_ratio >= hdmi_avi_aspect_ratio_max)) {
++		HDMI_0_TRACE("Wrong active aspect ratio info");
++		goto exit_this_func;
++	}
++	if (aviData->non_uniform_sc >= hdmi_avi_non_uniform_scaling_max) {
++		HDMI_0_TRACE("In correct non-uniform scaling info");
++		goto exit_this_func;
++	}
++	rtn_value = 0x0;
++
++      exit_this_func:
++	HDMI_0_TRACE("validate_info_frame_cfg<<<<");
++	return (rtn_value);
++}
++
++static int validate_core_config(struct hdmi_core_input_cfg *config)
++{
++	HDMI_0_TRACE(">>>>validate_core_config");
++	HDMI_ARGS_CHECK((config != NULL));
++
++	if (config->data_bus_width > hdmi_10_bits_chan_width) {
++		HDMI_0_TRACE("Bus width should be <=30 bits/pixel");
++		return (VPS_EBADARGS);
++	}
++
++	if (config->sync_gen_cfg >= hdmi_max_syncs) {
++		HDMI_0_TRACE("Incorrect meathods used for synchronization");
++		return (VPS_EBADARGS);
++	}
++
++	HDMI_0_TRACE("validate_core_config<<<<");
++	return (0x0);
++}
++
++static int validate_wp_cfg(struct hdmi_wp_config *config)
++{
++	int rtn_value = VPS_EBADARGS;
++	HDMI_0_TRACE(">>>>validate_wp_cfg");
++
++	if ((config->debounce_rcv_detect < 0x01) ||
++	    (config->debounce_rcv_detect > 0x14)) {
++		HDMI_0_TRACE("Debounce receiver detect incorrect");
++		goto exit_this_func;
++	}
++	if ((config->debounce_rcv_sens < 0x01) ||
++	    (config->debounce_rcv_sens > 0x14)) {
++		HDMI_0_TRACE("Debounce receiver sens incorrect");
++		goto exit_this_func;
++	}
++	if (config->is_slave_mode == 0x0) {
++		HDMI_0_TRACE("Warpper is not in SLAVE mode ");
++		HDMI_0_TRACE(" - Master mode cannot be supported");
++		goto exit_this_func;
++	}
++	if (config->width >= hdmi_12_bits_chan_width) {
++		HDMI_0_TRACE("Bus width should be < 36 bits/pixel");
++		HDMI_0_TRACE(" - 8 & 10 bits/channel is valid");
++		goto exit_this_func;
++	}
++	if (config->pack_mode >= hdmi_wp_no_pack) {
++		HDMI_0_TRACE("Incorrect data packing mode");
++		goto exit_this_func;
++	}
++	rtn_value = 0x0;
++	HDMI_0_TRACE("validate_wp_cfg<<<<");
++
++      exit_this_func:
++	return (rtn_value);
++}
++
++static int validate_path_config(struct hdmi_core_data_path *config)
++{
++	HDMI_0_TRACE(">>>>validate_path_config");
++	HDMI_ARGS_CHECK((config != NULL));
++	if (config->output_width >= hdmi_max_bits_chan_width) {
++		HDMI_1_TRACE("In valid output channel width",
++			       config->output_width);
++		return (VPS_EBADARGS);
++	}
++	HDMI_0_TRACE("validate_path_config<<<<");
++	return (0x0);
++}
++
++
++static int check_copy_config(struct instance_cfg *inst_cntxt,
++			     struct hdmi_cfg_params *config)
++{
++	int rtn_value = 0x0;
++	HDMI_0_TRACE(">>>>check_copy_config");
++
++	if (config->use_display_mode != 0x0) {
++		if (config->display_mode >= hdmi_max_mode) {
++			HDMI_0_TRACE("Incorrect mode id");
++			rtn_value = VPS_EUNSUPPORTED_CMD;
++			goto exit_this_func;
++		}
++		inst_cntxt->config.display_mode = config->display_mode;
++	}
++	if (config->use_wp_config != 0x0) {
++		rtn_value = validate_wp_cfg(&(config->wp_config));
++		if (rtn_value != 0x0) {
++			HDMI_0_TRACE("Wrapper config incorrect");
++			goto exit_this_func;
++		}
++		memcpy((void *) (&(inst_cntxt->config.wp_config)),
++		       ((const void *) &(config->wp_config)),
++		       sizeof(struct hdmi_wp_config));
++	}
++	if (config->use_core_config != 0x0) {
++		rtn_value = validate_core_config(&(config->core_config));
++		if (rtn_value != 0x0) {
++			HDMI_0_TRACE("Core config incorrect");
++			goto exit_this_func;
++		}
++		memcpy((void *) (&(inst_cntxt->config.core_config)),
++		       ((const void *) &(config->core_config)),
++		       sizeof(struct hdmi_core_input_cfg));
++	}
++	if (config->use_core_path_config != 0x0) {
++		rtn_value =
++		    validate_path_config(&(config->core_path_config));
++		if (rtn_value != 0x0) {
++			HDMI_0_TRACE("Core data path config incorrect");
++			goto exit_this_func;
++		}
++		memcpy((void *) (&(inst_cntxt->config.core_path_config)),
++		       ((const void *) &(config->core_path_config)),
++		       sizeof(struct hdmi_core_data_path));
++	}
++	if (config->use_info_frame_config != 0x0) {
++		if (config->info_frame_config.use_avi_info_data != 0x0) {
++			rtn_value = validate_info_frame_cfg
++			    (&(config->info_frame_config));
++			if (rtn_value != 0x0) {
++				HDMI_0_TRACE("Bad AVI Info frame data");
++				goto exit_this_func;
++			}
++			memcpy((void
++				*) (&(inst_cntxt->config.
++				      info_frame_config)),
++			       ((const void *)
++				&(config->info_frame_config)),
++			       sizeof(struct hdmi_info_frame_cfg));
++		}
++	}
++	HDMI_0_TRACE("check_copy_config<<<<");
++
++exit_this_func:
++	return (rtn_value);
++}
++
++static int determine_pixel_repeatation(struct instance_cfg *inst_context)
++{
++	int rtn_value = 0x0;
++	u32 mPixelPerSec = 0x0;
++	HDMI_0_TRACE(">>>>determine_pixel_repeatation");
++	HDMI_ARGS_CHECK((inst_context != NULL));
++
++	switch (inst_context->config.display_mode) {
++	case hdmi_ntsc_mode:
++		mPixelPerSec = HDMI_VIDEO_STAND_NTSC;
++		inst_context->is_interlaced = TRUE;
++		HDMI_0_TRACE("NTSC Standard");
++		break;
++	case hdmi_pal_mode:
++		mPixelPerSec = HDMI_VIDEO_STAND_PAL;
++		inst_context->is_interlaced = TRUE;
++		HDMI_0_TRACE("PAL Standard");
++		break;
++	case hdmi_720P_60_mode:
++		mPixelPerSec = HDMI_VIDEO_STAND_720P60;
++		inst_context->is_interlaced = FALSE;
++		HDMI_0_TRACE("720P60 format");
++		break;
++	case hdmi_1080P_60_mode:
++		mPixelPerSec = HDMI_VIDEO_STAND_1080P60;
++		inst_context->is_interlaced = FALSE;
++		HDMI_0_TRACE("1080P60 format");
++		break;
++	case hdmi_1080P_30_mode:
++		mPixelPerSec = HDMI_VIDEO_STAND_1080P30;
++		inst_context->is_interlaced = FALSE;
++		HDMI_0_TRACE("1080P30 format");
++		break;
++	case hdmi_1080I_60_mode:
++		mPixelPerSec = HDMI_VIDEO_STAND_1080I60;
++		inst_context->is_interlaced = FALSE;
++		HDMI_0_TRACE("1080I60 format");
++		break;
++	default:
++		/* This should not happen */
++		rtn_value = VPS_EFAIL;
++		HDMI_0_TRACE("The display format is not supported");
++		break;
++	}
++	if (rtn_value == 0x0) {
++		if (mPixelPerSec < HDMI_MINIMUM_PIXELS_SEC) {
++			if ((mPixelPerSec * HDMI_PIXEL_REPLECATED_ONCE) >=
++			    HDMI_MINIMUM_PIXELS_SEC) {
++				rtn_value = HDMI_PIXEL_REPLECATED_ONCE;
++				HDMI_0_TRACE("Pixel Repeating 1 time");
++				goto exit_this_func;
++			}
++
++			if ((mPixelPerSec *
++			     HDMI_PIXEL_REPLECATED_FOUR_TIMES) >=
++			    HDMI_MINIMUM_PIXELS_SEC) {
++				rtn_value =
++				    HDMI_PIXEL_REPLECATED_FOUR_TIMES;
++				HDMI_0_TRACE("Pixel Repeating 4 time");
++				goto exit_this_func;
++			}
++			/* We could not still meet the HDMI needs - let the
++			   caller know */
++			rtn_value = VPS_EOUT_OF_RANGE;
++			HDMI_0_TRACE(
++				"Resolution too low Could not reach 25 MHz");
++			goto exit_this_func;
++		}
++	}
++
++exit_this_func:
++
++	HDMI_0_TRACE(">>>>determine_pixel_repeatation");
++	return (rtn_value);
++}
++
++/* ========================================================================== */
++/*                            Global Functions                                */
++/* ========================================================================== */
++
++int ti816x_hdmi_lib_init(struct ti816x_hdmi_init_params *init_param)
++{
++	int rtn_value = 0x0;
++	if (init_param == NULL) {
++		rtn_value = VPS_EBADARGS;
++		goto exit_this_func;
++	}
++
++	hdmi_config.is_recvr_sensed = FALSE;
++	hdmi_config.is_streaming = FALSE;
++	hdmi_config.is_scl_clocked = FALSE;
++	hdmi_config.vSync_counter = 0x0;
++	hdmi_config.is_interlaced = FALSE;
++
++	hdmi_config.core_base_addr = init_param->core_base_addr;
++	hdmi_config.wp_base_addr = init_param->wp_base_addr;
++	hdmi_config.phy_base_addr = init_param->phy_base_addr;
++
++	memcpy(((void *) &(hdmi_config.config)),
++	       ((void *) &default_config), sizeof(struct hdmi_cfg_params));
++	hdmi_config.state = HDMI_INST_INITIALIZED;
++
++	/*TODO - Setup hdmi clock mux ON */
++exit_this_func:
++	return (rtn_value);
++}
++
++int ti816x_hdmi_lib_deinit(void *args)
++{
++	int rtn_value = 0x0;
++
++	if ((hdmi_config.state != HDMI_INST_CLOSED) &&
++	    (hdmi_config.state != HDMI_INST_INITIALIZED)) {
++		rtn_value = VPS_EALLOC;
++		goto exit_this_func;
++	}
++	/* Semaphore_delete(&(hdmi_config[index].guard)); */
++	hdmi_config.state = HDMI_INST_UN_INITIALIZED;
++
++      exit_this_func:
++	return (rtn_value);
++}
++
++/* Open     - Power up the clock for the DDC and keeps it ON.
++ *          - Register the int, update HPD if required
++ */
++
++void *ti816x_hdmi_lib_open(u32 instance, struct hdmi_cfg_params *config,
++		       int *status, void *args)
++{
++	struct instance_cfg *inst_context = NULL;
++	int rtn_value = 0x0;
++	volatile u32 reset_time_out;
++	volatile u32 temp;
++
++	if ((hdmi_config.state == HDMI_INST_OPENED) ||
++	    (hdmi_config.state == HDMI_INST_UN_INITIALIZED)) {
++		rtn_value = VPS_EDRIVER_INUSE;
++		goto exit_this_func;
++	}
++	inst_context = &(hdmi_config);
++
++	if (config != NULL) {
++		if (check_copy_config(&(hdmi_config), config) != 0x0) {
++			rtn_value = VPS_EBADARGS;
++			goto exit_this_func;
++		}
++	}
++
++	reset_time_out = VPS_HAL_HDMI_WP_RESET_TIMEOUT;
++	temp =
++	    __raw_readl(inst_context->wp_base_addr +
++			HDMI_WP_SYSCONFIG_OFFSET);
++	temp |= HDMI_WP_SYSCONFIG_SOFTRESET_MASK;
++	__raw_writel(temp,
++		     (inst_context->wp_base_addr +
++		      HDMI_WP_SYSCONFIG_OFFSET));
++
++	while (((__raw_readl
++		(inst_context->wp_base_addr +
++		HDMI_WP_SYSCONFIG_OFFSET)) &
++		HDMI_WP_SYSCONFIG_SOFTRESET_MASK) ==
++	       HDMI_WP_SYSCONFIG_SOFTRESET_MASK) {
++		reset_time_out--;
++		if (reset_time_out == 0x0) {
++			HDMI_0_TRACE("Could not reset wrapper ");
++			rtn_value = VPS_EBADARGS;
++			goto exit_this_func;
++		}
++	}
++
++	rtn_value = configure_phy(inst_context);
++	if (rtn_value != 0x0) {
++		HDMI_0_TRACE("Could not configure PHY");
++		goto exit_this_func;
++	}
++
++	rtn_value = configure_wrapper(inst_context);
++	if (rtn_value != 0x0) {
++		HDMI_0_TRACE("Could not configure wrapper");
++		rtn_value = VPS_EFAIL;
++	}
++
++	temp =
++	    __raw_readl(inst_context->wp_base_addr +
++			HDMI_WP_AUDIO_CTRL_OFFSET);
++	temp &= (~(HDMI_WP_AUDIO_CTRL_DISABLE_MASK));
++	__raw_writel(temp,
++		     (inst_context->wp_base_addr +
++		      HDMI_WP_AUDIO_CTRL_OFFSET));
++	__raw_writel(0x0,
++		     (inst_context->wp_base_addr +
++		      HDMI_WP_AUDIO_CFG_OFFSET));
++
++	if (inst_context->is_recvr_sensed == FALSE) {
++		if (((__raw_readl(inst_context->core_base_addr + 
++			HDMI_CORE_INTR1_OFFSET)) & HDMI_INTR1_HPD_MASK) ==
++			HDMI_INTR1_HPD_MASK) {
++			if (inst_context->is_recvr_sensed != TRUE) {
++				inst_context->is_recvr_sensed =
++				    TRUE;
++				HDMI_0_TRACE("Dected a sink");
++			}
++		} else {
++			/* Check for un-plug */
++			if (inst_context->is_recvr_sensed == TRUE) {
++				/* Why was this not sensed by wrappers interrupt ? */
++				inst_context->is_recvr_sensed =
++				    FALSE;
++				HDMI_0_TRACE("Attached sink is removed");
++			}
++		}
++	}
++	temp = __raw_readl(inst_context->core_base_addr + 
++			HDMI_CORE_SRST_OFFSET);
++	temp |= HDMI_SRST_SWRST_MASK;
++	__raw_writel(temp, 
++		(inst_context->core_base_addr + HDMI_CORE_SRST_OFFSET));
++
++	temp = __raw_readl(inst_context->core_base_addr + 
++		HDMI_CORE_SYS_CTRL1_OFFSET);
++	temp |= HDMI_SYS_CTRL1_PD_MASK;
++	__raw_writel(temp, 
++		(inst_context->core_base_addr + HDMI_CORE_SYS_CTRL1_OFFSET));
++
++	rtn_value = configure_core(inst_context);
++	if (rtn_value != 0x0) {
++		HDMI_0_TRACE("Could not cfg core");
++		goto exit_this_func;
++	}
++	__raw_writel(0x0, 
++		(inst_context->core_base_addr + HDMI_CORE_AUD_MODE_OFFSET));
++
++	inst_context->state = HDMI_INST_OPENED;
++
++	if (status != NULL) {
++		*status = rtn_value;
++	}
++	HDMI_0_TRACE("ti816x_hdmi_lib_open<<<<");
++
++exit_this_func:
++	return ((void *) inst_context);
++}
++
++int ti816x_hdmi_lib_close(void *handle, void *args)
++{
++	int rtn_value = 0x0;
++	struct instance_cfg *inst_context = NULL;
++	HDMI_0_TRACE(">>>>ti816x_hdmi_lib_close");
++	HDMI_ARGS_CHECK((args == NULL));
++
++	if (handle == NULL) {
++		rtn_value = VPS_EBADARGS;
++		goto exit_this_func;
++	}
++	inst_context = (struct instance_cfg *) handle;
++	if (inst_context->state != HDMI_INST_OPENED) {
++		rtn_value = VPS_EUNSUPPORTED_OPS;
++		goto exit_this_func;
++	}
++	if (inst_context->is_streaming == FALSE) {
++		inst_context->state = HDMI_INST_CLOSED;
++		goto exit_this_func;
++	}
++	rtn_value = VPS_EBADARGS;
++exit_this_func:
++	HDMI_0_TRACE("ti816x_hdmi_lib_close<<<<");
++	return (rtn_value);
++}
++
++static int ti816x_hdmi_lib_get_cfg(void *handle,
++				struct hdmi_cfg_params *config, void *args)
++{
++	int rtn_value = 0x0;
++	struct instance_cfg *inst_context = NULL;
++	HDMI_0_TRACE(">>>>ti816x_hdmi_lib_get_cfg");
++	HDMI_ARGS_CHECK((args == NULL));
++	if ((handle == NULL) || (config == NULL)) {
++		rtn_value = VPS_EBADARGS;
++		HDMI_0_TRACE("Invalid handle/config pointer");
++		goto exit_this_func;
++	}
++	inst_context = (struct instance_cfg *) handle;
++	if (inst_context->state != HDMI_INST_OPENED) {
++		rtn_value = VPS_EUNSUPPORTED_OPS;
++		HDMI_0_TRACE("Instance not yet opened");
++		goto exit_this_func;
++	}
++	/* Copy the configurations */
++	memcpy((void *) config,
++			((const void *) &(inst_context->config)),
++			sizeof(struct hdmi_cfg_params));
++	/* Turn OFF the config update flags */
++	config->use_display_mode = 0x0;
++	config->use_wp_config = 0x0;
++	config->use_core_config = 0x0;
++	config->use_core_path_config = 0x0;
++	config->use_info_frame_config = 0x0;
++	
++exit_this_func:
++	HDMI_0_TRACE("ti816x_hdmi_lib_get_cfg<<<<");
++	return (rtn_value);
++}
++
++#if 0
++static int ti816x_hdmi_lib_set_cfg(void *handle,
++				struct hdmi_cfg_params *config, void *args)
++{
++	struct instance_cfg *inst_context = NULL;
++	int rtn_value = 0x0;
++	volatile u32 temp;
++
++	HDMI_0_TRACE(">>>>ti816x_hdmi_lib_set_cfg");
++	HDMI_ARGS_CHECK((args == NULL));
++
++	inst_context = (struct instance_cfg *) handle;
++	HDMI_ARGS_CHECK(
++		       (inst_context->coreRegOvrlay != NULL));
++	if (inst_context->state != HDMI_INST_OPENED) {
++		HDMI_0_TRACE("Not yet opened");
++		rtn_value = VPS_EDRIVER_INUSE;
++		goto exit_this_func;
++	}
++	if (inst_context->is_streaming == TRUE) {
++		HDMI_0_TRACE("Streaming - cannot re-configure");
++		rtn_value = VPS_EUNSUPPORTED_CMD;
++		goto exit_this_func;
++	}
++	if (config == NULL) {
++		rtn_value = VPS_EBADARGS;
++		goto exit_this_func;
++	}
++
++	rtn_value = check_copy_config(inst_context, config);
++	if (rtn_value != 0x0) {
++		goto exit_this_func;
++	}
++
++	rtn_value = configure_phy(inst_context);
++	if (rtn_value != 0x0) {
++		goto exit_this_func;
++	}
++
++	if (config->use_wp_config != 0x0) {
++		rtn_value = configure_wrapper(inst_context);
++		if (rtn_value != 0x0) {
++			HDMI_0_TRACE("Could not configure wrapper");
++			rtn_value = VPS_EFAIL;
++			goto exit_this_func;
++		}
++	}
++
++	inst_context->coreRegOvrlay->SRST |=
++	    CSL_HDMI_SRST_SWRST_MASK;
++	inst_context->coreRegOvrlay->SYS_CTRL1 &=
++	    (~(CSL_HDMI_SYS_CTRL1_PD_MASK));
++
++	if ((config->use_core_config != 0x0) ||
++	    (config->use_core_path_config != 0x0)) {
++		rtn_value = configure_core(inst_context);
++		if (rtn_value != 0x0) {
++			goto exit_this_func;
++		}
++	} else {
++		rtn_value =
++		    determine_pixel_repeatation(inst_context);
++		/* No pixel repetation - by default */
++		inst_context->coreRegOvrlay->VID_CTRL &=
++		    (~(CSL_HDMI_VID_CTRL_ICLK_MASK));
++		if (rtn_value == HDMI_PIXEL_REPLECATED_ONCE) {
++			/* Repeat once */
++			inst_context->coreRegOvrlay->VID_CTRL |=
++			    (((0x01u) <<
++			      CSL_HDMI_VID_CTRL_ICLK_SHIFT) &
++			     CSL_HDMI_VID_CTRL_ICLK_MASK);
++		} else if (rtn_value ==
++			   HDMI_PIXEL_REPLECATED_FOUR_TIMES) {
++			inst_context->coreRegOvrlay->VID_CTRL |=
++			    CSL_HDMI_VID_CTRL_ICLK_MASK;
++		} else if (rtn_value == 0x0) {
++			HDMI_0_TRACE("No Pixel repeatation required");
++		} else {
++			/* Error let the caller know */
++			HDMI_0_TRACE("Could not determine pixel ");
++			HDMI_0_TRACE(" rate that would be required.");
++			goto exit_this_func;
++		}
++		/* Power up core and bring it out of reset. */
++		inst_context->coreRegOvrlay->SYS_CTRL1 |=
++		    CSL_HDMI_SYS_CTRL1_PD_MASK;
++		inst_context->coreRegOvrlay->SRST &=
++		    (~(CSL_HDMI_SRST_SWRST_MASK));
++	}
++	/*
++	 * Step 4
++	 * Re-configure the wrapper with the scan type. It might have changed.
++	 */
++	temp =
++	    __raw_readl(inst_context->wp_base_addr +
++			HDMI_WP_VIDEO_CFG_OFFSET);
++	if (inst_context->is_interlaced == TRUE) {
++		temp |=
++		    HDMI_WP_VIDEO_CFG_PROGRESSIVE_INTERLACE_MASK;
++	} else {
++		temp &=
++		    (~
++		     (HDMI_WP_VIDEO_CFG_PROGRESSIVE_INTERLACE_MASK));
++	}
++	__raw_writel(temp,
++		     (inst_context->wp_base_addr +
++		      HDMI_WP_VIDEO_CFG_OFFSET));
++
++	/* Step 4 - Configure AVI Info frame and enable them to be transmitted
++	   every frame */
++	if (config->use_info_frame_config != 0x0) {
++		rtn_value = configure_avi_info_frame(inst_context);
++		if (rtn_value != 0x0) {
++			goto exit_this_func;
++		}
++		/*
++		 * Policy
++		 * 1. Enabling continious transmission of AVI Information packets
++		 */
++		inst_context->coreRegOvrlay->PB_CTRL1 |=
++		    (CSL_HDMI_PB_CTRL1_AVI_EN_MASK |
++		     CSL_HDMI_PB_CTRL1_AVI_RPT_MASK);
++	}
++exit_this_func:
++	HDMI_0_TRACE("ti816x_hdmi_lib_set_cfg<<<<");
++	return (rtn_value);
++}
++#endif
++
++int ti816x_hdmi_lib_start(void *handle, void *args)
++{
++	int rtn_value = 0x0;
++	struct instance_cfg *inst_context = NULL;
++	volatile u32 temp;
++
++	HDMI_0_TRACE(">>>>ti816x_hdmi_lib_start");
++	HDMI_ARGS_CHECK((args == NULL));
++
++	if (handle == NULL) {
++		rtn_value = VPS_EBADARGS;
++		HDMI_0_TRACE("Invalid handle/config pointer");
++		goto exit_this_func;
++	}
++	inst_context = (struct instance_cfg *) handle;
++	if (inst_context->state != HDMI_INST_OPENED) {
++		rtn_value = VPS_EUNSUPPORTED_OPS;
++		HDMI_0_TRACE("Instance not yet opened");
++		goto exit_this_func;
++	}
++	if ((inst_context->is_streaming == FALSE) && 
++		(inst_context->is_recvr_sensed == TRUE)){
++			HDMI_0_TRACE("Trying to start the port");
++				
++		temp = __raw_readl(inst_context->core_base_addr + 
++				HDMI_CORE_SYS_CTRL1_OFFSET);
++		temp |= HDMI_SYS_CTRL1_PD_MASK;
++		__raw_writel(temp, 
++		   (inst_context->core_base_addr + HDMI_CORE_SYS_CTRL1_OFFSET));
++		
++		temp = __raw_readl(inst_context->core_base_addr + 
++				HDMI_CORE_SRST_OFFSET);
++		temp &= (~(HDMI_SRST_SWRST_MASK));
++		__raw_writel(temp, 
++			(inst_context->core_base_addr + HDMI_CORE_SRST_OFFSET));
++
++		/*
++		 * Configure core would have updated the global member to 
++		 * specify the scan type update the wrapper with same info
++		 */
++		temp =
++		    __raw_readl(inst_context->wp_base_addr +
++				HDMI_WP_VIDEO_CFG_OFFSET);
++
++		if (inst_context->is_interlaced == TRUE) {
++			temp |= HDMI_WP_VIDEO_CFG_PROGRESSIVE_INTERLACE_MASK;
++		} else {
++			temp &= 
++			(~(HDMI_WP_VIDEO_CFG_PROGRESSIVE_INTERLACE_MASK));
++		}
++		__raw_writel(temp,
++			     (inst_context->wp_base_addr +
++			      HDMI_WP_VIDEO_CFG_OFFSET));
++
++		rtn_value = configure_avi_info_frame(inst_context);
++		if (rtn_value != 0x0) {
++			HDMI_0_TRACE("Could not configure AVI Info frames");
++			goto exit_this_func;
++		}
++
++		rtn_value = configure_ctrl_packets(inst_context);
++		if (rtn_value != 0x0) {
++			HDMI_0_TRACE("Could not cfg control packets");
++			goto exit_this_func;
++		}
++
++		temp = __raw_readl(inst_context->core_base_addr + 
++				HDMI_CORE_PB_CTRL1_OFFSET);
++		temp = (HDMI_PB_CTRL1_AVI_EN_MASK 
++			| HDMI_PB_CTRL1_AVI_RPT_MASK);
++		__raw_writel(temp, 
++			(inst_context->core_base_addr + 
++			HDMI_CORE_PB_CTRL1_OFFSET));
++
++		temp = __raw_readl(inst_context->core_base_addr + 
++				HDMI_CORE_VID_MODE_OFFSET);
++		temp = ((temp & HDMI_VID_MODE_DITHER_MODE_MASK) >>
++			HDMI_VID_MODE_DITHER_MODE_SHIFT);
++		/* General control packets are required only in deep color mode,
++		*  as packing phase would require to be indicated, 
++		*  else bypass this 
++		*/
++		if (temp != HDMI_VID_MODE_DITHER_TO_24_BITS_MODE) {
++			__raw_writel((HDMI_PB_CTRL2_GEN_EN_MASK |
++				      HDMI_PB_CTRL2_GEN_RPT_MASK), 
++				(inst_context->core_base_addr + 
++					HDMI_CORE_PB_CTRL2_OFFSET));
++		} else {
++			__raw_writel((HDMI_PB_CTRL2_CP_EN_MASK |
++			     HDMI_PB_CTRL2_CP_RPT_MASK |
++			     HDMI_PB_CTRL2_GEN_EN_MASK |
++			     HDMI_PB_CTRL2_GEN_RPT_MASK), 
++			(inst_context->core_base_addr + 
++				HDMI_CORE_PB_CTRL2_OFFSET));
++		}
++
++		temp =
++		    __raw_readl((inst_context->wp_base_addr +
++				 HDMI_WP_VIDEO_CFG_OFFSET));
++		temp |= HDMI_WP_VIDEO_CFG_ENABLE_MASK;
++		__raw_writel(temp,
++			     (inst_context->wp_base_addr +
++			      HDMI_WP_VIDEO_CFG_OFFSET));
++		inst_context->is_streaming = TRUE;
++		HDMI_0_TRACE("Started the port");
++	} else {
++			if (inst_context->is_recvr_sensed == TRUE){
++				rtn_value = VPS_EBADARGS;
++				HDMI_0_TRACE("No Sinks dected-not starting");
++			}
++		}
++exit_this_func:
++	HDMI_0_TRACE("ti816x_hdmi_lib_start<<<<");
++	return (rtn_value);
++}
++
++int ti816x_hdmi_lib_stop(void *handle, void *args)
++{
++	int rtn_value = 0x0;
++	struct instance_cfg *inst_context = NULL;
++	volatile u32 temp;
++
++	HDMI_0_TRACE(">>>>ti816x_hdmi_lib_stop");
++	HDMI_ARGS_CHECK((args == NULL));
++
++	if (handle == NULL) {
++		rtn_value = VPS_EBADARGS;
++		HDMI_0_TRACE("Invalid handle/config pointer");
++		goto exit_this_func;
++	}
++	inst_context = (struct instance_cfg *) handle;
++	if (inst_context->state != HDMI_INST_OPENED) {
++		rtn_value = VPS_EUNSUPPORTED_OPS;
++		HDMI_0_TRACE("Instance not yet opened");
++		goto exit_this_func;
++	}
++	if (inst_context->is_streaming == TRUE) {
++		HDMI_0_TRACE("Trying to stop the port");
++		temp = __raw_readl(inst_context->core_base_addr + 
++				HDMI_CORE_SRST_OFFSET);
++		temp |= HDMI_SRST_SWRST_MASK;
++		__raw_writel(temp, 
++			(inst_context->core_base_addr + HDMI_CORE_SRST_OFFSET));
++		temp =
++		    __raw_readl((inst_context->wp_base_addr +
++				 HDMI_WP_VIDEO_CFG_OFFSET));
++		temp &= (~(HDMI_WP_VIDEO_CFG_ENABLE_MASK));
++		__raw_writel(temp,
++			     (inst_context->wp_base_addr +
++			      HDMI_WP_VIDEO_CFG_OFFSET));
++		inst_context->is_streaming = FALSE;
++		HDMI_0_TRACE("Stopped the port");
++	}
++exit_this_func:
++	HDMI_0_TRACE("ti816x_hdmi_lib_stop<<<<");
++	return (rtn_value);
++}
++
++int ti816x_hdmi_lib_control(void *handle,
++			u32 cmd, void *cmdArgs, void *additionalArgs)
++{
++	int rtn_value = 0x0;
++	struct instance_cfg *inst_context = NULL;
++
++	HDMI_0_TRACE(">>>>ti816x_hdmi_lib_control");
++	/* Validate the handle and execute the command. */
++	if ((handle == NULL) || (cmdArgs == NULL)) {
++		rtn_value = VPS_EBADARGS;
++		HDMI_0_TRACE("Invalid handle/cmdArgs pointer");
++		goto exit_this_func;
++	}
++	inst_context = (struct instance_cfg *) handle;
++	if (inst_context->state != HDMI_INST_OPENED) {
++		rtn_value = VPS_EUNSUPPORTED_OPS;
++		HDMI_0_TRACE("Instance not yet opened");
++		goto exit_this_func;
++	}
++	switch (cmd) {
++	case IOCTL_HDMI_START:
++		rtn_value = ti816x_hdmi_lib_start(handle, NULL);
++		break;
++
++	case IOCTL_HDMI_STOP:
++		rtn_value = ti816x_hdmi_lib_stop(handle, NULL);
++		break;
++	case IOCTL_HDMI_GET_STATUS:
++		rtn_value = VPS_EBADARGS;
++		if (cmdArgs != NULL) {
++			(*(u32 *) cmdArgs) = inst_context->is_streaming;
++			rtn_value = 0x0;
++		}
++		break;
++	case IOCTL_HDMI_READ_EDID:
++		rtn_value = ti816x_hdmi_lib_read_edid(handle,
++						(struct hdmi_edid_read_params *)
++						cmdArgs,
++						NULL);
++		break;
++	case IOCTL_HDMI_GET_CONFIG:
++		rtn_value = ti816x_hdmi_lib_get_cfg(handle,
++						(struct hdmi_cfg_params *)
++						cmdArgs,
++						NULL);
++		break;
++	case IOCTL_HDMI_SET_CONFIG:
++#if 0
++		rtn_value = ti816x_hdmi_lib_set_cfg(handle,
++						(struct hdmi_cfg_params *)
++						cmdArgs,
++						NULL);
++#endif
++		rtn_value = VPS_EBADARGS;
++		break;
++	default:
++		rtn_value = VPS_EBADARGS;
++		HDMI_0_TRACE("Un-recoganized command");
++		break;
++	}
++exit_this_func:
++	HDMI_0_TRACE("ti816x_hdmi_lib_control<<<<");
++	return (rtn_value);
++}
++
++static int ti816x_hdmi_lib_read_edid(void *handle,
++			       struct hdmi_edid_read_params *r_params,
++			       void *args)
++{
++	int rtn_value = 0x0;
++	u32 r_byte_cnt = 0x0;
++	volatile u32 io_timeout = 0x0;
++	volatile u32 timeout;
++	volatile u32 cmd_status;
++	volatile u32 temp;
++	UInt8 *buf_ptr = NULL;
++	struct instance_cfg *inst_context = NULL;
++
++	HDMI_0_TRACE(">>>>ti816x_hdmi_lib_read_edid");
++	HDMI_ARGS_CHECK((args == NULL));
++
++	if ((handle == NULL) || (r_params == NULL)) {
++		HDMI_0_TRACE("Invalid params ");
++		rtn_value = VPS_EBADARGS;
++		goto exit_this_func;
++	}
++	inst_context = handle;
++	buf_ptr = (UInt8 *) r_params->buffer_ptr;
++	if (buf_ptr == NULL) {
++		HDMI_0_TRACE("Invalid buffer pointer");
++		rtn_value = VPS_EBADARGS;
++		goto exit_this_func;
++	}
++	/* 10 bits to hold the count - which would be 3FF */
++	if ((r_params->no_of_bytes == 0x0)
++	    || (r_params->no_of_bytes > 0x3FF)) {
++		HDMI_0_TRACE("Invalid byte count");
++		rtn_value = VPS_EBADARGS;
++		goto exit_this_func;
++	}
++	r_params->no_of_bytes_read = 0x0;
++	if ((inst_context->state != HDMI_INST_OPENED) ||
++	    (inst_context->is_recvr_sensed != TRUE)) {
++		HDMI_0_TRACE("HPD not detected - HAL not opened");
++		rtn_value = VPS_EUNSUPPORTED_OPS;
++		goto exit_this_func;
++	}
++	if (r_params->timeout == 0x0){
++		HDMI_0_TRACE("Could not read in given time");
++		rtn_value = VPS_ETIMEOUT;
++		goto exit_this_func;
++	}
++
++	temp = __raw_readl((inst_context->core_base_addr +
++			HDMI_CORE_RI_STAT_OFFSET));
++	if ((temp & HDMI_RI_STAT_RI_STARTED_MASK) ==
++		HDMI_RI_STAT_RI_STARTED_MASK) {
++		HDMI_0_TRACE("RI Check enbled - DDC bus busy");
++		rtn_value = VPS_EDEVICE_INUSE;
++		goto exit_this_func;
++	}
++
++	if (inst_context->is_scl_clocked == FALSE) {
++		__raw_writel(HDMI_DDC_CMD_CLOCK_SCL, 
++		    (inst_context->core_base_addr + HDMI_CORE_DDC_CMD_OFFSET));
++		    
++		timeout = VPS_HAL_HDMI_DDC_CMD_TIMEOUT;
++		temp = __raw_readl((inst_context->core_base_addr +
++			HDMI_CORE_DDC_STATUS_OFFSET));
++		while ((temp & HDMI_DDC_STATUS_IN_PROG_MASK)
++		       == HDMI_DDC_STATUS_IN_PROG_MASK) {
++			timeout--;
++			temp = __raw_readl((inst_context->core_base_addr +
++			HDMI_CORE_DDC_STATUS_OFFSET));
++		}
++		if (timeout == 0x0) {
++			HDMI_0_TRACE("Could not clock SCL before read");
++			rtn_value = VPS_ETIMEOUT;
++			goto exit_this_func;
++		}
++		inst_context->is_scl_clocked = TRUE;
++	}
++
++	__raw_writel((HDMI_DDC_ADDR_DDC_ADDR_MASK & r_params->slave_address), 
++		(inst_context->core_base_addr + HDMI_CORE_DDC_ADDR_OFFSET));
++
++	__raw_writel((HDMI_DDC_SEGM_DDC_SEGM_MASK & r_params->segment_ptr), 
++		(inst_context->core_base_addr + HDMI_CORE_DDC_SEGM_OFFSET));
++
++	__raw_writel((HDMI_DDC_OFFSET_DDC_OFFSET_MASK & r_params->offset), 
++		(inst_context->core_base_addr + HDMI_CORE_DDC_OFFSET_OFFSET));
++
++	__raw_writel((HDMI_DDC_COUNT1_DDC_COUNT_MASK & r_params->no_of_bytes), 
++		(inst_context->core_base_addr + HDMI_CORE_DDC_COUNT1_OFFSET));
++
++	__raw_writel((HDMI_DDC_COUNT2_DDC_COUNT_MASK & 
++		(r_params->no_of_bytes >> 0x08)), 
++		(inst_context->core_base_addr + HDMI_CORE_DDC_COUNT2_OFFSET));
++
++	__raw_writel(HDMI_DDC_CMD_CLEAR_FIFO, 
++		(inst_context->core_base_addr + HDMI_CORE_DDC_CMD_OFFSET));
++
++	timeout = VPS_HAL_HDMI_DDC_CMD_TIMEOUT;
++	temp = __raw_readl((inst_context->core_base_addr +
++			HDMI_CORE_DDC_STATUS_OFFSET));
++	while ((temp & HDMI_DDC_STATUS_IN_PROG_MASK)
++		== HDMI_DDC_STATUS_IN_PROG_MASK) {
++		timeout--;
++		temp = __raw_readl((inst_context->core_base_addr +
++		HDMI_CORE_DDC_STATUS_OFFSET));
++	}
++	if (timeout == 0x0) {
++		HDMI_0_TRACE("Could not clear FIFOs");
++		rtn_value = VPS_ETIMEOUT;
++		goto abort_exit_this_func;
++	}
++	
++	io_timeout = r_params->timeout;
++	if (r_params->use_eddc_read == 0x0){
++		__raw_writel(HDMI_DDC_CMD_SEQ_R_NO_ACK_ON_LAST_BYTE, 
++		    (inst_context->core_base_addr + HDMI_CORE_DDC_CMD_OFFSET));
++	}else{
++		__raw_writel(HDMI_DDC_CMD_EDDC_R_NO_ACK_ON_LAST_BYTE, 
++		    (inst_context->core_base_addr + HDMI_CORE_DDC_CMD_OFFSET));
++	}
++	temp = __raw_readl((inst_context->core_base_addr +
++			HDMI_CORE_DDC_FIFOCNT_OFFSET));
++	while (temp == 0x0) {
++		if (io_timeout == 0x0){
++			rtn_value = VPS_ETIMEOUT;
++			goto abort_exit_this_func;
++		}
++		temp = __raw_readl((inst_context->core_base_addr +
++			HDMI_CORE_DDC_FIFOCNT_OFFSET));
++		io_timeout--;
++	}
++	/* Check for errors */
++	cmd_status = __raw_readl((inst_context->core_base_addr +
++			HDMI_CORE_DDC_STATUS_OFFSET));
++			
++	if ((cmd_status & HDMI_DDC_STATUS_BUS_LOW_MASK) ==
++	    HDMI_DDC_STATUS_BUS_LOW_MASK) {
++		/* Bus is being held by the slave / others... 
++		   Ultra Slow slaves? */
++		HDMI_0_TRACE("Bus being held low");
++		rtn_value = VPS_EFAIL;
++		goto abort_exit_this_func;
++	}
++	if ((cmd_status & HDMI_DDC_STATUS_NO_ACK_MASK) ==
++	    HDMI_DDC_STATUS_NO_ACK_MASK) {
++		/* UnPlugged TV? */
++		HDMI_0_TRACE("No ACK from the device");
++		rtn_value = VPS_EFAIL;
++		goto abort_exit_this_func;
++	}
++	while (r_byte_cnt < r_params->no_of_bytes){
++		if (inst_context->is_recvr_sensed != TRUE) {
++			rtn_value = VPS_ETIMEOUT;
++			goto abort_exit_this_func;
++		}
++		temp = __raw_readl((inst_context->core_base_addr +
++			HDMI_CORE_DDC_FIFOCNT_OFFSET));
++		if (temp == 0x0){
++			while (temp == 0x0)
++			{
++				if (io_timeout == 0x0){
++					rtn_value = VPS_ETIMEOUT;
++					goto abort_exit_this_func;
++				}
++				io_timeout--;
++				temp = __raw_readl(
++					(inst_context->core_base_addr + 
++					HDMI_CORE_DDC_FIFOCNT_OFFSET));
++			}
++		}
++		
++		*buf_ptr = (UInt8) ((__raw_readl((inst_context->core_base_addr 
++					+ HDMI_CORE_DDC_DATA_OFFSET))) &
++						HDMI_DDC_DATA_DDC_DATA_MASK);
++		buf_ptr++;
++		r_byte_cnt++;
++	}
++	/*
++	 * Aborting the READ command.
++	 * In case we have completed as expected - no of bytes to read is read
++	 *  - No issues, aborting on completion is OK
++	 * If device was unplugged before read could be complete,
++	 *  - Abort should leave the bus clean
++	 * If any other error
++	 *  - Ensure bus is clean
++	 */
++	r_params->no_of_bytes_read = r_byte_cnt;
++
++abort_exit_this_func:
++	__raw_writel(HDMI_DDC_CMD_ABORT, 
++		(inst_context->core_base_addr + HDMI_CORE_DDC_CMD_OFFSET));
++
++	temp = __raw_readl((inst_context->core_base_addr +
++			HDMI_CORE_DDC_STATUS_OFFSET));
++	while ((temp & HDMI_DDC_STATUS_IN_PROG_MASK)
++		== HDMI_DDC_STATUS_IN_PROG_MASK) {
++		timeout--;
++		temp = __raw_readl((inst_context->core_base_addr +
++		HDMI_CORE_DDC_STATUS_OFFSET));
++	}
++exit_this_func:
++	HDMI_0_TRACE("ti816x_hdmi_lib_read_edid<<<<");
++	return (rtn_value);
++}
++
++/* Debug functions */
++static void HDMI_0_TRACE(char *info_string)
++{
++	return;
++}
++
++static void HDMI_1_TRACE(char *info_string, u32 val1)
++{
++	return;
++}
++
++static void HDMI_ARGS_CHECK(u32 condition)
++{
++	return;
++}
+diff --git a/common/ti816x_lib.c b/common/ti816x_lib.c
+new file mode 100644
+index 0000000..86d93dc
+--- /dev/null
++++ b/common/ti816x_lib.c
+@@ -0,0 +1,335 @@
++#include <logo.h>
++
++struct hdmi_cfg_params param720p60 = TI816X_HDMI_8BIT_720_60_16_9_HD;
++static struct ti816x_hdmi_init_params initParams;
++static void * handle = 0x0;
++
++void ti816x_HdVpssClkEnable()
++{
++	uint delay;
++#ifdef DEBUG_VPSS
++	printf("\t\nPRCM for HDVPSS is in Progress","Output",1,1,1);
++#endif
++	WR_MEM_32(CM_HDDSS_CLKSTCTRL, 2); /*Enable Power Domain Transition for HDVPSS */
++
++	WR_MEM_32(CM_ACTIVE_HDDSS_CLKCTRL, 0); /*Enable HDVPSS Clocks*/
++	delay = 1000;
++	while(delay-- > 0);
++	WR_MEM_32(CM_ACTIVE_HDDSS_CLKCTRL, 2); /*Enable HDVPSS Clocks*/
++
++	/*Check clocks are active*/
++	while(((RD_MEM_32(CM_HDDSS_CLKSTCTRL) & 0xFF00) >> 8) != 0xFF) ;
++
++	/* Check to see module is functional */
++	while(((RD_MEM_32(CM_ACTIVE_HDDSS_CLKCTRL) & 0x70000) >> 16) != 0) ;
++#ifdef DEBUG_VPSS
++	printf("\t\nPRCM for HDVPSS is Done Successfully","Output",1,1,1);
++#endif
++}
++
++void ti816x_HdmiClkEnable()
++{
++#ifdef DEBUG_VPSS
++	printf("\t\nPRCM for HDMI is in Progress","Output",1,1,1);
++#endif
++	WR_MEM_32(CM_HDMI_CLKSTCTRL,2); /*Enable Power Domain Transition for HDMI */
++	WR_MEM_32(CM_ACTIVE_HDMI_CLKCTRL,2); /*Enable HDMI Clocks*/
++
++	/*Check clocks are active*/
++	while(((RD_MEM_32(CM_HDMI_CLKSTCTRL) & 0x300) >> 8) != 0x3) ;
++
++	/* Check to see module is functional */
++	while(((RD_MEM_32(CM_ACTIVE_HDMI_CLKCTRL) & 0x70000) >> 16) != 0) ;
++#ifdef DEBUG_VPSS
++	printf("\t\nPRCM for HDMI is Done Successfully","Output",1,1,1);
++#endif
++}
++
++void ti816x_HdVpss_VencD297_VencA297()
++{
++#ifdef DEBUG_VPSS
++	printf("\t\nVideo PLL: VencD->297 VencA->297 Please Wait.....","Output",1,1,1);
++#endif
++	/*SYS_CLKOUT selection*/
++	WR_MEM_32(CM_CLKOUT_CTRL, 0xA2);  /* /5 divider is selected*/
++	ti816x_VideoPLL(0x6E, 0x2, 0xB, 0x0, 0x5, 0xA, 0x0, 0x2, 0xA, 0x0, 0x2, 0x3, 0x3);
++#ifdef DEBUG_VPSS
++	printf("\t\nVideo PLL Configuration is Done.....","Output",1,1,1);
++#endif
++}
++
++void ti816x_VideoPLL(uint VIDEO_N, uint VIDEO_P, uint  VIDEO_INTFREQ1, uint 
++VIDEO_FRACFREQ1, uint VIDEO_MDIV1, uint  VIDEO_INTFREQ2, uint VIDEO_FRACFREQ2, 
++uint VIDEO_MDIV2, uint  VIDEO_INTFREQ3, uint VIDEO_FRACFREQ3, uint VIDEO_MDIV3, 
++uint B1, unsigned C2)
++{
++	uint video_pll_ctrl=0;
++
++	/*Put the Video PLL in Bypass Mode*/
++	video_pll_ctrl = RD_MEM_32(VIDEOPLL_CTRL);
++	video_pll_ctrl &=0xFFFFFFFB;
++	video_pll_ctrl |=4;
++	WR_MEM_32(VIDEOPLL_CTRL, video_pll_ctrl);
++
++	/*Bring Video PLL out of Power Down Mode*/
++	video_pll_ctrl = RD_MEM_32(VIDEOPLL_CTRL);
++	video_pll_ctrl &=0xFFFFFFF7;
++	video_pll_ctrl |=8;
++	WR_MEM_32(VIDEOPLL_CTRL, video_pll_ctrl);
++
++	/*Program the Video PLL Multiplier and Pre-dividr value*/
++	video_pll_ctrl = RD_MEM_32(VIDEOPLL_CTRL);
++	video_pll_ctrl &=0xFF;
++	video_pll_ctrl |=(VIDEO_N<<16) | (VIDEO_P<<8);
++	WR_MEM_32(VIDEOPLL_CTRL, video_pll_ctrl);
++
++	/*Bring the Video PLL Individual output clocks out of Power Down Mode
++	  1->Power Down
++	  0->Normal Mode i.e., out of Power Down Mode
++	 */
++	WR_MEM_32(VIDEOPLL_PWD, 0x0);
++
++	/*Program the Video PLL to generate SYSCLK11 (RF Modulator), SYSCLK17 (SD_VENC), and STC1 source clocks*/
++	WR_MEM_32(VIDEOPLL_FREQ1, (1<<31) | (1<<28) | (VIDEO_INTFREQ1<<24) | VIDEO_FRACFREQ1);
++
++	/*Program Video PLL SYSCLK11 Post divider register*/
++	WR_MEM_32(VIDEOPLL_DIV1, (1<<8) | VIDEO_MDIV1);
++
++	/*Program the PLL to generate SYSCLK13 (HD_VENC_D clock) and STC0/STC1 source clocks */
++	WR_MEM_32(VIDEOPLL_FREQ2, (1<<31) | (1<<28) | (VIDEO_INTFREQ2<<24) | VIDEO_FRACFREQ2);
++	WR_MEM_32(VIDEOPLL_DIV2,  (1<<8) | VIDEO_MDIV2);
++
++	/*Program the PLL to generate SYSCLK13 and STC0/STC1 source clocks */
++	WR_MEM_32(VIDEOPLL_FREQ3, (1<<31) | (1<<28) | (VIDEO_INTFREQ3<<24) | VIDEO_FRACFREQ3);
++	WR_MEM_32(VIDEOPLL_DIV3,  (1<<8) | VIDEO_MDIV3);
++
++	WR_MEM_32(CM_SYSCLK13_CLKSEL, C2);
++	WR_MEM_32(CM_SYSCLK15_CLKSEL, B1);
++
++	/*Wait for PLL to Lock*/
++	while( (RD_MEM_32(VIDEOPLL_CTRL) & 0x80) != 0x80 );
++
++	/*Put the Main PLL in Normal(PLL) Mode*/
++	video_pll_ctrl = RD_MEM_32(VIDEOPLL_CTRL);
++	video_pll_ctrl &=0xFFFFFFFB;
++	WR_MEM_32(VIDEOPLL_CTRL, video_pll_ctrl);
++}
++
++void ti816x_SetDvo2PinMux()
++{
++	/* enable clocks on all units */
++	WR_MEM_32(0x48100100, 0x01031FFF);
++
++	WR_MEM_32(0x48100114, 0xC010E);
++
++	/* enable all video encoders */
++	WR_MEM_32(0x48100118, 0xF);
++
++	WR_MEM_32(0x48140814, 2);
++	WR_MEM_32(0x48140818, 2);
++	WR_MEM_32(0x4814081c, 2);
++	WR_MEM_32(0x48140820, 2);
++	WR_MEM_32(0x48140824, 2);
++	WR_MEM_32(0x48140828, 1);
++	WR_MEM_32(0x4814082c, 1);
++	WR_MEM_32(0x48140830, 1);
++	WR_MEM_32(0x48140834, 1);
++	WR_MEM_32(0x48140838, 1);
++	WR_MEM_32(0x4814083c, 2);
++	WR_MEM_32(0x48140840, 2);
++	WR_MEM_32(0x48140844, 2);
++	WR_MEM_32(0x48140848, 2);
++	WR_MEM_32(0x4814084c, 2);
++	WR_MEM_32(0x48140850, 2);
++	WR_MEM_32(0x48140854, 1);
++	WR_MEM_32(0x48140858, 1);
++	WR_MEM_32(0x4814085c, 1);
++	WR_MEM_32(0x48140860, 1);
++	WR_MEM_32(0x48140864, 1);
++	WR_MEM_32(0x48140868, 1);
++	WR_MEM_32(0x4814086c, 1);
++	WR_MEM_32(0x48140870, 1);
++	WR_MEM_32(0x48140874, 1);
++	WR_MEM_32(0x48140878, 2);
++	WR_MEM_32(0x4814087c, 1);
++	WR_MEM_32(0x48140880, 1);
++	WR_MEM_32(0x48140884, 1);
++	WR_MEM_32(0x48140888, 1);
++	WR_MEM_32(0x4814088c, 1);
++	WR_MEM_32(0x48140890, 1);
++	WR_MEM_32(0x48140894, 1);
++	WR_MEM_32(0x48140898, 1);
++	WR_MEM_32(0x4814089c, 1);
++	WR_MEM_32(0x481408b4, 2);
++	WR_MEM_32(0x481408b8, 2);
++	WR_MEM_32(0x481408bc, 2);
++	WR_MEM_32(0x481408c0, 2);
++	WR_MEM_32(0x481408c4, 2);
++	WR_MEM_32(0x481409d4, 0);
++	WR_MEM_32(0x481409d8, 0);
++	WR_MEM_32(0x481409dc, 0);
++	WR_MEM_32(0x481409e0, 0);
++	WR_MEM_32(0x481409e4, 0);
++	WR_MEM_32(0x481409e8, 0);
++	WR_MEM_32(0x481409ec, 0);
++	WR_MEM_32(0x481409f0, 0);
++#ifdef DEBUG_VPSS
++	printf("\t\nPinmux Configuration is Done.....","Output",1,1,1);
++#endif
++}
++
++void ti816x_configureHdmi(struct hdmi_cfg_params *cfgPtr)
++{
++	int status;
++
++	initParams.wp_base_addr = HDMI_WP_0_REGS;
++	initParams.core_base_addr = HDMI_CORE_0_REGS;
++	initParams.phy_base_addr = HDMI_PHY_0_REGS;
++
++	if (ti816x_hdmi_lib_init(&initParams) != 0x0)
++	{
++		while(1);
++	}
++
++	handle = ti816x_hdmi_lib_open( 0, cfgPtr, &status, 0x0);
++	if (handle == 0x0)
++	{
++		while(1);
++	}
++}
++
++void ti816x_startHdmi(void)
++{
++	int status;
++
++	status =  ti816x_hdmi_lib_start(handle, 0x0);
++
++	if (status == 0x0)
++	{
++#ifdef DEBUG_VPSS
++		printf("\nStarted HDMI \n");
++#endif
++		if (handle == 0x0)
++		{
++			while(1);
++		}
++	}
++	else
++	{
++		printf("Could not start HDMI\n");
++	}
++
++}
++
++void ti816x_configureHdVenc720P60(int useEmbeddedSync,char cmd[])
++{
++	volatile uint *vencHd_D_Base = NULL;
++
++	vencHd_D_Base = (volatile uint *)0x48106000;
++
++	/**vencHd_D_Base = 0x40023043;  - Prob embedded syncs */    
++	/**vencHd_D_Base = 0x4003A013;  - Color space conversion done */ 
++	if (useEmbeddedSync != 0x0)
++	{
++		*vencHd_D_Base = 0x4002A033; 
++	}
++	else
++	{
++		if (strcmp(cmd,"colorbar") == 0)
++		{
++		/* enable the bit to display the colorbar */
++			*vencHd_D_Base = 0x4003A033; 
++		}
++		else
++		{		
++			*vencHd_D_Base = 0x40032033;    
++		}
++	}
++
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x1FD01E24;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x02DC020C;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x00DA004A;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x020C1E6C;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x02001F88;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x00200000;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x1B6C0C77;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x1C0C0C30;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x1C0C0C30;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x842EE672;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x3F000018;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x50500103;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x000002E8;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x000C39E7;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x50500172;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x0001A64B;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x002D0000;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x05000000;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x00003000;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x00000000;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x5050016A;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x0001A64B;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x002D0000;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x05000000;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x00003000;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x00000000;
++	vencHd_D_Base++;
++	*vencHd_D_Base = 0x00000000;
++}
++
++void ti816x_vps_init()
++{
++	/* enable comp units */
++	vps_write32(VPS_COMP_STATUS, 0
++			| (1<<0)   /* HDMI enable */
++			);
++
++	/* set background color */
++	vps_write32(VPS_COMP_BGCOLOR, LOGO_BGCOLOR);
++}
++
++int ti816x_set_board(char cmd[])
++{
++	struct hdmi_cfg_params *params = NULL;
++	params = &param720p60;
++
++	/* enable vps clock */
++	ti816x_HdVpssClkEnable();
++	/* enable hdmi clock */
++	ti816x_HdmiClkEnable();
++	ti816x_HdVpss_VencD297_VencA297();
++	ti816x_SetDvo2PinMux();
++	ti816x_configureHdVenc720P60(0u, cmd);
++	ti816x_configureHdmi(params);
++	ti816x_startHdmi();
++
++	/* set the comp for hdmi */
++	ti816x_vps_init();
++
++	return 0;
++}
+-- 
+1.7.1
+

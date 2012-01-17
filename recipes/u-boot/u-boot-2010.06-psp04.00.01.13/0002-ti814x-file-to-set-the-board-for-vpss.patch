@@ -1,0 +1,603 @@
+From 0d98b6ae36827e603840e17fe768a4e019f9aa8f Mon Sep 17 00:00:00 2001
+From: Amarinder Bindra <a-bindra@ti.com>
+Date: Mon, 16 Jan 2012 19:11:21 +0530
+Subject: [PATCH 2/6] ti814x: file to set the board for vpss
+
+
+Signed-off-by: Amarinder Bindra <a-bindra@ti.com>
+---
+ common/ti814x_lib.c |  582 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 582 insertions(+), 0 deletions(-)
+ create mode 100644 common/ti814x_lib.c
+
+diff --git a/common/ti814x_lib.c b/common/ti814x_lib.c
+new file mode 100644
+index 0000000..847cd98
+--- /dev/null
++++ b/common/ti814x_lib.c
+@@ -0,0 +1,582 @@
++#include <logo.h>
++
++int ti814x_prcm_init()
++{
++	if (ti814x_prcm_enable_vps_power_and_clock() < 0)
++	{
++		return -1;
++	}
++
++	return 0;
++}
++
++int ti814x_prcm_enable_vps_power_and_clock()
++{
++	int repeat;
++	int ok;
++	uint32_t val;
++
++	/* SW_WKUP: Start a software forced wake up transition on the domain. */
++	prcm_write32(CM_HDVPSS_CLKSTCTRL, 0x02);
++
++	/* wait for 10 microseconds before checking for power update */
++	udelay(10);
++
++	/* Check the power state after the wakeup transistion */
++	for (ok=0, repeat=0; repeat<5; repeat++)
++	{
++		val = prcm_read32(PM_HDVPSS_PWRSTST);
++		if (val == 0x37)
++		{
++			ok = 1;
++			break;
++		}
++		udelay(10);
++	}
++	if (!ok)
++	{
++		return -1;
++	}
++
++	/* Enable HDVPSS Clocks */
++	prcm_write32(CM_HDVPSS_HDVPSS_CLK_CTRL, 0x02);
++
++	/* Enable HDMI Clocks */
++	prcm_write32(CM_HDVPSS_HDMI_CLKCTRL, 0x02);
++
++	for (ok = 0, repeat = 0; repeat < 5; repeat++)
++	{
++		val = prcm_read32(CM_HDVPSS_CLKSTCTRL);
++		if ((val & 0x100) == 0x100)
++		{
++			ok = 1;
++			break;
++		}
++		udelay(10);
++	}
++	if (!ok)
++	{
++		return -1;
++
++	}
++
++	/* reset HDVPSS and HDMI */
++	prcm_write32(RM_HDVPSS_RSTCTRL, 0x04);
++	udelay(10);
++	prcm_write32(RM_HDVPSS_RSTST, 0x04);
++	udelay(10);
++
++        /* release reset from HDVPSS and HDMI */
++	prcm_write32(RM_HDVPSS_RSTCTRL, 0x00);
++	udelay(10);
++
++        /* wait for SW reset to complete */
++	for (ok = 0, repeat = 0; repeat < 5; repeat++)
++	{
++		val = prcm_read32(RM_HDVPSS_RSTST);
++		if ((val & 0x4) == 0x4)
++		{
++			ok = 1;
++			break;
++		}
++		udelay(10);
++	}
++        if (!ok)
++        {
++    	        return -1;
++        }
++
++	/* put HDVPSS in ON State */
++	val = prcm_read32(PM_HDVPSS_PWRSTCTRL);
++	val |= 0x3;
++	prcm_write32(PM_HDVPSS_PWRSTCTRL, val);
++
++	/* wait 10 microseconds after powering on */
++	udelay(10);
++
++	/* check power status */
++	for (ok = 0, repeat = 0; repeat < 5; repeat++)
++	{
++		val = prcm_read32(PM_HDVPSS_PWRSTST);
++		if (val == 0x37)
++		{
++			ok = 1;
++			break;
++		}
++		udelay(10);
++	}
++        if (!ok)
++        {
++    	        return -1;
++        }
++
++	return 0;
++}
++
++/**
++ * Initialize the PLLs
++ */
++void ti814x_pll_init()
++{
++	ti814x_pll_config_hdvpss();
++}
++
++/**
++ * Configure PLL for HDVPSS unit
++ */
++void ti814x_pll_config_hdvpss()
++{
++	uint32_t rd_osc_src;
++	rd_osc_src = pll_read32(PLL_VIDEO2_PINMUX);
++	rd_osc_src &= 0xFFFFFFFE;
++	pll_write32(PLL_VIDEO2_PINMUX, rd_osc_src);
++	ti814x_pll_configure(PLL_HDVPSS_BASE, 19, 800, 4, 0x00000801);
++}
++
++/**
++ * Program a PLL unit
++ */
++void ti814x_pll_configure(uint32_t baseAddr, uint32_t N, uint32_t M, uint32_t M2, uint32_t clkCtrlValue)
++{
++	uint32_t m2nval, mn2val, clkctrl, clk_out, ref_clk, clkout_dco = 0;
++	uint32_t status;
++
++	m2nval = (M2<<16) | N;
++	mn2val =  M;
++	ref_clk     = OSC_FREQ / (N+1);
++	clkout_dco  = ref_clk * M;
++	clk_out     = clkout_dco / M2;
++
++	pll_write32((baseAddr + M2NDIV    ),m2nval);
++	pll_write32((baseAddr + MN2DIV    ),mn2val);
++	pll_write32((baseAddr + TENABLEDIV),0x1);
++	pll_write32((baseAddr + TENABLEDIV),0x0);
++	pll_write32((baseAddr + TENABLE   ),0x1);
++	pll_write32((baseAddr + TENABLE   ),0x0);
++
++	clkctrl = pll_read32(baseAddr + CLKCTRL);
++	clkctrl = (clkctrl & ~(7<<10 | 1<<23)) | clkCtrlValue;
++	pll_write32(baseAddr + CLKCTRL, clkctrl);
++
++	do
++	{
++		status = pll_read32(baseAddr + STATUS);
++	} 
++	while ((status & 0x00000600) != 0x00000600);
++}
++
++/**
++ * Initialize HDVPSS unit
++ */
++void ti814x_vps_init()
++{
++	/* enable clocks on all units */
++	vps_write32(VPS_CLKC_ENABLE, 0x01031fff);
++	vps_write32(VPS_CLKC_VENC_CLK_SELECT, 0x9000D);
++	udelay(10);
++
++	/* enable all video encoders */
++	vps_write32(VPS_CLKC_VENC_ENABLE, 0xD);
++
++	/* enable comp units */
++	vps_write32(VPS_COMP_STATUS, 0
++			| (1<<0)   // HDMI enable
++			);
++
++	/* set background color */
++	vps_write32(VPS_COMP_BGCOLOR, LOGO_BGCOLOR);
++}
++
++int ti814x_set_mode(int dispno,int xres, int yres, char cmd[])
++{
++#ifdef CONFIG_480p
++	/*modeline "720x480" 27.000 720 736 798 858 480 489 495 525 -hsync -vsync*/
++	if (ti814x_pll_config_hdmi(27000000) == -1)
++	{
++		return -1;
++	}
++	ti814x_hdmi_enable(27000000);
++        ti814x_vps_configure_venc(0x6000, 720, 736, 798, 858, 480, 489, 495, 525, 0, 1, 1,cmd);
++	xres = 720;
++	yres = 480;
++#else		
++	/* ModeLine "1920x1080" 148.50 1920 2008 2052 2200 1080 1084 1088 1125 +HSync +VSync */
++	if (ti814x_pll_config_hdmi(148500000) == -1)
++	{
++		return -1;
++	}
++	ti814x_hdmi_enable(148500000);
++	ti814x_vps_configure_venc(0x6000, 1920, 2008, 2052, 2200, 1080, 1084, 1088, 1125, 0, 0, 0,cmd);
++	xres = 1920;
++	yres = 1080;
++#endif
++	ti814x_pll_hdmi_setwrapper_clk();
++
++	return 0;
++}
++
++/**
++ * Configure PLL for HDMI
++ */
++int ti814x_pll_config_hdmi(uint32_t freq)
++{
++	uint32_t rd_osc_src;
++	pll_config_t config;
++
++	rd_osc_src = pll_read32(PLL_OSC_SRC_CTRL);
++	pll_write32(PLL_OSC_SRC_CTRL, (rd_osc_src & 0xfffbffff) | 0x0);
++
++	rd_osc_src = pll_read32(PLL_VIDEO2_PINMUX);
++	rd_osc_src &= 0xFFFFFFFE;
++	pll_write32(PLL_VIDEO2_PINMUX, rd_osc_src);
++	if (ti814x_pll_get_dividers(freq, 1, &config) == -1)
++	{
++		return -1;
++	}
++
++	ti814x_pll_configure(PLL_VIDEO2_BASE, config.n, config.m, config.m2, config.clk_ctrl);
++
++	return 0;
++}
++
++/**
++ * Enable HDMI output.
++ */
++void ti814x_hdmi_enable(int freq)
++{
++	uint32_t temp, temp1;
++
++	/* wrapper soft reset */
++	temp = hdmi_read32(0x0010) ;
++	temp1 = ((temp & 0xFFFFFFFE)| 0x1 );
++	hdmi_write32(0x0300, temp1);
++	temp = 0;
++	udelay(10);
++
++	/* configure HDMI PHY */
++	/* 48 Mhz Clock input to HDMI ie SDIO clock output from PRCM */
++	prcm_write32(0x15B0, 0x2);
++
++	/* Power on the phy from wrapper */
++	hdmi_write32(0x0040, 0x8);
++
++	while((hdmi_read32(0x0040) & 0x00000003) != 2);
++
++	hdmi_write32(0x0040, 0x4A);
++	while((hdmi_read32(0x0040) & 0x000000FF ) != 0x5A);
++
++	hdmi_write32(0x0040, 0x8A);
++	while((hdmi_read32(0x0040) & 0xFF) != 0xAA);
++
++	/* Dummy read to PHY base to complete the SCP reset process HDMI_PHY_U_BAS */
++	temp = hdmi_read32(0x0300);
++
++	temp = hdmi_read32(0x0300);
++
++	if(freq > 50000000)
++	temp1 = ((temp & 0x3FFFFFFF) | (0x1 << 30));//0x40000000);
++	else
++	temp1 = ((temp & 0x3FFFFFFF) | (0x0 << 30));//0x40000000);
++	hdmi_write32(0x0300, temp1);
++
++	temp = hdmi_read32(0x030C) ;
++	temp1 = ((temp & 0x000FFFFF) | 0x85400000);
++	hdmi_write32(0x030C, temp1);
++
++	hdmi_write32(0x0304, 0xF0000000);
++
++	udelay(10);
++
++	/* cec clock divider config */
++	temp = hdmi_read32(0x0070) ;
++	temp1 = temp | 0x00000218;
++	hdmi_write32(0x0070, temp1);
++
++	/* wrapper debounce config */
++	temp = hdmi_read32(0x0044) ;
++	temp1 = temp | 0x00001414;
++	hdmi_write32(0x0044, temp1);
++
++	/* packing mode config */
++	temp = hdmi_read32(0x0050) ;
++	temp1 = temp | 0x105;
++	hdmi_write32(0x0050, temp1);
++
++	/* disable audio */
++	hdmi_write32(0x0080, 0x0);
++
++	/* release HDMI IP CORE reset and release power down of core */
++	hdmi_write32(0x0414, 0x1);
++	hdmi_write32(0x0424, 0x1);
++
++	/* video action  config of hdmi */
++	hdmi_write32(0x0524, 0x0);
++
++	/* config input data bus width */
++	hdmi_write32(0x0420, 0x7);
++
++	/* configure AVI INFOFRAME */
++	hdmi_write32(0x0528, 0x0);  // VID_MODE CONFIG
++	hdmi_write32(0x04CC, 0x1);  // DATA ENABLE CNTRL
++	hdmi_write32(0x0420, 0x37); // ENABLE VSYNC AND HSYNC
++	hdmi_write32(0x04F8, 0x0);  // iadjust config to enable vsync
++	hdmi_write32(0x0520, 0x10); // csc is bt709
++	hdmi_write32(0x09BC, 0x21); // enable hdmi
++
++	hdmi_write32(0x0608, 0x20); // tmds_ctrl
++	hdmi_write32(0x0904, 0x0);  // disable n/cts of actrl
++	hdmi_write32(0x0950, 0x0);  // disable audio
++	hdmi_write32(0x0414, 0x0);  // keep audio  operation in reset state
++
++	/* configure AVI INFOFRAME */
++	hdmi_write32(0x0A00, 0x82);
++	hdmi_write32(0x0A04, 0x2);
++	hdmi_write32(0x0A08, 0xD);
++	hdmi_write32(0x0A10, 0x1);
++	hdmi_write32(0x0A14, 0xA0);
++	hdmi_write32(0x0A1C, 0x8F);
++
++	hdmi_write32(0x0538 , 0x3);  // DISABLE DEEP COLOR MODE IN DC PACKET
++	hdmi_write32(0x09C0 , 0x10);
++	hdmi_write32(0x09F8 , 0x3);  // ENABLE AND REPEAT AVI INFOFRAM TRANSMISSON
++	hdmi_write32(0x09FC , 0xF);  // ENABLE AND REPEAT GENEERAL PACKET TRANSMISSION
++}
++
++/* Change pin mux */
++void ti814x_pll_hdmi_setwrapper_clk()
++{
++        uint32_t rd_osc_src;
++        rd_osc_src = pll_read32(PLL_VIDEO2_PINMUX);
++        rd_osc_src |= 0x1;
++        pll_write32(PLL_VIDEO2_PINMUX, rd_osc_src);
++}
++
++int ti814x_pll_get_dividers(uint32_t req_out_clk, int hdmi, pll_config_t* config)
++{
++	int32_t ret = -1;
++	int32_t n, m, m2;
++	float ref_clk, dco_clk, clk_out;
++	float best_delta;
++
++	config->n = 0;
++	config->m = 0;
++	config->m2 = 0;
++	config->clk_ctrl = 0;
++	best_delta = 1E20;
++
++	if(hdmi)
++	{
++		config->n = 19;//n;
++		config->m = 1485;//m;
++		config->m2 = 10;//m2;
++		config->clk_ctrl = 0x200a1001;
++        	if(req_out_clk == 74250000 )
++		{
++                	config->n = 19;//n;
++			config->m = 742;//m;
++			config->m2 = 10;//m2;
++			config->clk_ctrl = 0x20020801;
++		}
++    		else if(req_out_clk == 65000000 )
++    		{
++    			config->n = 19;//n;
++    			config->m = 650;//m;
++    			config->m2 = 10;//m2;
++	    		config->clk_ctrl = 0x20020801;
++    		}
++	    	else if(req_out_clk == 54000000 )
++   		{
++			config->n = 19;//n;
++	    		config->m = 540;//m;
++    			config->m2 = 10;//m2;
++	    		config->clk_ctrl = 0x20020801;
++	   	}
++    		else if(req_out_clk == 27000000 )
++	    	{
++		    	config->n = 19;//n;
++	    		config->m = 540;//m;
++		    	config->m2 = 2;//m2;
++    			config->clk_ctrl = 0x200A0801;//0x20020801;
++    		}
++	    	else if(req_out_clk == 33000000 )
++    		{
++	    		config->n = 19;//n;
++	    		config->m = 660;//m;
++    			config->m2 = 2;//m2;
++	    		config->clk_ctrl = 0x200A0801;//0x20020801;
++	    	}
++
++    		ref_clk = 20E6f / (config->n + 1);
++	    	dco_clk = ref_clk * config->m;
++    		clk_out = dco_clk / config->m2;
++    		ret = 0;
++	}
++	else
++	{
++		for (n = 19; n <= 19 && ret != 0; n++)
++		{
++			ref_clk = 20E6f / (n + 1);
++			if (ref_clk < 2.5E6)
++			{
++				int32_t m_min;
++				int32_t m_max;
++
++				if (hdmi)
++				{
++					m_min = 1000.0E6f / ref_clk;
++					m_max = 2000.0E6f / ref_clk;
++				}	
++				else
++				{
++					m_min =  500.0E6f / ref_clk;
++					m_max = 1000.0E6f / ref_clk;
++				}	
++
++				for (m = m_min; m < m_max && ret != 0; m++)
++				{
++					dco_clk = ref_clk * m;
++					for (m2 = 10; m2 <= 20; m2++)
++					{
++						float delta;
++						clk_out = dco_clk / m2;
++						delta = clk_out-req_out_clk;
++						if (delta < 0)
++						{
++							delta = -delta;
++						}
++
++						if (delta < best_delta)
++						{
++							config->n = n;
++							config->m = m;
++							config->m2 = m2;
++							if (hdmi)
++							{
++								config->clk_ctrl = 0x200a1001;
++							}
++							else
++							{
++								config->clk_ctrl = 0x00000801;
++							}
++
++							best_delta = delta;
++
++							if (delta == 0.0)
++							{
++								ret = 0;
++								break;
++							}
++						}
++					}
++				}
++			}
++		}
++	}
++	return ret;
++}
++
++/**
++ * Configure VENC unit
++  */
++void ti814x_vps_configure_venc(uint32_t cfg_reg_base, int hdisp, int hsyncstart, int hsyncend, int htotal, int vdisp, int vsyncstart, int vsyncend, int vtotal, int enable_invert, int hs_invert, int vs_invert,char *cmd)
++{
++
++  	int av_start_h = htotal-hsyncstart;
++	int av_start_v = vtotal-vsyncstart;
++	int hs_width = hsyncend-hsyncstart;
++	int vs_width = vsyncend-vsyncstart;
++
++	 /* CFG10: clamp, lines (total num lines), pixels (total num pixels/line) */
++
++	vps_write32(cfg_reg_base + 0x28, 0x84000000 | (vtotal<<12) | (htotal));  // 84h=132d for 1080i
++
++	 /* CFG12: hs_width, act_pix, h_blank-1 */
++
++  	vps_write32(cfg_reg_base + 0x30, (hs_width<<24) | (hdisp<<12) | (av_start_h-1));
++
++ 	 /* CFG15: vout_hs_wd, vout_avdhw, vout_avst_h (same as in 0x6030?) */
++
++  	vps_write32(cfg_reg_base + 0x3c, (hs_width<<24) | (hdisp<<12) | (av_start_h));
++
++  	/* CFG16: bp_pk_l (back porch peak), vout_avst_v1 (active video start field 1), vout_hs_st (hsync start) */
++
++  	vps_write32(cfg_reg_base + 0x40, (av_start_v<<12));
++
++ 	 /* CFG17: bp_pk_h (back porch peak), vout_avst_vw (num active lines), vout_avst_v1 (active video start field 2) */
++
++  	vps_write32(cfg_reg_base + 0x44, (vtotal<<12));
++
++  	/* CFG18: vout_vs_wd1, vout_vs_st1 (vsync start), vout_avd_vw2 (vs width field 2) */
++
++  	vps_write32(cfg_reg_base + 0x48, (vs_width<<24));
++
++  	/* CFG21: osd_avd_hw (number of pixels per line), osd_avst_h */
++
++  	vps_write32(cfg_reg_base + 0x54, (hs_width<<24) | (hdisp<<12) | (av_start_h-8));
++
++  	/* CFG22: osd_avst_v1 (first active line), osd_hs_st (HS pos) */
++
++  	vps_write32(cfg_reg_base + 0x58, (av_start_v<<12));
++
++  	/* CFG23: osd_avd_vw1 (number of active lines), osd_avst_v2 (first active line in 2nd field) */
++
++  	vps_write32(cfg_reg_base + 0x5c, (vdisp<<12));
++
++  	/* CFG24: osd_vs_wd1 (vsync width), osd_vs_st1 (vsync start), osd_avd_vw2 */
++
++  	vps_write32(cfg_reg_base + 0x60, (vs_width<<24));
++
++  	/* CFG25: osd_vs_wd2, osd_fid_st1, osd_vs_st2 */
++
++  	vps_write32(cfg_reg_base + 0x64, 0x00000000);
++
++  	vps_write32(cfg_reg_base + 0x00,
++
++    	(enable_invert<<25)
++
++    	| (hs_invert<<24)
++
++    	| (vs_invert<<23)
++
++    	| (3<<16) // video out format: 10 bit, separate syncs
++
++    	| (1<<13) // bypass gamma correction
++
++    	| (1<<5)  // bypass gamma correction
++
++    	| (1<<4)  // bypass 2x upscale
++
++    	| (1<<0)  // 480p format 
++
++    	);
++
++	if (strcmp(cmd, "colorbar") == 0)
++		vps_write32(cfg_reg_base + 0x00, vps_read32(cfg_reg_base+0x00) | 0x40000000 | 1<<15); /* start encoder with color bar bit set*/
++	else
++		vps_write32(cfg_reg_base + 0x00, vps_read32(cfg_reg_base+0x00) | 0x40000000); /* start encoder */
++}
++
++int ti814x_set_board(char cmd[])
++{
++	if(ti814x_prcm_init() == -1)
++        {
++#ifdef DEBUG_VPSS
++		printf("ERROR: ti814x_prcm_init failed\n");
++#endif
++		return -1;
++        }
++
++	ti814x_pll_init();
++
++	ti814x_vps_init();
++
++	if (ti814x_set_mode(1, WIDTH, HEIGHT, cmd) == -1)
++	{
++#ifdef DEBUG_VPSS
++		printf("ERROR: ti814x_set_mode failed\n");
++#endif
++		return -1;
++	}
++	
++	return 0;
++}
+-- 
+1.7.1
+

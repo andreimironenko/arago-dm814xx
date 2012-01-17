@@ -1,0 +1,274 @@
+From d678b9c4af3c959145b092b9ae7b400e59390baa Mon Sep 17 00:00:00 2001
+From: Amarinder Bindra <a-bindra@ti.com>
+Date: Mon, 16 Jan 2012 20:39:12 +0530
+Subject: [PATCH 4/6] ti814x ti816x: header file for logo and colorbar
+
+
+Signed-off-by: Amarinder Bindra <a-bindra@ti.com>
+---
+ include/logo.h |  253 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 253 insertions(+), 0 deletions(-)
+ create mode 100644 include/logo.h
+
+diff --git a/include/logo.h b/include/logo.h
+new file mode 100644
+index 0000000..a07f353
+--- /dev/null
++++ b/include/logo.h
+@@ -0,0 +1,253 @@
++#include <command.h>
++#include <common.h>
++
++#ifdef CONFIG_TI816X
++#include <hdmi_cfg.h>             /* include the hdmi configuration header file */
++#endif
++
++#define WR_MEM_32(addr, data)      *(uint*)(addr) =(uint)(data)
++#define RD_MEM_32(addr)            *(uint*)(addr)
++
++#define PRCM_REG_BASE 			0x48180000
++#define PRCM_REG_SIZE 			(12*1024)
++
++#define prcm_read32(off)            *(volatile int*)(PRCM_REG_BASE+(off))
++#define prcm_write32(off, value)    (*(volatile int*)(PRCM_REG_BASE+(off)) =(value))
++
++//#define CONFIG_GRPX0
++
++/*For TI816X */
++#ifdef CONFIG_TI816X
++
++#define CONFIG_720p
++#define SETBOARD()		 	ti816x_set_board(argv[0])
++#define CTRL_MODULE_BASE_ADDR    	0x48140000
++#define CM_CLKOUT_CTRL           	(PRCM_REG_BASE + 0x100)
++
++#define VIDEOPLL_CTRL            	(CTRL_MODULE_BASE_ADDR + 0x470)
++#define VIDEOPLL_PWD             	(CTRL_MODULE_BASE_ADDR + 0x474)
++#define VIDEOPLL_FREQ1           	(CTRL_MODULE_BASE_ADDR + 0x478)
++#define VIDEOPLL_DIV1            	(CTRL_MODULE_BASE_ADDR + 0x47C)
++#define VIDEOPLL_FREQ2           	(CTRL_MODULE_BASE_ADDR + 0x480)
++#define VIDEOPLL_DIV2            	(CTRL_MODULE_BASE_ADDR + 0x484)
++#define VIDEOPLL_FREQ3          	(CTRL_MODULE_BASE_ADDR + 0x488)
++#define VIDEOPLL_DIV3            	(CTRL_MODULE_BASE_ADDR + 0x48C)
++
++/*HDVPSS*/
++#define CM_HDDSS_CLKSTCTRL       	(PRCM_REG_BASE + 0x0404)
++#define CM_HDMI_CLKSTCTRL        	(PRCM_REG_BASE + 0x0408)
++#define CM_ACTIVE_HDDSS_CLKCTRL  	(PRCM_REG_BASE + 0x0424)
++#define CM_SYSCLK13_CLKSEL       	(PRCM_REG_BASE + 0x0334)
++#define CM_SYSCLK15_CLKSEL       	(PRCM_REG_BASE + 0x0338)
++#define CM_ACTIVE_HDMI_CLKCTRL   	(PRCM_REG_BASE + 0x0428)
++
++#endif
++
++/*For TI814X */
++#ifdef CONFIG_TI814X
++
++#define CONFIG_480p
++#define SETBOARD()		 	ti814x_set_board(argv[0])
++#define CM_HDVPSS_CLKSTCTRL       	0x0800
++#define CM_HDVPSS_HDVPSS_CLK_CTRL   	0x0820
++#define CM_HDVPSS_HDMI_CLKCTRL      	0x0824
++
++#define PM_HDVPSS_PWRSTCTRL         	0x0E00
++#define PM_HDVPSS_PWRSTST           	0x0E04
++#define RM_HDVPSS_RSTCTRL           	0x0E10
++#define RM_HDVPSS_RSTST             	0x0E14
++
++#define PLL_REG_BASE			0x481C5000
++#define PLL_REG_SIZE 			(4*1024)
++
++#define pll_read32(off)            *(volatile int*)(PLL_REG_BASE+(off))
++#define pll_write32(off, value)    (*(volatile int*)(PLL_REG_BASE+(off))= (uint)(value))
++
++#define CLKCTRL   			0x04
++#define TENABLE                        0x08
++#define TENABLEDIV			0x0C
++#define M2NDIV				0x10
++#define MN2DIV				0x14
++#define STATUS				0x24
++#define OSC_FREQ			20
++
++#define PLL_CONTROL_REVISION      	0x0000
++#define PLL_CONTROL_SYSCONFIG     	0x0010
++
++#define PLL_HDVPSS_BASE           	PLL_HDVPSS_PWRCTRL
++#define PLL_HDVPSS_PWRCTRL        	0x0170
++#define PLL_HDVPSS_CLKCTRL        	0x0174
++#define PLL_HDVPSS_TENABLE        	0x0178
++#define PLL_HDVPSS_TENABLEDIV     	0x017C
++#define PLL_HDVPSS_M2NDIV         	0x0180
++#define PLL_HDVPSS_MN2DIV         	0x0184
++#define PLL_HDVPSS_FRACDIV        	0x0188
++#define PLL_HDVPSS_BWCTRL         	0x018C
++#define PLL_HDVPSS_FRACCTRL       	0x0190
++#define PLL_HDVPSS_STATUS         	0x0194
++
++#define PLL_VIDEO0_BASE           	PLL_VIDEO0_PWRCTRL
++#define PLL_VIDEO0_PWRCTRL        	0x01A0
++#define PLL_VIDEO0_CLKCTRL        	0x01A4
++#define PLL_VIDEO0_TENABLE        	0x01A8
++#define PLL_VIDEO0_TENABLEDIV     	0x01AC
++#define PLL_VIDEO0_M2NDIV         	0x01B0
++#define PLL_VIDEO0_MN2DIV         	0x01B4
++#define PLL_VIDEO0_FRACDIV        	0x01B8
++#define PLL_VIDEO0_BWCTRL         	0x01BC
++#define PLL_VIDEO0_FRACCTRL       	0x01C0
++#define PLL_VIDEO0_STATUS         	0x01C4
++
++#define PLL_VIDEO1_BASE           	PLL_VIDEO1_PWRCTRL
++#define PLL_VIDEO1_PWRCTRL       	0x01D0
++#define PLL_VIDEO1_CLKCTRL        	0x01D4
++#define PLL_VIDEO1_TENABLE        	0x01D8
++#define PLL_VIDEO1_TENABLEDIV     	0x01DC
++#define PLL_VIDEO1_M2NDIV         	0x01E0
++#define PLL_VIDEO1_MN2DIV         	0x01E4
++#define PLL_VIDEO1_FRACDIV        	0x01E8
++#define PLL_VIDEO1_BWCTRL         	0x01EC
++#define PLL_VIDEO1_FRACCTRL       	0x01F0
++#define PLL_VIDEO1_STATUS         	0x01F4
++
++#define PLL_VIDEO2_BASE           	PLL_VIDEO2_PWRCTRL
++#define PLL_VIDEO2_PWRCTRL        	0x0200
++#define PLL_VIDEO2_CLKCTRL        	0x0204
++#define PLL_VIDEO2_TENABLE        	0x0208
++#define PLL_VIDEO2_TENABLEDIV     	0x020C
++#define PLL_VIDEO2_M2NDIV         	0x0210
++#define PLL_VIDEO2_MN2DIV        	0x0214
++#define PLL_VIDEO2_FRACDIV        	0x0218
++#define PLL_VIDEO2_BWCTRL         	0x021C
++#define PLL_VIDEO2_FRACCTRL       	0x0220
++#define PLL_VIDEO2_STATUS         	0x0224
++#define PLL_VIDEO2_PINMUX         	0x02C8
++#define PLL_OSC_SRC_CTRL          	0x02C0
++
++#define HDMI_REG_BASE 0x46C00000
++#define HDMI_REG_SIZE (4*1024)
++
++#define hdmi_read32(off)            *(int*)(HDMI_REG_BASE+(off))
++#define hdmi_write32(off, value)    *( int*)(HDMI_REG_BASE+(off)) = (value)
++#endif
++
++/* Common for TI814X and TI816X */
++#define VPDMA_REG_BASE 0x4810D000
++
++#define vpdma_read32(off)            *(volatile int*)(VPDMA_REG_BASE+(off))
++#define vpdma_write32(off, value)    (*(volatile int*)(VPDMA_REG_BASE+(off)) =(value))
++
++#define DATA_TYPE                       0x6
++#define VPDMA_DESC_BUFFER               0x81600000  /* Descriptor buffer */
++#define VPDMA_PID                       0x000
++#define VPDMA_LIST_ADDR                 0x004
++#define VPDMA_LIST_ATTR                 0x008
++#define VPDMA_LIST_STAT_SYNC            0x00C
++#define VPDMA_BG_RGB                    0x018
++#define VPDMA_GRPX0_DATA_CSTAT          0x37c
++#define VPDMA_GRPX1_DATA_CSTAT          0x380
++#define VPDMA_GRPX2_DATA_CSTAT          0x384
++#define VPDMA_LIST_NUMBER               2 
++
++#define GRPX0                           0
++#define GRPX1                           1
++#define GRPX2                           2
++#define GRPX0_CHANNEL_NUMBER            29
++#define GRPX1_CHANNEL_NUMBER            30
++#define GRPX2_CHANNEL_NUMBER            31
++
++#define vps_read32(off)            *(volatile int*)(VPS_REG_BASE+(off))
++#define vps_write32(off, value)    *(volatile int*)(VPS_REG_BASE+(off)) = (value)
++
++#define VPS_REG_BASE                    0x48100000
++#define VPS_REG_SIZE                    (128*1024)
++
++#define vps_read32(off)            *(volatile int*)(VPS_REG_BASE+(off))
++#define vps_write32(off, value)    *(volatile int*)(VPS_REG_BASE+(off)) = (value)
++
++#define VPS_CLKC_ENABLE                 0x0100
++#define VPS_CLKC_VENC_CLK_SELECT        0x0114
++#define VPS_CLKC_VENC_ENABLE            0x0118
++#define VPS_COMP_STATUS                 0x5200
++#define VPS_COMP_BGCOLOR                0x5214
++#define LOGO_BGCOLOR                    0x0	/*Black*/
++#define VPS_CLKC_RESET                  0x0104
++#define VPS_COMP_HDMI_VOUT1             0x5204
++
++#define bmp_read64(off)		  *(long long*)(off)
++#define bmp_read16(off)		  *(short int*)(off)
++
++#ifdef CONFIG_480p
++#define WIDTH                           720
++#define HEIGHT                          480
++#elif defined CONFIG_720p
++#define WIDTH                           1280
++#define HEIGHT                          720
++#else
++#define WIDTH                           1920
++#define HEIGHT                          1080
++#endif
++
++#define STRIDE                          3 * WIDTH
++#define FRAME_SIZE                      (STRIDE * HEIGHT)
++
++#define bmp_read64(off)           *(long long*)(off)
++#define bmp_read16(off)           *(short int*)(off)
++
++#define BMP_SIGNATURE                   0x4d42
++#define BMP_WIDTH_OFFSET                0x12
++#define BMP_HEIGHT_OFFSET               0x16
++#define BMP_DATA_OFFSET                 0xA
++#define BMP_BITS_PER_PIXEL_OFFSET       0x1C
++#define BMP_IMAGE_BOTTOMUP              0
++#define BMP_IMAGE_TOPDOWN               1
++
++typedef struct
++ {
++         uint32_t n;
++         uint32_t m;
++         uint32_t m2; 
++         uint32_t clk_ctrl;
++ } pll_config_t;
++
++typedef enum
++{       
++       VPS_MODULE_VPDMA = 0
++} vps_module_t;
++
++int vpdma_load_firmware(uint32_t*);
++void vpdma_send_list(uint32_t*, int, int);
++int dispmgr_wait_for_list_complete(int);
++int read_bmp_image(uint32_t, uint32_t);
++uint32_t dispmgr_create_grpx_conf_descriptor(int, uint32_t*, uint32_t*, uint32_t, uint32_t);
++uint32_t dispmgr_setup_layers(uint32_t*, int, int, int, uint32_t);
++void vps_reset_module(vps_module_t, int);
++
++#ifdef CONFIG_TI816X
++void ti816x_HdVpssClkEnable(void);
++void ti816x_HdmiClkEnable(void);
++void ti816x_HdVpss_VencD297_VencA297(void);
++void ti816x_VideoPLL(uint, uint, uint, uint, uint, uint, uint, uint, uint, uint, uint, uint, unsigned);
++void ti816x_SetDvo2PinMux(void);
++void ti816x_configureHdmi(struct hdmi_cfg_params*);
++void ti816x_startHdmi(void);
++void ti816x_configureHdVenc720P60(int, char []);
++void ti816x_vps_init(void);
++int ti816x_set_board(char[]);
++#endif
++
++#ifdef CONFIG_TI814X
++int ti814x_pll_get_dividers(uint32_t, int, pll_config_t*);
++void ti814x_pll_configure(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t);
++void ti814x_pll_config_hdvpss(void);
++int ti814x_prcm_enable_vps_power_and_clock(void);
++int ti814x_prcm_init(void);
++void ti814x_vps_configure_venc(uint32_t, int, int, int, int, int, int, int, int, int, int, int,char*);
++int ti814x_pll_config_hdmi(uint32_t);
++void ti814x_pll_init(void);
++void ti814x_vps_init(void);
++int ti814x_set_mode(int ,int , int, char []);
++void ti814x_pll_hdmi_setwrapper_clk(void);
++void ti814x_hdmi_enable(int);
++int ti814x_set_board(char[]);
++#endif
+-- 
+1.7.1
+
