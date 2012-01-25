@@ -39,3 +39,6 @@ PREFERRED_VERSION_eglibc-initial	= "2.12"
 # Select newer fakeroot, as others are unfetchable
 PREFERRED_VERSION_fakeroot = "1.14.5"
 PREFERRED_VERSION_fakeroot-native = "1.14.5"
+
+# Pin down util-linux-ng at 2.17 for GPLv3-less mods
+PREFERRED_VERSION_util-linux-ng = "2.17"
