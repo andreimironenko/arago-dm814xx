@@ -13,7 +13,7 @@ test -x "$thttpd" || exit 0
 case "$1" in
   start)
     echo -n "Starting thttpd"
-    start-stop-daemon --start --quiet --exec $thttpd -- -d @@SRVDIR -u root -c "/cgi-bin/*"
+    start-stop-daemon --start --quiet --exec $thttpd -- -d @@SRVDIR -p 8080 -u root -c "/cgi-bin/*"
     echo "."
     ;;
   stop)
@@ -36,7 +36,7 @@ case "$1" in
     done
     echo ""
     echo -n "Starting thttpd"
-    start-stop-daemon --start --quiet --exec $thttpd -- -d @@SRVDIR -u root -c "/cgi-bin/*"
+    start-stop-daemon --start --quiet --exec $thttpd -- -d @@SRVDIR -p 8080 -u root -c "/cgi-bin/*"
     echo "."
     ;;
   *)
