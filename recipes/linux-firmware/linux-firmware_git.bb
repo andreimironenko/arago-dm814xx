@@ -3,11 +3,11 @@ LICENSE = "TI TSPA"
 # This recipe overlays the recipe in OE as the ti wl12xx firmware files are fetched from 
 # a different git in github. 
 
-PR = "r2"
+PR = "r3"
 PR_append = "+gitr${SRCREV}"
-SRCREV = "RLS_R4_11"
+SRCREV = "c18c1ab06c8c1f9c7a3f635e9392e56d5499df6e"
 
-SRC_URI = "git://github.com/TI-OpenLink/ti-utils.git;protocol=git"
+SRC_URI = "git://github.com/TI-ECS/ti-utils.git;protocol=git"
 
 # Default NVS file for out of box startup
 SRC_URI += "file://wl1271-nvs.bin"
