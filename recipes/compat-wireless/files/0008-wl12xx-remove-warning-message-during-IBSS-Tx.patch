@@ -1,0 +1,36 @@
+From fd9d568c69b66d91143253077ffb784abe9ba4b1 Mon Sep 17 00:00:00 2001
+From: Arik Nemtsov <arik@wizery.com>
+Date: Wed, 28 Sep 2011 09:20:44 +0300
+Subject: [PATCH 1/2] wl12xx: remove warning message during IBSS Tx
+
+mac80211 sets the carrier on an IBSS interface even when no network is
+joined. Ignore garbage frames transmitted on a disconnected IBSS
+interface without printing warnings.
+---
+ drivers/net/wireless/wl12xx/tx.c |   10 +++++++++-
+ 1 files changed, 9 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/wireless/wl12xx/tx.c b/drivers/net/wireless/wl12xx/tx.c
+index 367809e..bccbf52 100644
+--- a/drivers/net/wireless/wl12xx/tx.c
++++ b/drivers/net/wireless/wl12xx/tx.c
+@@ -490,7 +490,15 @@ static int wl1271_prepare_tx_frame(struct wl1271 *wl, struct sk_buff *skb,
+ 	}
+ 
+ 	if (hlid == WL1271_INVALID_LINK_ID) {
+-		wl1271_error("invalid hlid. dropping skb 0x%p", skb);
++		if (wl->bss_type == BSS_TYPE_IBSS &&
++		    !test_bit(WL1271_FLAG_IBSS_JOINED, &wl->flags)) {
++			/* It's ok to drop packets when not joined to IBSS */
++			wl1271_debug(DEBUG_TX, "dropping skb while IBSS not "
++				     " joined");
++		} else {
++			wl1271_error("invalid hlid. dropping skb 0x%p", skb);
++		}
++
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+1.7.4.1
+
