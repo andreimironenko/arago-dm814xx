@@ -1,7 +1,7 @@
 DESCRIPTION = "TI EDMA3 Low Level Driver (LLD)"
 HOMEPAGE = "http://software-dl.ti.com/dsps/dsps_public_sw/${SRC_URI_edma3lldsite}/edma3_lld"
 SECTION = "devel"
-LICENSE = "TI"
+LICENSE = "BSD"
 
 require ti-paths.inc
 require ti-staging.inc
