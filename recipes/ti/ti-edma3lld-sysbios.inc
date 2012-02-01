@@ -1,7 +1,7 @@
 DESCRIPTION = "TI EDMA3 Low Level Driver (LLD) for SYSBIOS"
 HOMEPAGE = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_tii/psp/edma3_lld"
 SECTION = "devel"
-LICENSE = "TI"
+LICENSE = "BSD"
 
 require ti-paths.inc
 require ti-staging.inc
