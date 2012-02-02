@@ -18,6 +18,7 @@ PLATFORM_dm368-evm = "dm368"
 SRC_URI = "file://mksdboot.sh \
            file://setup.htm \
            file://top_${PLATFORM}_evm.png \
+           file://ti_logo.bmp \
            file://README.boot.scr \
            file://windows_users.htm \
 "
@@ -49,6 +50,7 @@ do_install () {
     install -m 0755 ${WORKDIR}/mksdboot.sh ${D}/bin
     install -m 0755 ${WORKDIR}/setup.htm ${D}/bin
     install -m 0755 ${WORKDIR}/top_${PLATFORM}_evm.png ${D}/bin
+    install -m 0755 ${WORKDIR}/ti_logo.bmp ${D}/bin
     install -m 0755 ${WORKDIR}/windows_users.htm ${D}/bin
     install -m 0755 ${WORKDIR}/README.boot.scr ${D}/bin
 }
