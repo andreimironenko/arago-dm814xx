@@ -19,4 +19,5 @@ SRC_URI += "file://0001-ti816x-ti814x-C-files-for-register-settings-on-the-b.pat
             file://0003-ti814x-added-configs-for-displaying-logo.patch \
             file://0004-ti816x-added-configs-for-displaying-logo.patch \
             file://0005-ti814x-ti816x-changes-in-Makefile-to-compile-the-fil.patch \
+            file://0006-ti816x-adding-config-CONFIG_TI81XX_VIDEO-for-logo.patch \
 "
