@@ -5,7 +5,7 @@ LICENSE = "TI"
 inherit qt4e
 
 PR = "${MACHINE_KERNEL_PR}"
-PR_append = "a"
+PR_append = "b"
 
 DEMOSPLATFORM_dm355    = "dm355"
 DEMOSPLATFORM_dm365    = "dm365"
@@ -31,4 +31,3 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 FILES_${PN} = "${installdir}/dvsdk-demos/*"
 RRECOMMENDS_${PN} = "qt4-embedded-plugin-mousedriver-tslib"
-
