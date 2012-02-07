@@ -163,8 +163,8 @@ execute "cp $sdkdir/board-support/prebuilt-images/uImage-*.bin /tmp/sdk/$$/uImag
 execute "cp $sdkdir/board-support/prebuilt-images/u-boot.bin /tmp/sdk/$$/"
 execute "cp $sdkdir/board-support/prebuilt-images/u-boot.noxip.bin /tmp/sdk/$$/"
 execute "cp $sdkdir/board-support/prebuilt-images/MLO /tmp/sdk/$$/"
-execute "cp $sdkdir/bin/top_ti816x_evm.png /tmp/sdk/$$/"
 execute "cp $sdkdir/bin/ti_logo.bmp /tmp/sdk/$$/"
+execute "cp $sdkdir/bin/top_ti816x_evm.png /tmp/sdk/$$/"
 execute "cp $sdkdir/bin/windows_users.htm /tmp/sdk/$$/"
 execute "cp $sdkdir/bin/README.boot.scr /tmp/sdk/$$/"
 
