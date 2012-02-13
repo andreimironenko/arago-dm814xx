@@ -1,3 +1,5 @@
+require matrix-gui-apps-git.inc
+
 require matrix-gui-paths.inc
 
 MATRIX_FILES_DIR ?= ${S}

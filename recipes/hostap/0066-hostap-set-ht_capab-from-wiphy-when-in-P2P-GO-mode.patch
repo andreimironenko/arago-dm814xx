@@ -1,0 +1,57 @@
+From 60e9a4ae17602c6ff315c78cfb8e17d6d92e8013 Mon Sep 17 00:00:00 2001
+From: Arik Nemtsov <arik@wizery.com>
+Date: Fri, 25 Nov 2011 15:57:28 +0200
+Subject: [PATCH 25/29] hostap: set ht_capab from wiphy when in P2P GO mode
+
+Set the HT capabilities of a P2P GO according to the wiphy supported
+ones. Mask-in a white-list of HT capabilities that won't cause problems
+for non-supporting stations.
+
+Signed-hostap: Arik Nemtsov <arik@wizery.com>
+---
+ wpa_supplicant/ap.c |   20 +++++++++++++++++---
+ 1 files changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/wpa_supplicant/ap.c b/wpa_supplicant/ap.c
+index ce7e070..5f76f5d 100644
+--- a/wpa_supplicant/ap.c
++++ b/wpa_supplicant/ap.c
+@@ -87,9 +87,10 @@ static int wpa_supplicant_conf_ap(struct wpa_supplicant *wpa_s,
+ 
+ #ifdef CONFIG_IEEE80211N
+ 	/*
+-	 * Enable HT20 if the driver supports it, by setting conf->ieee80211n.
++	 * Enable HT20 if the driver supports it, by setting conf->ieee80211n
++	 * and a mask of allowed capabilities within conf->ht_capab.
+ 	 * Using default config settings for: conf->ht_op_mode_fixed,
+-	 * conf->ht_capab, conf->secondary_channel, conf->require_ht
++	 * conf->secondary_channel, conf->require_ht
+ 	 */
+ 	modes = wpa_drv_get_hw_feature_data(wpa_s, &num_modes, &flags);
+ 	if (modes) {
+@@ -101,8 +102,21 @@ static int wpa_supplicant_conf_ap(struct wpa_supplicant *wpa_s,
+ 				break;
+ 			}
+ 		}
+-		if (mode && mode->ht_capab)
++		if (mode && mode->ht_capab) {
+ 			conf->ieee80211n = 1;
++
++			/*
++			 * white-list capabilities that won't cause issues
++			 * to connecting stations, while leaving the current
++			 * capabilities intact (currently disabled SMPS).
++			 */
++			conf->ht_capab |= mode->ht_capab &
++			(HT_CAP_INFO_GREEN_FIELD |
++			HT_CAP_INFO_SHORT_GI20MHZ |
++			HT_CAP_INFO_SHORT_GI40MHZ |
++			HT_CAP_INFO_RX_STBC_MASK |
++			HT_CAP_INFO_MAX_AMSDU_SIZE);
++		}
+ 		ieee80211_sta_free_hw_features(modes, num_modes);
+ 		modes = NULL;
+ 	}
+-- 
+1.7.0.4
+

@@ -1,57 +1,65 @@
 DESCRIPTION = "libGLES for the omap3"
 LICENSE = "TI Proprietary"
 
-PR = "r10"
+PR = "r25"
 
-COMPATIBLE_MACHINE = "(omap3|ti816x|ti814x)"
+COMPATIBLE_MACHINE = "(omap3|ti814x|ti816x|ti33x)"
 
 DEPENDS = "virtual/libx11 libxau libxdmcp"
 
 PROVIDES += "virtual/egl"
 
-# some hints to get you going. as this isnt a totally "open" library, you need
-# to do some work. follow the steps below.
-#
-# 1. if you don't already have a ti account get one here. it's free:
-#  http://www.ti.com/hdr_my_ti
-# 2. fetch the gl-es bin (full OMAP Graphics SDK) from here:
-#  http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/gfxsdk/latest/index_FDS.html
-# 3. put the OMAP35x_*.bin file in $DL_DIR, i.e. downloads/
-#  mv OMAP35x_Graphics_SDK_setuplinux_3_01_00_06.bin ./downloads/
-# 4. make the checksum file in ./downloads/ directory:
-#  cd ./downloads/
-#  md5sum OMAP35x_Graphics_SDK_setuplinux_3_01_00_06.bin > OMAP35x_Graphics_SDK_setuplinux_3_01_00_06.bin.md5
-# 
-# voila!
+BINFILE ?= "OMAP35x_Graphics_SDK_setuplinux_${SGXPV}.bin"
 
-SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/gfxsdk/${SGXPV}/exports/OMAP35x_Graphics_SDK_setuplinux_${SGXPV}.bin \
+SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/gfxsdk/${SGXPV}/exports/${BINFILE} \
 		   file://cputype \
 		   file://rc.pvr \
 		   file://sample.desktop \
-		   file://99-bufferclass.rules  \
+		   file://99-bufferclass.rules \
 		   file://0001-Added-sdk-make-install-file-to-graphics-sdk.patch \
 "
 
-
-S = "${WORKDIR}/OMAP35x_Graphics_SDK_${SGXPV}"
+S ?= "${WORKDIR}/OMAP35x_Graphics_SDK_${SGXPV}"
 
 # Logic to unpack installjammer file
 TI_BIN_UNPK_CMDS="Y: qY:workdir:Y"
 require ../ti/ti-eula-unpack.inc
+
+# For accessing SUPPORT_XORG value
+require powervr.inc
 
 BINLOCATION ?= "${S}/gfx_rel"
 ES2LOCATION ?= "${S}/gfx_rel_es2.x"
 ES3LOCATION ?= "${S}/gfx_rel_es3.x"
 ES5LOCATION ?= "${S}/gfx_rel_es5.x"
 ES6LOCATION ?= "${S}/gfx_rel_es6.x"
+ES8LOCATION ?= "${S}/gfx_rel_es8.x"
 
 LIBGLESWINDOWSYSTEM ?= "libpvrPVR2D_FRONTWSEGL.so.1"
+
+export SUPPORT_XORG
 
 do_configure() {
 	# Attempt to fix up the worst offenders for file permissions
 	for i in $(find ${S} -name "*.h") $(find ${S} -name "*.c") $(find ${S} -name "Make*") ; do
 		chmod 0644 $i
-	done 
+	done
+
+	cp ${S}/targetfs/XSGX/lib/libdrm.so* ${STAGING_DIR_TARGET}${libdir}
+
+	# Change PVR server's user mode library to point to DRI
+		for drifile in $(find ${S} -name "libsrv_um_dri.so"); do
+		if [ "$drifile" != "" ]
+		then
+			dir=$(dirname ${drifile})
+			if [ "$SUPPORT_XORG" = "1" ]
+			then
+			mv ${dir}/libsrv_um_dri.so ${dir}/libsrv_um.so
+			else
+			rm -rf ${dir}/libsrv_um_dri.so
+			fi
+		fi
+		done
 
 	# Attempt to create proper library softlinks
 	for sofile in $(find ${S} -name "lib*Open*.so") $(find ${S} -name "lib*srv*.so") $(find ${S} -name "lib*gl*.so") $(find ${S} -name "libpvr*.so") $(find ${S} -name "lib*GL*.so"); do
@@ -93,23 +101,23 @@ do_compile() {
 	for X11BUILD in 0 1 ; do
 		for demo in ${S}/GFX_Linux_SDK/OGLES/SDKPackage/Demos/* ; do
 			cd $demo/OGLES/Build/LinuxGeneric
-			oe_runmake Common=1 PLATFORM=$PLATFORM X11BUILD=$X11BUILD  
+			oe_runmake Common=1 PLATFORM=$PLATFORM X11BUILD=$X11BUILD
 			rm $demo/OGLES/Build/LinuxOMAP3/Release*/*.o
 			install -m 0755 $demo/OGLES/Build/LinuxOMAP3/ReleaseX11/* ${S}/demos/x11 || true
 			sed -e s:NAME:$(basename $demo): \
 			    -e s:EXEC:${bindir}/SGX/demos/X11/$(basename $demo/OGLES/Build/LinuxOMAP3/ReleaseX11/*): \
 			     ${WORKDIR}/sample.desktop > ${WORKDIR}/$(basename $demo).desktop
-			install -m 0755 $demo/OGLES/Build/LinuxOMAP3/ReleaseRaw/* ${S}/demos/raw || true	
+			install -m 0755 $demo/OGLES/Build/LinuxOMAP3/ReleaseRaw/* ${S}/demos/raw || true
 		done
 		for demo in ${S}/GFX_Linux_SDK/OGLES2/SDKPackage/Demos/* ; do
 			cd $demo/OGLES2/Build/LinuxGeneric
-			oe_runmake Common=1 PLATFORM=$PLATFORM X11BUILD=$X11BUILD  
+			oe_runmake Common=1 PLATFORM=$PLATFORM X11BUILD=$X11BUILD
 			rm -f $demo/OGLES2/Build/LinuxOMAP3/Release*/*.o
 			install -m 0755 $demo/OGLES2/Build/LinuxOMAP3/ReleaseX11/* ${S}/demos/x11 || true
 			sed -e s:NAME:$(basename $demo): \
 			    -e s:EXEC:${bindir}/SGX/demos/X11/$(basename $demo/OGLES2/Build/LinuxOMAP3/ReleaseX11/*): \
 			     ${WORKDIR}/sample.desktop > ${WORKDIR}/$(basename $demo).desktop
-			install -m 0755 $demo/OGLES2/Build/LinuxOMAP3/ReleaseRaw/* ${S}/demos/raw || true	
+			install -m 0755 $demo/OGLES2/Build/LinuxOMAP3/ReleaseRaw/* ${S}/demos/raw || true
 		done
 	done
 
@@ -127,15 +135,14 @@ do_compile() {
 
 			if [ -e $training/OGLES2/Build/LinuxOMAP3/Makefile ] ; then
 				cd $training/OGLES2/Build/LinuxOMAP3
-			fi			
+			fi
 
-			oe_runmake Common=1 PLATFORM=$PLATFORM X11BUILD=$X11BUILD  
+			oe_runmake Common=1 PLATFORM=$PLATFORM X11BUILD=$X11BUILD
 			rm -f $training/OGLES2/Build/LinuxOMAP3/Release*/*.o
 			install -m 0755 $training/OGLES2/Build/LinuxOMAP3/ReleaseX11/* ${S}/trainingcourses/x11 || true
-			install -m 0755 $training/OGLES2/Build/LinuxOMAP3/ReleaseRaw/* ${S}/trainingcourses/raw || true	
+			install -m 0755 $training/OGLES2/Build/LinuxOMAP3/ReleaseRaw/* ${S}/trainingcourses/raw || true
 		done
 	done
-
 }
 
 do_install () {
@@ -165,9 +172,15 @@ do_install () {
 	cp -pPr ${S}/GFX_Linux_SDK/OVG/SDKPackage/Builds/OVG/Include/V* ${D}${includedir}/ || true
 	cp -pPr ${S}/include/*.h ${D}${includedir} || true
 	cp -pPr ${S}/include/wsegl/*.h ${D}${includedir} || true
-	
+
 	install -d ${D}${sysconfdir}/init.d/
+	if [ "$SUPPORT_XORG" = "0" ]; then
 	cp -pP ${WORKDIR}/rc.pvr ${D}${sysconfdir}/init.d/pvr-init
+	fi
+	if [ "$SUPPORT_XORG" = "1" ]; then
+	cp -pPR ${S}/targetfs/XSGX ${D}/usr/local
+	cp -pP ${WORKDIR}/rc_dri.pvr ${D}${sysconfdir}/init.d/pvr-init
+	fi
 
 	install -d ${D}${sysconfdir}
 	echo "[default]" > ${D}${sysconfdir}/powervr.ini
@@ -179,20 +192,28 @@ do_install () {
 	install -d ${D}${libdir}/ES5.0
 	install -d ${D}${libdir}/ES3.0
 	install -d ${D}${libdir}/ES2.0
+	install -d ${D}${libdir}/ES8.0
 
 	install -d ${D}${bindir}/ES6.0
 	install -d ${D}${bindir}/ES5.0
 	install -d ${D}${bindir}/ES3.0
 	install -d ${D}${bindir}/ES2.0
+	install -d ${D}${bindir}/ES8.0
 
 
-	cp -pPR ${ES2LOCATION}/lib*${IMGPV} ${D}${libdir}/ES2.0/
-	cp ${ES2LOCATION}/p[dv]* ${D}${bindir}/ES2.0/
+    if [ -e ${ES2LOCATION} ]
+    then
+        cp -pPR ${ES2LOCATION}/lib*${IMGPV} ${D}${libdir}/ES2.0/
+        cp ${ES2LOCATION}/p[dv]* ${D}${bindir}/ES2.0/
+    fi
 
-	cp -pPR ${D}${libdir}/lib*${IMGPV} ${D}${libdir}/ES3.0/
-	cp ${D}${bindir}/p[dv]* ${D}${bindir}/ES3.0
+    if [ -e ${ES3LOCATION} ]
+    then
+        cp -pPR ${ES3LOCATION}/lib*${IMGPV} ${D}${libdir}/ES3.0/
+        cp ${ES3LOCATION}/p[dv]* ${D}${bindir}/ES3.0/
+    fi
 
-	if [ -e ${ES5LOCATION} ] ; then 
+	if [ -e ${ES5LOCATION} ] ; then
 		cp -pPR ${ES5LOCATION}/lib*${IMGPV} ${D}${libdir}/ES5.0/
 		cp ${ES5LOCATION}/p[dv]* ${D}${bindir}/ES5.0/
 	fi
@@ -200,6 +221,11 @@ do_install () {
 	if [ -e ${ES6LOCATION} ] ; then
 		cp -pPR ${ES6LOCATION}/lib*${IMGPV} ${D}${libdir}/ES6.0/
 		cp ${ES6LOCATION}/p[dv]* ${D}${bindir}/ES6.0/
+	fi
+
+	if [ -e ${ES8LOCATION} ] ; then
+		cp -pPR ${ES8LOCATION}/lib*${IMGPV} ${D}${libdir}/ES8.0/
+		cp ${ES8LOCATION}/p[dv]* ${D}${bindir}/ES8.0/
 	fi
 
 	rm ${D}${bindir}/ES*/*.h ${D}${bindir}/ES*/pdsasm ${D}${bindir}/pdsasm -f || true
@@ -236,14 +262,14 @@ PACKAGES =+ "${PN}-rawdemos \
 PACKAGES += "xserver-kdrive-powervrsgx \
              ${PN}-tests "
 
-PACKAGES =+ "${PN}-blitwsegl ${PN}-flipwsegl ${PN}-frontwsegl ${PN}-linuxfbwsegl ${PN}-x11wsegl"
+PACKAGES =+ "${PN}-blitwsegl ${PN}-flipwsegl ${PN}-frontwsegl ${PN}-linuxfbwsegl ${PN}-x11wsegl ${PN}-driwsegl"
 
 FILES_${PN}-blitwsegl = "${libdir}/libpvrPVR2D_BLITWSEGL.so.* ${libdir}/*/libpvrPVR2D_BLITWSEGL.so.*"
 FILES_${PN}-flipwsegl = "${libdir}/libpvrPVR2D_FLIPWSEGL.so.* ${libdir}/*/libpvrPVR2D_FLIPWSEGL.so.*"
 FILES_${PN}-frontwsegl = "${libdir}/libpvrPVR2D_FRONTWSEGL.so.* ${libdir}/*/libpvrPVR2D_FRONTWSEGL.so.*"
 FILES_${PN}-linuxfbwsegl = "${libdir}/libpvrPVR2D_LINUXFBWSEGL.so.* ${libdir}/*/libpvrPVR2D_LINUXFBWSEGL.so.*"
 FILES_${PN}-x11wsegl = "${libdir}/libpvrPVR2D_X11WSEGL.so* ${libdir}/*/libpvrPVR2D_X11WSEGL.so*"
-
+FILES_${PN}-driwsegl = "${libdir}/libpvrPVR2D_DRIWSEGL.so* ${libdir}/*/libpvrPVR2D_DRIWSEGL.so*"
 CONFFILES_${PN} = "${sysconfdir}/powervr.ini"
 
 FILES_${PN} = "${sysconfdir} ${libdir}/lib*.so.* ${libdir}/ES*/* ${bindir}/pvrsrvinit ${bindir}/cputype ${bindir}/*/*"
@@ -257,11 +283,11 @@ FILES_${PN}-dbg = "${libdir}/.debug/* ${bindir}/.debug/* \
 
 FILES_${PN}-rawdemos = "${bindir}/SGX/demos/Raw/*"
 FILES_${PN}-x11demos = "${bindir}/SGX/demos/X11/* ${prefix}/share/applications "
-RRECOMMENDS_${PN}-x11demos = "${PN}-x11wsegl"
+RRECOMMENDS_${PN}-x11demos = "${PN}-driwsegl"
 
 FILES_${PN}-rawtrainingcourses = "${bindir}/SGX/trainingcourses/Raw/*"
 FILES_${PN}-x11trainingcourses = "${bindir}/SGX/trainingcourses/X11/*"
-RRECOMMENDS_${PN}-x11trainingcourses = "${PN}-x11wsegl"
+RRECOMMENDS_${PN}-x11trainingcourses = "${PN}-driwsegl"
 
 # The libs need the kernel-modules
 RRECOMMENDS_${PN} = "omap3-sgx-modules"
@@ -276,6 +302,7 @@ INSANE_SKIP_${PN}-flipwsegl = True
 INSANE_SKIP_${PN}-frontwsegl = True
 INSANE_SKIP_${PN}-linuxfbwsegl = True
 INSANE_SKIP_${PN}-x11wsegl = True
+INSANE_SKIP_${PN}-driwsegl = True
 INSANE_SKIP_${PN}-tests = True
 INSANE_SKIP_xserver-kdrive-powervrsgx = True
 
@@ -292,6 +319,7 @@ INITSCRIPT_PARAMS = "start 30 5 2 . stop 05 0 1 6 ."
 pkg_postinst_${PN}_append() {
 rm -f /etc/powervr-esrev
 
-ln -sf /usr/lib/libXdmcp.so.6.0.0 /usr/lib/libXdmcp.so.0 
+ln -sf /usr/lib/libXdmcp.so.6.0.0 /usr/lib/libXdmcp.so.0
 ln -sf /usr/lib/libXau.so.6.0.0 /usr/lib/libXau.so.0
+
 }

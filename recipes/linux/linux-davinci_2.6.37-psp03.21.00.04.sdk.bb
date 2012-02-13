@@ -4,7 +4,7 @@ BRANCH = "03.21.00.03"
 
 SRCREV = "v2.6.37_DAVINCIPSP_03.21.00.04"
 
-COMPATIBLE_MACHINE = "(dm365-evm|dm368-evm|omapl138)"
+COMPATIBLE_MACHINE = "omapl138"
 
 KVER = "2.6.37"
 PSPREL = "03.21.00.04.sdk"
@@ -16,6 +16,9 @@ SRC_URI += " \
 	file://0005-Davinci-da850-Add-Mistral-WL12XX-config-support-to.patch \
 	file://0006-Add-wlan-and-BT-config-switches.patch \
 	"
+
+# Updated PIO mode for MUSB help description
+SRC_URI += "file://0001-musb-update-PIO-mode-help-information-in-Kconfig.patch"
 
 SRC_URI_append_am180x-evm = " file://uio_pruss.patch"
 

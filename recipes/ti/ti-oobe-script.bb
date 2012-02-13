@@ -1,6 +1,6 @@
 DESCRIPTION = "Script to parse ip address during boot and make it available to the host system using shared partitions"
 
-PR = "r0"
+PR = "r1"
 
 LICENSE = "MIT"
 

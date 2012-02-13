@@ -1,0 +1,47 @@
+From becf97da41737f9fa21f855f4f781ae32fdaeff5 Mon Sep 17 00:00:00 2001
+From: Eliad Peller <eliad@wizery.com>
+Date: Wed, 5 Oct 2011 13:30:34 +0200
+Subject: [PATCH] wl12xx: handle idle changes per-interface
+
+Idle changes are currently handled per hardware.
+However, some operations should be done only per-interface.
+
+Signed-off-by: Eliad Peller <eliad@wizery.com>
+---
+ drivers/net/wireless/wl12xx/main.c |   13 ++++++-------
+ 1 files changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/wireless/wl12xx/main.c b/drivers/net/wireless/wl12xx/main.c
+index d66b079..9956881 100644
+--- a/drivers/net/wireless/wl12xx/main.c
++++ b/drivers/net/wireless/wl12xx/main.c
+@@ -2444,13 +2444,6 @@ static int wl1271_op_config(struct ieee80211_hw *hw, u32 changed)
+ 		}
+ 	}
+ 
+-	if (changed & IEEE80211_CONF_CHANGE_IDLE && !is_ap) {
+-		ret = wl1271_sta_handle_idle(wl,
+-					conf->flags & IEEE80211_CONF_IDLE);
+-		if (ret < 0)
+-			wl1271_warning("idle mode change failed %d", ret);
+-	}
+-
+ 	/*
+ 	 * if mac80211 changes the PSM mode, make sure the mode is not
+ 	 * incorrectly changed after the pspoll failure active window.
+@@ -3531,6 +3524,12 @@ static void wl1271_bss_info_changed_sta(struct wl1271 *wl,
+ 		do_join = true;
+ 	}
+ 
++	if (changed & BSS_CHANGED_IDLE) {
++		ret = wl1271_sta_handle_idle(wl, bss_conf->idle);
++		if (ret < 0)
++			wl1271_warning("idle mode change failed %d", ret);
++	}
++
+ 	if ((changed & BSS_CHANGED_CQM)) {
+ 		bool enable = false;
+ 		if (bss_conf->cqm_rssi_thold)
+-- 
+1.7.4.1
+

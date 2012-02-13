@@ -32,7 +32,7 @@ extract_fs() {
     check_status
     sudo chown $me:$me $1 
     check_status
-    sudo chown -R $me:$me $1/home $1/usr $1/etc $1/lib $1/opt 
+    sudo chown -R $me:$me $1/home $1/usr $1/etc $1/lib $1/opt $1/boot
     check_status
     echo
     echo "Successfully extracted `basename $fstar` to $1"

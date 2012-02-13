@@ -1,0 +1,29 @@
+From d56aa4f8e8b5eb22ef25f5a91dc6d8f58b648411 Mon Sep 17 00:00:00 2001
+From: Arik Nemtsov <arik@wizery.com>
+Date: Thu, 17 Nov 2011 08:23:15 +0200
+Subject: [PATCH] wl12xx: prevent double idle on/off transitions
+
+Just return when the idle state is unchanged from before.
+
+Signed-off-by: Arik Nemtsov <arik@wizery.com>
+---
+ drivers/net/wireless/wl12xx/main.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/wireless/wl12xx/main.c b/drivers/net/wireless/wl12xx/main.c
+index 1f8595b..3082166 100644
+--- a/drivers/net/wireless/wl12xx/main.c
++++ b/drivers/net/wireless/wl12xx/main.c
+@@ -2296,6 +2296,9 @@ static int wl1271_sta_handle_idle(struct wl1271 *wl, bool idle)
+ {
+ 	int ret;
+ 
++	if (idle == !!test_bit(WL1271_FLAG_IDLE, &wl->flags))
++		return 0;
++
+ 	if (idle) {
+ 		if (test_bit(WL1271_FLAG_ROC, &wl->flags)) {
+ 			ret = wl1271_croc(wl, wl->dev_role_id);
+-- 
+1.7.4.1
+

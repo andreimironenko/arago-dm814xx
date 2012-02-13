@@ -1,0 +1,35 @@
+From 04d7a1e9e96acf7d6dfd02bcb4dd60dfd5a5085f Mon Sep 17 00:00:00 2001
+From: Chase Maupin <Chase.Maupin@ti.com>
+Date: Thu, 10 Nov 2011 15:39:33 -0600
+Subject: [PATCH] omaplfb_linux: add support for later kernels
+
+* Add support for the 3.0.8 kernel used by beagleboard.
+
+Upstream-Status: Submitted
+    - Submitted to graphics team
+
+Signed-off-by: Chase Maupin <Chase.Maupin@ti.com>
+---
+ .../3rdparty/dc_omapfb3_linux/omaplfb_linux.c      |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/services4/3rdparty/dc_omapfb3_linux/omaplfb_linux.c b/services4/3rdparty/dc_omapfb3_linux/omaplfb_linux.c
+index 8aac78a..4e1dbba 100755
+--- a/services4/3rdparty/dc_omapfb3_linux/omaplfb_linux.c
++++ b/services4/3rdparty/dc_omapfb3_linux/omaplfb_linux.c
+@@ -24,9 +24,12 @@
+  *
+  ******************************************************************************/
+ 
++#include <linux/version.h>
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,38)
+ #ifndef AUTOCONF_INCLUDED
+ #include <linux/config.h>
+ #endif
++#endif
+ 
+ #include <linux/version.h>
+ 
+-- 
+1.7.0.4
+

@@ -10,7 +10,7 @@ require ti-paths.inc
 # It is assumed that the component makefiles follow the naming
 # Makefile_$component.  All Makefiles will be part of the SRC_URI to be
 # fetched, but only the listed ones will be used to build the final Makefile
-MAKEFILES_COMMON = "linux matrix-gui am-benchmarks am-sysinfo"
+MAKEFILES_COMMON = "linux matrix-gui am-benchmarks am-sysinfo matrix-gui-browser"
 
 # Blank the MAKEFILES_COMMON for devices that don't use the component flow
 MAKEFILES_COMMON_dm816x-evm = ""
@@ -26,12 +26,13 @@ MAKEFILES_COMMON_dm6446-evm = ""
 MAKEFILES_COMMON_dm6467-evm = ""
 
 # Add device specific make targets
-MAKEFILES_am37x-evm = "x-load u-boot-legacy av-examples"
-MAKEFILES_am3517-evm = "x-load u-boot-legacy"
+MAKEFILES_am37x-evm = "u-boot-spl av-examples"
+MAKEFILES_am3517-evm = "u-boot-spl av-examples"
 MAKEFILES_ti33x = "u-boot-spl"
 MAKEFILES_am389x-evm = "u-boot-min-sd u-boot-legacy"
 MAKEFILES_am387x-evm = "u-boot-min-sd u-boot-legacy"
-MAKEFILES_beagleboard = "x-load u-boot-legacy"
+MAKEFILES_beagleboard = "u-boot-spl"
+MAKEFILES_am180x-evm = "pru u-boot-legacy"
 
 
 
@@ -47,9 +48,11 @@ SRC_URI = "\
     file://Makefile_av-examples \
     file://Makefile_u-boot-min-sd \
     file://Makefile_u-boot-spl \
+    file://Makefile_matrix-gui-browser \
+    file://Makefile_pru \
 "
 
-PR = "r85"
+PR = "r92"
 
 do_configure_prepend_dm37x-evm () { 
          sed -i -e 's:OMAPES=3.x:OMAPES=5.x:g' ${WORKDIR}/Makefile

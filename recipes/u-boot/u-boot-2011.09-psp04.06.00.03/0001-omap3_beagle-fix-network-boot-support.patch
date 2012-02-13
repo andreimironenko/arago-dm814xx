@@ -1,0 +1,51 @@
+From 41bfd3f8dcfc689b281f2471f740733ab11d44ce Mon Sep 17 00:00:00 2001
+From: Chase Maupin <Chase.Maupin@ti.com>
+Date: Mon, 19 Dec 2011 13:16:28 -0600
+Subject: [PATCH] omap3_beagle: fix network boot support
+
+* Needed to enable EHCI support instead of MUSB so that we could
+  find the network device on the beagleboard-xM.
+* Needed to set usbethaddr to a default value
+* This is based on changes by Steve Kipisz
+
+Signed-off-by: Chase Maupin <Chase.Maupin@ti.com>
+---
+ include/configs/omap3_beagle.h |   11 ++++++-----
+ 1 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/include/configs/omap3_beagle.h b/include/configs/omap3_beagle.h
+index 2d4a661..7556cb2 100644
+--- a/include/configs/omap3_beagle.h
++++ b/include/configs/omap3_beagle.h
+@@ -123,15 +123,15 @@
+  * to use the EHCI driver for Host functionalities.
+  */
+ #define CONFIG_USB_OMAP3
+-#define CONFIG_MUSB_HCD
+-/* #define CONFIG_MUSB_UDC */
+-/* #define CONFIG_USB_EHCI */
+-/* #define CONFIG_SYS_USB_EHCI_MAX_ROOT_PORTS 3 */
++/* #define CONFIG_MUSB_HCD */
++#define CONFIG_MUSB_UDC
++#define CONFIG_USB_EHCI
++#define CONFIG_SYS_USB_EHCI_MAX_ROOT_PORTS 3
+ #define CONFIG_TWL4030_USB
+ 
+ #ifdef CONFIG_USB_OMAP3
+ 
+-#ifdef CONFIG_MUSB_HCD
++#if defined (CONFIG_MUSB_HCD) || defined (CONFIG_USB_EHCI)
+ #define CONFIG_CMD_USB
+ #define CONFIG_USB_HOST_ETHER
+ #define CONFIG_USB_ETHER_SMSC95XX
+@@ -235,6 +235,7 @@
+ 	"kloadaddr=0x80007fc0\0" \
+ 	"rdaddr=0x81000000\0" \
+ 	"usbtty=cdc_acm\0" \
++    "usbethaddr=de:ad:be:ef\0" \
+ 	"bootfile=uImage.beagle\0" \
+ 	"console=ttyO2,115200n8\0" \
+ 	"mpurate=auto\0" \
+-- 
+1.7.0.4
+

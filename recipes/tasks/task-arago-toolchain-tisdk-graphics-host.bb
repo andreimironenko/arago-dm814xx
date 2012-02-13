@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics application sources on host"
-PR = "r8"
+PR = "r9"
 LICENSE = "MIT"
 
 inherit task

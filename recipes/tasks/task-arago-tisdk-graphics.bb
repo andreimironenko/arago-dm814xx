@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r19"
+PR = "r30"
 LICENSE = "MIT"
 
 inherit task
@@ -66,8 +66,6 @@ RDEPENDS_${PN} = "\
     qt4-embedded-plugin-imageformat-gif \
     qt4-embedded-plugin-imageformat-jpeg \
     libxml2 \
-    ${MATRIX_APPS_COMMON} \
     ${MATRIX_APPS} \
     ${QTWIDGET_DEMO} \
-    ${GRAPHICS_3D} \
     "

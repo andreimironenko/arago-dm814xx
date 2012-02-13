@@ -1,6 +1,15 @@
 #!/bin/sh
 PATH=$PATH:/usr/sbin
 
+# Check if an fb device is available.  If not then just go ahead and
+# exit because we have no display.
+fbset > /dev/null 2>&1
+if [ "$?" == "1" ]
+then
+    # looks like there is no display, so let's exit
+    exit 0
+fi
+
 BITSPERPIXEL="$(fbset | grep geom | awk '{print $6}')"
 YRES="$(fbset | grep geom | awk '{print $3}')"
 
@@ -28,10 +37,9 @@ if [ "$BITSPERPIXEL" = "32" ] ; then
 fi
 
 # Try to enable triple buffering when there's enough VRAM
-fbset -vyres $(expr $YRES \* 3) 
+fbset -vyres $(expr $YRES \* 3)
 
-case $CPUTYPE in
-"OMAP3530")
+sgxprepare () {
 	echo Starting PVR
 	insmod $(busybox find /lib/modules/$(uname -r) -name "pvrsrvkm.ko")
 	modprobe omaplfb
@@ -40,16 +48,32 @@ case $CPUTYPE in
 	pvr_maj=`grep "pvrsrvkm$" /proc/devices | cut -b1,2,3`
         bc_maj=`grep "bc" /proc/devices | cut -b1,2,3`
 
-	if [ -e /dev/pvrsrvkm ] ; then 
+	if [ -e /dev/pvrsrvkm ] ; then
 		rm -f /dev/pvrsrvkm
 	fi
 
-	mknod /dev/pvrsrvkm c $pvr_maj 0 
+	mknod /dev/pvrsrvkm c $pvr_maj 0
 	chmod 666 /dev/pvrsrvkm
 
 	touch /etc/powervr-esrev
 
 	SAVED_ESREVISION="$(cat /etc/powervr-esrev)"
+}
+
+sgxfinish () {
+	if [ "${ES_REVISION}" != "${SAVED_ESREVISION}" ] ; then
+		echo -n "Starting SGX fixup for"
+		echo " ES${ES_REVISION}.x"
+		cp -a /usr/lib/ES${ES_REVISION}.0/* /usr/lib
+		cp -a /usr/bin/ES${ES_REVISION}.0/* /usr/bin
+		echo "${ES_REVISION}" > /etc/powervr-esrev
+	fi
+	/usr/bin/pvrsrvinit
+}
+
+case $CPUTYPE in
+"OMAP3530")
+	sgxprepare
 
 	devmem2 0x48004B48 w 0x2 > /dev/null
 	devmem2 0x48004B10 w 0x1 > /dev/null
@@ -57,63 +81,31 @@ case $CPUTYPE in
 
 	ES_REVISION="$(devmem2 0x50000014 | sed -e s:0x00010205:5: -e s:0x00010201:3: -e s:0x00010003:2: | tail -n1 | awk -F': ' '{print $2}')"
 
-	if [ "${ES_REVISION}" != "${SAVED_ESREVISION}" ] ; then
-		echo -n "Starting SGX fixup for"
-		echo " ES${ES_REVISION}.x"
-		cp -a /usr/lib/ES${ES_REVISION}.0/* /usr/lib
-		cp -a /usr/bin/ES${ES_REVISION}.0/* /usr/bin	
-		echo "${ES_REVISION}" > /etc/powervr-esrev
-	fi
-	/usr/bin/pvrsrvinit
+	sgxfinish
 	;;
-"TI814x")
-	echo Starting PVR
-	insmod $(busybox find /lib/modules/$(uname -r) -name "pvrsrvkm.ko")
-	modprobe omaplfb
-	modprobe bufferclass_ti
+"TI33XX")
+	sgxprepare
 
-	pvr_maj=`grep "pvrsrvkm$" /proc/devices | cut -b1,2,3`
-        bc_maj=`grep "bc" /proc/devices | cut -b1,2,3`
+	devmem2 0x44e01104 w 0x0 > /dev/null
+	devmem2 0x44e00904 w 0x2 > /dev/null
 
-	if [ -e /dev/pvrsrvkm ] ; then 
-		rm -f /dev/pvrsrvkm
-	fi
+	ES_REVISION="$(devmem2 0x56000014 | sed -e s:0x00010205:8: | tail -n1 | awk -F': ' '{print $2}')"
 
-	mknod /dev/pvrsrvkm c $pvr_maj 0 
-	chmod 666 /dev/pvrsrvkm
-
-	touch /etc/powervr-esrev
-
-	SAVED_ESREVISION="$(cat /etc/powervr-esrev)"
-
-	devmem2 0x48180F04 w 0x0
-	devmem2 0x48180900 w 0x2
-	devmem2 0x48180920 w 0x2
-
-	ES_REVISION="$(devmem2 0x56000014 | sed -e s:0x00010205:5: -e s:0x00010201:3: -e s:0x00010003:2: | tail -n1 | awk -F': ' '{print $2}')"
-
-	echo "${ES_REVISION}" > /etc/powervr-esrev
-	/usr/bin/pvrsrvinit
+	sgxfinish
 	;;
 "TI816x")
-	echo Starting PVR
-	insmod $(busybox find /lib/modules/$(uname -r) -name "pvrsrvkm.ko")
-	modprobe omaplfb
-	modprobe bufferclass_ti
+	sgxprepare
 
-	pvr_maj=`grep "pvrsrvkm$" /proc/devices | cut -b1,2,3`
-        bc_maj=`grep "bc" /proc/devices | cut -b1,2,3`
+	devmem2 0x48180F04 w 0x0 > /dev/null
+	devmem2 0x48180900 w 0x2 > /dev/null
+	devmem2 0x48180920 w 0x2 > /dev/null
 
-	if [ -e /dev/pvrsrvkm ] ; then 
-		rm -f /dev/pvrsrvkm
-	fi
+	ES_REVISION="$(devmem2 0x56000014 | sed -e s:0x00010205:6: -e s:0x00010201:3: -e s:0x00010003:2: | tail -n1 | awk -F': ' '{print $2}')"
 
-	mknod /dev/pvrsrvkm c $pvr_maj 0 
-	chmod 666 /dev/pvrsrvkm
-
-	touch /etc/powervr-esrev
-
-	SAVED_ESREVISION="$(cat /etc/powervr-esrev)"
+	sgxfinish
+	;;
+"TI814x")
+	sgxprepare
 
 	devmem2 0x48180F04 w 0x0
 	devmem2 0x48180900 w 0x2
@@ -121,8 +113,7 @@ case $CPUTYPE in
 
 	ES_REVISION="$(devmem2 0x56000014 | sed -e s:0x00010205:5: -e s:0x00010201:3: -e s:0x00010003:2: | tail -n1 | awk -F': ' '{print $2}')"
 
-	echo "${ES_REVISION}" > /etc/powervr-esrev
-	/usr/bin/pvrsrvinit
+	sgxfinish
 	;;
 *)
 	echo No SGX hardware, not starting PVR

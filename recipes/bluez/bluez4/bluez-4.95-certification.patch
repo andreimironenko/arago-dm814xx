@@ -1,0 +1,222 @@
+diff --git a/Makefile.am b/Makefile.am
+index fab05eb..3b0dff9 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -257,7 +257,7 @@ src_bluetoothd_SOURCES = $(gdbus_sources) $(builtin_sources) \
+			src/error.h src/error.c \
+			src/manager.h src/manager.c \
+			src/adapter.h src/adapter.c \
+-			src/device.h src/device.c \
++			src/device.h src/device.c src/attio.h \
+			src/dbus-common.c src/dbus-common.h \
+			src/event.h src/event.c \
+			src/oob.h src/oob.c src/eir.h src/eir.c
+diff --git a/input/device.c b/input/device.c
+index aa593e0..8d008a4 100644
+--- a/input/device.c
++++ b/input/device.c
+@@ -971,6 +971,19 @@ static DBusMessage *input_device_disconnect(DBusConnection *conn,
+	return g_dbus_create_reply(msg, DBUS_TYPE_INVALID);
+ }
+
++static DBusMessage *input_device_unplug(DBusConnection *conn,
++						DBusMessage *msg, void *data)
++{
++	struct input_device *idev = data;
++	int err;
++
++	err = disconnect(idev, 1 << HIDP_VIRTUAL_CABLE_UNPLUG);
++	if (err < 0)
++		return btd_error_failed(msg, strerror(-err));
++
++	return g_dbus_create_reply(msg, DBUS_TYPE_INVALID);
++}
++
+ static void device_unregister(void *data)
+ {
+	struct input_device *idev = data;
+@@ -1024,6 +1037,7 @@ static GDBusMethodTable device_methods[] = {
+						G_DBUS_METHOD_FLAG_ASYNC },
+	{ "Disconnect",		"",	"",	input_device_disconnect	},
+	{ "GetProperties",	"",	"a{sv}",input_device_get_properties },
++	{ "Unplug",		"",	"",	input_device_unplug	},
+	{ }
+ };
+
+diff --git a/src/event.c b/src/event.c
+index 86a413e..9e478c6 100644
+--- a/src/event.c
++++ b/src/event.c
+@@ -443,6 +443,9 @@ void btd_event_conn_failed(bdaddr_t *local, bdaddr_t *peer, uint8_t status)
+	if (!device)
+		return;
+
++	if (device_is_bonding(device, NULL))
++		device_cancel_bonding(device, status);
++
+	if (device_is_temporary(device))
+		adapter_remove_device(conn, adapter, device, TRUE);
+ }
+diff --git a/src/main.conf b/src/main.conf
+index 8cd132f..e77803b 100644
+--- a/src/main.conf
++++ b/src/main.conf
+@@ -24,11 +24,11 @@ PairableTimeout = 0
+
+ # Use some other page timeout than the controller default one
+ # which is 16384 (10 seconds).
+-PageTimeout = 8192
++#PageTimeout = 8192
+
+ # Discover scheduler interval used in Adapter.DiscoverDevices
+ # The value is in seconds. Defaults is 30.
+-DiscoverSchedulerInterval = 30
++DiscoverSchedulerInterval = 0
+
+ # What value should be assumed for the adapter Powered property when
+ # SetProperty(Powered, ...) hasn't been called yet. Defaults to true
+diff --git a/src/textfile.c b/src/textfile.c
+index 3fb3c01..b271aab 100644
+--- a/src/textfile.c
++++ b/src/textfile.c
+@@ -224,8 +224,10 @@ static int write_key(const char *pathname, const char *key, const char *value, i
+			munmap(map, size);
+			lseek(fd, size, SEEK_SET);
+			err = write_key_value(fd, key, value);
++			goto unlock;
++		} else {
++			goto unmap;
+		}
+-		goto unlock;
+	}
+
+	base = off - map;
+diff --git a/test/l2test.c b/test/l2test.c
+index 3ac332f..76581de 100644
+--- a/test/l2test.c
++++ b/test/l2test.c
+@@ -98,7 +98,11 @@ static int count = 1;
+
+ /* Default delay after sending count number of frames */
+ static unsigned long delay = 0;
++static unsigned long delay_before_first_frame = 0;
++static unsigned long delay_after_last_frame = 0;
+
++/* Default operation mode */
++static int one_time = 0;
+ static char *filename = NULL;
+
+ static int rfcmode = 0;
+@@ -462,13 +466,19 @@ static void do_listen(void (*handler)(int sk))
+							strerror(errno), errno);
+			goto error;
+		}
+-		if (fork()) {
+-			/* Parent */
+-			close(nsk);
+-			continue;
++
++		if (one_time == 0) {
++			if (fork()) {
++				/* Parent */
++				close(nsk);
++				continue;
++			}
++			/* Child */
++			close(sk);
++		}
++		else {
++			close(sk);
+		}
+-		/* Child */
+-		close(sk);
+
+		/* Get current options */
+		memset(&opts, 0, sizeof(opts));
+@@ -543,7 +553,7 @@ static void do_listen(void (*handler)(int sk))
+		}
+
+		handler(nsk);
+-
++		close(nsk);
+		syslog(LOG_INFO, "Disconnect: %m");
+		exit(0);
+	}
+@@ -754,6 +764,7 @@ static void do_send(int sk)
+	}
+
+	seq = 0;
++	sleep(delay_before_first_frame);
+	while ((num_frames == -1) || (num_frames-- > 0)) {
+		*(uint32_t *) buf = htobl(seq);
+		*(uint16_t *) (buf + 4) = htobs(data_size);
+@@ -778,6 +789,7 @@ static void do_send(int sk)
+		if (num_frames && delay && count && !(seq % count))
+			usleep(delay);
+	}
++	sleep(delay_after_last_frame);
+ }
+
+ static void send_mode(int sk)
+@@ -1055,8 +1067,7 @@ failed:
+
+ static void usage(void)
+ {
+-	printf("l2test - L2CAP testing\n"
+-		"Usage:\n");
++	printf("Usage:\n");
+	printf("\tl2test <mode> [options] [bdaddr]\n");
+	printf("Modes:\n"
+		"\t-r listen and receive\n"
+@@ -1094,7 +1105,11 @@ static void usage(void)
+		"\t[-E] request encryption\n"
+		"\t[-S] secure connection\n"
+		"\t[-M] become master\n"
+-		"\t[-T] enable timestamps\n");
++		"\t[-T] enable timestamps\n"
++		"\t[-H seconds] Delay before first sent frame (default = 0)\n"
++		"\t[-K seconds] Delay after last sent frame, before disconnection (default = 0)\n"
++		"\t[-Y] One time only (do not listen for more incoming connections)");
++
+ }
+
+ int main(int argc, char *argv[])
+@@ -1102,9 +1117,11 @@ int main(int argc, char *argv[])
+	struct sigaction sa;
+	int opt, sk, mode = RECV, need_addr = 0;
+
++	printf("l2test - L2CAP testing version:%s\n",VERSION);
++
+	bacpy(&bdaddr, BDADDR_ANY);
+
+-	while ((opt=getopt(argc,argv,"rdscuwmntqxyzpb:i:P:I:O:J:B:N:L:W:C:D:X:F:Q:Z:RUGAESMT")) != EOF) {
++	while ((opt=getopt(argc,argv,"rdscuwmntqxyzpb:i:P:I:O:J:B:N:L:W:C:D:X:F:Q:Z:H:K:RUGAESMTY")) != EOF) {
+		switch(opt) {
+		case 'r':
+			mode = RECV;
+@@ -1174,6 +1191,14 @@ int main(int argc, char *argv[])
+			data_size = atoi(optarg);
+			break;
+
++		case 'H':
++			delay_before_first_frame = atoi(optarg);
++			break;
++
++		case 'K':
++			delay_after_last_frame = atoi(optarg);
++			break;
++
+		case 'i':
+			if (!strncasecmp(optarg, "hci", 3))
+				hci_devba(atoi(optarg + 3), &bdaddr);
+@@ -1271,6 +1296,10 @@ int main(int argc, char *argv[])
+		case 'J':
+			cid = atoi(optarg);
+			break;
++
++		case 'Y':
++			one_time = 1;
++			break;
+
+		default:
+			usage();

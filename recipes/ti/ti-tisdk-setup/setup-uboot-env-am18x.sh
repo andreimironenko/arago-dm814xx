@@ -62,16 +62,6 @@ fsnfsargs3="$rootpath"
 fsnfsargs4=",nolock,rsize=1024,wsize=1024"
 fsnfsargs=$fsnfsargs1$fsnfsargs2$fsnfsargs3$fsnfsargs4
 
-echo "Select board memory:"
-echo " 1: 128MB"
-echo " 2:  64MB"
-echo
-read -p "[ 1 ] " memory
-
-if [ ! -n "$memory" ]; then
-    memory="1"
-fi
-
 echo "Select Linux kernel location:"
 echo " 1: TFTP"
 echo " 2: SD card"
@@ -92,10 +82,6 @@ read -p "[ 1 ] " fs
 
 if [ ! -n "$fs" ]; then
     fs="1"
-fi
-
-if [ "$memory" -eq "1" ]; then
-    extendbaseargs=" mem=64M@0xc4000000"
 fi
 
 if [ "$kernel" -eq "1" ]; then
@@ -228,7 +214,7 @@ if [ "$minicom" = "y" ]; then
     check_status
 
 #   For dash compatibility need to use printf instead of echo
-    printf "send \"$extendbaseargs \c\"\n" >> $minicomfilepath
+#   printf "send \"$extendbaseargs \c\"\n" >> $minicomfilepath
 #   printf "send \"$videoargs1 \c\"\n" >> $minicomfilepath
 #   printf "send \"$videoargs2 \c\"\n" >> $minicomfilepath
 #   printf "send \"$videoargs3 \c\"\n" >> $minicomfilepath

@@ -1,0 +1,53 @@
+From 1abb56367f509df7cf4727c3599e645f6d46f1ac Mon Sep 17 00:00:00 2001
+From: Eyal Shapira <eyal@wizery.com>
+Date: Sun, 18 Dec 2011 09:18:21 +0200
+Subject: [PATCH 31/32] Enable wpa_dbg on Android
+
+Only wpa_printf was enabled which caused a lot
+of logs to be missed on Android
+
+Signed-off-by: Eyal Shapira <eyal@wizery.com>
+---
+ src/utils/wpa_debug.h |   13 ++++++-------
+ 1 files changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/src/utils/wpa_debug.h b/src/utils/wpa_debug.h
+index ae36afe..9459ff8 100644
+--- a/src/utils/wpa_debug.h
++++ b/src/utils/wpa_debug.h
+@@ -26,6 +26,11 @@ enum {
+ 
+ #ifdef CONFIG_ANDROID_LOG
+ 
++void android_printf(int level, char *format, ...)
++PRINTF_FORMAT(2, 3);
++
++#define wpa_printf android_printf
++
+ #define wpa_debug_print_timestamp() do {} while (0)
+ #define wpa_hexdump(...)            do {} while (0)
+ #define wpa_hexdump_key(...)        do {} while (0)
+@@ -35,19 +40,13 @@ enum {
+ #define wpa_hexdump_ascii_key(...)  do {} while (0)
+ #define wpa_debug_open_file(...)    do {} while (0)
+ #define wpa_debug_close_file()      do {} while (0)
+-#define wpa_dbg(...)                do {} while (0)
++#define wpa_dbg(wpas, args...)      android_printf(args)
+ 
+ static inline int wpa_debug_reopen_file(void)
+ {
+ 	return 0;
+ }
+ 
+-
+-void android_printf(int level, char *format, ...)
+-PRINTF_FORMAT(2, 3);
+-
+-#define wpa_printf android_printf
+-
+ #else /* CONFIG_ANDROID_LOG */
+ 
+ #ifdef CONFIG_NO_STDOUT_DEBUG
+-- 
+1.7.0.4
+

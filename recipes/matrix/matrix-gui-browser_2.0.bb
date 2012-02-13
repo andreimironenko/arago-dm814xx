@@ -4,10 +4,10 @@ LICENSE = "BSD"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-PR = "r2"
+PR = "r4"
 
-SRCREV = "274185aa2fc7e086ed18abe64fc4a55a696e33dc"
-BRANCH ?= "qwebview"
+SRCREV = "5857a24ef0eaa0835f9e9c5a5f80ce681a1e801e"
+BRANCH ?= "master"
 
 SRC_URI = "git://gitorious.org/matrix-gui-v2/matrix_browser.git;protocol=git;branch=${BRANCH}"
 
@@ -17,5 +17,5 @@ inherit qt4e
 
 do_install() {
 	install -d ${D}/${bindir}
-    install -m 0755 ${S}/matrix_browser ${D}/${bindir}
+	install -m 0755 ${S}/matrix_browser ${D}/${bindir}
 }

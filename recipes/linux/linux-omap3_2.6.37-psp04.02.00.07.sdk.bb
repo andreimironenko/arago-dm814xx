@@ -5,7 +5,7 @@ PSPREL = "04.02.00.07.sdk"
 
 SRCREV= "v2.6.37_OMAPPSP_04.02.00.07"
 
-COMPATIBLE_MACHINE = "am37x-evm"
+COMPATIBLE_MACHINE = "am37x-evm|am3517-evm"
 
 # The following patches below have been upstreamed to linux kernel 2.6.39 tree
 # and will not be needed once we move to this kernel.
@@ -55,3 +55,19 @@ SRC_URI += "file://0001-omap3evm-add-wake-on-wlan-support.patch \
     file://0006-revert-duplicate-insertion-of-mmc_card_keep_power-fu.patch \
 "
 
+# The following patches allow for NOR to be enabled and built
+# easily.
+SRC_URI += " \
+    file://0001-omap3-am3517evm-Allow-for-NAND-to-really-be-disabled.patch \
+    file://0002-omap3-am3517evm-Update-NOR-partition-table.patch \
+    file://0003-AM3517-Add-am3517_evn_nor_defconfig.patch \
+"
+
+# The following patch sets the dto timeout for SD cards to the max of 14.
+# This has been found to make SD cards work more reliably in the omap3 systems
+SRC_URI += " \
+    file://0001-omap_hsmmc-make-default-dto-value-14.patch \
+"
+
+# Updated PIO mode for MUSB help description
+SRC_URI_append_am3517-evm = " file://0001-musb-update-PIO-mode-help-information-in-Kconfig.patch"

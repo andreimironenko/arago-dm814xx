@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on sdk target"
-PR = "r6"
+PR = "r7"
 LICENSE = "MIT"
 
 inherit task
@@ -14,6 +14,7 @@ GRAPHICS_3D_ti814x = "libgles-omap3-dev"
 # graphics SDK source package is already installed hence no need for duplicating the headers.
 GRAPHICS_3D_omap3evm = ""
 GRAPHICS_3D_dm37x-evm = ""
+GRAPHICS_3D_ti33x = "libgles-omap3-dev"
 
 RDEPENDS_${PN} = "\
     qt4-embedded-dev \

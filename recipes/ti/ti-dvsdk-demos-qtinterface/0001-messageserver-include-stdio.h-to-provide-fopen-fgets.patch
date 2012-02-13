@@ -1,0 +1,25 @@
+From 9b520d8ccf4b3843d0a209bb21a1cbe760d45be4 Mon Sep 17 00:00:00 2001
+From: Denys Dmytriyenko <denys@ti.com>
+Date: Sun, 5 Feb 2012 01:13:51 -0500
+Subject: [PATCH] messageserver: include stdio.h to provide fopen, fgets, fileno etc.
+
+Signed-off-by: Denys Dmytriyenko <denys@ti.com>
+---
+ messageserver.cpp |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/messageserver.cpp b/messageserver.cpp
+index ec54e70..3f29675 100755
+--- a/messageserver.cpp
++++ b/messageserver.cpp
+@@ -44,6 +44,7 @@
+ #include <sys/time.h>
+ #include <sys/types.h>
+ 
++#include <stdio.h>
+ #include <stdlib.h>
+ #include <unistd.h>
+ #include <linux/stat.h>
+-- 
+1.7.8.4
+

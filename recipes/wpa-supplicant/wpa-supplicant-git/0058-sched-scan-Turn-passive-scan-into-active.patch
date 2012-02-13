@@ -1,0 +1,31 @@
+From 4e2cf8778872fdd309783d52c0ff4242acf7a12f Mon Sep 17 00:00:00 2001
+From: Eyal Shapira <eyal@wizery.com>
+Date: Mon, 21 Nov 2011 12:41:40 +0200
+Subject: [PATCH 17/29] sched scan: Turn passive scan into active
+
+In case there are no scan_ssid networks in the conf
+passive scan was done. Better do an active scan using
+broadcast probe request as it's shorter
+---
+ wpa_supplicant/scan.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
+
+diff --git a/wpa_supplicant/scan.c b/wpa_supplicant/scan.c
+index b347f2c..41fdcc4 100644
+--- a/wpa_supplicant/scan.c
++++ b/wpa_supplicant/scan.c
+@@ -716,6 +716,11 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 		ssid = ssid->next;
+ 	}
+ 
++	/* In case no SSIDs for active scan add wildcard SSID to trigger
++	   broadcast probe request */
++	if (!params.num_ssids)
++		params.num_ssids++;
++
+ 	if (wpa_s->wps)
+ 		wps_ie = wpa_supplicant_extra_ies(wpa_s, &params);
+ 
+-- 
+1.7.0.4
+

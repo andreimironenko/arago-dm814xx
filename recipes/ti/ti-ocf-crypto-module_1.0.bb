@@ -2,12 +2,14 @@ DESCRIPTION = "Builds Crypto module used by OCF-Linux driver in OpenSSL example 
 HOMEPAGE = "https://gforge.ti.com/gf/project/arm_crypto/"
 LICENSE = "BSD GPLv2"
 
-COMPATIBLE_MACHINE = "am37x-evm"
+COMPATIBLE_MACHINE = "am37x-evm|am3517-evm"
+
+DEPENDS += "virtual/kernel"
 
 SRC_URI = "svn://gforge.ti.com/svn/arm_crypto/;module=trunk;proto=https;user=anonymous;pswd=''"
 
 #gforge source revision
-SRCREV = "13"
+SRCREV = "16"
 
 PACKAGE_STRIP = "no"
 
@@ -15,7 +17,7 @@ S = "${WORKDIR}/trunk"
 
 inherit module
 
-PR = "${MACHINE_KERNEL_PR}+svnr${SRCPV}-r1"
+MACHINE_KERNEL_PR_append = "+svnr${SRCPV}"
 
 do_compile_prepend () {
 	sed -i "s/arm-none-linux-gnueabi-/${TARGET_PREFIX}/g" ${S}/Makefile

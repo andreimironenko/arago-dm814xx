@@ -1,0 +1,104 @@
+From 48495307a287a1e7907cd0025102b242727847b6 Mon Sep 17 00:00:00 2001
+From: Luciano Coelho <coelho@ti.com>
+Date: Fri, 30 Sep 2011 16:20:07 +0300
+Subject: [PATCH 11/29] wpa_s: add delayed scheduled scan request
+
+When initializing, the scheduled scan code was being called before
+everything is ready.  With normal scans, the first scan round is
+delayed, so the initialization is finished by the time it really
+starts.
+
+Add a function that can be used to request a delayed scheduled scan.
+The scan will only start after the specified time has elapsed.  Call
+this function instead of starting the scheduled scan directly during
+driver initialization.
+
+Signed-off-by: Luciano Coelho <coelho@ti.com>
+---
+ wpa_supplicant/scan.c           |   33 +++++++++++++++++++++++++++++++++
+ wpa_supplicant/scan.h           |    2 ++
+ wpa_supplicant/wpa_supplicant.c |    4 +++-
+ 3 files changed, 38 insertions(+), 1 deletions(-)
+
+diff --git a/wpa_supplicant/scan.c b/wpa_supplicant/scan.c
+index 40a97e1..a78962b 100644
+--- a/wpa_supplicant/scan.c
++++ b/wpa_supplicant/scan.c
+@@ -216,6 +216,17 @@ int wpa_supplicant_trigger_scan(struct wpa_supplicant *wpa_s,
+ 
+ 
+ static void
++wpa_supplicant_delayed_sched_scan_timeout(void *eloop_ctx, void *timeout_ctx)
++{
++	struct wpa_supplicant *wpa_s = eloop_ctx;
++
++	wpa_dbg(wpa_s, MSG_DEBUG, "Starting delayed sched scan");
++
++	if (wpa_supplicant_req_sched_scan(wpa_s))
++		wpa_supplicant_req_scan(wpa_s, 0, 0);
++}
++
++static void
+ wpa_supplicant_sched_scan_timeout(void *eloop_ctx, void *timeout_ctx)
+ {
+ 	struct wpa_supplicant *wpa_s = eloop_ctx;
+@@ -585,6 +596,28 @@ void wpa_supplicant_req_scan(struct wpa_supplicant *wpa_s, int sec, int usec)
+ }
+ 
+ /**
++ * wpa_supplicant_delayed_sched_scan - Request a delayed scheduled scan
++ * @wpa_s: Pointer to wpa_supplicant data
++ * @sec: Number of seconds after which to scan
++ * @usec: Number of microseconds after which to scan
++ *
++ * This function is used to schedule periodic scans for neighboring
++ * access points after the specified time.
++ */
++int wpa_supplicant_delayed_sched_scan(struct wpa_supplicant *wpa_s,
++				      int sec, int usec)
++{
++	if (!wpa_s->sched_scan_supported)
++		return -EOPNOTSUPP;
++
++	eloop_register_timeout(sec, usec,
++			       wpa_supplicant_delayed_sched_scan_timeout,
++			       wpa_s, NULL);
++
++	return 0;
++}
++
++/**
+  * wpa_supplicant_req_sched_scan - Start a periodic scheduled scan
+  * @wpa_s: Pointer to wpa_supplicant data
+  *
+diff --git a/wpa_supplicant/scan.h b/wpa_supplicant/scan.h
+index f9d21b0..81dee01 100644
+--- a/wpa_supplicant/scan.h
++++ b/wpa_supplicant/scan.h
+@@ -17,6 +17,8 @@
+ 
+ int wpa_supplicant_enabled_networks(struct wpa_config *conf);
+ void wpa_supplicant_req_scan(struct wpa_supplicant *wpa_s, int sec, int usec);
++int wpa_supplicant_delayed_sched_scan(struct wpa_supplicant *wpa_s,
++				      int sec, int usec);
+ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s);
+ void wpa_supplicant_cancel_scan(struct wpa_supplicant *wpa_s);
+ void wpa_supplicant_cancel_sched_scan(struct wpa_supplicant *wpa_s);
+diff --git a/wpa_supplicant/wpa_supplicant.c b/wpa_supplicant/wpa_supplicant.c
+index c354b5f..ccf03b3 100644
+--- a/wpa_supplicant/wpa_supplicant.c
++++ b/wpa_supplicant/wpa_supplicant.c
+@@ -2071,7 +2071,9 @@ int wpa_supplicant_driver_init(struct wpa_supplicant *wpa_s)
+ 	wpa_s->prev_scan_ssid = WILDCARD_SSID_SCAN;
+ 	if (wpa_supplicant_enabled_networks(wpa_s->conf)) {
+ 		int ret;
+-		ret = wpa_supplicant_req_sched_scan(wpa_s);
++		ret = wpa_supplicant_delayed_sched_scan(wpa_s,
++							interface_count,
++							100000);
+ 		if (ret)
+ 			wpa_supplicant_req_scan(wpa_s, interface_count, 100000);
+ 		interface_count++;
+-- 
+1.7.0.4
+

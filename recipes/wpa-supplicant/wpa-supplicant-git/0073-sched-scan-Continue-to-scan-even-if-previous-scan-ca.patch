@@ -1,0 +1,81 @@
+From 26dc596d69919a8e5e8dc3c464b1e65b556c3ae5 Mon Sep 17 00:00:00 2001
+From: Eyal Shapira <eyal@wizery.com>
+Date: Sun, 18 Dec 2011 09:18:22 +0200
+Subject: [PATCH 32/32] sched scan: Continue to scan even if previous scan cancel fails
+
+cancel_sched_scan might fail if there wasn't any scan going
+on before. This shouldn't stop a new sched scan attempt.
+
+Signed-off-by: Eyal Shapira <eyal@wizery.com>
+---
+ wpa_supplicant/scan.c |   19 +++++++++++--------
+ wpa_supplicant/scan.h |    2 +-
+ 2 files changed, 12 insertions(+), 9 deletions(-)
+
+diff --git a/wpa_supplicant/scan.c b/wpa_supplicant/scan.c
+index 9c11992..598ebf6 100644
+--- a/wpa_supplicant/scan.c
++++ b/wpa_supplicant/scan.c
+@@ -252,7 +252,6 @@ static int wpa_supplicant_stop_sched_scan(struct wpa_supplicant *wpa_s)
+ 	if (ret) {
+ 		wpa_dbg(wpa_s, MSG_DEBUG, "stopping sched_scan failed!");
+ 		/* TODO: what to do if stopping fails? */
+-		return -1;
+ 	}
+ 
+ 	return ret;
+@@ -628,10 +627,14 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 	}
+ 
+ 	if (wpa_s->sched_scanning) {
+-		wpa_dbg(wpa_s, MSG_DEBUG, "Cancel previous sched scan");
+-		wpa_s->override_sched_scan = 1;
+-		wpa_supplicant_cancel_sched_scan(wpa_s);
+-		return 0;
++		wpa_dbg(wpa_s, MSG_DEBUG,
++			"Restarting sched scan with new parameters");
++		ret = wpa_supplicant_cancel_sched_scan(wpa_s);
++		if (!ret) {
++			wpa_s->override_sched_scan = 1;
++			return 0;
++		}
++		/* If failed probably no scan running so continu */
+ 	}
+ 
+ 	wpa_s->override_sched_scan = 0;
+@@ -744,16 +747,16 @@ void wpa_supplicant_cancel_scan(struct wpa_supplicant *wpa_s)
+  *
+  * This function is used to stop a periodic scheduled scan.
+  */
+-void wpa_supplicant_cancel_sched_scan(struct wpa_supplicant *wpa_s)
++int wpa_supplicant_cancel_sched_scan(struct wpa_supplicant *wpa_s)
+ {
+ 	if (!wpa_s->sched_scanning) {
+ 		wpa_dbg(wpa_s, MSG_DEBUG,
+ 			"cancel_sched_scan called when no sched scan");
+-		return;
++		return 0;
+ 	}
+ 
+ 	wpa_dbg(wpa_s, MSG_DEBUG, "Cancelling sched scan");
+-	wpa_supplicant_stop_sched_scan(wpa_s);
++	return wpa_supplicant_stop_sched_scan(wpa_s);
+ }
+ 
+ 
+diff --git a/wpa_supplicant/scan.h b/wpa_supplicant/scan.h
+index 81dee01..2982368 100644
+--- a/wpa_supplicant/scan.h
++++ b/wpa_supplicant/scan.h
+@@ -21,7 +21,7 @@ int wpa_supplicant_delayed_sched_scan(struct wpa_supplicant *wpa_s,
+ 				      int sec, int usec);
+ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s);
+ void wpa_supplicant_cancel_scan(struct wpa_supplicant *wpa_s);
+-void wpa_supplicant_cancel_sched_scan(struct wpa_supplicant *wpa_s);
++int wpa_supplicant_cancel_sched_scan(struct wpa_supplicant *wpa_s);
+ void wpa_supplicant_notify_scanning(struct wpa_supplicant *wpa_s,
+ 				    int scanning);
+ struct wpa_driver_scan_params;
+-- 
+1.7.0.4
+

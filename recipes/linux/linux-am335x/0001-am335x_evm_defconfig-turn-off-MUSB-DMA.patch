@@ -1,0 +1,38 @@
+From 7606b0cf0af8d08987648ff7af2f9f0176bc637b Mon Sep 17 00:00:00 2001
+From: Chase Maupin <Chase.Maupin@ti.com>
+Date: Thu, 2 Feb 2012 16:38:51 -0600
+Subject: [PATCH] am335x_evm_defconfig: turn off MUSB DMA
+
+* Turn off the MUSB DMA in the am335x_evm_defconfig.  This way
+  we can pull the default defconfig without enabling the
+  faulty USB DMA.
+
+Signed-off-by: Chase Maupin <Chase.Maupin@ti.com>
+---
+ arch/arm/configs/am335x_evm_defconfig |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/configs/am335x_evm_defconfig b/arch/arm/configs/am335x_evm_defconfig
+index e52b895..56236de 100644
+--- a/arch/arm/configs/am335x_evm_defconfig
++++ b/arch/arm/configs/am335x_evm_defconfig
+@@ -1781,13 +1781,13 @@ CONFIG_USB_MUSB_TI81XX_GLUE=y
+ CONFIG_USB_MUSB_TI81XX=y
+ # CONFIG_USB_MUSB_BLACKFIN is not set
+ # CONFIG_USB_MUSB_UX500 is not set
+-CONFIG_USB_TI_CPPI41_DMA_HW=y
+-# CONFIG_MUSB_PIO_ONLY is not set
++# CONFIG_USB_TI_CPPI41_DMA_HW is not set
++CONFIG_MUSB_PIO_ONLY=y
+ # CONFIG_USB_INVENTRA_DMA_HW is not set
+ # CONFIG_USB_TI_CPPI_DMA_HW is not set
+ # CONFIG_USB_INVENTRA_DMA is not set
+ # CONFIG_USB_TI_CPPI_DMA is not set
+-CONFIG_USB_TI_CPPI41_DMA=y
++# CONFIG_USB_TI_CPPI41_DMA is not set
+ # CONFIG_USB_TUSB_OMAP_DMA is not set
+ # CONFIG_USB_UX500_DMA is not set
+ 
+-- 
+1.7.0.4
+

@@ -94,11 +94,11 @@ if [ "$kernel" -eq "1" ]; then
 else
     if [ "$fs" -eq "1" ]; then
         bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs ip=dhcp"
-        bootcmd="setenv bootcmd 'mmc init;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
+        bootcmd="setenv bootcmd 'mmc rescan 0;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
         cfg="uimage-sd_fs-nfs"
     else
         bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
-        bootcmd="setenv bootcmd 'mmc init;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
+        bootcmd="setenv bootcmd 'mmc rescan 0;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
         cfg="uimage-sd_fs-sd"
     fi
 fi
@@ -106,7 +106,7 @@ fi
 echo
 echo "Resulting u-boot variable settings:"
 echo
-echo "setenv bootdelay 4"
+echo "setenv bootdelay 3"
 echo "setenv baudrate 115200"
 echo $bootargs
 echo $bootcmd
@@ -159,7 +159,7 @@ if [ "$minicom" = "y" ]; then
     echo "verbose on" >> $minicomfilepath
     echo >> $minicomfilepath
     do_expect "\"stop autoboot:\"" "send \"\"" $minicomfilepath
-    do_expect "\"$prompt\"" "send \"setenv bootdelay 4\"" $minicomfilepath
+    do_expect "\"$prompt\"" "send \"setenv bootdelay 3\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv baudrate 115200\"" $minicomfilepath
     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv oldbootargs \$\{bootargs\}\"" $minicomfilepath

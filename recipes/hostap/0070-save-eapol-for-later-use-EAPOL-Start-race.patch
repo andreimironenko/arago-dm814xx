@@ -1,0 +1,97 @@
+From 893c5d1d54da6a67e7524e8eaed076cd421d064e Mon Sep 17 00:00:00 2001
+From: Eliad Peller <eliad@wizery.com>
+Date: Wed, 7 Dec 2011 02:50:00 +0200
+Subject: [PATCH 29/29] save eapol for later use (EAPOL Start race)
+
+---
+ src/ap/hostapd.c    |    3 +++
+ src/ap/hostapd.h    |    5 +++++
+ src/ap/ieee802_11.c |   19 +++++++++++++++++++
+ src/ap/ieee802_1x.c |   11 +++++++++++
+ 4 files changed, 38 insertions(+), 0 deletions(-)
+
+diff --git a/src/ap/hostapd.c b/src/ap/hostapd.c
+index d8af571..351e1b7 100644
+--- a/src/ap/hostapd.c
++++ b/src/ap/hostapd.c
+@@ -251,6 +251,9 @@ static void hostapd_cleanup(struct hostapd_data *hapd)
+ 	os_free(hapd->probereq_cb);
+ 	hapd->probereq_cb = NULL;
+ 
++	wpabuf_free(hapd->pending_eapol_rx);
++	hapd->pending_eapol_rx = NULL;
++
+ #ifdef CONFIG_P2P
+ 	wpabuf_free(hapd->p2p_beacon_ie);
+ 	hapd->p2p_beacon_ie = NULL;
+diff --git a/src/ap/hostapd.h b/src/ap/hostapd.h
+index d4501a1..3c8e010 100644
+--- a/src/ap/hostapd.h
++++ b/src/ap/hostapd.h
+@@ -116,6 +116,11 @@ struct hostapd_data {
+ 
+ 	struct wpabuf *wps_beacon_ie;
+ 	struct wpabuf *wps_probe_resp_ie;
++
++	struct wpabuf *pending_eapol_rx;
++	struct os_time pending_eapol_rx_time;
++	u8 pending_eapol_rx_src[ETH_ALEN];
++
+ #ifdef CONFIG_WPS
+ 	unsigned int ap_pin_failures;
+ 	struct upnp_wps_device_sm *wps_upnp;
+diff --git a/src/ap/ieee802_11.c b/src/ap/ieee802_11.c
+index 5c8cd32..5ff8fbe 100644
+--- a/src/ap/ieee802_11.c
++++ b/src/ap/ieee802_11.c
+@@ -1780,6 +1780,25 @@ static void handle_assoc_cb(struct hostapd_data *hapd,
+ 
+ 	ieee802_1x_notify_port_enabled(sta->eapol_sm, 1);
+ 
++	if (hapd->pending_eapol_rx) {
++		struct os_time now, age;
++		os_get_time(&now);
++		os_time_sub(&now, &hapd->pending_eapol_rx_time, &age);
++		if (age.sec == 0 && /*age.usec < 100000 &&*/
++		    os_memcmp(hapd->pending_eapol_rx_src,
++			      mgmt->da, ETH_ALEN) == 0) {
++			wpa_printf(MSG_DEBUG, "Process pending EAPOL "
++				"frame that was received just before "
++				"association notification");
++			ieee802_1x_receive(
++				hapd, hapd->pending_eapol_rx_src,
++				wpabuf_head(hapd->pending_eapol_rx),
++				wpabuf_len(hapd->pending_eapol_rx));
++		 }
++		 wpabuf_free(hapd->pending_eapol_rx);
++		 hapd->pending_eapol_rx = NULL;
++	 }
++
+  fail:
+ 	/* Copy of the association request is not needed anymore */
+ 	if (sta->last_assoc_req) {
+diff --git a/src/ap/ieee802_1x.c b/src/ap/ieee802_1x.c
+index 217f9f9..d4ef894 100644
+--- a/src/ap/ieee802_1x.c
++++ b/src/ap/ieee802_1x.c
+@@ -692,6 +692,17 @@ void ieee802_1x_receive(struct hostapd_data *hapd, const u8 *sa, const u8 *buf,
+ 	if (!sta || !(sta->flags & (WLAN_STA_ASSOC | WLAN_STA_PREAUTH))) {
+ 		wpa_printf(MSG_DEBUG, "IEEE 802.1X data frame from not "
+ 			   "associated/Pre-authenticating STA");
++		if (sta->flags & WLAN_STA_ASSOC_REQ_OK) {
++			wpa_printf(MSG_DEBUG, "Saving EAPOL for later use");
++			wpabuf_free(hapd->pending_eapol_rx);
++			hapd->pending_eapol_rx = wpabuf_alloc_copy(buf, len);
++			if (hapd->pending_eapol_rx) {
++				os_get_time(&hapd->pending_eapol_rx_time);
++				os_memcpy(hapd->pending_eapol_rx_src, sa,
++					  ETH_ALEN);
++			}
++		}
++
+ 		return;
+ 	}
+ 
+-- 
+1.7.0.4
+

@@ -27,20 +27,27 @@ PVRBUILD = "release"
 
 PACKAGE_STRIP = "no"
 
+export SUPPORT_XORG
+
 TI_PLATFORM_omap3 = "omap3630"
 TI_PLATFORM_ti816x = "ti81xx"
 TI_PLATFORM_ti814x = "ti81xx"
+TI_PLATFORM_ti33x = "ti335x"
 
-MODULESLOCATION_omap3 = "dc_omap3430_linux"
+MODULESLOCATION_omap3 = "dc_omapfb3_linux"
 MODULESLOCATION_ti816x = "dc_ti81xx_linux"
 MODULESLOCATION_ti814x = "dc_ti81xx_linux"
+MODULESLOCATION_ti33x = "dc_ti335x_linux"
 
-MAKE_TARGETS = " BUILD=${PVRBUILD} TI_PLATFORM=${TI_PLATFORM}"
+MAKE_TARGETS = " BUILD=${PVRBUILD} TI_PLATFORM=${TI_PLATFORM} SUPPORT_XORG=${SUPPORT_XORG}"
 
 do_install() {
 	mkdir -p ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/gpu/pvr
-	cp ${S}/pvrsrvkm.ko \
-	   ${S}/services4/3rdparty/${MODULESLOCATION}/omaplfb.ko  \
-	   ${S}/services4/3rdparty/bufferclass_ti/bufferclass_ti.ko \
-	   ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/gpu/pvr
+	cp ${S}/pvrsrvkm.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/gpu/pvr
+	if [ "$SUPPORT_XORG" = "1" ]; then
+	cp ${S}/services4/3rdparty/linux_drm/drm.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/gpu/pvr
+	else
+	cp ${S}/services4/3rdparty/${MODULESLOCATION}/omaplfb.ko  ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/gpu/pvr
+	fi
+	cp ${S}/services4/3rdparty/bufferclass_ti/bufferclass_ti.ko ${D}/lib/modules/${KERNEL_VERSION}/kernel/drivers/gpu/pvr
 }

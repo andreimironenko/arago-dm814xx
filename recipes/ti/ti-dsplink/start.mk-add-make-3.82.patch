@@ -1,0 +1,28 @@
+From 0675d40b8ccde2d63b1f0874ed7a75051a14e019 Mon Sep 17 00:00:00 2001
+From: Denys Dmytriyenko <denys@ti.com>
+Date: Sun, 5 Feb 2012 02:45:30 -0500
+Subject: [PATCH] start.mk: don't fail on make 3.82
+
+Signed-off-by: Denys Dmytriyenko <denys@ti.com>
+---
+ dsplink/make/start.mk |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/dsplink/make/start.mk b/dsplink/make/start.mk
+index 13c26b9..23c03ce 100644
+--- a/dsplink/make/start.mk
++++ b/dsplink/make/start.mk
+@@ -41,8 +41,8 @@
+ 
+ 
+ # Check for MAKE version
+-$(if $(filter $(MAKE_VERSION), 3.81 3.81beta1 3.90 3.92),,\
+-$(error This makefile requires one of GNU make version 3.81 3.81beta1 3.90 3.92))
++$(if $(filter $(MAKE_VERSION), 3.81 3.81beta1 3.82 3.90 3.92),,\
++$(error This makefile requires one of GNU make version 3.81 3.81beta1 3.82 3.90 3.92))
+ #   ============================================================================
+ #   Export the directory separator
+ #   ============================================================================
+-- 
+1.7.8.4
+

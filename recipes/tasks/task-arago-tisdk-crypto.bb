@@ -2,7 +2,7 @@
 #       that require filing for a TSU exemption or applications
 #       that depend on TSU exempt code.
 DESCRIPTION = "Task to install crypto packages into target FS"
-PR = "r15"
+PR = "r19"
 LICENSE = "MIT"
 
 inherit task
@@ -34,6 +34,7 @@ CRYPTO_SUPPORT_TSU = "\
 # md5sum: 00bb20f2f33a37489d8c52212933368d
 # sha256sum: 1fea8323d12cf1ee4f743f0f1c82d7f3821a7d9b7996c44b17d7761579bb090d
 CRYPTO_SUPPORT_TSU_append_am37x-evm = " ti-ocf-crypto-module"
+CRYPTO_SUPPORT_TSU_append_am3517-evm = " ti-ocf-crypto-module"
 ################################################################################
 
 
@@ -45,10 +46,6 @@ CRYPTO_SUPPORT = "\
     ${CRYPTO_SUPPORT_TSU} \
     openssl-misc \
     "
-
-# Add support for graphical configuration of wpa-supplicant
-# used by WLAN drivers.
-#CRYPTO_SUPPORT_append_am180x-evm = " wpa-gui-e"
 
 # WLAN support packages.  These are added here because they depend on
 # crypto packages and are grouped with the crypto task to avoid confusion.
@@ -66,10 +63,16 @@ WLAN_COMMON = "hostap-daemon \
                softap-udhcpd-config \
               "
 
+BLUETOOTH = ""
+BLUETOOTH_am37x-evm = "bluetooth-gui"
+BLUETOOTH_omapl138 = "bluetooth-gui"
+BLUETOOTH_ti33x = "bluetooth-gui"
+
 # These are the WLAN packages that are used for compatibility with the
 # 2.6.37 kernel used by some devices
 WLAN_COMPAT = "ti-compat-wireless-wl12xx \
                wl1271-bluetooth \
+               ti-compat-bluetooth \
               "
 
 # Base WLAN value is blank set
@@ -77,8 +80,10 @@ WLAN = ""
 WLAN_am180x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
 WLAN_am37x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
 WLAN_beagleboard = "${WLAN_COMMON}"
+WLAN_am335x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
 
 RDEPENDS_${PN} = "\
     ${CRYPTO_SUPPORT} \
     ${WLAN} \
+    ${BLUETOOTH} \
     "

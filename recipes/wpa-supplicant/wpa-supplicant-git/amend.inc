@@ -1,7 +1,9 @@
 # Adding patches from TI nlcp r&d which are part of R4-11 release
 # These patches are pending for upstream 
 
-PR_append = "-arago2"
+PR_append = "-arago3"
+
+DEPENDS += "dbus"
 
 SRC_URI_append = " \
     file://0001-hostapd-set-sta-flags-when-adding-a-new-station.patch;patchdir=.. \
@@ -45,4 +47,35 @@ SRC_URI_append = " \
     file://0039-p2p-disable-11b-rates-only-on-p2p-interface-creation.patch;patchdir=.. \
     file://0040-nl80211-fix-the-not-disabled-case-in-disable_11b_rat.patch;patchdir=.. \
     file://0041-driver_nl80211-added-the-power-save-private-driver-c.patch;patchdir=.. \
+    file://0042-wpa_s-reorganize-P2P-and-WPS-scan-code.patch;patchdir=.. \
+    file://0043-wpa_s-add-scheduled-scan-driver-operations.patch;patchdir=.. \
+    file://0044-nl80211-update-nl80211_copy.h-to-add-support-for-sch.patch;patchdir=.. \
+    file://0045-nl80211-add-scheduled-scan-support.patch;patchdir=.. \
+    file://0046-wpa_s-use-sched_scan-in-driver-init.patch;patchdir=.. \
+    file://0047-wpa_s-Increase-number-of-SSIDs-per-scan.patch;patchdir=.. \
+    file://0048-wpa_s-check-if-sched_scan-is-supported-before-using-.patch;patchdir=.. \
+    file://0049-nl80211-check-if-sched_scan-is-supported-in-wiphy-in.patch;patchdir=.. \
+    file://0050-wpa_s-add-filter-support-to-scheduled-scans.patch;patchdir=.. \
+    file://0051-nl80211-add-support-for-sched_scan-filtering.patch;patchdir=.. \
+    file://0052-wpa_s-add-delayed-scheduled-scan-request.patch;patchdir=.. \
+    file://0053-wpa_s-add-extra-IEs-for-P2P-and-WPS-in-scheduled-sca.patch;patchdir=.. \
+    file://0054-nl80211-update-nl80211_copy.h-to-add-support-for-WPL.patch;patchdir=.. \
+    file://0055-driver_nl8011-Add-support-for-DRIVER-RXFILTER-comman.patch;patchdir=.. \
+    file://0056-Android-Add-DRIVER-command-to-wpa_cli.patch;patchdir=.. \
+    file://0057-sched-scan-Fix-passive-scanning.patch;patchdir=.. \
+    file://0058-sched-scan-Turn-passive-scan-into-active.patch;patchdir=.. \
+    file://0060-sched-scan-Avoid-changing-state-to-SCANNING.patch;patchdir=.. \
+    file://0061-sched-scan-Avoid-scan-if-no-enabled-networks.patch;patchdir=.. \
+    file://0062-sched-scan-Update-scan-according-to-changes-in-netwo.patch;patchdir=.. \
+    file://0063-sched-scan-Fallback-to-normal-scan-during-WPS.patch;patchdir=.. \
+    file://0064-sched-scan-Logic-changes.patch;patchdir=.. \
+    file://0065-Revert-hostap-set-ht_capab-from-wiphy-when-in-P2P-GO.patch;patchdir=.. \
+    file://0066-hostap-set-ht_capab-from-wiphy-when-in-P2P-GO-mode.patch;patchdir=.. \
+    file://0067-rx-filters-Add-support-for-longer-patterns.patch;patchdir=.. \
+    file://0068-update-nl80211_copy.h.patch;patchdir=.. \
+    file://0069-add-PRE_ASSOC-flag-support.patch;patchdir=.. \
+    file://0070-save-eapol-for-later-use-EAPOL-Start-race.patch;patchdir=.. \
+    file://0071-Remove-ARP-wowlan-wakeup-pattern.patch;patchdir=.. \
+    file://0072-Enable-wpa_dbg-on-Android.patch;patchdir=.. \
+    file://0073-sched-scan-Continue-to-scan-even-if-previous-scan-ca.patch;patchdir=.. \
     "

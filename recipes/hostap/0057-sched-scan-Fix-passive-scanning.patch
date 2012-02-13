@@ -1,0 +1,62 @@
+From 0146bf2a462f10c4af026402db1f168644731dcc Mon Sep 17 00:00:00 2001
+From: Eyal Shapira <eyal@wizery.com>
+Date: Sun, 6 Nov 2011 17:51:51 +0200
+Subject: [PATCH 16/29] sched scan: Fix passive scanning
+
+Scan wasn't initiated in case the config contained only networks without scan_ssid.
+In such a case we want scan to be initiated without any SSIDs to actively scan
+but include all the SSIDs in the filter list.
+Also added some debug logs to easily see which SSIDs were included in which list.
+---
+ wpa_supplicant/scan.c |   13 +++++++------
+ 1 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/wpa_supplicant/scan.c b/wpa_supplicant/scan.c
+index 353335f..b347f2c 100644
+--- a/wpa_supplicant/scan.c
++++ b/wpa_supplicant/scan.c
+@@ -641,8 +641,10 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 	else
+ 		max_sched_scan_ssids = wpa_s->max_sched_scan_ssids;
+ 
+-	if (wpa_s->sched_scanning)
++	if (wpa_s->sched_scanning) {
++		wpa_dbg(wpa_s, MSG_DEBUG, "Already sched scanning");
+ 		return 0;
++	}
+ 
+ 	os_memset(&params, 0, sizeof(params));
+ 
+@@ -685,6 +687,8 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 		}
+ 
+ 		if (params.filter_ssids && ssid->ssid && ssid->ssid_len) {
++			wpa_dbg(wpa_s, MSG_DEBUG, "add to filter ssid: %s",
++				wpa_ssid_txt(ssid->ssid, ssid->ssid_len));
+ 			os_memcpy(params.filter_ssids[params.num_filter_ssids].ssid,
+ 				  ssid->ssid, ssid->ssid_len);
+ 			params.filter_ssids[params.num_filter_ssids].ssid_len =
+@@ -693,6 +697,8 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 		}
+ 
+ 		if (ssid->scan_ssid) {
++			wpa_dbg(wpa_s, MSG_DEBUG, "add to active scan ssid: %s",
++				wpa_ssid_txt(ssid->ssid, ssid->ssid_len));
+ 			params.ssids[params.num_ssids].ssid =
+ 				ssid->ssid;
+ 			params.ssids[params.num_ssids].ssid_len =
+@@ -710,11 +716,6 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 		ssid = ssid->next;
+ 	}
+ 
+-	if (!params.num_ssids) {
+-		os_free(params.filter_ssids);
+-		return 0;
+-	}
+-
+ 	if (wpa_s->wps)
+ 		wps_ie = wpa_supplicant_extra_ies(wpa_s, &params);
+ 
+-- 
+1.7.0.4
+

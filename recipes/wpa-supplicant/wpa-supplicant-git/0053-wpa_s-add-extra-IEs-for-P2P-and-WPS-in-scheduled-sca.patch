@@ -1,0 +1,56 @@
+From 0e633cbb217d30dab77fa3a823eb483cd44fea0a Mon Sep 17 00:00:00 2001
+From: Luciano Coelho <coelho@ti.com>
+Date: Fri, 30 Sep 2011 16:20:08 +0300
+Subject: [PATCH 12/29] wpa_s: add extra IEs for P2P and WPS in scheduled scan probe reqs
+
+When WPS and P2P are enabled, we need to send the proper IEs in the
+probe requests sent during scheduled scans.  Add extra IEs to the
+scheduled scan parameters.
+
+Signed-off-by: Luciano Coelho <coelho@ti.com>
+---
+ wpa_supplicant/scan.c |    8 ++++++--
+ 1 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/wpa_supplicant/scan.c b/wpa_supplicant/scan.c
+index a78962b..353335f 100644
+--- a/wpa_supplicant/scan.c
++++ b/wpa_supplicant/scan.c
+@@ -629,6 +629,7 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 	struct wpa_driver_scan_params params;
+ 	enum wpa_states prev_state;
+ 	struct wpa_ssid *ssid;
++	struct wpabuf *wps_ie = NULL;
+ 	int ret;
+ 	int max_sched_scan_ssids;
+ 
+@@ -640,8 +641,6 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 	else
+ 		max_sched_scan_ssids = wpa_s->max_sched_scan_ssids;
+ 
+-	/* TODO: Add WPS and P2P support */
+-
+ 	if (wpa_s->sched_scanning)
+ 		return 0;
+ 
+@@ -716,12 +715,17 @@ int wpa_supplicant_req_sched_scan(struct wpa_supplicant *wpa_s)
+ 		return 0;
+ 	}
+ 
++	if (wpa_s->wps)
++		wps_ie = wpa_supplicant_extra_ies(wpa_s, &params);
++
+ 	wpa_dbg(wpa_s, MSG_DEBUG, "Starting sched scan: interval %d timeout %d",
+ 		wpa_s->sched_scan_interval, wpa_s->sched_scan_timeout);
+ 
+ 	ret = wpa_supplicant_start_sched_scan(wpa_s, &params,
+ 					      wpa_s->sched_scan_interval);
++	wpabuf_free(wps_ie);
+ 	os_free(params.filter_ssids);
++
+ 	if (ret) {
+ 		wpa_msg(wpa_s, MSG_WARNING, "Failed to initiate sched scan");
+ 		if (prev_state != wpa_s->wpa_state)
+-- 
+1.7.0.4
+

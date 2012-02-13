@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r37"
+PR = "r38"
 LICENSE = "MIT"
 
 inherit task
@@ -119,6 +119,7 @@ MULTIMEDIA_ti814x = " \
 MULTIMEDIA_ti33x = " \
     task-arago-gst \
     gst-ffmpeg \
+    amsdk-av-files \
     "
 
 RDEPENDS_${PN} = "\

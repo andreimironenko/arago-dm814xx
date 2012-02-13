@@ -13,7 +13,7 @@ PROVIDES += "ti-syslink-examples"
 
 # This package builds a kernel module, use kernel PR as base and append a local version
 PR = "${MACHINE_KERNEL_PR}"
-PR_append = "i"
+PR_append = "j"
 PVExtra = ""
 
 S = "${WORKDIR}/syslink_${PV}${PVExtra}"
@@ -26,6 +26,7 @@ DEPENDS += "virtual/kernel"
 SYSLINKDEVICE_ti816x    = "TI816X"
 SYSLINKDEVICE_ti814x    = "TI814X"
 SYSLINKDEVICE_omap3     = "OMAP3530"
+SYSLINKDEVICE_omapl138  = "OMAPL1XX"
 SYSLINKDEVICE          ?= "<UNDEFINED_SYSLINKDEVICE>"
 
 PARALLEL_MAKE = ""

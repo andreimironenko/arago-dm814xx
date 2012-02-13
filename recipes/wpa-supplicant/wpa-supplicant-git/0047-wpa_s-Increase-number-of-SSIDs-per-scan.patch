@@ -1,0 +1,32 @@
+From 2f63a75ecd94d73a788eddb42e5404343abf5f21 Mon Sep 17 00:00:00 2001
+From: Luciano Coelho <coelho@ti.com>
+Date: Fri, 30 Sep 2011 16:20:01 +0300
+Subject: [PATCH 06/29] wpa_s: Increase number of SSIDs per scan
+
+With scheduled scan support, we may need to pass more than 10 SSIDs in
+a single scan request.  Some drivers (eg. wl12xx) support up to 16
+SSIDs at once.
+
+Change WPAS_MAX_SCAN_SSIDS from 10 to 16.
+
+Signed-off-by: Luciano Coelho <coelho@ti.com>
+---
+ src/drivers/driver.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/src/drivers/driver.h b/src/drivers/driver.h
+index d86cbb1..19e8007 100644
+--- a/src/drivers/driver.h
++++ b/src/drivers/driver.h
+@@ -195,7 +195,7 @@ struct wpa_interface_info {
+ 	const char *drv_name;
+ };
+ 
+-#define WPAS_MAX_SCAN_SSIDS 10
++#define WPAS_MAX_SCAN_SSIDS 16
+ 
+ /**
+  * struct wpa_driver_scan_params - Scan parameters
+-- 
+1.7.0.4
+

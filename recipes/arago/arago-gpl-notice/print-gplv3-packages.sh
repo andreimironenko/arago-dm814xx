@@ -23,6 +23,11 @@ then
     echo "the opkg remove command.  i.e.:"
     echo "    opkg remove <package>"
     echo "Where <package> is the name printed in the list above"
+    echo ""
+    echo "NOTE: If the package is a dependency of another package you"
+    echo "      will be notified of the dependent packages.  You should"
+    echo "      use the --force-removal-of-dependent-packages option to"
+    echo "      also remove the dependent packages as well"
     echo "***************************************************************"
     echo "***************************************************************"
 fi

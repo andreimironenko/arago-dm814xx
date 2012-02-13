@@ -1,0 +1,28 @@
+From c1cafd5c3e6a95a9ed144dec8b2adcf22371db23 Mon Sep 17 00:00:00 2001
+From: Moosa Baransi <moosab@ti.com>
+Date: Mon, 26 Dec 2011 10:41:53 +0200
+Subject: [PATCH] ti-compat-wireless-wl12xx: activate dynamic memory allocation
+
+Activate dynamic memory allocation
+
+Signed-off-by: Moosa Baransi <moosab@ti.com>
+---
+ drivers/net/wireless/wl12xx/main.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/wireless/wl12xx/main.c b/drivers/net/wireless/wl12xx/main.c
+index 5035543..dce8147 100644
+--- a/drivers/net/wireless/wl12xx/main.c
++++ b/drivers/net/wireless/wl12xx/main.c
+@@ -296,7 +296,7 @@ static struct conf_drv_settings default_conf = {
+ 		.ssid_profiles                = 1,
+ 		.rx_block_num                 = 70,
+ 		.tx_min_block_num             = 40,
+-		.dynamic_memory               = 0,
++		.dynamic_memory               = 1,
+ 		.min_req_tx_blocks            = 100,
+ 		.min_req_rx_blocks            = 22,
+ 		.tx_min                       = 27,
+-- 
+1.7.0.4
+

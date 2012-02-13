@@ -4,17 +4,17 @@ LICENSE = "BSD MIT Apache"
 SECTION = "multimedia"
 PRIORITY = "optional"
 
-PR = "r15"
+PR = "r30"
 
 INITSCRIPT_NAME = "matrix-gui-2.0"
-INITSCRIPT_PARAMS = "defaults 99"
+INITSCRIPT_PARAMS = "defaults 97"
 
-PACKAGE_ARCH = "all"
+PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 inherit update-rc.d
 
 BRANCH ?= "master"
-SRCREV = "a399ea05de87a8539c72e6c29d54c5c3aea62069"
+SRCREV = "87825c8598a2b42432e2817d1d9dba6082062249"
 
 SRC_URI = "git://gitorious.org/matrix-gui-v2/matrix-gui-v2.git;protocol=git;branch=${BRANCH} \
            file://init \
@@ -23,6 +23,9 @@ SRC_URI = "git://gitorious.org/matrix-gui-v2/matrix-gui-v2.git;protocol=git;bran
 require matrix-gui-paths.inc
 
 S = "${WORKDIR}/git"
+
+MATRIX_ROT = ""
+MATRIX_ROT_am37x-evm = "-display transformed:Rot90"
 
 do_install(){
 	install -d ${D}${MATRIX_BASE_DIR}
@@ -34,11 +37,13 @@ do_install(){
 
     # Set the proper path in the init script
     sed -i -e s=__MATRIX_WEB_DIR__=${MATRIX_WEB_DIR}= ${WORKDIR}/init
+    sed -i -e "s/__MATRIX_ROT__/\"${MATRIX_ROT}\"/" ${WORKDIR}/init
 
 	install -d ${D}${sysconfdir}/init.d
     install -m 0755 ${WORKDIR}/init ${D}${sysconfdir}/init.d/matrix-gui-2.0
+
 }
 
-RDEPENDS_${PN} += "lighttpd lighttpd-module-fastcgi lighttpd-module-compress lighttpd-module-expire lighttpd-module-rewrite php php-cgi php-cli matrix-gui-browser"
+RDEPENDS_${PN} += "lighttpd lighttpd-module-cgi lighttpd-module-compress lighttpd-module-expire php php-cgi php-cli matrix-gui-browser refresh-screen"
 
 FILES_${PN} += "${MATRIX_BASE_DIR}/*"

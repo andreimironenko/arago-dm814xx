@@ -1,0 +1,33 @@
+From 7094087f74ca885aa8502db5d825ebd38bbea2e4 Mon Sep 17 00:00:00 2001
+From: Arik Nemtsov <arik@wizery.com>
+Date: Wed, 26 Oct 2011 16:11:07 +0200
+Subject: [PATCH] wl12xx: don't allow scans in AP-mode
+
+Scans are unsupported in AP-mode and are rejected by the FW. This patch
+prevents the triggerring of a recovery on each scan request.
+
+Signed-off-by: Arik Nemtsov <arik@wizery.com>
+---
+ drivers/net/wireless/wl12xx/main.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/wireless/wl12xx/main.c b/drivers/net/wireless/wl12xx/main.c
+index f1b1884..2880524 100644
+--- a/drivers/net/wireless/wl12xx/main.c
++++ b/drivers/net/wireless/wl12xx/main.c
+@@ -2917,6 +2917,12 @@ static int wl1271_op_hw_scan(struct ieee80211_hw *hw,
+ 		goto out;
+ 	}
+ 
++	/* don't allow scan in AP-mode */
++	if (wl->bss_type == BSS_TYPE_AP_BSS) {
++		ret = -EOPNOTSUPP;
++		goto out;
++	}
++
+ 	ret = wl1271_ps_elp_wakeup(wl);
+ 	if (ret < 0)
+ 		goto out;
+-- 
+1.7.5.4
+

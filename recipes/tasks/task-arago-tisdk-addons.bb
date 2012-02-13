@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install additional utilities/demos for SDKs"
-PR = "r17"
+PR = "r18"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -29,6 +29,8 @@ UTILS_append_am180x-evm = " ti-pru-sw-examples"
 AM_ADDONS = " \
     dt \
     task-arago-test \
+    gdbserver \
+    oprofile \
     "
 
 # Add additional packages for AM devices

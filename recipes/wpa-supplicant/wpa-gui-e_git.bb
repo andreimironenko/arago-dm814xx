@@ -7,8 +7,8 @@ LICENSE = "GPL BSD"
 HOMEPAGE = "http://hostap.epitest.fi/wpa_supplicant/"
 RDEPENDS_${PN} = "wpa-supplicant"
 
-SRCREV = "b8fb017272ed4794339978c9fbc0e74571a44728"
-PR = "r3"
+SRCREV = "653c4893be17d12ef7bc6e941b765c92c1e4a161"
+PR = "r4"
 PV = "0.7.3+0.8.0-rc"
 PR_append = "+gitr${SRCPV}"
 

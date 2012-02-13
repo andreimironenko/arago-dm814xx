@@ -7,4 +7,4 @@
 # Provide own udev default file, that disables dev cache for armv7a
 
 # Set the suffix to specify amended packages
-PR_append = "-arago4"
+PR_append = "-arago5"

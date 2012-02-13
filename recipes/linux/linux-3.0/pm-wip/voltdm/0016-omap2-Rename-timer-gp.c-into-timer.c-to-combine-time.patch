@@ -1,4 +1,4 @@
-From 2c811d46f1a29fd9502ca09b6e0372d4be69eed3 Mon Sep 17 00:00:00 2001
+From 4c97f5b5e06d38af3eb726edd3f53176e2734465 Mon Sep 17 00:00:00 2001
 From: Tony Lindgren <tony@atomide.com>
 Date: Tue, 29 Mar 2011 15:54:50 -0700
 Subject: [PATCH 016/149] omap2+: Rename timer-gp.c into timer.c to combine timer init functions
@@ -29,12 +29,12 @@ index b148077..adbe82d 100644
 +++ b/arch/arm/mach-omap2/Makefile
 @@ -3,7 +3,7 @@
  #
-
+ 
  # Common support
 -obj-y := id.o io.o control.o mux.o devices.o serial.o gpmc.o timer-gp.o pm.o \
 +obj-y := id.o io.o control.o mux.o devices.o serial.o gpmc.o timer.o pm.o \
-	 common.o gpio.o dma.o wd_timer.o
-
+ 	 common.o gpio.o dma.o wd_timer.o
+ 
  omap-2-3-common				= irq.o sdrc.o
 diff --git a/arch/arm/mach-omap2/timer-gp.c b/arch/arm/mach-omap2/timer-gp.c
 deleted file mode 100644
@@ -274,7 +274,7 @@ index ab1931c..0000000
 -/* Clocksource code */
 -
 -#ifdef CONFIG_OMAP_32K_TIMER
--/*
+-/* 
 - * When 32k-timer is enabled, don't use GPTimer for clocksource
 - * instead, just leave default clocksource which uses the 32k
 - * sync counter.  See clocksource setup in plat-omap/counter_32k.c
@@ -732,5 +732,6 @@ index 0000000..e964072
 +}
 +OMAP_SYS_TIMER(4)
 +#endif
---
-1.6.6.1
+-- 
+1.7.0.4
+
