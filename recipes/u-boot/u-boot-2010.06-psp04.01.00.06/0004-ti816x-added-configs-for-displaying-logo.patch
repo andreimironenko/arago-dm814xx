@@ -1,0 +1,34 @@
+From 3205399c6dde935ffb9024095eb47fad14cfb63e Mon Sep 17 00:00:00 2001
+From: Amarinder Bindra <a-bindra@ti.com>
+Date: Tue, 31 Jan 2012 14:50:46 +0530
+Subject: [PATCH 4/5] ti816x: added configs for displaying logo
+
+
+Signed-off-by: Amarinder Bindra <a-bindra@ti.com>
+---
+ include/configs/ti8168_evm.h |    9 +++++++++
+ 1 files changed, 9 insertions(+), 0 deletions(-)
+
+diff --git a/include/configs/ti8168_evm.h b/include/configs/ti8168_evm.h
+index b2618a0..0d27240 100644
+--- a/include/configs/ti8168_evm.h
++++ b/include/configs/ti8168_evm.h
+@@ -293,6 +293,15 @@ extern unsigned int boot_flash_type;
+ # define CONFIG_MTD_DEVICE
+ #endif	/* NOR support */
+ 
++/* Splashscreen support */
++#define CONFIG_VIDEO
++#define CONFIG_CFB_CONSOLE
++#define CONFIG_VIDEO_LOGO
++#define CONFIG_VGA_AS_SINGLE_DEVICE
++#define CONFIG_SYS_CONSOLE_IS_IN_ENV
++#define CONFIG_CMD_BMP
++#define VIDEO_FB_LITTLE_ENDIAN
++
+ /* I2C support */
+ #ifdef CONFIG_I2C
+ # define CONFIG_CMD_I2C
+-- 
+1.7.1
+
