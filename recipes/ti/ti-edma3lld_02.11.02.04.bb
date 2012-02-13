@@ -7,4 +7,5 @@ SRC_URI[edma3lldbin.sha256sum] = "85c3ad7d15282235879d9743f1c043a11d595eb109af6d
 
 SRC_URI += "file://0001-Added-sdk-make-install-file-to-edma3lld.patch \
             file://0001-Added-targets-for-libs-only-build-of-centaurus-and-n.patch \
+            file://0001-makefile-Fix-support-for-building-M3-libraries-in-ti.patch \
 "

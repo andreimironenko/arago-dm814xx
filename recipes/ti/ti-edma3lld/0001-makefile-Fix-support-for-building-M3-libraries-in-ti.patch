@@ -1,0 +1,76 @@
+From 0b8d6806b8fdd0df0c4f417c9a32055e2c550d09 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Mon, 13 Feb 2012 16:53:51 +0530
+Subject: [PATCH] makefile: Fix support for building M3 libraries in ti814x
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ packages/makefile |   36 ++++++++++++++++++++++++++----------
+ 1 files changed, 26 insertions(+), 10 deletions(-)
+
+diff --git a/packages/makefile b/packages/makefile
+index d625a9d..5a560c0 100644
+--- a/packages/makefile
++++ b/packages/makefile
+@@ -142,31 +142,47 @@ endif
+ edma3_lld_ti814x_arm_libs: edma3_lld_ti814x_arm_libs_drv edma3_lld_ti814x_arm_libs_rm edma3_lld_ti814x_arm_libs_drvsample edma3_lld_ti814x_arm_libs_rmsample
+ edma3_lld_ti814x_arm_libs_drv:
+ ifeq ($(FORMAT),ELF)
+-	$(ECHO) \# Making a8:debug:edma3_lld_drv 
+-	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=debug
+-	$(ECHO) \# Making a8:release:edma3_lld_drv 
+-	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=release
++	$(ECHO) \# Making m3:debug:edma3_lld_drv 
++	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti814x-evm CORE=m3vpss PROFILE_m3vpss=debug
++	$(ECHO) \# Making m3:release:edma3_lld_drv 
++	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti814x-evm CORE=m3vpss PROFILE_m3vpss=release
++	$(ECHO) \# Making m3:debug:edma3_lld_drv 
++	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti814x-evm CORE=m3video PROFILE_m3video=debug
++	$(ECHO) \# Making m3:release:edma3_lld_drv 
++	$(MAKE) -C $(edma3_lld_drv_PATH) PLATFORM=ti814x-evm CORE=m3video PROFILE_m3video=release
+ endif
+ edma3_lld_ti814x_arm_libs_rm:
+ ifeq ($(FORMAT),ELF)
+ 	$(ECHO) \# Making ti814x-evm:debug:edma3_lld_rm 
+-	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=debug
++	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti814x-evm CORE=m3vpss PROFILE_m3vpss=debug
+ 	$(ECHO) \# Making ti814x-evm:rel:edma3_lld_rm 
+-	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=release
++	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti814x-evm CORE=m3vpss PROFILE_m3vpss=release
++	$(ECHO) \# Making ti814x-evm:debug:edma3_lld_rm 
++	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti814x-evm CORE=m3video PROFILE_m3video=debug
++	$(ECHO) \# Making ti814x-evm:rel:edma3_lld_rm 
++	$(MAKE) -C $(edma3_lld_rm_PATH) PLATFORM=ti814x-evm CORE=m3video PROFILE_m3video=release
+ endif
+ edma3_lld_ti814x_arm_libs_drvsample:
+ ifeq ($(FORMAT),ELF)
+ 	$(ECHO) \# Making ti814x-evm:debug:edma3_lld_drv_sample 
+-	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=debug
++	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti814x-evm CORE=m3vpss PROFILE_m3vpss=debug
++	$(ECHO) \# Making ti814x-evm:rel:edma3_lld_drv_sample 
++	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti814x-evm CORE=m3vpss PROFILE_m3vpss=release
++	$(ECHO) \# Making ti814x-evm:debug:edma3_lld_drv_sample 
++	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti814x-evm CORE=m3video PROFILE_m3video=debug
+ 	$(ECHO) \# Making ti814x-evm:rel:edma3_lld_drv_sample 
+-	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=release
++	$(MAKE) -C $(edma3_lld_drv_sample_PATH) PLATFORM=ti814x-evm CORE=m3video PROFILE_m3video=release
+ endif
+ edma3_lld_ti814x_arm_libs_rmsample:
+ ifeq ($(FORMAT),ELF)
+ 	$(ECHO) \# Making ti814x-evm:debug:edma3_lld_rm_sample 
+-	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=debug
++	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti814x-evm CORE=m3vpss PROFILE_m3vpss=debug
++	$(ECHO) \# Making ti814x-evm:rel:edma3_lld_rm_sample 
++	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti814x-evm CORE=m3vpss PROFILE_m3vpss=release
++	$(ECHO) \# Making ti814x-evm:debug:edma3_lld_rm_sample 
++	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti814x-evm CORE=m3video PROFILE_m3video=debug
+ 	$(ECHO) \# Making ti814x-evm:rel:edma3_lld_rm_sample 
+-	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti814x-evm CORE=a8host PROFILE_a8host=release
++	$(MAKE) -C $(edma3_lld_rm_sample_PATH) PLATFORM=ti814x-evm CORE=m3video PROFILE_m3video=release
+ endif
+ 
+ edma3_lld_drv:
+-- 
+1.7.0.4
+
