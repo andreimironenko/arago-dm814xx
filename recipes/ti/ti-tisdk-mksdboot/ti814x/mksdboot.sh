@@ -140,7 +140,7 @@ fi
 execute "mkdir -p /tmp/sdk"
 cat <<EOF >/tmp/sdk/boot.cmd
 colorbar
-setenv bootargs 'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 rw mem=364M@0x80000000 notifyk.vpssm3_sva=0xBF900000 ip=off noinitrd'
+setenv bootargs 'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 rw mem=364M@0x80000000 324M@0x9F900000 quiet notifyk.vpssm3_sva=0xBF900000 ip=off noinitrd'
 fatload mmc 0 0x80009000 uImage
 bootm 0x80009000
 EOF
