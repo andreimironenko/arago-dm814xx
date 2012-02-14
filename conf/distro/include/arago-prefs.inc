@@ -18,12 +18,10 @@ PREFERRED_VERSION_wpa-gui-e = "0.7.3+0.8.0-rc"
 # Lock udev at 141, as recent versions cannot be built with csl2009q1
 PREFERRED_VERSION_udev = "141"
 
-# Pin gstreamer version 0.10.30, as newer conflicts with xdc headers
-# keyword 'restrict' being defined in both headers, unpin when xdc fixed
-PREFERRED_VERSION_gstreamer = "0.10.30"
-PREFERRED_VERSION_gst-plugins-base = "0.10.30"
-PREFERRED_VERSION_gst-plugins-good = "0.10.25"
-PREFERRED_VERSION_gst-plugins-bad = "0.10.20"
+PREFERRED_VERSION_gstreamer = "0.10.32"
+PREFERRED_VERSION_gst-plugins-base = "0.10.32"
+PREFERRED_VERSION_gst-plugins-good = "0.10.28"
+PREFERRED_VERSION_gst-plugins-bad = "0.10.21"
 PREFERRED_VERSION_gst-plugins-ugly = "0.10.16"
 
 # Lock down older libxml2-native for RHEL4 compatibility
