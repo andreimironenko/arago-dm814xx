@@ -7,6 +7,8 @@ PV = "2_10_00_12"
 PVwithdots = "2.10.00.12"
 PVExtra = ""
 
+DEFAULT_PREFERENCE = "-1"
+
 require ti-paths.inc
 require ti-staging.inc
 
