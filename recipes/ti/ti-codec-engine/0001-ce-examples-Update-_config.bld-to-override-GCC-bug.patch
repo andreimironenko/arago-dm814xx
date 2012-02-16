@@ -1,0 +1,26 @@
+From 6928ca953e4397aba4b608a3c2588a49de04ba4b Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Thu, 16 Feb 2012 17:29:39 +0530
+Subject: [PATCH] ce-examples: Update _config.bld to override GCC bug
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ examples/_config.bld |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/examples/_config.bld b/examples/_config.bld
+index dd84ea3..0c37bc0 100644
+--- a/examples/_config.bld
++++ b/examples/_config.bld
+@@ -289,6 +289,7 @@ if (GCArmv5T != undefined) {
+     GCArmv5T.rootDir = V5T_rootdir;
+     GCArmv5T.LONGNAME = CC_V5T;
+     GCArmv5T.ccOpts.prefix += " -Wall -fno-strict-aliasing ";
++    GCArmv5T.profiles["release"].compileOpts.copts = "-O2 -ffunction-sections";
+ 
+     /* We disable C++ support so we don't need it on the target file system */
+     GCArmv5T.lnkOpts.suffix = GCArmv5T.lnkOpts.suffix.replace("-lstdc++", "");
+-- 
+1.7.0.4
+

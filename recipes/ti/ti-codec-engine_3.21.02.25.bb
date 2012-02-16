@@ -4,6 +4,7 @@ PV = "3_21_02_25"
 PVExtra = ""
 
 SRC_URI = "http://www.sanb.design.ti.com/tisb_releases/Codec_Engine/${PV}/exports/codec_engine_${PV}${PVExtra},lite.tar.gz;name=cetarball \
+           file://0001-ce-examples-Update-_config.bld-to-override-GCC-bug.patch \
 "
 
 SRC_URI[cetarball.md5sum] = "7db51940336a88fb97a60915dc9adb22"
