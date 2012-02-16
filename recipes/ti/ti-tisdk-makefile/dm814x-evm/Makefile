@@ -182,8 +182,8 @@ psp-examples:
 		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
 		INSTALL_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/audio \
 		EXE_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/audio/bin \
-		LIB_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit/arm-none-linux-gnueabi/usr/lib \
-		LIB_INC=$(DVSDK_INSTALL_DIR)/linux-devkit/arm-none-linux-gnueabi/usr/include \
+		LIB_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit/arm-arago-linux-gnueabi/usr/lib \
+		LIB_INC=$(DVSDK_INSTALL_DIR)/linux-devkit/arm-arago-linux-gnueabi/usr/include \
 		CROSS_COMPILE=$(CSTOOL_PREFIX)
 	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/edma \
 		KDIR=$(LINUXKERNEL_INSTALL_DIR) \
@@ -205,8 +205,8 @@ psp-examples_clean:
 		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
 		INSTALL_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/audio \
 		EXE_DIR=$(EXEC_DIR)/psp-linux-driver-examples*/audio \
-		LIB_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit/arm-none-linux-gnueabi/usr/lib \
-		LIB_INC=$(DVSDK_INSTALL_DIR)/linux-devkit/arm-none-linux-gnueabi/usr/include \
+		LIB_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit/arm-arago-linux-gnueabi/usr/lib \
+		LIB_INC=$(DVSDK_INSTALL_DIR)/linux-devkit/arm-arago-linux-gnueabi/usr/include \
 		CROSS_COMPILE=$(CSTOOL_PREFIX) \
 		clean
 	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/edma \
@@ -414,7 +414,7 @@ edma3lld_clean:
 gstomx_configure:
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; \
 		cd $(GST_OMX_INSTALL_DIR)/; \
-		./configure --host=arm-none-linux-gnueabi 
+		./configure --host=arm-arago-linux-gnueabi 
 
 gstomx: gstomx_configure
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; \
@@ -490,7 +490,7 @@ dsp-devkit:
 ###############################################################################
 # Build the Linux devkit
 ###############################################################################
-LINUX_DEVKIT_DESTDIR := $(LINUX_DEVKIT_DIR)/arm-none-linux-gnueabi
+LINUX_DEVKIT_DESTDIR := $(LINUX_DEVKIT_DIR)/arm-arago-linux-gnueabi
 LINUX_DEVKIT_LOG := $(LINUX_DEVKIT_DIR)/ti-install.log
 
 linux-devkit:
