@@ -32,7 +32,7 @@ MACHINE ?= "arago"
 DISTRO = "arago"
 
 # What toolchain to use (csl, arago, angstrom etc.)
-TOOLCHAIN_BRAND ?= "csl"
+TOOLCHAIN_BRAND ?= "arago"
 
 # Set Matrix to older version
 PREFERRED_VERSION_matrix-gui-e = "1.3"
