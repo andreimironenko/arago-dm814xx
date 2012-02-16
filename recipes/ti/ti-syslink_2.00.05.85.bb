@@ -4,6 +4,7 @@ PV = "2_00_05_85"
 
 SRC_URI = "http://www.sanb.design.ti.com/tisb_releases/SysLink/${PV}/exports/syslink_${PV}.tar.gz;name=syslinktarball \
            file://sdk.mk \
+           file://0001-makefile-change-test-to-use-PREFIX-instead-of-a-fixe.patch \
 "
 
 SRC_URI[syslinktarball.md5sum] = "521d08397cb27a9871e2bf7593ea85d7"

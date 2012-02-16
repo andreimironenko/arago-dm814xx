@@ -1,0 +1,27 @@
+From 1d73f4dcce488933893299064329693f1b1052db Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Thu, 16 Feb 2012 16:29:44 +0530
+Subject: [PATCH] makefile: change test to use PREFIX instead of a fixed toolchain
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/makefile b/makefile
+index d0ba1b4..a0616a0 100644
+--- a/makefile
++++ b/makefile
+@@ -358,7 +358,7 @@ ifeq ($(REQUIRE_LINUXKERNEL), 1)
+ endif
+ 
+ ifeq ($(REQUIRE_CGT_ARM), 1)
+-    TEST_FILE := $(CGT_ARM_INSTALL_DIR)/bin/arm-none-linux-gnueabi-gcc
++    TEST_FILE := $(CGT_ARM_PREFIX)gcc
+     ifeq ($(wildcard $(TEST_FILE)),)
+         $(error CGT_ARM_INSTALL_DIR is set to "$(CGT_ARM_INSTALL_DIR)", $(ERRMSG1))
+     endif
+-- 
+1.7.0.4
+
