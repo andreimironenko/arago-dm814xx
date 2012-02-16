@@ -11,6 +11,8 @@ S = "${WORKDIR}/Slog_${PV}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_tii/Slog/${PV}/exports/Slog_${PV}.tar.gz"
 
+EXTRA_OEMAKE = "COMPILER_PREFIX=${TARGET_PREFIX}"
+
 do_install() {
     install -d ${D}${SLOG_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${SLOG_INSTALL_DIR_RECIPE}
