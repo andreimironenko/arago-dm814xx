@@ -7,6 +7,7 @@ require ti-staging.inc
 
 PR = "r2"
 
+PVExtra = ""
 S = "${WORKDIR}/omtb_${PV}${PVExtra}"
 
 SRC_URI = "http://software-dl.ti.com:82/dsps/dsps_public_sw/omtb/${PV}/exports/omtb_${PV}.tar.gz;name=omtb \
@@ -33,6 +34,8 @@ EXTRA_OEMAKE = "ROOTDIR=${S} \
         lindevkit_PATH=${STAGING_DIR_TARGET}/usr \
         rtp_PATH=${STAGING_DIR_TARGET}/usr \
         CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
+        CROSS_COMPILE=${TARGET_PREFIX} \
+        TOOLCHAIN_LONGNAME=arm-arago-linux-gnueabi \
         DEST_ROOT=${S}/bin \
         dm81xxbm \
 "
