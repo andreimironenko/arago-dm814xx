@@ -410,7 +410,7 @@ sub fetch_git
 ################################################################################
 sub validate_input
 {
-    my $toolchain_gcc = "$toolchain/bin/arm-none-linux-gnueabi-gcc";
+    my $toolchain_gcc = "$toolchain/bin/arm-arago-linux-gnueabi-gcc";
 
     if (! -e $toolchain_gcc) {
         print "Error: $toolchain_gcc not found\n";
