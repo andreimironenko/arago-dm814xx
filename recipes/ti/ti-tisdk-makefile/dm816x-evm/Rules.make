@@ -135,6 +135,8 @@ OMX_BUILD_VARS = ROOTDIR=$(OMX_INSTALL_DIR) \
 		PLATFORM=$(OMX_PLATFORM) \
         EXAMPLES_ROOT=${OMX_INSTALL_DIR}/examples \
 		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
+		CROSS_COMPILE=arm-arago-linux-gnueabi- \
+		TOOLCHAIN_LONGNAME=arm-arago-linux-gnueabi \
         CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR}
 
 # Where OMTB package is installed
@@ -156,6 +158,8 @@ OMTB_BUILD_VARS = ROOTDIR=$(OMTB_INSTALL_DIR) \
 		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
 		xdc_PATH=$(XDC_INSTALL_DIR) \
 		lindevkit_PATH=$(LINUX_DEVKIT_DIR)/arm-arago-linux-gnueabi/usr \
+		CROSS_COMPILE=arm-arago-linux-gnueabi- \
+		TOOLCHAIN_LONGNAME=arm-arago-linux-gnueabi \
 		CODEGEN_PATH_A8=$(CSTOOL_DIR)
 
 # Where AAC-LC Decoder package is installed
