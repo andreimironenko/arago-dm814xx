@@ -32,7 +32,7 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-uia-src \
     ti-media-controller-utils-src \
     ti-omx-src \
-#    ti-omtb-src \
+    ti-omtb-src \
     ti-c674x-aaclcdec-src \
     ti-cgt6x-src \
     gst-openmax-ti-src \
