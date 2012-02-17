@@ -75,7 +75,7 @@ if [ "$kernel" -eq "1" ]; then
         uimage=$uimagedefault
     fi
 
-    bootcmd="setenv bootcmd 'colorbar;dhcp;setenv serverip $ip;tftpboot;bootm'"
+    bootcmd="setenv bootcmd 'dhcp;setenv serverip $ip;tftpboot;bootm'"
     serverip="setenv serverip $ip"
     bootfile="setenv bootfile $uimage"
 
@@ -89,11 +89,11 @@ if [ "$kernel" -eq "1" ]; then
 else
     if [ "$fs" -eq "1" ]; then
         bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs:$rootpath ip=dhcp"
-        bootcmd="setenv bootcmd 'colorbar;mmc rescan 0;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
+        bootcmd="setenv bootcmd 'mmc rescan 0;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
         cfg="uimage-sd_fs-nfs"
     else
         bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
-        bootcmd="setenv bootcmd 'colorbar;mmc rescan 0;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
+        bootcmd="setenv bootcmd 'mmc rescan 0;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
         cfg="uimage-sd_fs-sd"
     fi
 fi
