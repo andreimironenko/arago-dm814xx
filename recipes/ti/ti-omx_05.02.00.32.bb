@@ -6,6 +6,8 @@ require ti-omx.inc
 
 PV = "05_02_00_32"
 
+DEFAULT_PREFERENCE = "-1"
+
 SRC_URI = "http://bangsdowebsvr01.india.ti.com:8090/DM81xx-OMX/${PV}/exports/omx-ti81xx_${PV}.tar.gz;name=omx \
            file://sdk.mk \
 "
