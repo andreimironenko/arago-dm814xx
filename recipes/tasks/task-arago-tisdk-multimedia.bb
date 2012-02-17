@@ -23,7 +23,7 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-media-controller-utils \
     ti-media-controller-loader \
     ti-data \
-    ti-omtb \
+#    ti-omtb \
     ti-omx \
     task-arago-gst \
     ti-omx-core \
