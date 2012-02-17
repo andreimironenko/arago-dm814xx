@@ -21,18 +21,6 @@ MATRIX_APPS_COMMON = "matrix-gui-coming-soon \
                       matrix-gui-crypto-demos \
                       matrix-gui-qt4-demos \
                       "
-MATRIX_APPS_COMMON_dm816x-evm = "\
-    libxml2 \
-    matrix-gui-e \
-    qwt \
-"
-
-MATRIX_APPS_COMMON_dm814x-evm = "\
-    libxml2 \
-    matrix-gui-e \
-    qwt \
-"
-
 MATRIX_APPS = ""
 MATRIX_APPS_omap3 = "matrix-gui-clocks-300mhz \
                      matrix-gui-clocks-600mhz \
@@ -54,6 +42,18 @@ MATRIX_APPS_ti33x = "matrix-gui-3d-demos \
                      matrix-gui-submenus-pru \
                      "
 
+MATRIX_APPS_dm814x-evm = "\
+    libxml2 \
+    matrix-gui-e \
+    qwt \
+"
+
+MATRIX_APPS_dm816x-evm = "\
+    libxml2 \
+    matrix-gui-e \
+    qwt \
+"
+
 # Install 3D graphics for all omap3 SOC_FAMILY devices
 GRAPHICS_3D = ""
 GRAPHICS_3D_omap3 = "libgles-omap3-rawdemos"
@@ -68,4 +68,5 @@ RDEPENDS_${PN} = "\
     libxml2 \
     ${MATRIX_APPS} \
     ${QTWIDGET_DEMO} \
+    ${GRAPHICS_3D} \
     "
