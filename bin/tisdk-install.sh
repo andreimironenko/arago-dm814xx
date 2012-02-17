@@ -151,7 +151,7 @@ update_rules_make()
     $install_dir/usr/share/ti/Rules.make
   sed -i -e s=\<__CROSS_COMPILER_PATH__\>=${TOOLCHAIN_PATH}= \
     $install_dir/usr/share/ti/Rules.make
-  sed -i -e s=linuxlibs=linux-devkit/arm-none-linux-gnueabi/usr= \
+  sed -i -e s=linuxlibs=linux-devkit/arm-arago-linux-gnueabi/usr= \
     $install_dir/usr/share/ti/Rules.make
 }
 
@@ -592,21 +592,21 @@ install_arago_sdk ()
   echo "Installing linux-devkit ($arago_sdk)"
   execute "tar jxf ${arago_sdk} -C ${install_dir}"
 
-  execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  update"
+  execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-arago-linux-gnueabi -f ${opkg_conf}  update"
 
-  ! test -z $graphics && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  install $graphics_sdk_target "
-  ! test -z $multimedia && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  install $multimedia_sdk_target "
-  ! test -z $dsp && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  install $dsp_sdk_target "
-  ! test -z $crypto && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf}  install $crypto_sdk_target "
+  ! test -z $graphics && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-arago-linux-gnueabi -f ${opkg_conf}  install $graphics_sdk_target "
+  ! test -z $multimedia && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-arago-linux-gnueabi -f ${opkg_conf}  install $multimedia_sdk_target "
+  ! test -z $dsp && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-arago-linux-gnueabi -f ${opkg_conf}  install $dsp_sdk_target "
+  ! test -z $crypto && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-arago-linux-gnueabi -f ${opkg_conf}  install $crypto_sdk_target "
 
   # remove these packages (see arago/meta/meta-toolchain-target.bb)
-  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir}/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf} remove  -force-depends libc6 libc6-dev glibc-extra-nss libgcc1 linux-libc-headers-dev libthread-db1 sln gettext gettext-dev libgettextlib libgettextsrc"
-  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir}/linux-devkit/arm-none-linux-gnueabi -f ${opkg_conf} remove  -force-depends gnome* python* gtk* pango* tcl* tk* cairo* openssl* avahi* libgnutls-dev libgnutls-extra26"
+  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir}/linux-devkit/arm-arago-linux-gnueabi -f ${opkg_conf} remove  -force-depends libc6 libc6-dev glibc-extra-nss libgcc1 linux-libc-headers-dev libthread-db1 sln gettext gettext-dev libgettextlib libgettextsrc"
+  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir}/linux-devkit/arm-arago-linux-gnueabi -f ${opkg_conf} remove  -force-depends gnome* python* gtk* pango* tcl* tk* cairo* openssl* avahi* libgnutls-dev libgnutls-extra26"
 
   ! test -z $graphics && install_graphics_sdk_host 
 
   echo "Running demangle_libtool.sh to fix *.la files"
-  execute "demangle_libtool.sh $install_dir/linux-devkit/arm-none-linux-gnueabi/usr/lib/*.la" 2> /dev/null
+  execute "demangle_libtool.sh $install_dir/linux-devkit/arm-arago-linux-gnueabi/usr/lib/*.la" 2> /dev/null
   
   echo "Updating SDK_PATH env"        
   sed -i "1{s|SDK_PATH\(..*\)|SDK_PATH=$install_dir/linux-devkit/|g}" $install_dir/linux-devkit/environment-setup
@@ -759,7 +759,7 @@ cp deploy/images/$machine/*.tar.gz ${install_dir}/filesystem
 generate_sw_manifest "Packages installed on arago-sdk host side:" "$install_dir/linux-devkit" >> ${install_dir}/docs/software_manifest.htm
 generate_sw_bom "$install_dir/linux-devkit" >> ${install_dir}/docs/software_bom.htm;
 
-generate_sw_manifest "Packages installed on arago-sdk target side:" "$install_dir/linux-devkit/arm-none-linux-gnueabi" >> ${install_dir}/docs/software_manifest.htm
+generate_sw_manifest "Packages installed on arago-sdk target side:" "$install_dir/linux-devkit/arm-arago-linux-gnueabi" >> ${install_dir}/docs/software_manifest.htm
 
 # add manifest and BOM footer.
 sw_manifest_footer >> ${install_dir}/docs/software_manifest.htm
