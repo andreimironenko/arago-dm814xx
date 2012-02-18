@@ -199,7 +199,7 @@ GST_OMX_BUILD_VARS = BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
 		 CROSS_COMPILE=$(CSTOOL_PREFIX)
 
 # The prefix to be added before the GNU compiler tools (optionally including # path), i.e. "arm_v5t_le-" or "/opt/bin/arm_v5t_le-".
-CSTOOL_DIR=<__CROSS_COMPILER_PATH__>
+CSTOOL_DIR=$(LINUX_DEVKIT_DIR)
 CSTOOL_LONGNAME=bin/arm-arago-linux-gnueabi-gcc
 CSTOOL_PREFIX=$(CSTOOL_DIR)/bin/arm-arago-linux-gnueabi-
 CSTOOL_PATH=$(CSTOOL_DIR)/bin
