@@ -599,9 +599,11 @@ install_arago_sdk ()
   ! test -z $dsp && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-arago-linux-gnueabi -f ${opkg_conf}  install $dsp_sdk_target "
   ! test -z $crypto && execute "opkg-cl --cache $install_dir/deploy/cache -o $install_dir/linux-devkit/arm-arago-linux-gnueabi -f ${opkg_conf}  install $crypto_sdk_target "
 
+  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir}/linux-devkit/arm-arago-linux-gnueabi -f ${opkg_conf} remove  -force-depends libgnutls-dev libgnutls-extra26"
+
   # remove these packages (see arago/meta/meta-toolchain-target.bb)
-  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir}/linux-devkit/arm-arago-linux-gnueabi -f ${opkg_conf} remove  -force-depends libc6 libc6-dev glibc-extra-nss libgcc1 linux-libc-headers-dev libthread-db1 sln gettext gettext-dev libgettextlib libgettextsrc"
-  execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir}/linux-devkit/arm-arago-linux-gnueabi -f ${opkg_conf} remove  -force-depends gnome* python* gtk* pango* tcl* tk* cairo* openssl* avahi* libgnutls-dev libgnutls-extra26"
+  # execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir}/linux-devkit/arm-arago-linux-gnueabi -f ${opkg_conf} remove  -force-depends libc6 libc6-dev glibc-extra-nss libgcc1 linux-libc-headers-dev libthread-db1 sln gettext gettext-dev libgettextlib libgettextsrc"
+  # execute "opkg-cl  --cache ${install_dir}/deploy/cache -o ${install_dir}/linux-devkit/arm-arago-linux-gnueabi -f ${opkg_conf} remove  -force-depends gnome* python* gtk* pango* tcl* tk* cairo* openssl* avahi* libgnutls-dev libgnutls-extra26"
 
   ! test -z $graphics && install_graphics_sdk_host 
 
