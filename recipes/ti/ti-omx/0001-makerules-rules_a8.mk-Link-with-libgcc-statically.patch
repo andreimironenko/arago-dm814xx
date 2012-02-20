@@ -1,0 +1,27 @@
+From 6984c6fecd9d39b562bc85127392724601f8aaa0 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Mon, 20 Feb 2012 16:30:34 +0530
+Subject: [PATCH] makerules: rules_a8.mk - Link with libgcc statically
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ makerules/rules_a8.mk |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/makerules/rules_a8.mk b/makerules/rules_a8.mk
+index e4758e3..61e13cd 100644
+--- a/makerules/rules_a8.mk
++++ b/makerules/rules_a8.mk
+@@ -96,7 +96,7 @@ archive_spl:
+ 	$(AR) $(ARFLAGS) $(AR_SPL_PATH)/$(AR_SPL_NAME) $(AR_SPL_PATH)/*.ov5T
+ 
+ # Linker options and rules
+-LNKFLAGS_INTERNAL_COMMON =  -lpthread -lrt -L$(CODEGEN_PATH_A8)/$(TOOLCHAIN_LONGNAME)/lib
++LNKFLAGS_INTERNAL_COMMON =  -lpthread -lrt -lgcc_s -L$(CODEGEN_PATH_A8)/$(TOOLCHAIN_LONGNAME)/lib
+ 
+ # Assemble Linker flags from all other LNKFLAGS definitions
+ _LNKFLAGS = $(LNKFLAGS_INTERNAL_COMMON) $(LNKFLAGS_INTERNAL_PROFILE) $(LNKFLAGS_GLOBAL_$(CORE)) $(LNKFLAGS_LOCAL_COMMON) $(LNKFLAGS_LOCAL_$(CORE)) 
+-- 
+1.7.0.4
+
