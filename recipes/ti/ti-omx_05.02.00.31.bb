@@ -9,6 +9,7 @@ PV = "05_02_00_31"
 SRC_URI = "http://bangsdowebsvr01.india.ti.com:8090/DM81xx-OMX/${PV}/exports/omx-ti81xx_${PV}.tar.gz;name=omx \
            file://sdk.mk \
            file://0001-omx-Add-support-for-building-with-different-toolchai.patch \
+           file://0001-makerules-rules_a8.mk-Link-with-libgcc-statically.patch \
 "
 
 SRC_URI[omx.md5sum] = "21148fa663c704e946a172c0aba774e6"
