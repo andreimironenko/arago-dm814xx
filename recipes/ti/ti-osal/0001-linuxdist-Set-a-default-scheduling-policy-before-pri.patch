@@ -1,0 +1,27 @@
+From e6031a3ab77f088c115283963d0a3eef2698dc32 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Mon, 20 Feb 2012 22:23:52 +0530
+Subject: [PATCH] linuxdist: Set a default scheduling policy before priority
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ packages/ti/sdo/xdcruntime/linux/ThreadSupport.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/packages/ti/sdo/xdcruntime/linux/ThreadSupport.c b/packages/ti/sdo/xdcruntime/linux/ThreadSupport.c
+index ec56bfa..f43c79c 100644
+--- a/packages/ti/sdo/xdcruntime/linux/ThreadSupport.c
++++ b/packages/ti/sdo/xdcruntime/linux/ThreadSupport.c
+@@ -229,6 +229,8 @@ Int ThreadSupport_Instance_init(ThreadSupport_Object* thread, ThreadSupport_RunF
+         }
+     }
+ 
++    retc |= pthread_attr_setschedpolicy(&pattrs, SCHED_RR);
++
+     retc |= pthread_attr_setschedparam(&pattrs, &priParam);
+ 
+     if (retc) {
+-- 
+1.7.0.4
+
