@@ -15,6 +15,9 @@ my $bsp_binary = "task-arago-tisdk-bsp";
 my $bsp_sdk_header = "task-arago-toolchain-tisdk-bsp-target";
 my $addons_source = "task-arago-toolchain-tisdk-addons-host";
 my $addons_binary = "task-arago-tisdk-addons";
+my $crypto_binary = "task-arago-tisdk-crypto";
+my $crypto_sdk_header = "task-arago-toolchain-tisdk-crypto-target";
+my $crypto_source = "task-arago-toolchain-tisdk-crypto-host";
 my $multimedia_source = "task-arago-toolchain-tisdk-multimedia-host";
 my $multimedia_binary = "task-arago-tisdk-multimedia";
 my $multimedia_sdk_header ="task-arago-toolchain-tisdk-multimedia-target";
@@ -30,6 +33,7 @@ my $machine;
 my $index = 0;
 
 my $sdkpath_default = "sdk-cdrom";
+my $toolchain_default = "codesourcery";
 my $machine_default = "dm6446-evm";
 
 my %machines = (
@@ -37,6 +41,7 @@ my %machines = (
         SOC_FAMILY          => "dm365",
         bsp_default         => "yes",
         addons_default      => "yes",
+        crypto_default    => "no",
         multimedia_default  => "yes",
         dsp_default         => "no",
         graphics_default    => "yes",
@@ -45,6 +50,7 @@ my %machines = (
         SOC_FAMILY          => "dm6446",
         bsp_default         => "yes",
         addons_default      => "yes",
+        crypto_default    => "no",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         graphics_default    => "yes",
@@ -53,6 +59,7 @@ my %machines = (
         SOC_FAMILY          => "dm355",
         bsp_default         => "yes",
         addons_default      => "yes",
+        crypto_default    => "no",
         multimedia_default  => "yes",
         dsp_default         => "no",
         graphics_default    => "yes",
@@ -61,6 +68,7 @@ my %machines = (
         SOC_FAMILY          => "omapl137",
         bsp_default         => "yes",
         addons_default      => "yes",
+        crypto_default    => "no",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         graphics_default    => "yes",
@@ -69,6 +77,7 @@ my %machines = (
         SOC_FAMILY          => "dm6467",
         bsp_default         => "yes",
         addons_default      => "yes",
+        crypto_default    => "no",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         graphics_default    => "no",
@@ -77,6 +86,7 @@ my %machines = (
         SOC_FAMILY          => "omapl138",
         bsp_default         => "yes",
         addons_default      => "yes",
+        crypto_default    => "no",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         graphics_default    => "yes",
@@ -85,6 +95,7 @@ my %machines = (
         SOC_FAMILY          => "omap3",
         bsp_default         => "yes",
         addons_default      => "yes",
+        crypto_default    => "no",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         graphics_default    => "yes",
@@ -93,6 +104,7 @@ my %machines = (
         SOC_FAMILY          => "omap3",
         bsp_default         => "yes",
         addons_default      => "yes",
+        crypto_default    => "no",
         multimedia_default  => "yes",
         dsp_default         => "yes",
         graphics_default    => "yes",
@@ -101,6 +113,7 @@ my %machines = (
         SOC_FAMILY          => "omap3",
         bsp_default         => "yes",
         addons_default      => "yes",
+        crypto_default    => "yes",
         multimedia_default  => "yes",
         dsp_default         => "no",
         graphics_default    => "yes",
@@ -142,6 +155,7 @@ my %machines = (
         SOC_FAMILY          => "ti816x",
         bsp_default         => "yes",
         addons_default      => "yes",
+        crypto_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "no",
         dvsdk_factory_default => "no",
@@ -169,6 +183,7 @@ my %machines = (
         SOC_FAMILY          => "ti814x",
         bsp_default         => "yes",
         addons_default      => "yes",
+        crypto_default      => "yes",
         multimedia_default  => "yes",
         dsp_default         => "no",
         dvsdk_factory_default => "no",
@@ -666,6 +681,29 @@ sub get_input
         $addons = $machines{$machine}{'addons_default'};
     }
 
+    if (!$crypto) {
+        print "\nDo you want to add crypto in SDK? \n";
+        print "[ $machines{$machine}{'crypto_default'} ] ";
+        $input = <STDIN>;
+        $input =~ s/\s+$//;
+
+        if ($input) {
+            if ($input =~ m/y/i) {
+                $crypto = "yes";
+            }
+            else {
+                $crypto = "no";
+            }
+        }
+        else {
+            $crypto = $machines{$machine}{'crypto_default'};
+        }
+    }
+
+    if ($crypto =~ m/default/i) {
+        $crypto = $machines{$machine}{'crypto_default'};
+    }
+
     if (!$multimedia) {
         print "\nDo you want to add Multimedia packages in SDK? \n";
         print "[ $machines{$machine}{'multimedia_default'} ] ";
@@ -759,10 +797,34 @@ sub get_input
         $sdkpath = "$arago_dir/$sdkpath_default";
     }
 
+    if (!$toolchain) {
+        print "\nWhat kind of toolchain are you using ?\n";
+        print "[ $toolchain_default ] ";
+        $input = <STDIN>;
+        $input =~ s/\s+$//;
+
+        if ($input) {
+            $toolchain = "$input";
+        }
+        else {
+            $toolchain = "$toolchain_default";
+        }
+    }
+
+    if ($toolchain =~ m/default/i) {
+        $toolchain = "$toolchain_default";
+    }
+
     if ($bsp =~ m/yes/i) {
         $packages[$index++] = $bsp_source;
         $packages[$index++] = $bsp_binary;
         $packages[$index++] = $bsp_sdk_header;
+    }
+
+    if ($crypto =~ m/yes/i) {
+        $packages[$index++] = $crypto_source;
+        $packages[$index++] = $crypto_binary;
+        $packages[$index++] = $crypto_sdk_header;
     }
 
     if ($addons =~ m/yes/i) {
@@ -823,6 +885,12 @@ sub parse_args
             next;
         }
 
+        if ($ARGV[0] eq '-c' || $ARGV[0] eq '--crypto') {
+            shift(@ARGV);
+            $crypto = shift(@ARGV);
+            next;
+        }
+
         if ($ARGV[0] eq '-e' || $ARGV[0] eq '--multimedia') {
             shift(@ARGV);
             $multimedia = shift(@ARGV);
@@ -853,6 +921,12 @@ sub parse_args
             next;
         }
 
+        if ($ARGV[0] eq '-t' || $ARGV[0] eq '--toolchain') {
+            shift(@ARGV);
+            $toolchain = shift(@ARGV);
+            next;
+        }
+
         print "Warning: Option $ARGV[0] not supported (ignored)\n";
         shift(@ARGV);
     }
@@ -869,10 +943,12 @@ sub display_help
     print "    -i | --image        Image to build.\n";
     print "    -b | --bsp          Add Board Support Package in SDK.\n";
     print "    -a | --addons       Add Addon demo/utility packages in SDK.\n";
+    print "    -c | --crypto       Add crypto packages in SDK.\n";
     print "    -e | --multimedia   Add Multimedia packages in SDK.\n";
     print "    -d | --dsp          Add DSP packages in SDK.\n";
     print "    -g | --graphics     Add Graphics packages in SDK.\n";
     print "    -p | --sdkpath      Where to generate the Arago SDK\n";
+    print "    -t | --toolchain    The type of toolchain (arago|codesourcery)\n";
     print "\nIf an option is not given it will be queried interactively.\n";
     print "If the value \"default\" is given for any parameter, the\n";
     print "corresponding default value will be used to build the image\n\n";
