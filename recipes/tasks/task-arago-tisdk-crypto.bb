@@ -81,6 +81,8 @@ WLAN_am180x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
 WLAN_am37x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
 WLAN_beagleboard = "${WLAN_COMMON}"
 WLAN_am335x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
+WLAN_dm816x-evm = "${WLAN_COMMON}"
+WLAN_dm814x-evm = "${WLAN_COMMON}"
 
 RDEPENDS_${PN} = "\
     ${CRYPTO_SUPPORT} \
