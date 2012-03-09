@@ -13,6 +13,8 @@ require ../ti/ti-eula-unpack.inc
 # For accessing SUPPORT_XORG value
 require powervr.inc
 
+DEFAULT_PREFERENCE = "-1"
+
 SGXPV = "4_05_00_03"
 IMGPV = "1.6.16.4117"
 BINFILE = "Graphics_SDK_setuplinux_${SGXPV}.bin"
