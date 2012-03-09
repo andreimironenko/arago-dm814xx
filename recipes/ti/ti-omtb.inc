@@ -35,7 +35,7 @@ EXTRA_OEMAKE = "ROOTDIR=${S} \
         rtp_PATH=${STAGING_DIR_TARGET}/usr \
         CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
         CROSS_COMPILE=${TARGET_PREFIX} \
-        TOOLCHAIN_LONGNAME=arm-arago-linux-gnueabi \
+        TOOLCHAIN_LONGNAME=arm-none-linux-gnueabi \
         DEST_ROOT=${S}/bin \
         dm81xxbm \
 "
