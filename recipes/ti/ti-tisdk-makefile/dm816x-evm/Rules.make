@@ -132,12 +132,12 @@ OMX_BUILD_VARS = ROOTDIR=$(OMX_INSTALL_DIR) \
 		xdc_PATH=$(XDC_INSTALL_DIR) \
 		uia_PATH=$(UIA_INSTALL_DIR) \
         slog_PATH=${SLOG_INSTALL_DIR} \
-        lindevkit_PATH=${LINUX_DEVKIT_DIR}/arm-arago-linux-gnueabi/usr \
+        lindevkit_PATH=${LINUX_DEVKIT_DIR}/arm-none-linux-gnueabi/usr \
 		PLATFORM=$(OMX_PLATFORM) \
         EXAMPLES_ROOT=${OMX_INSTALL_DIR}/examples \
 		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
-		CROSS_COMPILE=arm-arago-linux-gnueabi- \
-		TOOLCHAIN_LONGNAME=arm-arago-linux-gnueabi \
+		CROSS_COMPILE=arm-none-linux-gnueabi- \
+		TOOLCHAIN_LONGNAME=arm-none-linux-gnueabi \
         CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR}
 
 # Where OMTB package is installed
@@ -158,9 +158,9 @@ OMTB_BUILD_VARS = ROOTDIR=$(OMTB_INSTALL_DIR) \
 		ipc_PATH=$(IPC_INSTALL_DIR) \
 		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
 		xdc_PATH=$(XDC_INSTALL_DIR) \
-		lindevkit_PATH=$(LINUX_DEVKIT_DIR)/arm-arago-linux-gnueabi/usr \
-		CROSS_COMPILE=arm-arago-linux-gnueabi- \
-		TOOLCHAIN_LONGNAME=arm-arago-linux-gnueabi \
+		lindevkit_PATH=$(LINUX_DEVKIT_DIR)/arm-none-linux-gnueabi/usr \
+		CROSS_COMPILE=arm-none-linux-gnueabi- \
+		TOOLCHAIN_LONGNAME=arm-none-linux-gnueabi \
 		CODEGEN_PATH_A8=$(CSTOOL_DIR)
 
 # Where AAC-LC Decoder package is installed
@@ -200,9 +200,9 @@ GST_OMX_BUILD_VARS = BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
 		 CROSS_COMPILE=$(CSTOOL_PREFIX)
 
 # The prefix to be added before the GNU compiler tools (optionally including # path), i.e. "arm_v5t_le-" or "/opt/bin/arm_v5t_le-".
-CSTOOL_DIR=$(LINUX_DEVKIT_DIR)
-CSTOOL_LONGNAME=bin/arm-arago-linux-gnueabi-gcc
-CSTOOL_PREFIX=$(CSTOOL_DIR)/bin/arm-arago-linux-gnueabi-
+CSTOOL_DIR=<__CROSS_COMPILER_PATH__>
+CSTOOL_LONGNAME=bin/arm-none-linux-gnueabi-gcc
+CSTOOL_PREFIX=$(CSTOOL_DIR)/bin/arm-none-linux-gnueabi-
 CSTOOL_PATH=$(CSTOOL_DIR)/bin
 
 MVTOOL_DIR=$(CSTOOL_DIR)
