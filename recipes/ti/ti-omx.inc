@@ -44,7 +44,7 @@ EXTRA_OEMAKE = "ROOTDIR=${S} \
         CODEGEN_PATH_M3=${CODEGEN_ARM_INSTALL_DIR} \
         CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
         CROSS_COMPILE=${TARGET_PREFIX} \
-        TOOLCHAIN_LONGNAME=arm-arago-linux-gnueabi \
+        TOOLCHAIN_LONGNAME=arm-none-linux-gnueabi \
 "
 
 PARALLEL_MAKE = ""
