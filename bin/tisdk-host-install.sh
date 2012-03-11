@@ -59,6 +59,7 @@ update_rules_make ()
   echo "Updating Rules.make"
 
   sed -i -e s:^EZSDK_INSTALL_DIR=.*:EZSDK_INSTALL_DIR=$install_dir: $install_dir/Rules.make 
+  sed -i -e s:^CSTOOL_DIR=.*:CSTOOL_DIR=$toolchain_dir: $install_dir/Rules.make 
 }
 
 #
@@ -68,6 +69,7 @@ update_linux_devkit ()
 {
   echo "Updating Linux Devkit environment-setup"
   sed -i -e s:SDK_PATH=.*:SDK_PATH=$install_dir/linux-devkit: $install_dir/linux-devkit/environment-setup
+  sed -i -e s:TOOLCHAIN_PATH=.*:TOOLCHAIN_PATH=$toolchain_dir: $install_dir/linux-devkit/environment-setup
 
   echo "Updating Linux Devkit libtoolize "
   sed -i -e s:=.*/linux-devkit:=$install_dir/linux-devkit:g $install_dir/linux-devkit/bin/libtoolize
@@ -115,6 +117,7 @@ done
 
 # check if machine and toolchain directory is defined.
 test -z $machine && usage $0
+test -z $toolchain_dir && usage $0
 
 
 install_dir=$(cd $(dirname $0) && pwd)
