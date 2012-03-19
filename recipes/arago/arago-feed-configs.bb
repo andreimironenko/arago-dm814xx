@@ -1,16 +1,18 @@
-DESCRIPTION = "Configuration files for online package repositories aka feeds"
+# Please note, Arago Project no longer provides official binary feeds,
+# so all the configuration files here should be treated as non-functioning
+# samples, only good to be modified for custom deployment, not used as is.
+
+DESCRIPTION = "Sample configuration files for online package repositories aka feeds"
 LICENSE = "MIT"
 RRECOMMENDS_${PN} += "opkg"
 
 #PV = "${DISTRO_VERSION}"
-PR = "r12"
+PR = "r13"
 
-# Here is the deal - since we build a common filesystem for several platforms,
-# we need to add all their respective feeds manually, hence next line is out
-#PACKAGE_ARCH = "${MACHINE_ARCH}"
+PACKAGE_ARCH = "${MACHINE_ARCH}"
 
-MACHS_ARMV5 = "dm6446-evm dm6467-evm dm6467t-evm dm355-evm dm365-evm da830-omapl137-evm da850-omapl138-evm am180x-evm am181x-evm"
-MACHS_ARMV7 = "omap3evm beagleboard am3517-evm am37x-evm dm37x-evm am389x-evm c6a816x-evm am387x-evm am45x-evm am335x-evm am3359-evm"
+MACHS_ARMV5 = "dm6446-evm dm6467-evm dm6467t-evm dm355-evm dm365-evm dm368-evm da830-omapl137-evm da850-omapl138-evm am180x-evm am181x-evm"
+MACHS_ARMV7 = "omap3evm beagleboard am3517-evm am37x-evm dm37x-evm am389x-evm c6a816x-evm am387x-evm am45x-evm am335x-evm am3359-evm beaglebone"
 
 # This gets set in the distro/local configuration
 ARAGO_FEED_BASEPATH ?= "feeds"
@@ -21,7 +23,7 @@ do_compile() {
 # Populate the list of supported architectures
 	rm ${S}/${sysconfdir}/opkg/arch.conf || true
 #	ipkgarchs="${PACKAGE_ARCHS}"
-	ipkgarchs="all any noarch arm armv4 armv4t armv5te #armv6 #armv7 #armv7a arago #omap3evm #beagleboard #dm6446-evm #dm6467-evm #dm6467t-evm #dm355-evm #dm365-evm #da830-omapl137-evm #da850-omapl138-evm #am180x-evm #am181x-evm #am3517-evm #am37x-evm #dm37x-evm #am389x-evm #c6a816x-evm #am387x-evm #am45x-evm #am335x-evm #am3359-evm"
+	ipkgarchs="all any noarch arm armv4 armv4t armv5te #armv6 #armv7 #armv7a #arago #omap3evm #beagleboard #dm6446-evm #dm6467-evm #dm6467t-evm #dm355-evm #dm365-evm #dm368-evm #da830-omapl137-evm #da850-omapl138-evm #am180x-evm #am181x-evm #omap3evm #beagleboard #am3517-evm #am37x-evm #dm37x-evm #am389x-evm #c6a816x-evm #am387x-evm #am45x-evm #am335x-evm #am3359-evm #beaglebone"
 	priority=1
 	for arch in $ipkgarchs; do
 		disable=`echo $arch|cut -c1`
@@ -35,9 +37,9 @@ do_compile() {
 	done
 
 # Add all Arago supported feeds
-	echo "src/gz no-arch ${DISTRO_FEED_URI}/all" > ${S}/${sysconfdir}/opkg/arago-noarch-feed.conf
-	echo "src/gz arago ${DISTRO_FEED_URI}/arago" > ${S}/${sysconfdir}/opkg/arago-mach-feed.conf
-	echo "src/gz armv5te ${DISTRO_FEED_URI}/armv5te" >  ${S}/${sysconfdir}/opkg/arago-armv5te-feed.conf
+	echo "src/gz no-arch ${DISTRO_FEED_URI}/all" > ${S}/${sysconfdir}/opkg/arago-noarch-feed.conf.sample
+	echo "src/gz arago ${DISTRO_FEED_URI}/arago" > ${S}/${sysconfdir}/opkg/arago-mach-feed.conf.sample
+	echo "src/gz armv5te ${DISTRO_FEED_URI}/armv5te" >  ${S}/${sysconfdir}/opkg/arago-armv5te-feed.conf.sample
 
 	echo "src/gz armv6 ${DISTRO_FEED_URI}/armv6" >  ${S}/${sysconfdir}/opkg/arago-armv6-feed.conf.sample
 	echo "src/gz armv7a ${DISTRO_FEED_URI}/armv7a" >  ${S}/${sysconfdir}/opkg/arago-armv7a-feed.conf.sample
