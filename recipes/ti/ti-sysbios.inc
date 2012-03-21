@@ -10,7 +10,7 @@ require ti-eula-unpack.inc
 PR = "r5"
 PVExtra = ""
 
-S = "${WORKDIR}/bios_${PV}${PVExtra}"
+S = "${WORKDIR}/ti/bios_${PV}${PVExtra}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/bios/sysbios/${PV}${PVExtra}/exports/bios_setuplinux_${PV}${PVExtra}.bin;name=sysbiosbin"
 
