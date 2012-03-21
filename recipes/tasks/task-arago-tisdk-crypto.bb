@@ -2,7 +2,7 @@
 #       that require filing for a TSU exemption or applications
 #       that depend on TSU exempt code.
 DESCRIPTION = "Task to install crypto packages into target FS"
-PR = "r19"
+PR = "r23"
 LICENSE = "MIT"
 
 inherit task
@@ -71,7 +71,6 @@ BLUETOOTH_ti33x = "bluetooth-gui"
 # These are the WLAN packages that are used for compatibility with the
 # 2.6.37 kernel used by some devices
 WLAN_COMPAT = "ti-compat-wireless-wl12xx \
-               wl1271-bluetooth \
                ti-compat-bluetooth \
               "
 
@@ -81,8 +80,7 @@ WLAN_am180x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
 WLAN_am37x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
 WLAN_beagleboard = "${WLAN_COMMON}"
 WLAN_am335x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
-WLAN_dm816x-evm = "${WLAN_COMMON}"
-WLAN_dm814x-evm = "${WLAN_COMMON}"
+WLAN_dm814x-evm = "${WLAN_COMMON} ${WLAN_COMPAT}"
 
 RDEPENDS_${PN} = "\
     ${CRYPTO_SUPPORT} \
