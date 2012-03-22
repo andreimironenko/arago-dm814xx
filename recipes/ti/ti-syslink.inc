@@ -53,10 +53,10 @@ do_compile() {
 
 do_install () {
     # Install the kernel module
-    oe_runmake EXEC_DIR=${D} install_driver
+    oe_runmake EXEC_DIR=${D} install-driver
 
     # Install Samples
-    oe_runmake EXEC_DIR=${D}/usr/share install_samples
+    oe_runmake EXEC_DIR=${D}/usr/share install-samples
 
     # Install/Stage the Source Tree
     install -d ${D}${SYSLINK_INSTALL_DIR_RECIPE}
