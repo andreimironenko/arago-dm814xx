@@ -14,6 +14,7 @@ PROVIDES += "ti-codec-engine-examples"
 
 PR = "${MACHINE_KERNEL_PR}"
 PR_append = "a"
+PVExtra = ""
 
 S = "${WORKDIR}/codec_engine_${PV}${PVExtra}"
 
@@ -78,7 +79,7 @@ do_prepsources() {
 
         for i in codecs extensions servers apps ; do
                 cd ${S}/examples/ti/sdo/ce/examples/$i
-                make DEVICES="${CEEXAMPLESDEVICES}" \
+                make DEVICE="${CEEXAMPLESDEVICES}" \
                      GPPOS="${CEEXAMPLESGPPOS}" \
                      PROGRAMS="${CEEXAMPLESPROGRAMS}" \
                      CE_INSTALL_DIR="${S}" \
@@ -87,16 +88,18 @@ do_prepsources() {
                      BIOSUTILS_INSTALL_DIR="${BIOSUTILS_INSTALL_DIR}" \
                      OSAL_INSTALL_DIR="${OSAL_INSTALL_DIR}" \
                      IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
-		     SYSLINK_INSTALL_DIR="${SYSLINK_INSTALL_DIR}" \
+                     LINK_INSTALL_DIR="${SYSLINK_INSTALL_DIR}" \
                      XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
                      FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
                      CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
                      LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
                      EDMA3_LLD_INSTALL_DIR="${EDMA3_LLD_INSTALL_DIR}" \
                      CGTOOLS_V5T="${TOOLCHAIN_PATH}" \
+                     CC_V5T="bin/${TARGET_PREFIX}gcc" \
                      CGTOOLS_C64P="${CODEGEN_INSTALL_DIR}" \
                      CGTOOLS_C674="${CODEGEN_INSTALL_DIR}" \
                      CGTOOLS_C674ELF="${CODEGEN_INSTALL_DIR}" \
+                     ti.targets.elf.C674="${CODEGEN_INSTALL_DIR}" \
                      clean
 		     # '.make' target was used in CE < 2.26, but its no longer
 		     # supported in CE >= 2.26. Now we are moved to >=2.26 
@@ -111,7 +114,7 @@ do_compile () {
 
         for i in codecs extensions servers apps ; do
                 cd ${S}/examples/ti/sdo/ce/examples/$i
-                make DEVICES="${CEEXAMPLESDEVICES}" \
+                make DEVICE="${CEEXAMPLESDEVICES}" \
                      GPPOS="${CEEXAMPLESGPPOS}" \
                      PROGRAMS="${CEEXAMPLESPROGRAMS}" \
                      CE_INSTALL_DIR="${S}" \
@@ -120,16 +123,18 @@ do_compile () {
                      BIOSUTILS_INSTALL_DIR="${BIOSUTILS_INSTALL_DIR}" \
                      OSAL_INSTALL_DIR="${OSAL_INSTALL_DIR}" \
                      IPC_INSTALL_DIR="${IPC_INSTALL_DIR}" \
-		     SYSLINK_INSTALL_DIR="${SYSLINK_INSTALL_DIR}" \
+                     LINK_INSTALL_DIR="${SYSLINK_INSTALL_DIR}" \
                      XDAIS_INSTALL_DIR="${XDAIS_INSTALL_DIR}" \
                      FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
                      CMEM_INSTALL_DIR="${CMEM_INSTALL_DIR}" \
                      LPM_INSTALL_DIR="${LPM_INSTALL_DIR}" \
                      EDMA3_LLD_INSTALL_DIR="${EDMA3_LLD_INSTALL_DIR}" \
                      CGTOOLS_V5T="${TOOLCHAIN_PATH}" \
+                     CC_V5T="bin/${TARGET_PREFIX}gcc" \
                      CGTOOLS_C64P="${CODEGEN_INSTALL_DIR}" \
                      CGTOOLS_C674="${CODEGEN_INSTALL_DIR}" \
                      CGTOOLS_C674ELF="${CODEGEN_INSTALL_DIR}" \
+                     ti.targets.elf.C674="${CODEGEN_INSTALL_DIR}" \
                      all
         done
 }
