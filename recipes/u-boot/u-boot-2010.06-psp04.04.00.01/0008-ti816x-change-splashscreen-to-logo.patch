@@ -1,0 +1,27 @@
+From fae5867309a3099a58d2ef5488a9e9bde585dac6 Mon Sep 17 00:00:00 2001
+From: Amarinder Bindra <a-bindra@ti.com>
+Date: Wed, 8 Feb 2012 18:08:41 +0530
+Subject: [PATCH 2/4] ti816x: change splashscreen to logo
+
+
+Signed-off-by: Amarinder Bindra <a-bindra@ti.com>
+---
+ include/configs/ti8168_evm.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/include/configs/ti8168_evm.h b/include/configs/ti8168_evm.h
+index f451806..7ea530f 100644
+--- a/include/configs/ti8168_evm.h
++++ b/include/configs/ti8168_evm.h
+@@ -293,7 +293,7 @@ extern unsigned int boot_flash_type;
+ # define CONFIG_MTD_DEVICE
+ #endif	/* NOR support */
+ 
+-/* Splashscreen support */
++/* Boot Logo support */
+ #ifdef CONFIG_TI81XX_VIDEO
+ # define CONFIG_VIDEO
+ # define CONFIG_CFB_CONSOLE
+-- 
+1.7.1
+
