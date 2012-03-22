@@ -1,0 +1,201 @@
+From cd938bfe21256efda884b9807c7fbcef8d6b01c9 Mon Sep 17 00:00:00 2001
+From: Vita Preskovsky <vitap@ti.com>
+Date: Thu, 9 Feb 2012 19:47:01 +0200
+Subject: [PATCH] arm: ti8148evm: Add wl12xx/wlan support
+
+The COM6/COM7 daughter cards for are wireless connectivity cards based
+on Murata's type TN module and Texas Instruments wl12xx chipset.
+These are 4-wire, 1.8V, embedded SDIO WLAN devices with an external IRQ
+line and are power-controlled by a GPIO-based fixed regulator.
+
+This patch adds support for the WLAN capabilities of these expansion
+boards.
+
+
+Signed-off-by: Ido Yariv <ido@wizery.com>
+---
+ arch/arm/mach-omap2/Kconfig           |   11 +++
+ arch/arm/mach-omap2/board-ti8148evm.c |  124 +++++++++++++++++++++++++++++++++
+ 2 files changed, 135 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/Kconfig b/arch/arm/mach-omap2/Kconfig
+index 807935d..71231e9 100644
+--- a/arch/arm/mach-omap2/Kconfig
++++ b/arch/arm/mach-omap2/Kconfig
+@@ -331,6 +331,17 @@ config MACH_DM385EVM
+ 	default y
+ 	depends on ARCH_TI814X
+ 
++config TI8148EVM_WL12XX
++       bool "TI814x wl12xx daughter board"
++       depends on MACH_TI8148EVM
++       select WL12XX_PLATFORM_DATA
++       help
++         The COM6/COM7 cards are wireless connectivity cards based on Murata's
++         type TN module and Texas Insturments wl12xx chipset.
++         Say Y if you want to use a wl12xx expansion card connected to the
++         TI8148 EVM.
++
++
+ config MACH_TI8168EVM
+ 	bool "TI8168 Evaluation Module"
+ 	default y
+diff --git a/arch/arm/mach-omap2/board-ti8148evm.c b/arch/arm/mach-omap2/board-ti8148evm.c
+index 8519842..bd7ac3d 100644
+--- a/arch/arm/mach-omap2/board-ti8148evm.c
++++ b/arch/arm/mach-omap2/board-ti8148evm.c
+@@ -29,6 +29,8 @@
+ #include <linux/i2c/pcf857x.h>
+ #include <linux/regulator/machine.h>
+ #include <linux/mfd/tps65910.h>
++#include <linux/gpio.h>
++#include <linux/wl12xx.h>
+ 
+ #include <mach/hardware.h>
+ #include <asm/mach-types.h>
+@@ -65,6 +67,21 @@ static struct omap_board_mux board_mux[] __initdata = {
+ 
+ static struct omap2_hsmmc_info mmc[] = {
+ 	{
++#ifdef CONFIG_TI8148EVM_WL12XX
++/* WLAN_EN is GP1[15] */
++#define GPIO_WLAN_EN	((1 * 32) + 15)
++/* WLAN_IRQ is GP0[30] */
++#define GPIO_WLAN_IRQ	((0 * 32) + 30)
++		.mmc		= 1,
++		.caps		= MMC_CAP_4_BIT_DATA | MMC_CAP_POWER_OFF_CARD,
++		.gpio_cd	= -EINVAL,
++		.gpio_wp	= -EINVAL,
++		.ocr_mask	= MMC_VDD_165_195,
++		.nonremovable	= true,
++	},
++	{
++		.mmc            = 2,
++#endif
+ 		.mmc		= 1,
+ 		.caps		= MMC_CAP_4_BIT_DATA,
+ 		.gpio_cd	= -EINVAL, /* Dedicated pins for CD and WP */
+@@ -725,6 +742,112 @@ static int ti8148_evm_lsi_phy_fixup(struct phy_device *phydev)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_TI8148EVM_WL12XX
++
++static struct wl12xx_platform_data wlan_data __initdata = {
++	.irq = OMAP_GPIO_IRQ(GPIO_WLAN_IRQ),
++	/* COM6 (127x) uses FREF */
++	.board_ref_clock = WL12XX_REFCLOCK_26,
++	/* COM7 (128x) uses TCXO */
++	.board_tcxo_clock = WL12XX_TCXOCLOCK_26,
++};
++
++static int wl12xx_set_power(struct device *dev, int slot, int power_on,
++			    int vdd)
++{
++	static bool power_state;
++
++	pr_debug("Powering %s wl12xx", power_on ? "on" : "off");
++
++	if (power_on == power_state)
++		return 0;
++	power_state = power_on;
++
++	if (power_on) {
++		/* Power up sequence required for wl127x devices */
++		gpio_set_value(GPIO_WLAN_EN, 1);
++		usleep_range(15000, 15000);
++		gpio_set_value(GPIO_WLAN_EN, 0);
++		usleep_range(1000, 1000);
++		gpio_set_value(GPIO_WLAN_EN, 1);
++		msleep(70);
++	} else {
++		gpio_set_value(GPIO_WLAN_EN, 0);
++	}
++
++	return 0;
++}
++
++static void __init ti814x_wl12xx_wlan_init(void)
++{
++	struct device *dev;
++	struct omap_mmc_platform_data *pdata;
++	int ret;
++
++	/* Set up mmc0 muxes */
++	omap_mux_init_signal("mmc0_clk", TI814X_INPUT_EN | TI814X_PULL_UP);
++	omap_mux_init_signal("mmc0_cmd", TI814X_INPUT_EN | TI814X_PULL_UP);
++	omap_mux_init_signal("mmc0_dat0", TI814X_INPUT_EN | TI814X_PULL_UP);
++	omap_mux_init_signal("mmc0_dat1", TI814X_INPUT_EN | TI814X_PULL_UP);
++	omap_mux_init_signal("mmc0_dat2", TI814X_INPUT_EN | TI814X_PULL_UP);
++	omap_mux_init_signal("mmc0_dat3", TI814X_INPUT_EN | TI814X_PULL_UP);
++
++	/* Set up the WLAN_EN and WLAN_IRQ muxes */
++	omap_mux_init_signal("gpio1_15_mux1", TI814X_PULL_DIS);
++	omap_mux_init_signal("gpio0_30", TI814X_INPUT_EN | TI814X_PULL_DIS);
++
++	/* Pass the wl12xx platform data information to the wl12xx driver */
++	if (wl12xx_set_platform_data(&wlan_data)) {
++		pr_err("Error setting wl12xx data\n");
++		return;
++	}
++
++	/*
++	 * The WLAN_EN gpio has to be toggled without using a fixed regulator,
++	 * as the omap_hsmmc does not enable/disable regulators on the TI814X.
++	 */
++	ret = gpio_request_one(GPIO_WLAN_EN, GPIOF_OUT_INIT_LOW, "wlan_en");
++	if (ret) {
++		pr_err("Error requesting wlan enable gpio: %d\n", ret);
++		return;
++	}
++
++	/*
++	 * Set our set_power callback function which will be called from
++	 * set_ios. This is requireq since, unlike other omap2+ platforms, a
++	 * no-op set_power function is registered. Thus, we cannot use a fixed
++	 * regulator, as it will never be toggled.
++	 * Moreover, even if this was not the case, we're on mmc0, for which
++	 * omap_hsmmc' set_power functions do not toggle any regulators.
++	 * TODO: Consider modifying omap_hsmmc so it would enable/disable a
++	 * regulator for ti814x/mmc0.
++	 */
++	dev = mmc[0].dev;
++	if (!dev) {
++		pr_err("wl12xx mmc device initialization failed\n");
++		return;
++	}
++
++	pdata = dev->platform_data;
++	if (!pdata) {
++		pr_err("Platform data of wl12xx device not set\n");
++		return;
++	}
++
++	pdata->slots[0].set_power = wl12xx_set_power;
++}
++
++static void __init ti814x_wl12xx_init(void)
++{
++	ti814x_wl12xx_wlan_init();
++}
++
++#else /* CONFIG_TI8148EVM_WL12XX */
++
++static void __init ti814x_wl12xx_init(void) { }
++
++#endif
++
+ static void __init ti8148_evm_init(void)
+ {
+ 	int bw; /* bus-width */
+@@ -758,6 +881,7 @@ static void __init ti8148_evm_init(void)
+ #ifdef CONFIG_SND_SOC_TI81XX_HDMI
+ 	platform_add_devices(ti8148_devices, ARRAY_SIZE(ti8148_devices));
+ #endif
++	ti814x_wl12xx_init();
+ 	regulator_use_dummy_regulator();
+ 	board_nor_init(ti814x_evm_norflash_partitions,
+ 		ARRAY_SIZE(ti814x_evm_norflash_partitions), 0);
+-- 
+1.7.0.4
+
