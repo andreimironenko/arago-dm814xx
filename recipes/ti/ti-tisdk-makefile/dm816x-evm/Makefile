@@ -271,13 +271,13 @@ syslink:
 	${MAKE} -C ${SYSLINK_INSTALL_DIR} $(SYSLINK_BUILD_VARS) syslink
 
 syslink_driver:
-	${MAKE} -C ${SYSLINK_INSTALL_DIR} $(SYSLINK_BUILD_VARS) syslink_driver
+	${MAKE} -C ${SYSLINK_INSTALL_DIR} $(SYSLINK_BUILD_VARS) syslink-driver
 
 syslink_hlos:
-	${MAKE} -C ${SYSLINK_INSTALL_DIR} $(SYSLINK_BUILD_VARS) syslink_hlos
+	${MAKE} -C ${SYSLINK_INSTALL_DIR} $(SYSLINK_BUILD_VARS) syslink-hlos
 
 syslink_rtos:
-	${MAKE} -C ${SYSLINK_INSTALL_DIR} $(SYSLINK_BUILD_VARS) syslink_rtos
+	${MAKE} -C ${SYSLINK_INSTALL_DIR} $(SYSLINK_BUILD_VARS) syslink-rtos
 
 
 syslink_clean: 
