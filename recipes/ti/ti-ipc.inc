@@ -12,7 +12,7 @@ PR = "r4"
 
 PVExtra = ""
 
-S = "${WORKDIR}/ipc_${PV}${PVExtra}"
+S = "${WORKDIR}/ti/ipc_${PV}${PVExtra}"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/ipc/${PV}/exports/ipc_setuplinux_${PV}${PVExtra}.bin;name=ipcbin"
 
