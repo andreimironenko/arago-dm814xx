@@ -14,33 +14,33 @@ all: components apps
 # Build components to enable all other build targets. 
 #==============================================================================
 components: components_linux components_dsp
-components_linux: linux cmem osal syslink_hlos syslink_driver sgx-driver omx
+components_linux: linux cmem osal syslink_hlos syslink_driver sgx-driver omx gstomx
 components_dsp: syslink_rtos edma3lld
 
 #==============================================================================
 # Install components
 #==============================================================================
-components_install: linux_install syslink_install cmem_install sgx-driver_install omx_install
+components_install: linux_install syslink_install cmem_install sgx-driver_install omx_install gstomx_install
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-components_clean: linux_clean syslink_clean cmem_clean sgx-driver_clean omx_clean edma3lld_clean
+components_clean: linux_clean syslink_clean cmem_clean sgx-driver_clean omx_clean edma3lld_clean gstomx_clean
 
 #==============================================================================
 # Build all Demos, Examples and Applications
 #==============================================================================
-apps: u-boot matrix psp-examples omtb media-controller-utils gstomx
+apps: u-boot matrix psp-examples omtb media-controller-utils
 
 #==============================================================================
 # Install everything
 #==============================================================================
-apps_install: u-boot_install matrix_install psp-examples_install omtb_install media-controller-utils_install gstomx_install
+apps_install: u-boot_install matrix_install psp-examples_install omtb_install media-controller-utils_install
 
 #==============================================================================
 # Clean all Demos, Examples and Applications
 #==============================================================================
-apps_clean: u-boot_clean matrix_clean psp-examples_clean omtb_clean media-controller-utils_clean gstomx_clean
+apps_clean: u-boot_clean matrix_clean psp-examples_clean omtb_clean media-controller-utils_clean
 
 #==============================================================================
 # Install everything
@@ -186,7 +186,7 @@ psp-examples:
 		LIB_INC=$(DVSDK_INSTALL_DIR)/linux-devkit/arm-none-linux-gnueabi/usr/include \
 		CROSS_COMPILE=$(CSTOOL_PREFIX)
 	$(MAKE) -C $(PSP_EXAMPLES_INSTALL_DIR)/edma \
-		KDIR=$(LINUXKERNEL_INSTALL_DIR) \
+		KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
 		PWD=$(PSP_EXAMPLES_INSTALL_DIR)/edma \
 		ARCH=arm \
 		CROSS_COMPILE=$(CSTOOL_PREFIX)
