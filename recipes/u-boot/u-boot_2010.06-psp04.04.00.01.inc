@@ -21,4 +21,5 @@ SRC_URI += "file://0001-ti814x-ti816x-changes-in-makefile-for-supporting-log.pat
             file://0005-ti814x-adding-configs-for-ti814x-for-logo-support.patch \
             file://0006-ti816x-setting-the-board-for-display-of-logo.patch \
             file://0007-ti816x-added-configs-for-logo-support-at-u-boot.patch \
+            file://0008-ti814x-ti816x-adding-the-vpdma-firmware-1B2-for-logo.patch \
 "
