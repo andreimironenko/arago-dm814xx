@@ -5,7 +5,7 @@ LICENSE = "BSD"
 require ti-paths.inc
 require ti-staging.inc
 
-DEPENDS = "ti-syslink"
+DEPENDS = "ti-syslink ti-ipc ti-sysbios ti-xdctools"
 
 INC_PR = "r0"
 
@@ -13,13 +13,18 @@ SRC_URI = "svn://gforge.ti.com/svn/m_c_utils/;module=trunk;proto=https;user=anon
 
 S = "${WORKDIR}/trunk/media_controller_utils"
 
-PLATFORM_ti816x = "ti816x"
-PLATFORM_ti814x = "ti814x"
+PLATFORM_ti816x = "ti816x-evm"
+PLATFORM_ti814x = "ti814x-evm"
 PLATFORM ?= "<UNDEFINED-PLATFORM>"
 
-EXTRA_OEMAKE = "SYSLINK_INSTALL_DIR=${SYSLINK_INSTALL_DIR} \
-                FIRMWARE=${OMX_INSTALL_DIR}/firmware \
-                PLATFORM=${PLATFORM} \
+EXTRA_OEMAKE = "PLATFORM=${PLATFORM} \
+		ROOTDIR=${S} \
+        bios_PATH=${SYSBIOS_INSTALL_DIR} \
+		ipc_PATH=${IPC_INSTALL_DIR} \
+		syslink_PATH=${SYSLINK_INSTALL_DIR} \
+		xdc_PATH=${XDC_INSTALL_DIR} \
+        CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
+        CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR} \
 "
 
 do_install() {
@@ -31,3 +36,4 @@ do_install() {
 }
 
 FILES_${PN} = "${bindir}/* ${installdir}/ti-media-controller-utils/* ${sysconfdir}/*"
+INSANE_SKIP_${PN} = True
