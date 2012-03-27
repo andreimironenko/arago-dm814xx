@@ -1,0 +1,473 @@
+From 507cb538a79cc67372ed95c3fce0761833565ee8 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Tue, 27 Mar 2012 21:23:48 +0530
+Subject: [PATCH] GFX_Linux_KM: Fix os functions
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ GFX_Linux_KM/services4/srvkm/env/linux/osfunc.c |  278 +++++++----------------
+ 1 files changed, 79 insertions(+), 199 deletions(-)
+
+diff --git a/GFX_Linux_KM/services4/srvkm/env/linux/osfunc.c b/GFX_Linux_KM/services4/srvkm/env/linux/osfunc.c
+index e50bae7..ad39b05 100755
+--- a/GFX_Linux_KM/services4/srvkm/env/linux/osfunc.c
++++ b/GFX_Linux_KM/services4/srvkm/env/linux/osfunc.c
+@@ -24,11 +24,14 @@
+  *
+  ******************************************************************************/
+ 
++#include <linux/version.h>
++
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,38)
+ #ifndef AUTOCONF_INCLUDED
+  #include <linux/config.h>
+ #endif
++#endif
+ 
+-#include <linux/version.h>
+ #include <asm/io.h>
+ #include <asm/page.h>
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22))
+@@ -76,11 +79,11 @@
+ #else
+ #define ON_EACH_CPU(func, info, wait) on_each_cpu(func, info, 0, wait)
+ #endif
+-/*
++
+ #if defined(PVR_LINUX_USING_WORKQUEUES) && !defined(CONFIG_PREEMPT)
+-#error "A preemptible Linux kernel is required when using workqueues"
++//#error "A preemptible Linux kernel is required when using workqueues"
+ #endif
+-*/
++
+ #define EVENT_OBJECT_TIMEOUT_MS		(100)
+ 
+ #define HOST_ALLOC_MEM_USING_KMALLOC ((IMG_HANDLE)0)
+@@ -136,14 +139,12 @@ PVRSRV_ERROR OSAllocMem_Impl(IMG_UINT32 ui32Flags, IMG_UINT32 ui32Size, IMG_PVOI
+ 
+ static inline int is_vmalloc_addr(const void *pvCpuVAddr)
+ {
+-        unsigned long lAddr = (unsigned long)pvCpuVAddr;
+-        return lAddr >= VMALLOC_START && lAddr < VMALLOC_END;
++	unsigned long lAddr = (unsigned long)pvCpuVAddr;
++	return lAddr >= VMALLOC_START && lAddr < VMALLOC_END;
+ }
+ 
+-#endif
+-
++#endif 
+ 
+-	
+ #if !defined(DEBUG_LINUX_MEMORY_ALLOCATIONS)
+ PVRSRV_ERROR OSFreeMem_Impl(IMG_UINT32 ui32Flags, IMG_UINT32 ui32Size, IMG_PVOID pvCpuVAddr, IMG_HANDLE hBlockAlloc)
+ #else
+@@ -523,12 +524,12 @@ IMG_UINT32 OSClockus(IMG_VOID)
+ }
+ 
+ 
+- 
+ IMG_VOID OSWaitus(IMG_UINT32 ui32Timeus)
+ {
+     udelay(ui32Timeus);
+ }
+ 
++
+ IMG_VOID OSSleepms(IMG_UINT32 ui32Timems)
+ {
+     msleep(ui32Timems);
+@@ -2599,10 +2600,6 @@ error:
+ }
+ 
+ typedef void (*InnerCacheOp_t)(const void *pvStart, const void *pvEnd);
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
+-typedef void (*InnerCacheOp_mapUnmap_t)(const void *pvStart, const IMG_UINT32 size, const IMG_UINT32 type);
+-#endif
+-
+ typedef void (*OuterCacheOp_t)(unsigned long ulStart, unsigned long ulEnd);
+ 
+ #if defined(CONFIG_OUTER_CACHE)
+@@ -2668,34 +2665,19 @@ IMG_VOID *FindMMapBaseVAddr(struct list_head *psMMapOffsetStructList,
+ 
+ 	return IMG_NULL;
+ }
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
++
+ static
+ IMG_BOOL CheckExecuteCacheOp(IMG_HANDLE hOSMemHandle,
+ 							 IMG_VOID *pvRangeAddrStart,
+ 							 IMG_UINT32 ui32Length,
+-							 void * pfnInnerCacheOp_ptr,
+-							 OuterCacheOp_t pfnOuterCacheOp,
+-                                                         IMG_UINT32 map_unmap)
+-#else
+-static
+-IMG_BOOL CheckExecuteCacheOp(IMG_HANDLE hOSMemHandle,
+-                                                         IMG_VOID *pvRangeAddrStart,
+-                                                         IMG_UINT32 ui32Length,
+-                                                         InnerCacheOp_t pfnInnerCacheOp,
+-                                                         OuterCacheOp_t pfnOuterCacheOp)
+-#endif
+-
++							 InnerCacheOp_t pfnInnerCacheOp,
++							 OuterCacheOp_t pfnOuterCacheOp)
+ {
+ 	LinuxMemArea *psLinuxMemArea = (LinuxMemArea *)hOSMemHandle;
+ 	IMG_UINT32 ui32AreaLength, ui32AreaOffset = 0;
+ 	struct list_head *psMMapOffsetStructList;
+ 	IMG_VOID *pvMinVAddr;
+ 
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))        
+-        InnerCacheOp_t pfnInnerCacheOp = (InnerCacheOp_t)pfnInnerCacheOp_ptr;
+-        InnerCacheOp_mapUnmap_t pfnInnerCacheOp_mapUnamp = (InnerCacheOp_mapUnmap_t)pfnInnerCacheOp_ptr;
+-#endif
+-
+ #if defined(CONFIG_OUTER_CACHE)
+ 	MemAreaToPhys_t pfnMemAreaToPhys = IMG_NULL;
+ 	IMG_UINT32 ui32PageNumOffset = 0;
+@@ -2721,70 +2703,38 @@ IMG_BOOL CheckExecuteCacheOp(IMG_HANDLE hOSMemHandle,
+ 	{
+ 		case LINUX_MEM_AREA_VMALLOC:
+ 		{
+-		 if(is_vmalloc_addr(pvRangeAddrStart))
+-                        {
+-	
+-			       pvMinVAddr = psLinuxMemArea->uData.sVmalloc.pvVmallocAddress + ui32AreaOffset;
+-
+-                                if(pvRangeAddrStart < pvMinVAddr)
+-                                        goto err_blocked;
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
+-        if (map_unmap == 0 ) {
+-
+-           pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+-
+-        } else if (map_unmap == 1) {
+-
+-           pfnInnerCacheOp_mapUnamp (pvRangeAddrStart, ui32Length, DMA_TO_DEVICE);
+-
+-        } else {
+-
+-           pfnInnerCacheOp_mapUnamp (pvRangeAddrStart, ui32Length, DMA_FROM_DEVICE);
+-
+-        }
+-#else
+-pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+-#endif
+-
+-//                                pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+-                        }
+-
+-		else
+-                {
+-
+-                                pvMinVAddr = FindMMapBaseVAddr(psMMapOffsetStructList,pvRangeAddrStart, ui32Length);
+-                                if(!pvMinVAddr)
+-                                        goto err_blocked;
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
+-        if (map_unmap == 0 ) {
+-
+-           pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+-
+-        } else if (map_unmap == 1) {
+-
+-           pfnInnerCacheOp_mapUnamp (pvRangeAddrStart, ui32Length, DMA_TO_DEVICE);
+-
+-        } else {
++			if(is_vmalloc_addr(pvRangeAddrStart))
++			{
++				pvMinVAddr = psLinuxMemArea->uData.sVmalloc.pvVmallocAddress + ui32AreaOffset;
+ 
+-           pfnInnerCacheOp_mapUnamp (pvRangeAddrStart, ui32Length, DMA_FROM_DEVICE);
++				
++				if(pvRangeAddrStart < pvMinVAddr)
++					goto err_blocked;
+ 
+-        }
+-#else
+-pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+-#endif
++				pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
++			}
++			else
++			{
++				
++				
+ 
++				pvMinVAddr = FindMMapBaseVAddr(psMMapOffsetStructList,
++											   pvRangeAddrStart, ui32Length);
++				if(!pvMinVAddr)
++					goto err_blocked;
+ 
+-//                                pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+-			
++				pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+ 
+ #if defined(CONFIG_OUTER_CACHE)
+- 				pvRangeAddrStart = psLinuxMemArea->uData.sVmalloc.pvVmallocAddress +(ui32AreaOffset & PAGE_MASK) + (pvRangeAddrStart - pvMinVAddr);
+-                  }
++				
++				pvRangeAddrStart = psLinuxMemArea->uData.sVmalloc.pvVmallocAddress +
++								   (ui32AreaOffset & PAGE_MASK) + (pvRangeAddrStart - pvMinVAddr);
++			}
+ 
+ 			pfnMemAreaToPhys = VMallocAreaToPhys;
+-#else
+-}
+-#endif
++#else 
++			}
++#endif 
+ 			break;
+ 		}
+ 
+@@ -2812,26 +2762,8 @@ pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+ 										   pvRangeAddrStart, ui32Length);
+ 			if(!pvMinVAddr)
+ 				goto err_blocked;
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
+-        if (map_unmap == 0 ) {
+-
+-           pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+-
+-        } else if (map_unmap == 1) {
+-
+-           pfnInnerCacheOp_mapUnamp (pvRangeAddrStart, ui32Length, DMA_TO_DEVICE);
+-
+-        } else {
+-
+-           pfnInnerCacheOp_mapUnamp (pvRangeAddrStart, ui32Length, DMA_FROM_DEVICE);
+-
+-        }
+-#else
+-pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+-#endif
+-
+-//			pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+ 
++			pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+ 
+ #if defined(CONFIG_OUTER_CACHE)
+ 			ui32PageNumOffset = ((ui32AreaOffset & PAGE_MASK) + (pvRangeAddrStart - pvMinVAddr)) >> PAGE_SHIFT;
+@@ -2846,25 +2778,8 @@ pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+ 										   pvRangeAddrStart, ui32Length);
+ 			if(!pvMinVAddr)
+ 				goto err_blocked;
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
+-        if (map_unmap == 0 ) {
+-
+-           pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+ 
+-        } else if (map_unmap == 1) {
+-
+-           pfnInnerCacheOp_mapUnamp (pvRangeAddrStart, ui32Length, DMA_TO_DEVICE);
+-
+-        } else {
+-
+-           pfnInnerCacheOp_mapUnamp (pvRangeAddrStart, ui32Length, DMA_FROM_DEVICE);
+-
+-        }
+-#else
+-pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+-#endif
+-
+-		//	pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
++			pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+ 
+ #if defined(CONFIG_OUTER_CACHE)
+ 			ui32PageNumOffset = ((ui32AreaOffset & PAGE_MASK) + (pvRangeAddrStart - pvMinVAddr)) >> PAGE_SHIFT;
+@@ -2877,31 +2792,10 @@ pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+ 			PVR_DBG_BREAK;
+ 	}
+ 
+-#if 0
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
+-        if (map_unmap == 0 ) {
+-
+-           pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+-
+-        } else if (map_unmap == 1) {
+-	
+-	   pfnInnerCacheOp_mapUnamp (pvRangeAddrStart, ui32Length, DMA_TO_DEVICE);
+-
+-        } else {
+-
+-           pfnInnerCacheOp_mapUnamp (pvRangeAddrStart, ui32Length, DMA_FROM_DEVICE);
+-
+-        }
+-#else
+-pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+-#endif
+-#endif
+-
+ #if defined(CONFIG_OUTER_CACHE)
+-	
+-//	if (pfnMemAreaToPhys != IMG_NULL)
+-      PVR_ASSERT(pfnMemAreaToPhys != IMG_NULL);
++	PVR_ASSERT(pfnMemAreaToPhys != IMG_NULL);
+ 
++	
+ 	{
+ 		unsigned long ulStart, ulEnd, ulLength, ulStartOffset, ulEndOffset;
+ 		IMG_UINT32 i, ui32NumPages;
+@@ -2929,10 +2823,6 @@ pfnInnerCacheOp(pvRangeAddrStart, pvRangeAddrStart + ui32Length);
+ 			pfnOuterCacheOp(ulStart, ulEnd);
+ 		}
+ 	}
+-//	else
+-//	{
+-//		PVR_DBG_BREAK;
+-//	}
+ #endif
+ 
+ 	return IMG_TRUE;
+@@ -2944,7 +2834,8 @@ err_blocked:
+ 			 psLinuxMemArea->eAreaType));
+ 	return IMG_FALSE;
+ }
+-#endif 
++
++#endif
+ 
+ #if defined(__i386__)
+ 
+@@ -2986,40 +2877,27 @@ IMG_BOOL OSFlushCPUCacheRangeKM(IMG_HANDLE hOSMemHandle,
+ 								IMG_VOID *pvRangeAddrStart,
+ 								IMG_UINT32 ui32Length)
+ {
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))	
++	
+ 	return CheckExecuteCacheOp(hOSMemHandle, pvRangeAddrStart, ui32Length,
+-							   (void *) x86_flush_cache_range, IMG_NULL, 0);
+-#else
+-       return CheckExecuteCacheOp(hOSMemHandle, pvRangeAddrStart, ui32Length,
+-                                                           x86_flush_cache_range, IMG_NULL);
+-
+-#endif
++							   x86_flush_cache_range, IMG_NULL);
+ }
+ 
+ IMG_BOOL OSCleanCPUCacheRangeKM(IMG_HANDLE hOSMemHandle,
+ 								IMG_VOID *pvRangeAddrStart,
+ 								IMG_UINT32 ui32Length)
+ {
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))	
++	
+ 	return CheckExecuteCacheOp(hOSMemHandle, pvRangeAddrStart, ui32Length,
+-							   (void *) x86_flush_cache_range, IMG_NULL, 0);
+-#else
+-       return CheckExecuteCacheOp(hOSMemHandle, pvRangeAddrStart, ui32Length,
+-                                                           x86_flush_cache_range, IMG_NULL);
+-#endif
++							   x86_flush_cache_range, IMG_NULL);
+ }
+ 
+ IMG_BOOL OSInvalidateCPUCacheRangeKM(IMG_HANDLE hOSMemHandle,
+ 									 IMG_VOID *pvRangeAddrStart,
+ 									 IMG_UINT32 ui32Length)
+ {
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))	
++	
+ 	return CheckExecuteCacheOp(hOSMemHandle, pvRangeAddrStart, ui32Length,
+-							   (void *) x86_flush_cache_range, IMG_NULL, 0);
+-#else
+-        return CheckExecuteCacheOp(hOSMemHandle, pvRangeAddrStart, ui32Length,
+-                                                           x86_flush_cache_range, IMG_NULL);
+-#endif
++							   x86_flush_cache_range, IMG_NULL);
+ }
+ 
+ #else 
+@@ -3048,52 +2926,55 @@ IMG_VOID OSFlushCPUCacheKM(IMG_VOID)
+ 	outer_flush_all();
+ #endif
+ }
++static inline size_t pvr_dmac_range_len(const void *pvStart, const void *pvEnd)
++{
++        return (size_t)((char *)pvEnd - (char *)pvStart);
++}
+ 
+-IMG_BOOL OSFlushCPUCacheRangeKM(IMG_HANDLE hOSMemHandle,
+-								IMG_VOID *pvRangeAddrStart,
+-								IMG_UINT32 ui32Length)
++
++static void pvr_dmac_inv_range(const void *pvStart, const void *pvEnd)
+ {
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
+-	return CheckExecuteCacheOp(hOSMemHandle, pvRangeAddrStart, ui32Length,
+-							   (void *) dmac_flush_range, outer_flush_range, 0);
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34))
++        dmac_inv_range(pvStart, pvEnd);
+ #else
+-        return CheckExecuteCacheOp(hOSMemHandle, pvRangeAddrStart, ui32Length,
+-                                                           dmac_flush_range, outer_flush_range);
++        dmac_map_area(pvStart, pvr_dmac_range_len(pvStart, pvEnd), DMA_FROM_DEVICE);
+ #endif
++}
+ 
++static void pvr_dmac_clean_range(const void *pvStart, const void *pvEnd)
++{
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34))
++        dmac_clean_range(pvStart, pvEnd);
++#else
++        dmac_map_area(pvStart, pvr_dmac_range_len(pvStart, pvEnd), DMA_TO_DEVICE);
++#endif
+ }
+ 
+-IMG_BOOL OSCleanCPUCacheRangeKM(IMG_HANDLE hOSMemHandle,
++
++IMG_BOOL OSFlushCPUCacheRangeKM(IMG_HANDLE hOSMemHandle,
+ 								IMG_VOID *pvRangeAddrStart,
+ 								IMG_UINT32 ui32Length)
+-{ 
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
+-	return CheckExecuteCacheOp(hOSMemHandle, pvRangeAddrStart, ui32Length,
+-                                                           (void *) dmac_map_area, outer_clean_range, 2);
+-#else
+-        return CheckExecuteCacheOp(hOSMemHandle, pvRangeAddrStart, ui32Length,
+-                                                           dmac_clean_range, outer_clean_range);
+-#endif
++{
++	return CheckExecuteCacheOp(hOSMemHandle, pvRangeAddrStart, ui32Length,dmac_flush_range, (OuterCacheOp_t)outer_flush_range);
++}
+ 
++IMG_BOOL OSCleanCPUCacheRangeKM(IMG_HANDLE hOSMemHandle,
++								IMG_VOID *pvRangeAddrStart,
++								IMG_UINT32 ui32Length)
++{
++	return CheckExecuteCacheOp(hOSMemHandle, pvRangeAddrStart, ui32Length,pvr_dmac_clean_range, (OuterCacheOp_t)outer_clean_range);
+ }
+ 
+ IMG_BOOL OSInvalidateCPUCacheRangeKM(IMG_HANDLE hOSMemHandle,
+ 									 IMG_VOID *pvRangeAddrStart,
+ 									 IMG_UINT32 ui32Length)
+ {
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
+-	return CheckExecuteCacheOp(hOSMemHandle, pvRangeAddrStart, ui32Length,
+-							   (void *) dmac_unmap_area, outer_inv_range, 1);
+-#else
+-        return CheckExecuteCacheOp(hOSMemHandle, pvRangeAddrStart, ui32Length,
+-                                                           dmac_inv_range, outer_inv_range);
+-#endif
++	return CheckExecuteCacheOp(hOSMemHandle, pvRangeAddrStart, ui32Length,pvr_dmac_inv_range, (OuterCacheOp_t)outer_inv_range);
+ }
+ 
+ #else 
+ 
+ #if defined(__mips__)
+-
+ IMG_VOID OSCleanCPUCacheKM(IMG_VOID)
+ {
+ 	
+@@ -3130,8 +3011,7 @@ IMG_BOOL OSInvalidateCPUCacheRangeKM(IMG_HANDLE hOSMemHandle,
+ 	return IMG_TRUE;
+ }
+ 
+-
+-#else
++#else 
+ 
+ #error "Implement CPU cache flush/clean/invalidate primitives for this CPU!"
+ 
+-- 
+1.7.0.4
+

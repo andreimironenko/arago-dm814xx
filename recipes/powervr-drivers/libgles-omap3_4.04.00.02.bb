@@ -28,6 +28,7 @@ SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/gf
                    file://sample.desktop \
                    file://99-bufferclass.rules  \
 		           file://0001-Added-sdk-make-install-file-to-graphics-sdk.patch \
+		           file://0001-GFX_Linux_KM-Fix-os-functions.patch \
 "
 
 SRC_URI[md5sum] = "901327765c0991900afda91473f84725"

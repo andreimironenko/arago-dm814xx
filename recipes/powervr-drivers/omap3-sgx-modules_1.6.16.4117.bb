@@ -17,6 +17,7 @@ inherit module
 MACHINE_KERNEL_PR_append = "i"
 
 SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/gfxsdk/${SGXPV}/exports/Graphics_SDK_setuplinux_${SGXPV}.bin \
+           file://0001-GFX_Linux_KM-Fix-os-functions.patch;striplevel=2 \
 "
 SRC_URI[md5sum] = "901327765c0991900afda91473f84725"
 SRC_URI[sha256sum] = "2ced2329ec819e42d57eca1a11120b02ec9c332fb63baa0a41285eed07d4b48e"
