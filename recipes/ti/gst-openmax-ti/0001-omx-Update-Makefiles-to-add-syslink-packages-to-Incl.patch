@@ -1,0 +1,39 @@
+From 4986c5aa346ec65b229c2db249194b1dc6a31b62 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Tue, 27 Mar 2012 09:36:33 +0530
+Subject: [PATCH] omx: Update Makefiles to add syslink packages to Include path
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ omx/Makefile.am |    1 +
+ omx/Makefile.in |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/omx/Makefile.am b/omx/Makefile.am
+index de5ee7c..f3b9f2b 100755
+--- a/omx/Makefile.am
++++ b/omx/Makefile.am
+@@ -64,6 +64,7 @@ libgstomx_la_CFLAGS = -DUSE_OMXTICORE $(OMXCORE_CFLAGS) $(OMXTIAUDIODEC_CFLAGS)
+     	-I$(OMX_INSTALL_DIR)/include/openMaxv11 \
+     	-I$(OMX_INSTALL_DIR)/packages \
+     	-I$(XDC_INSTALL_DIR)/packages \
++    	-I$(SYSLINK_INSTALL_DIR)/packages \
+     	-I$(OMX_INSTALL_DIR)/include \
+     	-I$(OMX_INSTALL_DIR)/packages/ti/omx/comp/ctrl \
+         -I$(KERNEL_INSTALL_DIR)/include -I$(KERNEL_INSTALL_DIR)/arch/arm/include \
+diff --git a/omx/Makefile.in b/omx/Makefile.in
+index 5883f70..7cf50d1 100644
+--- a/omx/Makefile.in
++++ b/omx/Makefile.in
+@@ -349,6 +349,7 @@ libgstomx_la_CFLAGS = -DUSE_OMXTICORE $(OMXCORE_CFLAGS) $(OMXTIAUDIODEC_CFLAGS)
+     	-I$(OMX_INSTALL_DIR)/include/openMaxv11 \
+     	-I$(OMX_INSTALL_DIR)/packages \
+     	-I$(XDC_INSTALL_DIR)/packages \
++    	-I$(SYSLINK_INSTALL_DIR)/packages \
+     	-I$(OMX_INSTALL_DIR)/include \
+     	-I$(OMX_INSTALL_DIR)/packages/ti/omx/comp/ctrl \
+         -I$(KERNEL_INSTALL_DIR)/include -I$(KERNEL_INSTALL_DIR)/arch/arm/include \
+-- 
+1.7.0.4
+

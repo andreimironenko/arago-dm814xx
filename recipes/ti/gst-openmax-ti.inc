@@ -10,7 +10,7 @@ require ti-staging.inc
 INC_PR = "r1"
 
 DEPENDS = "ti-omx gstreamer gst-plugins-base"
-RDEPENDS = "ti-omx-core"
+RDEPENDS = "ti-omx-core ti-syslink"
 
 SRC_URI = "http://install.source.dir.local/gst-openmax-${PV}.tar.gz\
 "
