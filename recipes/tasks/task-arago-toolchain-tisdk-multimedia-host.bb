@@ -36,6 +36,7 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-c674x-aaclcdec-src \
     ti-cgt6x-src \
     gst-openmax-ti-src \
+    ti-rpe-src \
 "
 
 MULTIMEDIA_SOURCETREE_am37x-evm = ""
