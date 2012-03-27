@@ -33,6 +33,9 @@ do_install() {
 
 	install -d ${D}${sysconfdir}/modprobe.d/
     install ${S}/src/linux/${PLATFORM}/modprobe.conf ${D}${sysconfdir}/modprobe.d/media-controller-utils.conf
+
+    install -d ${D}${MCUTILS_INSTALL_DIR_RECIPE}
+    cp -pPrf ${S}/* ${D}${MCUTILS_INSTALL_DIR_RECIPE}
 }
 
 FILES_${PN} = "${bindir}/* ${installdir}/ti-media-controller-utils/* ${sysconfdir}/*"
