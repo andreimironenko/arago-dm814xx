@@ -993,8 +993,9 @@ CONFIG_TI_CPSW=y
 # CONFIG_PCH_GBE is not set
 # CONFIG_NETDEV_10000 is not set
 # CONFIG_TR is not set
-# CONFIG_WLAN is not set
+CONFIG_WLAN=y
 CONFIG_WL12XX_PLATFORM_DATA=y
+CONFIG_TI8148EVM_WL12XX=y
 
 #
 # Enable WiMAX (Networking options) to see the WiMAX drivers
