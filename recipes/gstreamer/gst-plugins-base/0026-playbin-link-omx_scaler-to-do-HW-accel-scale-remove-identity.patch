@@ -1,0 +1,50 @@
+--- gst-plugins-base-0.10.32.orig/gst/playback/gstplaybin.c	2010-10-13 17:24:05.000000000 +0530
++++ gst-plugins-base-0.10.32/gst/playback/gstplaybin.c	2011-11-24 16:40:02.843360968 +0530
+@@ -830,7 +830,7 @@ gen_video_element (GstPlayBin * play_bin
+   GstElement *element;
+   GstElement *conv;
+ 
+-  GstElement *scale;
++  //GstElement *scale;
+   GstElement *sink;
+   GstElement *identity;
+   GstPad *pad;
+@@ -859,29 +859,29 @@ gen_video_element (GstPlayBin * play_bin
+   element = gst_bin_new ("vbin");
+   gst_bin_add (GST_BIN_CAST (element), sink);
+ 
+-  conv = gst_element_factory_make ("ffmpegcolorspace", "vconv");
++  conv = gst_element_factory_make ("omx_scaler", "vconv");
+   if (conv == NULL)
+     goto no_colorspace;
+   gst_bin_add (GST_BIN_CAST (element), conv);
+ 
+-  scale = gst_element_factory_make ("videoscale", "vscale");
++/*  scale = gst_element_factory_make ("identity", "vscale");
+   if (scale == NULL)
+     goto no_videoscale;
+-  gst_bin_add (GST_BIN_CAST (element), scale);
++  gst_bin_add (GST_BIN_CAST (element), scale);*/
+ 
+-  identity = gst_element_factory_make ("identity", "id");
++ /* identity = gst_element_factory_make ("identity", "id");
+   g_object_set (identity, "silent", TRUE, NULL);
+   g_signal_connect (identity, "handoff", G_CALLBACK (handoff), play_bin);
+-  gst_bin_add (GST_BIN_CAST (element), identity);
++  gst_bin_add (GST_BIN_CAST (element), identity);*/
+ 
+-  gst_element_link_pads (identity, "src", conv, "sink");
+-  gst_element_link_pads (conv, "src", scale, "sink");
++//  gst_element_link_pads (identity, "src", conv, "sink");
++ // gst_element_link_pads (conv, "src", scale, "sink");
+   /* be more careful with the pad from the custom sink element, it might not
+    * be named 'sink' */
+-  if (!gst_element_link_pads (scale, "src", sink, NULL))
++  if (!gst_element_link_pads (conv, "src", sink, NULL))
+     goto link_failed;
+ 
+-  pad = gst_element_get_static_pad (identity, "sink");
++  pad = gst_element_get_static_pad (conv, "sink");
+   gst_element_add_pad (element, gst_ghost_pad_new ("sink", pad));
+   gst_object_unref (pad);
+ 

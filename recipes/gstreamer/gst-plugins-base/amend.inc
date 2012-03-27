@@ -31,5 +31,5 @@ SRC_URI = "http://gstreamer.freedesktop.org/src/${PN}/${PN}-${PV}.tar.bz2;name=a
            file://0023-ffmpegcolorspace-support-for-rowstride.patch \
            file://0024-discoverer-rowstride-support.patch \
            file://0025-playsink-link-omx_colorconv-to-do-HW-accel-color-con.patch \
-           file://0026-playbin-link-omx_scaler-to-do-HW-accel-scale.patch \
+           file://0026-playbin-link-omx_scaler-to-do-HW-accel-scale-remove-identity.patch \
 "
