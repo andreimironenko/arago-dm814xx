@@ -21,5 +21,8 @@ SRC_URI += " \
 	file://0009-omap_hsmmc-Work-around-lack-of-mmc0-card-detection-p.patch \
 	file://0010-arm-ti8148evm-Add-wl12xx-wlan-support.patch \
 	file://0011-PATCH-ti8148evm-fix-of-mmc-array.patch \
+"
+
+SRC_URI_append_ti814x = " \
     file://0001-ti814x-added-code-for-disabling-the-least-significan.patch \
 "
