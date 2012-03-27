@@ -1,0 +1,51 @@
+From 237160f72d374629c3077ced26c8b6038e868264 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Tue, 27 Mar 2012 20:25:35 +0530
+Subject: [PATCH 2/2] examples/dm81xx: Setup memory map for ti816x as per evmDM8168
+
+* Avoid generic c6000 platform as it does not generate IRAM space.
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ examples/dm81xx/dspsubsys.xs |   25 +++++++++++--------------
+ 1 files changed, 11 insertions(+), 14 deletions(-)
+
+diff --git a/examples/dm81xx/dspsubsys.xs b/examples/dm81xx/dspsubsys.xs
+index 04b1b63..e7ccc2e 100644
+--- a/examples/dm81xx/dspsubsys.xs
++++ b/examples/dm81xx/dspsubsys.xs
+@@ -159,20 +159,17 @@ if (soc == 'ti814x') {
+  
+ }
+ else if (soc == 'ti816x') {
+-var device = 'TMS320TI816X';
+-Build.platformTable['ti.platforms.generic:plat'] =
+-{
+-  clockRate: 800.0,
+-  catalogName: 'ti.catalog.c6000',
+-  deviceName: device,
+-  regs: {l1DMode: "32k"},
+-  regs: {l1PMode: "32k"},
+-  regs:  {l2Mode: "64k"},
+-  customMemoryMap: getMemSegmentDefinition(platFormMem),
+-  codeMemory:"DSP",
+-  dataMemory:"DSP",
+-  stackMemory:"DSP"
+-};
++ var device = 'TMS320DM8168';
++ Build.platformTable['ti.platforms.evmDM8168'] =
++ {
++    l1DMode:"32k",
++    l1PMode:"32k",
++    l2Mode:"128k",            
++    externalMemoryMap: getMemSegmentDefinition(platFormMem),
++    codeMemory:"DSP",
++    dataMemory:"DSP",
++    stackMemory:"DSP"
++ };
+ }
+ else {
+ throw new Error("Unsupported value for SOC : " + soc);
+-- 
+1.7.0.4
+

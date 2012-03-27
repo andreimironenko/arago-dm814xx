@@ -1,0 +1,27 @@
+From 82f010907afb382c0282e0fa1148275a537ad102 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Tue, 27 Mar 2012 20:25:14 +0530
+Subject: [PATCH 1/2] makerules: Change from generic platform for ti816x
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ makerules/platform.mk |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/makerules/platform.mk b/makerules/platform.mk
+index 0c100de..1777e78 100644
+--- a/makerules/platform.mk
++++ b/makerules/platform.mk
+@@ -15,7 +15,7 @@
+ ifeq ($(PLATFORM),ti816x-evm)
+  SOC = ti816x
+  ifeq ($(CORE),c6xdsp)
+-  PLATFORM_XDC = "ti.platforms.generic:plat"
++  PLATFORM_XDC = "ti.platforms.evmDM8168"
+  endif 
+ endif
+ 
+-- 
+1.7.0.4
+

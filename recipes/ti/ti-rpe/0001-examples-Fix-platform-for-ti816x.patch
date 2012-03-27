@@ -1,0 +1,28 @@
+From a4414d954b43cd9aaac818f8d31233053f49f981 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Tue, 27 Mar 2012 20:06:31 +0530
+Subject: [PATCH] examples: Fix platform for ti816x
+
+* Use evmDM8168 instead of a generic platform
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ examples/dm81xx/config.bld |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/examples/dm81xx/config.bld b/examples/dm81xx/config.bld
+index 606f488..9fea60a 100644
+--- a/examples/dm81xx/config.bld
++++ b/examples/dm81xx/config.bld
+@@ -16,7 +16,7 @@ C674.rootDir        = java.lang.System.getenv("CGTOOLS_ELF");
+ C674.ccOpts.suffix  += "--gcc -mi10 -mo --no_compress -DOS_DSPBIOS -DDBC_ASSERTS=1 -DGT_ASSERT=1 -DGT_TRACE=1 -DPLATFORM_EVM_SI -DTI_816X_BUILD";
+ 
+ if (platform == "ti816x-evm") {
+-C674.platforms = ["ti.platforms.generic:plat"];
++C674.platforms = ["ti.platforms.evmDM8168"];
+ }
+ else
+ {
+-- 
+1.7.0.4
+
