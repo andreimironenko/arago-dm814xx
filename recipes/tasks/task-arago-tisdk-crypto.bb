@@ -71,7 +71,6 @@ BLUETOOTH_ti33x = "bluetooth-gui"
 # These are the WLAN packages that are used for compatibility with the
 # 2.6.37 kernel used by some devices
 WLAN_COMPAT = "ti-compat-wireless-wl12xx \
-               ti-compat-bluetooth \
               "
 
 # Base WLAN value is blank set
