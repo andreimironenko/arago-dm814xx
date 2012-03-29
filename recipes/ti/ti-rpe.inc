@@ -5,7 +5,7 @@ LICENSE = "BSD"
 require ti-paths.inc
 require ti-staging.inc
 
-PR = "r1"
+PR = "r2"
 
 PVExtra = ""
 S = "${WORKDIR}/rpe-${PV}${PVExtra}"
@@ -38,4 +38,11 @@ EXTRA_OEMAKE = "ROOTDIR=${S} \
 
 PARALLEL_MAKE = ""
 
+do_install() {
+    oe_runmake DESTDIR=${D} install
+}
+
+PACKAGES += "ti-rpe-examples"
+FILES_ti-rpe-examples += "${installdir}/*"
 INSANE_SKIP_${PN} = True
+INSANE_SKIP_ti-rpe-examples = True
