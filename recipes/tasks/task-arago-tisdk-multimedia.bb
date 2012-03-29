@@ -29,6 +29,7 @@ MULTIMEDIA_EZSDK_COMMON = " \
     ti-omx-core \
     gst-ffmpeg \
     gst-openmax-ti \
+    ti-rpe-examples \
 "
 
 MULTIMEDIA_dm365 = " \
