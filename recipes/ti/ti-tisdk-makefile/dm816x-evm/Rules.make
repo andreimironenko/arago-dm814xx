@@ -8,6 +8,7 @@ SYSLINK_PLATFORM=TI816X
 GRAPHICS_PLATFORM=6.x
 OMX_PLATFORM=ti816x-evm
 OMTB_PLATFORM=ti816x-evm
+RPE_PLATFORM=ti816x-evm
 MEDIA_CONTROLLER_UTILS_PLATFORM=ti816x-evm
 MATRIX_PLATFORM=ti816x
 EDMA3_LLD_TARGET=edma3_lld_ti816x_dsp_libs
@@ -199,6 +200,29 @@ GST_OMX_BUILD_VARS = BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
 		 KERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
 		 OMX_PLATFORM=$(OMX_PLATFORM) \
 		 CROSS_COMPILE=$(CSTOOL_PREFIX)
+
+# Where RPE package is installed
+RPE_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__rpe__>
+
+# RPE build variables
+RPE_BUILD_VARS = ROOTDIR=$(RPE_INSTALL_DIR) \
+		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR)/component-sources \
+		INTERNAL_SW_ROOT=$(RPE_INSTALL_DIR)/src \
+        bios_PATH=${SYSBIOS_INSTALL_DIR} \
+        xdais_PATH=${XDAIS_INSTALL_DIR} \
+		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
+        aaclcdec_PATH=${AACLCDEC_INSTALL_DIR} \
+		ipc_PATH=$(IPC_INSTALL_DIR) \
+		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
+		xdc_PATH=$(XDC_INSTALL_DIR) \
+		uia_PATH=$(UIA_INSTALL_DIR) \
+		mcutils_PATH=$(MEDIA_CONTROLLER_UTILS_INSTALL_DIR) \
+        lindevkit_PATH=${LINUX_DEVKIT_DIR}/arm-none-linux-gnueabi/usr \
+		PLATFORM=$(RPE_PLATFORM) \
+		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
+		CROSS_COMPILE=arm-none-linux-gnueabi- \
+		TOOLCHAIN_LONGNAME=arm-none-linux-gnueabi \
+        CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR}
 
 # The prefix to be added before the GNU compiler tools (optionally including # path), i.e. "arm_v5t_le-" or "/opt/bin/arm_v5t_le-".
 CSTOOL_DIR=<__CROSS_COMPILER_PATH__>

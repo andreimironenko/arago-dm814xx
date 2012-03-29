@@ -14,18 +14,18 @@ all: components apps
 # Build components to enable all other build targets. 
 #==============================================================================
 components: components_linux components_dsp
-components_linux: linux cmem osal syslink_hlos syslink_driver sgx-driver omx gstomx
-components_dsp: syslink_rtos edma3lld
+components_linux: linux cmem osal syslink_hlos syslink_driver sgx-driver omx gstomx rpe_linux
+components_dsp: syslink_rtos edma3lld rpe_dsp
 
 #==============================================================================
 # Install components
 #==============================================================================
-components_install: linux_install syslink_install cmem_install sgx-driver_install omx_install gstomx_install
+components_install: linux_install syslink_install cmem_install sgx-driver_install omx_install gstomx_install rpe_install
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-components_clean: linux_clean syslink_clean cmem_clean sgx-driver_clean omx_clean edma3lld_clean gstomx_clean
+components_clean: linux_clean syslink_clean cmem_clean sgx-driver_clean omx_clean edma3lld_clean gstomx_clean rpe_clean
 
 #==============================================================================
 # Build all Demos, Examples and Applications
@@ -120,6 +120,10 @@ help:
 	@echo "    gstomx                         : Build TI GST OpenMax Plugin"
 	@echo "    gstomx_clean                   : Remove TI GST OpenMax generated files"
 	@echo "    gstomx_install                 : Install TI GST OpenMax Plugin"
+	@echo
+	@echo "    rpe                            : Build Remote Processor Execute"
+	@echo "    rpe_clean                      : Remove Remote Processor Execute generated files"
+	@echo "    rpe_install                    : Install Remote Processor Execute"
 	@echo
 	@echo "    all                            : Rebuild everything"
 	@echo "    clean                          : Remove all generated files"
@@ -427,6 +431,24 @@ gstomx_clean: gstomx_configure
 gstomx_install:
 	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; \
 		make -C $(GST_OMX_INSTALL_DIR) $(GST_OMX_BUILD_VARS) install prefix=$(EXEC_DIR)/usr
+
+###############################################################################
+# Build RPE
+###############################################################################
+rpe: 
+	${MAKE} -C ${RPE_INSTALL_DIR} $(RPE_BUILD_VARS) all
+
+rpe_linux:
+	${MAKE} -C ${RPE_INSTALL_DIR} $(RPE_BUILD_VARS) linuxsharedlib
+
+rpe_bios:
+	${MAKE} -C ${RPE_INSTALL_DIR} $(RPE_BUILD_VARS) dsplib
+
+rpe_clean: 
+	${MAKE} -C ${RPE_INSTALL_DIR} $(RPE_BUILD_VARS) clean
+
+rpe_install:
+	${MAKE} -C ${RPE_INSTALL_DIR} $(RPE_BUILD_VARS) install prefix=$(EXEC_DIR)/usr
 
 ###############################################################################
 # Build the DSP devkit
