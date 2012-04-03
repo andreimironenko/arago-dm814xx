@@ -447,7 +447,7 @@ rpe:
 rpe_linux:
 	${MAKE} -C ${RPE_INSTALL_DIR} $(RPE_BUILD_VARS) linuxsharedlib
 
-rpe_bios:
+rpe_dsp:
 	${MAKE} -C ${RPE_INSTALL_DIR} $(RPE_BUILD_VARS) dsplib
 
 rpe_clean: 
