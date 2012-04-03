@@ -34,7 +34,7 @@ fi
 uimagesrc=`ls -1 $cwd/../board-support/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyO0,115200n8 rootwait rw mem=364M@0x80000000 mem=324M@0x9F900000"
+baseargs="console=ttyO2,115200n8 rootwait rw mem=364M@0x80000000 mem=324M@0x9F900000"
 videoargs="vmalloc=500M notifyk.vpssm3_sva=0xBF900000"
 fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3"
 fsnfsargs="root=/dev/nfs nfsroot=$ip"
