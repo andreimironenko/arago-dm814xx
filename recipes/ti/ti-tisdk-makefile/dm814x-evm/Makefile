@@ -14,33 +14,33 @@ all: components apps
 # Build components to enable all other build targets. 
 #==============================================================================
 components: components_linux components_dsp
-components_linux: linux cmem osal syslink_hlos syslink_driver sgx-driver omx gstomx rpe_linux
+components_linux: linux cmem osal syslink_hlos syslink_driver sgx-driver omx gstomx media-controller-utils rpe_linux
 components_dsp: syslink_rtos edma3lld rpe_dsp
 
 #==============================================================================
 # Install components
 #==============================================================================
-components_install: linux_install syslink_install cmem_install sgx-driver_install omx_install gstomx_install rpe_install
+components_install: linux_install syslink_install cmem_install sgx-driver_install omx_install gstomx_install media-controller-utils_install rpe_install
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-components_clean: linux_clean syslink_clean cmem_clean sgx-driver_clean omx_clean edma3lld_clean gstomx_clean rpe_clean
+components_clean: linux_clean syslink_clean cmem_clean sgx-driver_clean omx_clean edma3lld_clean gstomx_clean media-controller-utils_clean rpe_clean
 
 #==============================================================================
 # Build all Demos, Examples and Applications
 #==============================================================================
-apps: u-boot matrix psp-examples omtb media-controller-utils
+apps: u-boot matrix psp-examples omtb 
 
 #==============================================================================
 # Install everything
 #==============================================================================
-apps_install: u-boot_install matrix_install psp-examples_install omtb_install media-controller-utils_install
+apps_install: u-boot_install matrix_install psp-examples_install omtb_install
 
 #==============================================================================
 # Clean all Demos, Examples and Applications
 #==============================================================================
-apps_clean: u-boot_clean matrix_clean psp-examples_clean omtb_clean media-controller-utils_clean
+apps_clean: u-boot_clean matrix_clean psp-examples_clean omtb_clean 
 
 #==============================================================================
 # Install everything
@@ -225,7 +225,7 @@ psp-examples_clean:
 		EXE_DIR=$(PSP_EXAMPLES_INSTALL_DIR)/video/bin \
 		CROSS_COMPILE=$(CSTOOL_PREFIX) \
 		clean
-	rm -f $(PSP_EXAMPLES_INSTALL_DIR)/watchdog/saWatchdog
+	rm -f $(PSP_EXAMPLES_INSTALL_DIR)/watchdog/bin/*
 
 psp-examples_install:
 	install -d $(EXEC_DIR)/usr/share/ti/ti-psp-examples
@@ -233,6 +233,7 @@ psp-examples_install:
 	install $(PSP_EXAMPLES_INSTALL_DIR)/audio/bin/minimal_playback $(EXEC_DIR)/usr/share/ti/ti-psp-examples
 	install $(PSP_EXAMPLES_INSTALL_DIR)/edma/edma_test.ko $(EXEC_DIR)/usr/share/ti/ti-psp-examples
 	install $(PSP_EXAMPLES_INSTALL_DIR)/video/bin/* $(EXEC_DIR)/usr/share/ti/ti-psp-examples
+	install $(PSP_EXAMPLES_INSTALL_DIR)/watchdog/bin/* $(EXEC_DIR)/usr/share/ti/ti-psp-examples
 
 #==============================================================================
 # Build the CMEM kernel module for the configured platform, and make sure the
