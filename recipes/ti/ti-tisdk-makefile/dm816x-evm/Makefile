@@ -30,7 +30,7 @@ components_clean: linux_clean syslink_clean cmem_clean sgx-driver_clean omx_clea
 #==============================================================================
 # Build all Demos, Examples and Applications
 #==============================================================================
-apps: u-boot matrix psp-examples omtb 
+apps: u-boot matrix psp-examples omtb rpe
 
 #==============================================================================
 # Install everything
