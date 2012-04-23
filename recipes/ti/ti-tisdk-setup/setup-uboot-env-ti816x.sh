@@ -34,7 +34,8 @@ fi
 uimagesrc=`ls -1 $cwd/../board-support/prebuilt-images/uImage*.bin`
 uimagedefault=`basename $uimagesrc`
 
-baseargs="console=ttyO2,115200n8 rootwait rw mem=364M@0x80000000 mem=324M@0x9F900000"
+baseargs="console=ttyO2,115200n8 rootwait rw"
+memargs="mem=364M@0x80000000 mem=324M@0x9F900000"
 videoargs="vmalloc=500M notifyk.vpssm3_sva=0xBF900000"
 fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3"
 fsnfsargs="root=/dev/nfs nfsroot=$ip"
@@ -80,19 +81,19 @@ if [ "$kernel" -eq "1" ]; then
     bootfile="setenv bootfile $uimage"
 
     if [ "$fs" -eq "1" ]; then
-        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs:$rootpath ip=dhcp"
+        bootargs="setenv bootargs $baseargs $memargs $videoargs $fsnfsargs:$rootpath ip=dhcp"
         cfg="uimage-tftp_fs-nfs"
     else
-        bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
+        bootargs="setenv bootargs $baseargs $memargs $videoargs $fssdargs ip=off"
         cfg="uimage-tftp_fs-sd"
     fi
 else
     if [ "$fs" -eq "1" ]; then
-        bootargs="setenv bootargs $baseargs $videoargs $fsnfsargs:$rootpath ip=dhcp"
+        bootargs="setenv bootargs $baseargs $memargs $videoargs $fsnfsargs:$rootpath ip=dhcp"
         bootcmd="setenv bootcmd 'mmc rescan 0;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
         cfg="uimage-sd_fs-nfs"
     else
-        bootargs="setenv bootargs $baseargs $videoargs $fssdargs ip=off"
+        bootargs="setenv bootargs $baseargs $memargs $videoargs $fssdargs ip=off"
         bootcmd="setenv bootcmd 'mmc rescan 0;fatload mmc 0 0x82000000 uImage;bootm 0x82000000'"
         cfg="uimage-sd_fs-sd"
     fi
@@ -157,6 +158,7 @@ if [ "$minicom" == "y" ]; then
     do_expect "\"ENTER ...\"" "send \"\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv oldbootargs \$\{bootargs\}\"" $minicomfilepath
     do_expect "\"$prompt\"" "send \"setenv bootargs $baseargs \c\"" $minicomfilepath
+    echo "send \"$memargs \c\"" >> $minicomfilepath
     echo "send \"$videoargs1 \c\"" >> $minicomfilepath
     echo "send \"$videoargs2 \c\"" >> $minicomfilepath
     if [ "$fs" -eq "1" ]; then
