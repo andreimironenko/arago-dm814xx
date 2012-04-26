@@ -1,0 +1,27 @@
+From 5c81e8727d4a4fc8dd07205b17c749f27dbaa508 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Thu, 26 Apr 2012 12:18:02 +0530
+Subject: [PATCH] domx: Increase buffers so that multiple channels can allocate buffers
+
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ src/ti/omx/domx/domx_cfg.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/src/ti/omx/domx/domx_cfg.h b/src/ti/omx/domx/domx_cfg.h
+index 0b9bea8..99e0ed5 100644
+--- a/src/ti/omx/domx/domx_cfg.h
++++ b/src/ti/omx/domx/domx_cfg.h
+@@ -545,7 +545,7 @@
+ #endif
+ 
+ #ifndef DOMX_CORE_COMPINFOTBL_MAXNUMBUFFS_vfpc_indtxscwb
+-  #define DOMX_CORE_COMPINFOTBL_MAXNUMBUFFS_vfpc_indtxscwb      (DOMX_CORE_COMPINFOTBL_MAXNUMBUFFS_GENERIC)
++  #define DOMX_CORE_COMPINFOTBL_MAXNUMBUFFS_vfpc_indtxscwb      (2*DOMX_CORE_COMPINFOTBL_MAXNUMBUFFS_GENERIC)
+ #endif
+ 
+ /* Entry 8 */
+-- 
+1.7.0.4
+

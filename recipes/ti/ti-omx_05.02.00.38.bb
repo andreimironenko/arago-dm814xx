@@ -7,6 +7,7 @@ require ti-omx.inc
 PV = "05_02_00_38"
 
 SRC_URI = "http://bangsdowebsvr01.india.ti.com:8090/DM81xx-OMX/${PV}/exports/omx-ti81xx_${PV}.tar.gz;name=omx \
+           file://0001-domx-Increase-buffers-so-that-multiple-channels-can-.patch \
            file://sdk.mk \
 "
 
