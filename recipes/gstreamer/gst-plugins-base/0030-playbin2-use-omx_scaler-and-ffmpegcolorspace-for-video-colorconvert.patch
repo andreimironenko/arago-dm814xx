@@ -1,0 +1,24 @@
+--- gst-plugins-base-0.10.32/gst/playback/gstplaysink.c	2012-02-03 16:22:51.449527311 +0530
++++ gst-plugins-base-0.10.32.new/gst/playback/gstplaysink.c	2012-02-03 13:23:16.641523431 +0530
+@@ -1268,17 +1268,16 @@ gen_video_chain (GstPlaySink * playsink,
+   }
+ 
+   {
+-    GST_DEBUG_OBJECT (playsink, "creating omx_ctrl");
+-    chain->ctrl = gst_element_factory_make ("omx_ctrl", "omxctrl");
++    GST_DEBUG_OBJECT (playsink, "creating ffmpegcolorspace");
++    chain->ctrl = gst_element_factory_make ("ffmpegcolorspace", "colorspace");
+ 
+     if (chain->ctrl == NULL) {
+-      post_missing_element_message (playsink, "omx_ctrl");
++      post_missing_element_message (playsink, "ffmpegcolorspace");
+       GST_ELEMENT_WARNING (playsink, CORE, MISSING_PLUGIN,
+           (_("Missing element '%s' - check your GStreamer installation."),
+-              "omx_ctrl"), ("video rendering might fail"));
++              "ffmpegcolorspace"), ("video rendering might fail"));
+     } else {
+       gst_bin_add (bin, chain->ctrl);
+-      g_object_set(G_OBJECT(chain->ctrl), "display-mode", "OMX_DC_MODE_1080P_60"  ,NULL);
+       if (prev) {
+         if (!gst_element_link_pads_full (prev, "src", chain->ctrl, "sink",
+               GST_PAD_LINK_CHECK_TEMPLATE_CAPS))
