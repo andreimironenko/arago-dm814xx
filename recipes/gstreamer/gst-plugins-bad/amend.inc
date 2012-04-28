@@ -7,7 +7,7 @@ DEPENDS := "${@oe_filter_out('opencv', bb.data.getVar('DEPENDS', d, 1), d)}"
 DEPENDS := "${@oe_filter_out('libcdio', bb.data.getVar('DEPENDS', d, 1), d)}"
 
 # Set the suffix to specify amended packages
-PR_append = "-arago4"
+PR_append = "-arago5"
 
 EXTRA_OECONF += "--disable-vp8 \
 "
@@ -22,4 +22,5 @@ SRC_URI = "http://gstreamer.freedesktop.org/src/${PN}/${PN}-${PV}.tar.bz2;name=a
            file://0006-mpegvideoparse-merge-sequence-header.patch \
            file://0007-h264parse-fix-boundary-condition.patch \
            file://0008-h264parse-modifications-for-playbin.patch \
+           file://0010-mpegtsdemux-picking-up-a-fix-to-genrate-no-more-pads.patch \
 "
