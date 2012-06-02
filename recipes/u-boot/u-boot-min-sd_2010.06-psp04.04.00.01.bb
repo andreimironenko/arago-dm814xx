@@ -8,6 +8,7 @@ PR = "${INC_PR}.1"
 # being marked as a failure even though it shows a successful build.
 PROVIDES = "u-boot-min-sd"
 
+UBOOT_MACHINE_ti811x = "ti8148_evm_min_sd"
 UBOOT_MACHINE_ti814x = "ti8148_evm_min_sd"
 UBOOT_MACHINE_ti816x = "ti8168_evm_min_sd"
 UBOOT_BINARY = "u-boot.min.sd"
