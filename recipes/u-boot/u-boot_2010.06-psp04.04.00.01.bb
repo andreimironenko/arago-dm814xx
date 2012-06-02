@@ -2,10 +2,12 @@ require u-boot_${PV}.inc
 
 PR = "${INC_PR}.0"
 
+UBOOT_MACHINE_ti811x = "ti8148_evm_config"
 UBOOT_MACHINE_ti814x = "ti8148_evm_config"
 UBOOT_MACHINE_ti816x = "ti8168_evm_config"
 
 # This is the NAND binary which is signed to be booted by the boot ROM
+TI_UBOOT_BINARY_ti811x = "u-boot.bin"
 TI_UBOOT_BINARY_ti814x = "u-boot.bin"
 TI_UBOOT_BINARY_ti816x = "u-boot.noxip.bin"
 

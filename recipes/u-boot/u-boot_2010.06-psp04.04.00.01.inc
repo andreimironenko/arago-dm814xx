@@ -1,6 +1,6 @@
 require u-boot-omap3.inc
 
-COMPATIBLE_MACHINE = "ti816x|ti814x"
+COMPATIBLE_MACHINE = "ti816x|ti814x|ti811x"
 
 BRANCH = "ti81xx-master"
 
