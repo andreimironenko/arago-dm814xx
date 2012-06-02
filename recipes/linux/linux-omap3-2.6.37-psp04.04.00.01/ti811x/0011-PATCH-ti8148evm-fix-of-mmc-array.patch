@@ -1,0 +1,49 @@
+From 496d46bf09f846816a5eeb0abcd15d12c56d2a4d Mon Sep 17 00:00:00 2001
+From: Vita Preskovsky <vitap@ti.com>
+Date: Thu, 1 Mar 2012 13:48:17 +0200
+Subject: [PATCH] [PATCH] ti8148evm: fix of mmc array
+
+	* fix of mmc array in the case of CONFIG_TI8148EVM_WL12XX option is choosed;
+	  board_ref_clock is changed to 38XTAL
+
+
+Signed-off-by: Vita Preskovsky <vitap@ti.com>
+---
+ arch/arm/mach-omap2/board-ti8148evm.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/board-ti8148evm.c b/arch/arm/mach-omap2/board-ti8148evm.c
+index bd7ac3d..e878d98 100644
+--- a/arch/arm/mach-omap2/board-ti8148evm.c
++++ b/arch/arm/mach-omap2/board-ti8148evm.c
+@@ -29,7 +29,6 @@
+ #include <linux/i2c/pcf857x.h>
+ #include <linux/regulator/machine.h>
+ #include <linux/mfd/tps65910.h>
+-#include <linux/gpio.h>
+ #include <linux/wl12xx.h>
+ 
+ #include <mach/hardware.h>
+@@ -81,8 +80,9 @@ static struct omap2_hsmmc_info mmc[] = {
+ 	},
+ 	{
+ 		.mmc            = 2,
+-#endif
++#else
+ 		.mmc		= 1,
++#endif
+ 		.caps		= MMC_CAP_4_BIT_DATA,
+ 		.gpio_cd	= -EINVAL, /* Dedicated pins for CD and WP */
+ 		.gpio_wp	= -EINVAL,
+@@ -747,7 +747,7 @@ static int ti8148_evm_lsi_phy_fixup(struct phy_device *phydev)
+ static struct wl12xx_platform_data wlan_data __initdata = {
+ 	.irq = OMAP_GPIO_IRQ(GPIO_WLAN_IRQ),
+ 	/* COM6 (127x) uses FREF */
+-	.board_ref_clock = WL12XX_REFCLOCK_26,
++	.board_ref_clock = WL12XX_REFCLOCK_38_XTAL,
+ 	/* COM7 (128x) uses TCXO */
+ 	.board_tcxo_clock = WL12XX_TCXOCLOCK_26,
+ };
+-- 
+1.7.0.4
+
