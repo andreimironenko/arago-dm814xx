@@ -9,9 +9,9 @@ RELNOTESTOPIC_omapl138 = "OMAPL138_DVSDK_4.00_Release_Notes"
 RELNOTESTOPIC_omap3evm = "OMAP3530_DVSDK_4.00_Release_Notes"
 RELNOTESTOPIC_dm37x-evm = "TMS320DM3730_DVSDK_4.00_Release_Notes"
 RELNOTESTOPIC_c6a816x-evm = "C6A816x_AM389x_EZSDK_5.01_Release_Notes"
-RELNOTESTOPIC_dm816x-evm = "DM816x_EZSDK_5.04_Release_Notes"
+RELNOTESTOPIC_dm816x-evm = "DM816x_EZSDK_5.05_Release_Notes"
 RELNOTESTOPIC_dm816x-custom = "DM816x_C6A816x_AM389x_EZSDK_5.01_Release_Notes"
-RELNOTESTOPIC_ti814x = "DM814x_EZSDK_5.04_Release_Notes"
+RELNOTESTOPIC_ti814x = "DM814x_EZSDK_5.05_Release_Notes"
 
 RELNOTESURL = "http://ap-fpdsp-swapps.dal.design.ti.com/index.php/${RELNOTESTOPIC}"
 
