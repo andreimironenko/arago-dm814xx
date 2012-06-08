@@ -5,7 +5,7 @@ require ti-paths.inc
 
 PR = "r4"
 
-COMPATIBLE_MACHINE = "(dm365-evm|da850-omapl138-evm|dm37x-evm|omap3evm|ti816x|ti814x)"
+COMPATIBLE_MACHINE = "(dm365-evm|da850-omapl138-evm|dm37x-evm|omap3evm|ti816x|ti814x|ti811x)"
 
 TOPIC_dm365 = "TMS320DM365_Software_Developers_Guide"
 TOPIC_dm368-evm = "TMS320DM368_Software_Developers_Guide"
@@ -18,6 +18,7 @@ TOPIC_dm816x-custom = "DM816x_C6A816x_AM389x_EZ_Software_Developers_Guide"
 TOPIC_c6a814x-evm = "C6A814x_AM387x_EZ_Software_Developers_Guide"
 TOPIC_dm814x-evm = "DM814x_EZ_Software_Developers_Guide"
 TOPIC_dm814x-custom = "DM814x_C6A814x_AM387x_EZ_Software_Developers_Guide"
+TOPIC_c6a811x-evm = "DM814x_EZ_Software_Developers_Guide"
 
 TOPICFILE = "${@bb.data.getVar('TOPIC', d, 1).replace('/','_')}"
 TOPICURL = "http://ap-fpdsp-swapps.dal.design.ti.com/index.php/${TOPIC}"
