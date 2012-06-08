@@ -18,6 +18,7 @@ DEPENDS += "ti-c674x-aaclcdec ti-media-controller-utils"
 
 PLATFORM_ti816x = "ti816x-evm"
 PLATFORM_ti814x = "ti814x-evm"
+PLATFORM_ti811x = "ti814x-evm"
 
 EXTRA_OEMAKE = "ROOTDIR=${S} \
         PLATFORM=${PLATFORM} \
