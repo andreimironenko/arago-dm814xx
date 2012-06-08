@@ -198,6 +198,16 @@ my %machines = (
         dvsdk_factory_default => "no",
         graphics_default    => "no",
     },
+    "c6a811x-evm"     => {
+        SOC_FAMILY          => "ti811x",
+        bsp_default         => "yes",
+        addons_default      => "yes",
+        crypto_default      => "no",
+        multimedia_default  => "yes",
+        dsp_default         => "no",
+        dvsdk_factory_default => "no",
+        graphics_default    => "yes",
+    },
 );
 
 ################################################################################
@@ -290,7 +300,7 @@ sub copy_output
     if ($machine =~ m/beagleboard/ || $machine =~ m/omap3evm/ ||
         $machine =~ m/am3517-evm/ || $machine =~ m/dm37x/ ||
         $machine =~ m/am37x/ || $machine =~ m/816x/ || 
-        $machine =~ m/am389x/ || $machine =~ m/814x/ ) {
+        $machine =~ m/am389x/ || $machine =~ m/814x/ || $machine =~ m/811x/ ) {
         $march = "armv7a";
     }
     else {
