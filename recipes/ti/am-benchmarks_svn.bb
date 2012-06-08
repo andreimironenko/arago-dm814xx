@@ -19,6 +19,7 @@ ARCHITECTURE_da850-omapl138-evm = "arm9"
 ARCHITECTURE_omap3 = "cortex-a8"
 ARCHITECTURE_ti816x = "cortex-a8"
 ARCHITECTURE_ti814x = "cortex-a8"
+ARCHITECTURE_ti811x = "cortex-a8"
 ARCHITECTURE ?= "<UNDEFINED>"
 
 INSANE_SKIP_${PN} = "True"
