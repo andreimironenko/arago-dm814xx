@@ -5,7 +5,7 @@ LICENSE = "BSD"
 require ti-paths.inc
 require ti-staging.inc
 
-COMPATIBLE_MACHINE = "(ti816x|ti814x)"
+COMPATIBLE_MACHINE = "(ti816x|ti814x|ti811x)"
 
 PR = "r1"
 PVExtra = ""
@@ -18,6 +18,7 @@ DEPENDS = "ti-syslink ti-ipc"
 
 UIAPLATFORM_ti816x = "evmti816x"
 UIAPLATFORM_ti814x = "evmti816x"
+UIAPLATFORM_ti811x = "evmti816x"
 
 do_compile() {
     :
