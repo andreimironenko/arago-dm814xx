@@ -16,6 +16,7 @@ MAKEFILES_COMMON = "linux matrix-gui am-benchmarks am-sysinfo matrix-gui-browser
 MAKEFILES_COMMON_dm816x-evm = ""
 MAKEFILES_COMMON_dm814x-evm = ""
 MAKEFILES_COMMON_c6a816x-evm = ""
+MAKEFILES_COMMON_c6a811x-evm = ""
 MAKEFILES_COMMON_da830-omapl137-evm = ""
 MAKEFILES_COMMON_da850-omapl138-evm = ""
 MAKEFILES_COMMON_dm355-evm = ""
