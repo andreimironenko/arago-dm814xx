@@ -15,6 +15,7 @@ INITSCRIPT_PARAMS = "defaults 01 99"
 
 PLATFORM_ti816x = "ti816x-evm"
 PLATFORM_ti814x = "ti814x-evm"
+PLATFORM_ti811x = "ti814x-evm"
 PLATFORM ?= "<UNDEFINED-PLATFORM>"
 
 SRC_URI = "svn://gforge.ti.com/svn/m_c_utils/;module=trunk;proto=https;user=anonymous;pswd='' "
