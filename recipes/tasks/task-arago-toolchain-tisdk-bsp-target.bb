@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install corresponding development packages for Board Support Package"
-PR = "r6"
+PR = "r7"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -20,6 +20,7 @@ BLUETOOTH_SUPPORT_omap3 = "${BLUETOOTH_STACK}"
 BLUETOOTH_SUPPORT_omapl138 = "${BLUETOOTH_STACK}"
 BLUETOOTH_SUPPORT_ti816x = ""
 BLUETOOTH_SUPPORT_ti814x = ""
+BLUETOOTH_SUPPORT_ti811x = ""
 BLUETOOTH_SUPPORT_omap4 = "${BLUETOOTH_STACK}"
 
 RRECOMMENDS_${PN} = "\

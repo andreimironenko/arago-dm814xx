@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install multimedia binaries on ${MACHINE}"
-PR = "r38"
+PR = "r39"
 LICENSE = "MIT"
 
 inherit task
@@ -115,6 +115,17 @@ MULTIMEDIA_ti816x = " \
 MULTIMEDIA_ti814x = " \
     ${MULTIMEDIA_EZSDK_COMMON} \
     ti-firmware \
+    "
+
+MULTIMEDIA_ti811x = " \
+    ti-syslink-examples \
+    ti-uia \
+    ti-media-controller-utils \
+    ti-media-controller-loader \
+    ti-data \
+    task-arago-gst \
+    gst-ffmpeg \
+    ti-rpe-examples \
     "
 
 MULTIMEDIA_ti33x = " \

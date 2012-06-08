@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install Board Support Package binaries on ${MACHINE}"
-PR = "r27"
+PR = "r28"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -60,6 +60,11 @@ BSP_COMPONENTS_ti814x = "\
     u-boot-min-nand \
     "
 
+BSP_COMPONENTS_ti811x = "\
+    u-boot-min-sd \
+    u-boot-min-nand \
+    "
+
 BLUETOOTH_STACK = "\
     bluez4 \
     bluez4-agent \
@@ -76,6 +81,7 @@ BLUETOOTH_SUPPORT_omap3 = "${BLUETOOTH_STACK}"
 BLUETOOTH_SUPPORT_omapl138 = "${BLUETOOTH_STACK}"
 BLUETOOTH_SUPPORT_ti816x = ""
 BLUETOOTH_SUPPORT_ti814x = ""
+BLUETOOTH_SUPPORT_ti811x = ""
 BLUETOOTH_SUPPORT_omap4 = "${BLUETOOTH_STACK}"
 BLUETOOTH_SUPPORT_ti33x = "${BLUETOOTH_STACK}"
 

@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install header and libs in sdk"
-PR = "r3"
+PR = "r4"
 LICENSE = "MIT"
 
 inherit task
@@ -22,6 +22,10 @@ EZSDK_MULTIMEDIA_dm816x-custom = "\
 "
 
 EZSDK_MULTIMEDIA_ti814x = "\
+    ${EZSDK_MULTIMEDIA_COMMON} \
+"
+
+EZSDK_MULTIMEDIA_ti811x = "\
     ${EZSDK_MULTIMEDIA_COMMON} \
 "
 

@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install Board Support Package sources (or development header) packages on host"
-PR = "r47"
+PR = "r48"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -154,6 +154,19 @@ BSP_COMPONENTS_ti814x = "\
     ti-tisdk-mksdboot \
     linux-omap3-src \
     pinmux-utility \
+    ti-docs-linux-devkit \
+    ti-docs-dsp-devkit \
+    "
+
+BSP_COMPONENTS_ti811x = "\
+    ti-tisdk-setup \
+    ti-tisdk-relnotes \
+    ti-docs-sdg \
+    ti-docs-psp \
+    ti-host-tools-psp \
+    ti-psp-driver-examples \
+    ti-tisdk-mksdboot \
+    linux-omap3-src \
     ti-docs-linux-devkit \
     ti-docs-dsp-devkit \
     "

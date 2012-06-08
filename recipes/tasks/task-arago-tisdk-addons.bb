@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install additional utilities/demos for SDKs"
-PR = "r18"
+PR = "r19"
 LICENSE = "MIT"
 ALLOW_EMPTY = "1"
 
@@ -18,6 +18,7 @@ UTILS_append_omap3 = " am-benchmarks"
 UTILS_append_ti33x = " am-benchmarks"
 UTILS_append_ti816x = " am-benchmarks"
 UTILS_append_ti814x = " am-benchmarks"
+UTILS_append_ti811x = " am-benchmarks"
 UTILS_append_dm365 = " am-benchmarks"
 
 # Add PRU examples for am180x-evm devices

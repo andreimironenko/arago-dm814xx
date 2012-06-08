@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on sdk target"
-PR = "r7"
+PR = "r8"
 LICENSE = "MIT"
 
 inherit task
@@ -10,6 +10,7 @@ GRAPHICS_3D = ""
 GRAPHICS_3D_omap3 = "libgles-omap3-dev"
 GRAPHICS_3D_ti816x = "libgles-omap3-dev"
 GRAPHICS_3D_ti814x = "libgles-omap3-dev"
+GRAPHICS_3D_ti811x = "libgles-omap3-dev"
 
 # graphics SDK source package is already installed hence no need for duplicating the headers.
 GRAPHICS_3D_omap3evm = ""

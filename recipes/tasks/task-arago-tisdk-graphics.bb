@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to install graphics binaries on ${MACHINE}"
-PR = "r30"
+PR = "r31"
 LICENSE = "MIT"
 
 inherit task
@@ -42,6 +42,12 @@ MATRIX_APPS_ti33x = "matrix-gui-3d-demos \
                      matrix-gui-submenus-pru \
                      "
 
+MATRIX_APPS_c6a811x-evm = "\
+    libxml2 \
+    matrix-gui-e \
+    qwt \
+"
+
 MATRIX_APPS_dm814x-evm = "\
     libxml2 \
     matrix-gui-e \
@@ -59,6 +65,7 @@ GRAPHICS_3D = ""
 GRAPHICS_3D_omap3 = "libgles-omap3-rawdemos"
 GRAPHICS_3D_ti816x = "libgles-omap3-rawdemos"
 GRAPHICS_3D_ti814x = "libgles-omap3-rawdemos"
+GRAPHICS_3D_ti811x = "libgles-omap3-rawdemos"
 
 RDEPENDS_${PN} = "\
     task-arago-qte \

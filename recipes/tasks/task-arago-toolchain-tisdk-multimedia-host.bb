@@ -1,5 +1,5 @@
 DESCRIPTION = "Task to build and install multimedia source (or development header) packages on host"
-PR = "r26"
+PR = "r27"
 LICENSE = "MIT"
 
 inherit task
@@ -116,6 +116,20 @@ MULTIMEDIA_SOURCETREE_dm814x-custom = " \
     ti-omx-src \
     ortp-src \
     "
+
+MULTIMEDIA_SOURCETREE_c6a811x-evm = " \
+    ti-sysbios-src \
+    ti-xdctools-src \
+    ti-edma3lld-src \
+    ti-xdais-src \
+    ti-ipc-src \
+    ti-syslink-src \
+    ti-uia-src \
+    ti-media-controller-utils-src \
+    ti-c674x-aaclcdec-src \
+    ti-cgt6x-src \
+    ti-rpe-src \
+"
 
 # Do not pull DSP sources into AMSDK builds
 MULTIMEDIA_SOURCETREE_am37x-evm = ""
