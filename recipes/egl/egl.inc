@@ -1,2 +1,2 @@
-COMPATIBLE_MACHINE = "omap3|ti816x|ti33x|ti814x"
+COMPATIBLE_MACHINE = "omap3|ti816x|ti33x|ti814x|ti811x"
 
