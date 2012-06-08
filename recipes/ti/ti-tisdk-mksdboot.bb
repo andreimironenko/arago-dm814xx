@@ -1,7 +1,7 @@
 DESCRIPTION = "Scripts to create bootable SD card for ${MACHINE}"
 LICENSE = GPLv2
 
-PR = "r29"
+PR = "r30"
 
 require ti-paths.inc
 
@@ -9,6 +9,7 @@ PLATFORM_omapl138 = "omapl138"
 PLATFORM_omap3 = "omap35x"
 PLATFORM_ti816x = "ti816x"
 PLATFORM_ti814x = "ti814x"
+PLATFORM_ti811x = "ti814x"
 PLATFORM_am180x-evm = "am180x"
 PLATFORM_am181x-evm = "am1810"
 PLATFORM_am3517-evm = "am3517"
