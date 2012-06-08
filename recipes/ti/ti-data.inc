@@ -22,6 +22,7 @@ DEMOSPLATFORM_omapl138   = "omapl138"
 DEMOSPLATFORM_omap3   = "omap3530"
 DEMOSPLATFORM_ti816x   = "ti816x"
 DEMOSPLATFORM_ti814x   = "ti816x"
+DEMOSPLATFORM_ti811x   = "ti816x"
 
 do_compile () {
 	:
