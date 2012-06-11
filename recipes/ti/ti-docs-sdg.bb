@@ -18,7 +18,7 @@ TOPIC_dm816x-custom = "DM816x_C6A816x_AM389x_EZ_Software_Developers_Guide"
 TOPIC_c6a814x-evm = "C6A814x_AM387x_EZ_Software_Developers_Guide"
 TOPIC_dm814x-evm = "DM814x_EZ_Software_Developers_Guide"
 TOPIC_dm814x-custom = "DM814x_C6A814x_AM387x_EZ_Software_Developers_Guide"
-TOPIC_c6a811x-evm = "DM814x_EZ_Software_Developers_Guide"
+TOPIC_c6a811x-evm = "C6A811x_EZ_Software_Developers_Guide"
 
 TOPICFILE = "${@bb.data.getVar('TOPIC', d, 1).replace('/','_')}"
 TOPICURL = "http://ap-fpdsp-swapps.dal.design.ti.com/index.php/${TOPIC}"
