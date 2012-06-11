@@ -12,6 +12,7 @@ RELNOTESTOPIC_c6a816x-evm = "C6A816x_AM389x_EZSDK_5.01_Release_Notes"
 RELNOTESTOPIC_dm816x-evm = "DM816x_EZSDK_5.05_Release_Notes"
 RELNOTESTOPIC_dm816x-custom = "DM816x_C6A816x_AM389x_EZSDK_5.01_Release_Notes"
 RELNOTESTOPIC_ti814x = "DM814x_EZSDK_5.05_Release_Notes"
+RELNOTESTOPIC_ti811x = "C6A811x_EZSDK_5.05_Release_Notes"
 
 RELNOTESURL = "http://ap-fpdsp-swapps.dal.design.ti.com/index.php/${RELNOTESTOPIC}"
 
@@ -24,6 +25,7 @@ SDK_SHORT_PLATFORM_c6a816x-evm = "c6a816x-am389x"
 SDK_SHORT_PLATFORM_dm816x-evm = "dm816x"
 SDK_SHORT_PLATFORM_dm816x-custom = "dm816x-c6a816x-am389x"
 SDK_SHORT_PLATFORM_ti814x = "dm814x"
+SDK_SHORT_PLATFORM_ti811x = "c6a811x"
 
 require ti-paths.inc
 
