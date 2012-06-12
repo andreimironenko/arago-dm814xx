@@ -6,8 +6,6 @@ DEFAULT_UBOOT_CONFIG=ti8148_evm_config
 MIN_UBOOT_CONFIG=ti8148_evm_min_sd
 SYSLINK_PLATFORM=TI814X
 GRAPHICS_PLATFORM=6.x
-OMX_PLATFORM=ti814x-evm
-OMTB_PLATFORM=ti814x-evm
 RPE_PLATFORM=ti814x-evm
 MEDIA_CONTROLLER_UTILS_PLATFORM=ti814x-evm
 MATRIX_PLATFORM=ti814x
@@ -25,18 +23,8 @@ DVEVM_INSTALL_DIR=$(EZSDK_INSTALL_DIR)
 # Where SYS/BIOS is installed.
 SYSBIOS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__sysbios__>
 
-# Where the OSAL package is installed.
-OSAL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__osal__>
-
-# OSAL build variables
-OSAL_BUILD_VARS = CROSS_COMPILE=$(CSTOOL_PREFIX) \
-		OSAL_INSTALL_DIR=$(OSAL_INSTALL_DIR)
-
 # Where the IPC package is installed.
 IPC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__ipc__>
-
-# Where the Codec Engine package is installed.
-CE_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__codec-engine__>
 
 # Where the SYS Link package is installed.
 SYSLINK_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__syslink__>
@@ -68,16 +56,6 @@ EDMA3_LLD_BUILD_VARS = ROOTDIR=$(EDMA3_LLD_INSTALL_DIR) \
 		xdc_PATH=$(XDC_INSTALL_DIR) \
 		CODEGEN_PATH_DSPELF=$(CODEGEN_INSTALL_DIR) \
 		FORMAT=ELF
-
-# Where the Framework Components package is installed.
-FC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__framework-components__>
-
-# Where the MFC Linux Utils package is installed.
-LINUXUTILS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__linuxutils__>
-CMEM_INSTALL_DIR=$(LINUXUTILS_INSTALL_DIR)
-
-# CMEM build variables
-CMEM_BUILD_VARS = RULES_MAKE=../../../../../../../../../Rules.make
 
 # Where the XDAIS package is installed.
 XDAIS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__xdais__>
@@ -113,62 +91,8 @@ GRAPHICS_BUILD_VARS = BUILD=release \
 # Where the Unified Instrumentation Architecture is installed.
 UIA_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__uia__>
 
-# Where OMX package is installed
-OMX_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__omx__>
-
-# OMX build variables
-OMX_BUILD_VARS = ROOTDIR=$(OMX_INSTALL_DIR) \
-		EXTERNAL_SW_ROOT=$(DVSDK_INSTALL_DIR)/component-sources \
-		INTERNAL_SW_ROOT=$(OMX_INSTALL_DIR)/src \
-        kernel_PATH=${LINUXKERNEL_INSTALL_DIR} \
-        bios_PATH=${SYSBIOS_INSTALL_DIR} \
-		fc_PATH=$(FC_INSTALL_DIR) \
-		osal_PATH=$(OSAL_INSTALL_DIR) \
-        xdais_PATH=${XDAIS_INSTALL_DIR} \
-		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
-        ce_PATH=${CE_INSTALL_DIR} \
-        aaclcdec_PATH=${AACLCDEC_INSTALL_DIR} \
-		ipc_PATH=$(IPC_INSTALL_DIR) \
-		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
-		xdc_PATH=$(XDC_INSTALL_DIR) \
-		uia_PATH=$(UIA_INSTALL_DIR) \
-        slog_PATH=${SLOG_INSTALL_DIR} \
-        lindevkit_PATH=${LINUX_DEVKIT_DIR}/arm-none-linux-gnueabi/usr \
-		PLATFORM=$(OMX_PLATFORM) \
-        EXAMPLES_ROOT=${OMX_INSTALL_DIR}/examples \
-		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
-		CROSS_COMPILE=arm-none-linux-gnueabi- \
-		TOOLCHAIN_LONGNAME=arm-none-linux-gnueabi \
-        CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR}
-
-# Where OMTB package is installed
-OMTB_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/example-applications/<__omtb__>
-
-# OMTB build variables
-OMTB_BUILD_VARS = ROOTDIR=$(OMTB_INSTALL_DIR) \
-		PLATFORM=$(OMTB_PLATFORM) \
-		OMTB_ROOT=$(OMTB_INSTALL_DIR) \
-		EZSDK_INSTALL_DIR=$(DVSDK_INSTALL_DIR) \
-		DEST_ROOT=$(OMTB_INSTALL_DIR)/bin \
-		OMX_INSTALL_DIR=$(OMX_INSTALL_DIR)/src \
-		fc_PATH=$(FC_INSTALL_DIR) \
-		uia_PATH=$(UIA_INSTALL_DIR) \
-		ce_PATH=$(CE_INSTALL_DIR) \
-		osal_PATH=$(OSAL_INSTALL_DIR) \
-		linuxutils_PATH=$(LINUXUTILS_INSTALL_DIR) \
-		ipc_PATH=$(IPC_INSTALL_DIR) \
-		syslink_PATH=$(SYSLINK_INSTALL_DIR) \
-		xdc_PATH=$(XDC_INSTALL_DIR) \
-		lindevkit_PATH=$(LINUX_DEVKIT_DIR)/arm-none-linux-gnueabi/usr \
-		CROSS_COMPILE=arm-none-linux-gnueabi- \
-		TOOLCHAIN_LONGNAME=arm-none-linux-gnueabi \
-		CODEGEN_PATH_A8=$(CSTOOL_DIR)
-
 # Where AAC-LC Decoder package is installed
 AACLCDEC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__c674x-aaclcdec__>
-
-# Where SLOG package is installed
-SLOG_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__slog__>
 
 # Where Media Controller Utils package is installed
 MEDIA_CONTROLLER_UTILS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/board-support/<__media-controller-utils__>
@@ -183,23 +107,6 @@ MEDIA_CONTROLLER_UTILS_BUILD_VARS = PLATFORM=$(MEDIA_CONTROLLER_UTILS_PLATFORM) 
 		DESTDIR=$(EXEC_DIR) prefix=/usr \
 		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
         CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR}
-
-GST_OMX_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__gst-openmax-ti__>
-
-GST_OMX_BUILD_VARS = BIOS_INSTALL_DIR=$(SYSBIOS_INSTALL_DIR) \
-		 IPC_INSTALL_DIR=$(IPC_INSTALL_DIR) \
-		 XDC_INSTALL_DIR=$(XDC_INSTALL_DIR) \
-		 FC_INSTALL_DIR=$(FC_INSTALL_DIR) \
-		 CE_INSTALL_DIR=$(CE_INSTALL_DIR) \
-		 OSAL_INSTALL_DIR=$(OSAL_INSTALL_DIR) \
-		 UIA_INSTALL_DIR=$(UIA_INSTALL_DIR) \
-		 SYSLINK_INSTALL_DIR=$(SYSLINK_INSTALL_DIR) \
-		 LINUXUTILS_INSTALL_DIR=$(LINUXUTILS_INSTALL_DIR) \
-		 OMX_INSTALL_DIR=$(OMX_INSTALL_DIR) \
-		 LINUXKERNEL=$(LINUXKERNEL_INSTALL_DIR) \
-		 KERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
-		 OMX_PLATFORM=$(OMX_PLATFORM) \
-		 CROSS_COMPILE=$(CSTOOL_PREFIX)
 
 # Where RPE package is installed
 RPE_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__rpe__>

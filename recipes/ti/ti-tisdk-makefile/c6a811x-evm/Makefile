@@ -3,7 +3,7 @@ include Rules.make
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	components components_clean components_linux components_dsp all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install syslink syslink_clean syslink_install matrix matrix_clean matrix_install dsp-devkit linux-devkit media-controller-utils_clean media-controller-utils_install edma3lld edma3lld_clean sgx-driver sgx-driver_clean sgx-driver_install gstomx gstomx_clean gstomx_install
+.PHONY:	components components_clean components_linux components_dsp all clean help linux linux_clean linux_install install u-boot u-boot_clean u-boot_install syslink syslink_clean syslink_install matrix matrix_clean matrix_install dsp-devkit linux-devkit media-controller-utils_clean media-controller-utils_install edma3lld edma3lld_clean sgx-driver sgx-driver_clean sgx-driver_install
 
 #==============================================================================
 # Build everything rebuildable.
@@ -14,33 +14,33 @@ all: components apps
 # Build components to enable all other build targets. 
 #==============================================================================
 components: components_linux components_dsp
-components_linux: linux cmem osal syslink_hlos syslink_driver sgx-driver omx gstomx media-controller-utils rpe_linux
+components_linux: linux syslink_hlos syslink_driver sgx-driver media-controller-utils rpe_linux
 components_dsp: syslink_rtos edma3lld rpe_dsp
 
 #==============================================================================
 # Install components
 #==============================================================================
-components_install: linux_install syslink_install cmem_install sgx-driver_install omx_install gstomx_install media-controller-utils_install rpe_install
+components_install: linux_install syslink_install sgx-driver_install media-controller-utils_install rpe_install
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-components_clean: linux_clean syslink_clean cmem_clean sgx-driver_clean omx_clean edma3lld_clean gstomx_clean media-controller-utils_clean rpe_clean
+components_clean: linux_clean syslink_clean sgx-driver_clean edma3lld_clean media-controller-utils_clean rpe_clean
 
 #==============================================================================
 # Build all Demos, Examples and Applications
 #==============================================================================
-apps: u-boot matrix psp-examples omtb rpe
+apps: u-boot matrix psp-examples rpe
 
 #==============================================================================
 # Install everything
 #==============================================================================
-apps_install: u-boot_install matrix_install psp-examples_install omtb_install
+apps_install: u-boot_install matrix_install psp-examples_install
 
 #==============================================================================
 # Clean all Demos, Examples and Applications
 #==============================================================================
-apps_clean: u-boot_clean matrix_clean psp-examples_clean omtb_clean 
+apps_clean: u-boot_clean matrix_clean psp-examples_clean
 
 #==============================================================================
 # Install everything
@@ -71,10 +71,6 @@ help:
 	@echo "    linux-devkit                   : Populate the linux devkit"
 	@echo "    dsp-devkit                     : Populate the dsp devkit"
 	@echo
-	@echo "    cmem                           : Build the CMEM kernel module"
-	@echo "    cmem_clean                     : Remove generated cmem files."
-	@echo "    cmem_install                   : Install cmemk module"
-	@echo
 	@echo "    syslink                        : Configure and build SYS Link for HLOS and HLOS without sample examples"
 	@echo "    syslink_clean                  : Remove generated SysLink files"
 	@echo "    syslink_install                : Install HLOS and RTOS link files"
@@ -91,20 +87,9 @@ help:
 	@echo "    psp-examples_clean             : Remove generated driver example files"
 	@echo "    psp-examples_install           : Install the psp examples"
 	@echo
-	@echo "    osal                           : Build the OSAL"
-	@echo "    osal_clean                     : Remove generated OSAL files"
-	@echo
 	@echo "    matrix                         : Build matrix application launcher"
 	@echo "    matrix_clean                   : Remove all matrix files"
 	@echo "    matrix_install                 : Install matrix"
-	@echo
-	@echo "    omx                            : Build OMX and OMX IL Clients"
-	@echo "    omx_clean                      : Remove OMX generated files"
-	@echo "    omx_install                    : Install OMX IL Clients"
-	@echo
-	@echo "    omtb                           : Build OMTB IL Clients"
-	@echo "    omtb_clean                     : Remove OMTB generated files"
-	@echo "    omtb_install                   : Install OMTB IL Clients"
 	@echo
 	@echo "    media-controller-utils         : Build media controller utils"
 	@echo "    media-controller-utils_clean   : Remove media controller utils generated files"
@@ -116,10 +101,6 @@ help:
 	@echo "    sgx-driver                     : Build SGX kernel module"
 	@echo "    sgx-driver_clean               : Remove SGX generated files"
 	@echo "    sgx-driver_install             : Install SGX kernel module"
-	@echo
-	@echo "    gstomx                         : Build TI GST OpenMax Plugin"
-	@echo "    gstomx_clean                   : Remove TI GST OpenMax generated files"
-	@echo "    gstomx_install                 : Install TI GST OpenMax Plugin"
 	@echo
 	@echo "    rpe                            : Build Remote Processor Execute"
 	@echo "    rpe_clean                      : Remove Remote Processor Execute generated files"
@@ -235,34 +216,6 @@ psp-examples_install:
 	install $(PSP_EXAMPLES_INSTALL_DIR)/video/bin/* $(EXEC_DIR)/usr/share/ti/ti-psp-examples
 	install $(PSP_EXAMPLES_INSTALL_DIR)/watchdog/bin/* $(EXEC_DIR)/usr/share/ti/ti-psp-examples
 
-#==============================================================================
-# Build the CMEM kernel module for the configured platform, and make sure the
-# kernel_binaries directory is kept in sync. Also, an explicit cleanup target
-# is defined.
-#==============================================================================
-cmem:
-	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/interface $(CMEM_BUILD_VARS) ../../lib/cmem.a470MV
-	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module $(CMEM_BUILD_VARS)
-
-cmem_clean:
-	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module clean
-	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/interface clean
-
-cmem_install:
-	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
-	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
-
-###############################################################################
-# Build the OSAL
-###############################################################################
-osal:
-	$(MAKE) -C $(OSAL_INSTALL_DIR)/packages/linuxdist/build $(OSAL_BUILD_VARS)
-	$(MAKE) -C $(OSAL_INSTALL_DIR)/packages/linuxdist/cstubs $(OSAL_BUILD_VARS)
-
-osal_clean:
-	$(MAKE) -C $(OSAL_INSTALL_DIR)/packages/linuxdist/build $(OSAL_BUILD_VARS) clean
-	$(MAKE) -C $(OSAL_INSTALL_DIR)/packages/linuxdist/cstubs $(OSAL_BUILD_VARS) clean
-
 ###############################################################################
 # Build SYSLINK
 ###############################################################################
@@ -324,69 +277,6 @@ matrix_install:
 	install  $(DVSDK_INSTALL_DIR)/example-applications/matrix-gui-e*/images/* \
         $(EXEC_DIR)/usr/share/matrix/images
 
-
-################################################################################
-# Build OMX and IL Client Applications 
-################################################################################
-
-omx:
-	$(MAKE) -C $(OMX_INSTALL_DIR)/src $(OMX_BUILD_VARS) libs
-	$(MAKE) -C $(OMX_INSTALL_DIR)/src $(OMX_BUILD_VARS) DEST_ROOT=$(OMX_INSTALL_DIR)/bin examples 
-	@echo "  CCLD   lib/libtiomx.so"
-	@$(CSTOOL_PREFIX)gcc -Wl,-soname,libOMX_Core -shared -Xlinker --start-group \
-	$(OMX_INSTALL_DIR)/lib/omxcore.av5T \
-	$(OMX_INSTALL_DIR)/lib/domx.av5T \
-    $(OMX_INSTALL_DIR)/lib/memcfg.av5T \
-    $(OMX_INSTALL_DIR)/lib/timmosal.av5T \
-	$(OMX_INSTALL_DIR)/lib/domx_delegates_shmem.av5T \
-	$(OMX_INSTALL_DIR)/lib/omxcfg.av5T \
-	$(SYSLINK_INSTALL_DIR)/packages/ti/syslink/lib/syslink.a_debug \
-	$(FC_INSTALL_DIR)/packages/ti/sdo/rcm/lib/debug/rcm_syslink.av5T \
-	$(FC_INSTALL_DIR)/packages/ti/sdo/fc/memutils/lib/release/memutils.av5T \
-	$(FC_INSTALL_DIR)/packages/ti/sdo/fc/global/lib/debug/fcsettings.av5T \
-	$(OSAL_INSTALL_DIR)/packages/linuxdist/build/lib/osal.a \
-	$(OSAL_INSTALL_DIR)/packages/linuxdist/cstubs/lib/cstubs.a \
-	$(LINUXUTILS_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/lib/cmem.a470MV \
-	$(UIA_INSTALL_DIR)/packages/ti/uia/linux/lib/servicemgr.a -Xlinker --end-group \
-	-Wl,-u,OMX_Init \
-	-Wl,-u,OMX_Deinit \
-	-Wl,-u,OMX_ComponentNameEnum \
-	-Wl,-u,OMX_GetHandle \
-	-Wl,-u,OMX_FreeHandle \
-	-Wl,-u,OMX_GetRolesOfComponent \
-	-pthread -lrt -o $(OMX_INSTALL_DIR)/lib/libtiomx.so.5.2 -Wl,--fix-cortex-a8 $(CFLAGS) $(LDFLAGS)
-
-omx_clean:
-	rm -rf $(OMX_INSTALL_DIR)/bin ${OMX_INSTALL_DIR}/lib
-	$(MAKE) -C $(OMX_INSTALL_DIR)/src $(OMX_BUILD_VARS) clean
-
-omx_install:
-	install -d $(EXEC_DIR)/usr/share/ti/ti-omx
-	for i in `find ${OMX_INSTALL_DIR}/bin -name "*.xv5T"`; do \
-		install $$i ${EXEC_DIR}/usr/share/ti/ti-omx; \
-	done
-	install -d $(EXEC_DIR)/usr/lib
-	install $(OMX_INSTALL_DIR)/lib/libtiomx.so.5.2 $(EXEC_DIR)/usr/lib/libtiomx.so.5.2
-	ln -sf libtiomx.so.5.2 $(EXEC_DIR)/usr/lib/libtiomx.so.5
-	ln -sf libtiomx.so.5.2 $(EXEC_DIR)/usr/lib/libtiomx.so
-	ln -sf libtiomx.so.5.2 $(EXEC_DIR)/usr/lib/libOMX_Core.so
-	ln -sf libtiomx.so.5.2 $(EXEC_DIR)/usr/lib/libOMX_Core
-
-################################################################################
-# Build OMTB IL Client Applications 
-################################################################################
-
-omtb:
-	$(MAKE) -C $(OMTB_INSTALL_DIR) $(OMTB_BUILD_VARS) dm81xxbm
-
-omtb_clean:
-	$(MAKE) -C $(OMTB_INSTALL_DIR) $(OMTB_BUILD_VARS) clean_dm81xxbm
-
-omtb_install:
-	install -d $(EXEC_DIR)/usr/share/ti/ti-omtb
-	install $(OMTB_INSTALL_DIR)/bin/dm81xxbm/bin/$(OMTB_PLATFORM)/omtb_dm81xxbm_a8host.xv5T $(EXEC_DIR)/usr/share/ti/ti-omtb
-	install $(OMTB_INSTALL_DIR)/packages/ti/sdo/omtb/scripts/* $(EXEC_DIR)/usr/share/ti/ti-omtb
-
 ###################################################################################
 # build media controller utils
 ##################################################################################
@@ -412,26 +302,6 @@ edma3lld:
 edma3lld_clean:
 	make -C $(EDMA3_LLD_INSTALL_DIR)/packages $(EDMA3_LLD_BUILD_VARS) cleanall
 
-
-###################################################################################
-# build GST OMX Plugin
-##################################################################################
-gstomx_configure:
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; \
-		cd $(GST_OMX_INSTALL_DIR)/; \
-		./configure --host=arm-none-linux-gnueabi 
-
-gstomx: gstomx_configure
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; \
-		make -C $(GST_OMX_INSTALL_DIR) $(GST_OMX_BUILD_VARS)
-
-gstomx_clean: gstomx_configure
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; \
-		make -C $(GST_OMX_INSTALL_DIR) $(GST_OMX_BUILD_VARS) clean distclean
-
-gstomx_install:
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; \
-		make -C $(GST_OMX_INSTALL_DIR) $(GST_OMX_BUILD_VARS) install prefix=$(EXEC_DIR)/usr
 
 ###############################################################################
 # Build RPE
@@ -465,16 +335,6 @@ dsp-devkit:
 		-f sdk.mk install-packages
 	@echo $(notdir $(UIA_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 
-	@echo "Installing $(notdir $(CE_INSTALL_DIR)) to dsp-devkit.."
-	@$(MAKE) -C $(CE_INSTALL_DIR) DESTDIR=$(DSP_DEVKIT_DIR) \
-		-f codec_engine.mak install-packages
-	@echo $(notdir $(CE_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
-
-	@echo "Installing $(notdir $(FC_INSTALL_DIR)) to dsp-devkit.."
-	@$(MAKE) -C $(FC_INSTALL_DIR) DESTDIR=$(DSP_DEVKIT_DIR) \
-		-f framework_components.mak install-packages
-	@echo $(notdir $(FC_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
-
 	@echo "Installing $(notdir $(SYSBIOS_INSTALL_DIR)) to dsp-devkit.."
 	@$(MAKE) -C $(SYSBIOS_INSTALL_DIR) DESTDIR=$(DSP_DEVKIT_DIR) \
 		-f bios.mak install-packages
@@ -495,11 +355,6 @@ dsp-devkit:
 		-f xdais.mak install-packages
 	@echo $(notdir $(XDAIS_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
 
-	@echo "Installing $(notdir $(OSAL_INSTALL_DIR)) to dsp-devkit.."
-	@$(MAKE) -C $(OSAL_INSTALL_DIR) DESTDIR=$(DSP_DEVKIT_DIR) \
-		-f sdk.mk install-packages
-	@echo $(notdir $(OSAL_INSTALL_DIR)) >> $(DSP_DEVKIT_LOG)
-
 	@chmod u+w -R $(DSP_DEVKIT_DIR)/packages $(DSP_DEVKIT_DIR)/docs
 	@echo "Generating API documentation.."
 #	@cd $(DSP_DEVKIT_DIR) && doxygen
@@ -519,16 +374,6 @@ LINUX_DEVKIT_LOG := $(LINUX_DEVKIT_DIR)/ti-install.log
 linux-devkit:
 	@rm -f $(LINUX_DEVKIT_LOG)
 
-	@echo "Installing $(notdir $(CE_INSTALL_DIR)) to linux-devkit.."
-	@$(MAKE) -C $(CE_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-		-f codec_engine.mak install
-	@echo $(notdir $(CE_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
-
-	@echo "Installing $(notdir $(FC_INSTALL_DIR)) to linux-devkit.."
-	@$(MAKE) -C $(FC_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-		-f framework_components.mak install
-	@echo $(notdir $(FC_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
-
 	@echo "Installing $(notdir $(IPC_INSTALL_DIR)) to linux-devkit.."
 	@$(MAKE) -C $(IPC_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
 		-f ipc.mak install
@@ -538,16 +383,6 @@ linux-devkit:
 	@$(MAKE) -C $(XDAIS_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
 		-f xdais.mak install
 	@echo $(notdir $(XDAIS_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
-
-	@echo "Installing $(notdir $(OSAL_INSTALL_DIR)) to linux-devkit.."
-	@$(MAKE) -C $(OSAL_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-		-f sdk.mk install
-	@echo $(notdir $(OSAL_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
-
-	@echo "Installing $(notdir $(LINUXUTILS_INSTALL_DIR)) to linux-devkit.."
-	@$(MAKE) -C $(LINUXUTILS_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-		-f sdk.mk install
-	@echo $(notdir $(LINUXUTILS_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
 
 	@echo "Installing $(notdir $(SYSLINK_INSTALL_DIR)) to linux-devkit.."
 	@$(MAKE) -C $(SYSLINK_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
@@ -559,11 +394,6 @@ linux-devkit:
 		-f sdk.mk install
 	@echo $(notdir $(UIA_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
 
-	@echo "Installing $(notdir $(OMX_INSTALL_DIR)) to linux-devkit.."
-	@$(MAKE) -C $(OMX_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-		-f sdk.mk install
-	@echo $(notdir $(OMX_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
-
 	@echo "Installing $(notdir $(GRAPHICS_INSTALL_DIR)) to linux-devkit.."
 	@$(MAKE) -C $(GRAPHICS_INSTALL_DIR) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
 		-f sdk.mk install
@@ -572,12 +402,6 @@ linux-devkit:
 	@echo "Installing headers from $(notdir $(LINUXKERNEL_INSTALL_DIR)) to linux-devkit.."
 	@$(MAKE) -C $(LINUXKERNEL_INSTALL_DIR)  headers_install ARCH=arm \
 		INSTALL_HDR_PATH=$(LINUX_DEVKIT_DESTDIR)/usr/src/$(notdir $(LINUXKERNEL_INSTALL_DIR))-headers
-
-	@echo "Installing $(notdir $(GST_OMX_INSTALL_DIR)) to linux-devkit.."
-	. $(DVSDK_INSTALL_DIR)/linux-devkit/environment-setup; \
-	$(MAKE) -C $(GST_OMX_INSTALL_DIR) $(GST_OMX_BUILD_VARS) DESTDIR=$(LINUX_DEVKIT_DESTDIR) \
-		prefix=/usr install
-	@echo $(notdir $(GST_OMX_INSTALL_DIR)) >> $(LINUX_DEVKIT_LOG)
 
 	@chmod u+w -R $(LINUX_DEVKIT_DESTDIR)/usr
 	@echo "Generating md5sums.."
