@@ -129,6 +129,7 @@ MULTIMEDIA_SOURCETREE_c6a811x-evm = " \
     ti-c674x-aaclcdec-src \
     ti-cgt6x-src \
     ti-rpe-src \
+    ti-linuxutils-src \
 "
 
 # Do not pull DSP sources into AMSDK builds
