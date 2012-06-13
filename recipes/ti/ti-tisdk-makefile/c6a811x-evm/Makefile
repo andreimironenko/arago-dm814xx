@@ -3,7 +3,7 @@ include Rules.make
 # export cross compiler location in PATH
 PATH := ${PATH}:${CSTOOL_PATH}
 
-.PHONY:	components components_clean components_linux components_dsp all clean help linux linux_clean linux_install install u-boot u-boot_clean u-boot_install syslink syslink_clean syslink_install matrix matrix_clean matrix_install dsp-devkit linux-devkit media-controller-utils_clean media-controller-utils_install edma3lld edma3lld_clean sgx-driver sgx-driver_clean sgx-driver_install
+.PHONY:	components components_clean components_linux components_dsp all clean help cmem cmem_clean cmem_install linux linux_clean linux_install install u-boot u-boot_clean u-boot_install syslink syslink_clean syslink_install matrix matrix_clean matrix_install dsp-devkit linux-devkit media-controller-utils_clean media-controller-utils_install edma3lld edma3lld_clean sgx-driver sgx-driver_clean sgx-driver_install
 
 #==============================================================================
 # Build everything rebuildable.
@@ -14,18 +14,18 @@ all: components apps
 # Build components to enable all other build targets. 
 #==============================================================================
 components: components_linux components_dsp
-components_linux: linux syslink_hlos syslink_driver sgx-driver media-controller-utils rpe_linux
+components_linux: linux cmem syslink_hlos syslink_driver sgx-driver media-controller-utils rpe_linux
 components_dsp: syslink_rtos edma3lld rpe_dsp
 
 #==============================================================================
 # Install components
 #==============================================================================
-components_install: linux_install syslink_install sgx-driver_install media-controller-utils_install rpe_install
+components_install: linux_install syslink_install cmem_install sgx-driver_install media-controller-utils_install rpe_install
 
 #==============================================================================
 # Clean up the targets built by 'make all'.
 #==============================================================================
-components_clean: linux_clean syslink_clean sgx-driver_clean edma3lld_clean media-controller-utils_clean rpe_clean
+components_clean: linux_clean syslink_clean cmem_clean sgx-driver_clean edma3lld_clean media-controller-utils_clean rpe_clean
 
 #==============================================================================
 # Build all Demos, Examples and Applications
@@ -70,6 +70,10 @@ help:
 	@echo
 	@echo "    linux-devkit                   : Populate the linux devkit"
 	@echo "    dsp-devkit                     : Populate the dsp devkit"
+	@echo
+	@echo "    cmem                           : Build the CMEM kernel module"
+	@echo "    cmem_clean                     : Remove generated cmem files."
+	@echo "    cmem_install                   : Install cmemk module"
 	@echo
 	@echo "    syslink                        : Configure and build SYS Link for HLOS and HLOS without sample examples"
 	@echo "    syslink_clean                  : Remove generated SysLink files"
@@ -215,6 +219,23 @@ psp-examples_install:
 	install $(PSP_EXAMPLES_INSTALL_DIR)/edma/edma_test.ko $(EXEC_DIR)/usr/share/ti/ti-psp-examples
 	install $(PSP_EXAMPLES_INSTALL_DIR)/video/bin/* $(EXEC_DIR)/usr/share/ti/ti-psp-examples
 	install $(PSP_EXAMPLES_INSTALL_DIR)/watchdog/bin/* $(EXEC_DIR)/usr/share/ti/ti-psp-examples
+
+#==============================================================================
+# Build the CMEM kernel module for the configured platform, and make sure the
+# kernel_binaries directory is kept in sync. Also, an explicit cleanup target
+# is defined.
+#==============================================================================
+cmem:
+	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/interface $(CMEM_BUILD_VARS) ../../lib/cmem.a470MV
+	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module $(CMEM_BUILD_VARS)
+
+cmem_clean:
+	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module clean
+	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/interface clean
+
+cmem_install:
+	install -d $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
+	install $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.ko $(EXEC_DIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/dsp
 
 ###############################################################################
 # Build SYSLINK
