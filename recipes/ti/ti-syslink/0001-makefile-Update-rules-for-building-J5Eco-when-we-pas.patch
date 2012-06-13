@@ -1,0 +1,34 @@
+From 725375a2905b07e0bedf947e1057cabc87bfafc8 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Wed, 13 Jun 2012 10:57:32 +0530
+Subject: [PATCH] makefile: Update rules for building J5Eco when we pass SDK=EZSDK
+
+* If SDK=EZSDK, then we should be able to build sample applications
+  This is the supported interface for Ne/Ce but is not working for
+  J5Eco.
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ makefile |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/makefile b/makefile
+index b36c6ed..8487a55 100644
+--- a/makefile
++++ b/makefile
+@@ -723,9 +723,9 @@ else ifeq ("$(DEVICE)","TI811X")
+             endif
+         endif
+     else ifeq ("$(SDK)", "EZSDK")
+-             ifeq ($(MAKECMDGOALS), samples)
+-             $(error For SDK set to "$(SDK)", building samples are not support on "$(DEVICE)")
+-             endif
++        ifeq ("$(GPPOS)", "Bios")
++             $(error SDK is set to "$(SDK)", which is invalid when setting GPPOS to "$(GPPOS)". $(ERRMSG))
++        endif
+     else 
+          $(error SDK is set to "$(SDK)", which is invalid. $(ERRMSG))
+     endif
+-- 
+1.7.0.4
+
