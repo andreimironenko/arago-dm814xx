@@ -128,6 +128,7 @@ MULTIMEDIA_SOURCETREE_c6a811x-evm = " \
     ti-media-controller-utils-src \
     ti-c674x-aaclcdec-src \
     ti-cgt6x-src \
+    ti-cgt470-src \
     ti-rpe-src \
     ti-linuxutils-src \
 "
