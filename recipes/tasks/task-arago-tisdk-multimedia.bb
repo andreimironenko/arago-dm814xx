@@ -126,6 +126,7 @@ MULTIMEDIA_ti811x = " \
     task-arago-gst \
     gst-ffmpeg \
     ti-rpe-examples \
+    ti-firmware \
     "
 
 MULTIMEDIA_ti33x = " \
