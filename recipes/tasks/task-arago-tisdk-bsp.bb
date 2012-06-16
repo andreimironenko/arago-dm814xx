@@ -63,6 +63,7 @@ BSP_COMPONENTS_ti814x = "\
 BSP_COMPONENTS_ti811x = "\
     u-boot-min-sd \
     u-boot-min-nand \
+    j5eco-tvp5158-decoder-app \
     "
 
 BLUETOOTH_STACK = "\

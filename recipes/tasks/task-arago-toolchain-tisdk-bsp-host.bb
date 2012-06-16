@@ -169,6 +169,7 @@ BSP_COMPONENTS_ti811x = "\
     linux-omap3-src \
     ti-docs-linux-devkit \
     ti-docs-dsp-devkit \
+    j5eco-tvp5158-src \
     "
 
 BSP_COMPONENTS_append_am180x-evm = "\
