@@ -131,6 +131,9 @@ RPE_BUILD_VARS = ROOTDIR=$(RPE_INSTALL_DIR) \
 		uia_PATH=$(UIA_INSTALL_DIR) \
 		mcutils_PATH=$(MEDIA_CONTROLLER_UTILS_INSTALL_DIR) \
         lindevkit_PATH=${LINUX_DEVKIT_DIR}/arm-none-linux-gnueabi/usr \
+        RPE_USEAACDEC=1 \
+        RPE_USEAACENC=0 \
+        RPE_USEMP3DEC=0 \
 		PLATFORM=$(RPE_PLATFORM) \
 		CODEGEN_PATH_A8=$(CSTOOL_DIR) \
 		CROSS_COMPILE=arm-none-linux-gnueabi- \
