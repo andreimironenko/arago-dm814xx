@@ -5,7 +5,7 @@ LICENSE = "BSD"
 require ti-paths.inc
 require ti-staging.inc
 
-PR = "r2"
+PR = "r3"
 
 PVExtra = ""
 S = "${WORKDIR}/rpe-${PV}${PVExtra}"
@@ -18,7 +18,7 @@ DEPENDS += "ti-c674x-aaclcdec ti-media-controller-utils"
 
 PLATFORM_ti816x = "ti816x-evm"
 PLATFORM_ti814x = "ti814x-evm"
-PLATFORM_ti811x = "ti814x-evm"
+PLATFORM_ti811x = "ti811x-evm"
 
 EXTRA_OEMAKE = "ROOTDIR=${S} \
         PLATFORM=${PLATFORM} \
@@ -35,6 +35,9 @@ EXTRA_OEMAKE = "ROOTDIR=${S} \
         lindevkit_PATH=${STAGING_DIR_TARGET}/usr \
         CODEGEN_PATH_A8=${TOOLCHAIN_PATH} \
         CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR} \
+        RPE_USEAACDEC=1 \
+        RPE_USEAACENC=0 \
+        RPE_USEMP3DEC=0 \
 "
 
 PARALLEL_MAKE = ""
