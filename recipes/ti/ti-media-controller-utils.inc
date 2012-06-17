@@ -15,7 +15,7 @@ S = "${WORKDIR}/trunk/media_controller_utils"
 
 PLATFORM_ti816x = "ti816x-evm"
 PLATFORM_ti814x = "ti814x-evm"
-PLATFORM_ti811x = "ti814x-evm"
+PLATFORM_ti811x = "ti811x-evm"
 PLATFORM ?= "<UNDEFINED-PLATFORM>"
 
 EXTRA_OEMAKE = "PLATFORM=${PLATFORM} \
