@@ -11,6 +11,7 @@ SECONDARY_BOOTLOADER_omap3 = "u-boot-spl"
 SECONDARY_BOOTLOADER_dm37x-evm = "x-load"
 SECONDARY_BOOTLOADER_ti816x = "u-boot-min-sd"
 SECONDARY_BOOTLOADER_ti814x = "u-boot-min-sd"
+SECONDARY_BOOTLOADER_ti811x = "u-boot-min-sd"
 
 RDEPENDS_${PN} = "\
     dbus \
