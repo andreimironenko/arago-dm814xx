@@ -7,6 +7,8 @@ elif [ "$(machine_id)" = "ti8148evm" ] ; then
 	echo TI814x
 elif [ "$(machine_id)" = "am335xevm" ] ; then
     echo TI33XX
+elif [ "$(machine_id)" = "ti811xevm" ] ; then
+        echo TI811x
 else
 	devmem2 0x4800244c | \
 	grep 'Read at address' | \
