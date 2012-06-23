@@ -67,6 +67,7 @@ GRAPHICS_3D_ti816x = "libgles-omap3-rawdemos"
 GRAPHICS_3D_ti814x = "libgles-omap3-rawdemos"
 GRAPHICS_3D_ti811x = "\
     omap3-sgx-modules \
+    libgles-omap3 \
     libgles-omap3-blitwsegl \
     libgles-omap3-flipwsegl \
     libgles-omap3-frontwsegl \
