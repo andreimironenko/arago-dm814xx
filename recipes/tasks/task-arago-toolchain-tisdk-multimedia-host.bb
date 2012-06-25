@@ -133,6 +133,7 @@ MULTIMEDIA_SOURCETREE_c6a811x-evm = " \
     ti-linuxutils-src \
     ti-hdvpss-src \
     ti-firmware-c6a811x-src \
+    ti-dsplib-c674x \
 "
 
 # Do not pull DSP sources into AMSDK builds
