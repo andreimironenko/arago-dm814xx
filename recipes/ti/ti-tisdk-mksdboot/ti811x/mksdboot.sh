@@ -141,7 +141,7 @@ execute "mkdir -p /tmp/sdk"
 cat <<EOF >/tmp/sdk/boot.cmd
 fatload mmc 0 0x81000000 ti_logo.bmp
 bmp display 0x81000000
-setenv bootargs 'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 rw mem=354M@0x80000000 notifyk.vpssm3_sva=0x9F900000 ip=off noinitrd'
+setenv bootargs 'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 rw mem=304M@0x80000000 notifyk.vpssm3_sva=0x9F900000 ip=off noinitrd'
 fatload mmc 0 0x80009000 uImage
 bootm 0x80009000
 EOF
@@ -200,7 +200,6 @@ if [ "$pc2" != "" ]; then
   execute "cp -ar $copy /tmp/sdk/$$"
   execute "cp $sdkdir/bin/setup.htm /tmp/sdk/$$"
   execute "cp $sdkdir/bin/top_ti814x_evm.png /tmp/sdk/$$/"
-  execute "cp $sdkdir/docs/*_Quick_start_guide.pdf /tmp/sdk/$$/quickstartguide.pdf"
   sync
   echo "unmounting ${device}3"
   execute "umount /tmp/sdk/$$"
