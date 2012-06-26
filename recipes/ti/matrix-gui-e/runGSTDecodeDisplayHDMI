@@ -1,0 +1,56 @@
+#!/bin/sh
+
+
+
+#
+# Turn on the ALSA Mixer
+#
+configure_alsa_mixer()
+{
+   amixer sset 'Left PGA Mixer Mic3L' on
+   amixer sset 'Left PGA Mixer Mic3R' on
+   amixer sset 'Right PGA Mixer Mic3L' on
+   amixer sset 'Right PGA Mixer Mic3R' on
+
+   amixer cset name='PCM Playback Volume' 75%,75%
+   amixer cset name='PGA Capture Volume' 75%,75%
+}
+
+
+
+#
+# In order to view video, the graphics plane needs to be
+# disabled. Once the video has finished playing the graphics
+# plane needs to be re-enabled. 
+#
+# Call this function with 0 to disable graphics and 1 to
+# enable it.
+# 
+configure_graphics()
+{
+    echo $1 > /sys/devices/platform/vpss/graphics0/enabled
+    echo $1 > /sys/devices/platform/vpss/graphics1/enabled
+}
+
+
+
+
+# 
+# Call this function to setup and execute the demo 
+# 
+execute_demo()
+{
+    gst-launch -v filesrc location=/usr/share/ti/data/videos/dm816x_1080p_demo.264 \
+    ! 'video/x-h264' ! h264parse access-unit=true ! omx_h264dec !  omx_scaler \
+    ! omx_ctrl display-mode=OMX_DC_MODE_1080P_60 ! omx_videosink sync=false
+}
+
+
+# Disable Graphics Plane so that Video can be seen.
+configure_graphics 0
+
+configure_alsa_mixer
+execute_demo
+    
+# Enable Graphics again.
+configure_graphics 1
