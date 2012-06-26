@@ -1,0 +1,79 @@
+From d4fa0e58dc7ff9b8e4104639b1ed25f6914c3303 Mon Sep 17 00:00:00 2001
+From: Siddharth Heroor <heroor@ti.com>
+Date: Tue, 26 Jun 2012 17:14:08 +0530
+Subject: [PATCH] src/linux: ti811x - add temporary patch for load-hd-firmware
+
+* Use Slaveloader instead of Firmware Loader
+
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ src/linux/ti811x-evm/load-hd-firmware.sh |   23 +++++++++++++++++++----
+ 1 files changed, 19 insertions(+), 4 deletions(-)
+
+diff --git a/src/linux/ti811x-evm/load-hd-firmware.sh b/src/linux/ti811x-evm/load-hd-firmware.sh
+index fc47282..68f96f9 100755
+--- a/src/linux/ti811x-evm/load-hd-firmware.sh
++++ b/src/linux/ti811x-evm/load-hd-firmware.sh
+@@ -1,33 +1,47 @@
+ #!/bin/sh
+ #
+-# manage HDVICP2 and HDVPSS Engine firmware
++# manage DSP, HDVICP2 and HDVPSS Engine firmware
+ 
+ PATH=$PATH:/usr/share/ti/ti-media-controller-utils
++DSP_ID=0
+ HDVICP2_ID=1
+ HDVPSS_ID=2
+       
+ case "$1" in
+     start)
+         /usr/share/ti/j5eco-tvp5158/decoder_init
+-
++        sleep 2
+         echo "Loading HDVPSS Firmware"
+         modprobe syslink
++        sleep 2
+         until [[ -e /dev/syslinkipc_ProcMgr && -e /dev/syslinkipc_ClientNotifyMgr ]]
+         do                                                
+             sleep 0.5
+         done
+-        firmware_loader $HDVPSS_ID /usr/share/ti/ti-media-controller-utils/ti811x_hdvpss.xem3 start
++        /usr/share/ti/syslink-examples/TI811X/messageq/slaveloader_debug startup VPSS-M3 /usr/share/ti/ti-media-controller-utils/ti811x_hdvpss.xem3 start
++        sleep 2
+         modprobe vpss sbufaddr=0x9fd00000 mode=hdmi:720p-60 i2c_mode=1 debug=1
++        sleep 2
+         modprobe ti81xxfb vram=0:16M,1:16M,2:6M  debug=1
++        sleep 2
+         modprobe ti81xxvo video1_numbuffers=3 video2_numbuffers=3 debug=1
++        sleep 2
+         modprobe tvp7002 debug=1
++        sleep 2
+         modprobe ti81xxvin debug=1
++        sleep 2
+         modprobe sii9022a
++        sleep 2
+         modprobe tlc59108
++        sleep 2
++        echo "Loading DSP Firmware"
++        firmware_loader $DSP_ID /usr/share/ti/rpe/dm81xx_c6xdsp_debug.xe674 start
++        sleep 2
+       ;;
+ 
+     stop)
+-        echo "Unloading HDVPSS Firmware"
++        echo "Unloading DSP Firmware"
++        firmware_loader $DSP_ID /usr/share/ti/rpe/dm81xx_c6xdsp_debug.xe674 stop
+         rmmod tlc59108
+         rmmod sii9022a
+         rmmod ti81xxvin
+@@ -35,6 +49,7 @@ case "$1" in
+         rmmod ti81xxvo
+         rmmod ti81xxfb
+         rmmod vpss
++        echo "Unloading HDVPSS Firmware"
+         firmware_loader $HDVPSS_ID /usr/share/ti/ti-media-controller-utils/ti811x_hdvpss.xem3 stop
+         rm /tmp/firmware.$HDVPSS_ID
+         rmmod syslink
+-- 
+1.7.0.4
+
