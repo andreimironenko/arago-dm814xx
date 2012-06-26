@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# 
+# Call this function to setup and execute the demo 
+# 
+execute_demo()
+{
+    /usr/share/ti/rpe/aacenc_a8host_debug.xv5T -i /usr/share/ti/rpe/aacenctest.cfg
+}
+
+
+execute_demo
