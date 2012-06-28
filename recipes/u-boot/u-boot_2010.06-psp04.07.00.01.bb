@@ -4,7 +4,7 @@ PR = "${INC_PR}.0"
 
 COMPATIBLE_MACHINE = "ti811x"
 
-UBOOT_MACHINE_ti811x = "ti811x_evm_config"
+UBOOT_MACHINE_ti811x = "ti811x_evm_config_sd"
 UBOOT_MACHINE_ti814x = "ti8148_evm_config"
 UBOOT_MACHINE_ti816x = "ti8168_evm_config"
 
