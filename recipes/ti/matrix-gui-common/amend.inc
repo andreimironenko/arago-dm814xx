@@ -22,6 +22,9 @@ SRC_URI += "file://0001-ti814x-Add-GStreamer-Decode-Demo-to-Multimedia-Menu.patc
             file://mp3-decode.png \
             file://video-loopback-demo.png \
             file://j5eco.init \
+            file://aacdectest.cfg \
+            file://aacenctest.cfg \
+            file://mp3dectest.cfg \
 "
 
 do_copyimage() {
@@ -45,5 +48,8 @@ do_copyimage() {
     cp ${WORKDIR}/desc_mp3_decode_playback.html ${S}/ti811x/html
     cp ${WORKDIR}/menu_main.html ${S}/ti811x/html
     cp ${WORKDIR}/rpe_audio.html ${S}/ti811x/html
+    cp ${WORKDIR}/aacdectest.cfg ${S}/ti811x/html
+    cp ${WORKDIR}/aacenctest.cfg ${S}/ti811x/html
+    cp ${WORKDIR}/mp3dectest.cfg ${S}/ti811x/html
 }
 addtask copyimage after do_unpack before do_patch

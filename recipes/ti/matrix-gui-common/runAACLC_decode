@@ -5,7 +5,7 @@
 # 
 execute_demo()
 {
-    /usr/share/ti/rpe/aacdec_a8host_debug.xv5T -i /usr/share/ti/rpe/aacdectest.cfg
+    /usr/share/ti/rpe/aacdec_a8host_debug.xv5T -i /usr/share/matrix/html/aacdectest.cfg
 }
 
 
