@@ -18,6 +18,11 @@ GST_TI_PLUGIN_am181x-evm = ""
 GST_TI_PLUGIN_dm37x-evm = "gstreamer-ti"
 GST_TI_PLUGIN_omap3evm = "gstreamer-ti"
 
+PREBUILT_V4L2_SUPPORT = ""
+PREBUILT_V4L2_SUPPORT_ti811x = "gst-prebuilt-j5eco-v4l2"
+PREBUILT_V4L2_SUPPORT_ti814x = "gst-prebuilt-v4l2"
+PREBUILT_V4L2_SUPPORT_ti816x = "gst-prebuilt-v4l2"
+
 RDEPENDS_${PN} = " \
     gstreamer \
     gst-plugins-base \
@@ -28,5 +33,5 @@ RDEPENDS_${PN} = " \
     gst-plugins-good-meta \
     gst-plugins-bad-meta \
     gst-plugins-ugly-meta \
-    gst-prebuilt-v4l2 \
+    ${PREBUILT_V4L2_SUPPORT} \
     "
