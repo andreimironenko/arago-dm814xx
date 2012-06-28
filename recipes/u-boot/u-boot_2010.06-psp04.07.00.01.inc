@@ -13,3 +13,7 @@ PSPREL = "04.07.00.01"
 UBOOT_MAKE_TARGET = "u-boot.ti"
 
 INC_PR = "r1"
+
+SRC_URI += "file://0001-drivers-net-cpsw-halt-cpsw-properly-to-stop-receivin.patch \
+            file://ti811x-u-boot-nand-change-to-hamming-ecc-scheme.patch \
+"

@@ -1,0 +1,39 @@
+From e6fcefa86a70460674fe38320cc3ad1cc97a2ea6 Mon Sep 17 00:00:00 2001
+From: Mugunthan V N <mugunthanvnm@ti.com>
+Date: Fri, 22 Jun 2012 15:37:09 +0530
+Subject: [PATCH] drivers: net: cpsw: halt cpsw properly to stop receiving properly
+
+During cpsw driver halt, cpdma and cpsw must be stopped from processing
+network packets to ensure that hardware doesn't modify any DDR data where
+kernel may have its own data structures
+
+Signed-off-by: Mugunthan V N <mugunthanvnm@ti.com>
+Signed-off-by: Siddharth Heroor <heroor@ti.com>
+---
+ drivers/net/cpsw.c |   10 ++++++++++
+ 1 files changed, 10 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/cpsw.c b/drivers/net/cpsw.c
+index 993176b..200a8b4 100644
+--- a/drivers/net/cpsw.c
++++ b/drivers/net/cpsw.c
+@@ -804,6 +804,16 @@ static int cpsw_init(struct eth_device *dev, bd_t *bis)
+ static void cpsw_halt(struct eth_device *dev)
+ {
+ 	struct cpsw_priv	*priv = dev->priv;
++
++	__raw_writel(0, priv->dma_regs + CPDMA_TXCONTROL);
++	__raw_writel(0, priv->dma_regs + CPDMA_RXCONTROL);
++
++	/* soft reset the controller and initialize priv */
++	soft_reset(&priv->regs->soft_reset);
++
++	/* clear dma state */
++	soft_reset(priv->dma_regs + CPDMA_SOFTRESET);
++
+ 	priv->data.control(0);
+ }
+ 
+-- 
+1.7.0.4
+
