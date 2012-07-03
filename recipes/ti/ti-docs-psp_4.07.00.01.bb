@@ -9,8 +9,8 @@ PSPVERSION = "TI81XX-LINUX-PSP-04.07.00.01"
 
 SRC_URI = "http://install.source.dir.local/${PSPVERSION}-docs.tar.gz;name=psptarball"
 
-SRC_URI[psptarball.md5sum] = "eb45a14e54ca633ce147b3077f6ee1c3"
-SRC_URI[psptarball.sha256sum] = "a5e3c1f891ecb5230652643a138b641d70a7e92ece2aed00713b4609556ba5a8"
+SRC_URI[psptarball.md5sum] = "f5c372a20abb0de56aa180af9c0c6a7f"
+SRC_URI[psptarball.sha256sum] = "d8494a7c696f9a83d4548cc137e03cfdbfd77d794186846ba75d108bfb53d9a9"
 
 S = ${WORKDIR}/${PSPVERSION}/docs
 
