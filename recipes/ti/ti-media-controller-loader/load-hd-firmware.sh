@@ -7,6 +7,24 @@ DSP_ID=0
 HDVICP2_ID=1
 HDVPSS_ID=2
       
+
+initialize_lcd()
+{
+    echo 0 > /sys/devices/platform/vpss/display1/enabled
+    echo 29232,800/40/40/48, 480/13/29/3,1/3 > /sys/devices/platform/vpss/display1/timings
+    echo triplediscrete,rgb888,0/0/1/0 > /sys/devices/platform/vpss/display1/output
+    echo 1 > /sys/devices/platform/vpss/display1/enabled
+}
+
+configure_lcd()
+{
+    fbset -xres 800 -yres 480 -vxres 800 -vyres 480
+    echo 0 > /sys/devices/platform/vpss/graphics0/enabled
+    echo 1:dvo2 > /sys/devices/platform/vpss/graphics0/nodes
+    echo 1 > /sys/devices/platform/vpss/graphics0/enabled
+    echo vcompmux:dvo2 > /sys/devices/platform/vpss/video0/nodes
+}
+      
 case "$1" in
     start)
         /usr/share/ti/j5eco-tvp5158/decoder_init
@@ -18,7 +36,7 @@ case "$1" in
         do                                                
             sleep 0.5
         done
-        /usr/share/ti/syslink-examples/TI811X/messageq/slaveloader_debug startup VPSS-M3 /usr/share/ti/ti-media-controller-utils/ti811x_hdvpss.xem3 start
+        /usr/share/ti/syslink-examples/TI811X/messageq/slaveloader_debug startup VPSS-M3 /usr/share/ti/ti-media-controller-utils/ti811x_hdvpss.xem3
         sleep 2
         modprobe vpss sbufaddr=0x9fd00000 mode=hdmi:720p-60 i2c_mode=1 debug=1
         sleep 2
@@ -37,6 +55,10 @@ case "$1" in
         echo "Loading DSP Firmware"
         firmware_loader $DSP_ID /usr/share/ti/rpe/dm81xx_c6xdsp_debug.xe674 start
         sleep 2
+
+        initialize_lcd
+
+        #configure_lcd
       ;;
 
     stop)
@@ -50,7 +72,7 @@ case "$1" in
         rmmod ti81xxfb
         rmmod vpss
         echo "Unloading HDVPSS Firmware"
-        firmware_loader $HDVPSS_ID /usr/share/ti/ti-media-controller-utils/ti811x_hdvpss.xem3 stop
+        /usr/share/ti/syslink-examples/TI811X/messageq/slaveloader_debug shutdown VPSS-M3
         rm /tmp/firmware.$HDVPSS_ID
         rmmod syslink
       ;;
