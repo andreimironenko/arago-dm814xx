@@ -139,8 +139,6 @@ fi
 # creating boot.scr
 execute "mkdir -p /tmp/sdk"
 cat <<EOF >/tmp/sdk/boot.cmd
-fatload mmc 0 0x81000000 ti_logo.bmp
-bmp display 0x81000000
 setenv bootargs 'console=ttyO0,115200n8 rootwait root=/dev/mmcblk0p2 rw mem=304M@0x80000000 notifyk.vpssm3_sva=0x9F900000 ip=off noinitrd'
 fatload mmc 0 0x80009000 uImage
 bootm 0x80009000
