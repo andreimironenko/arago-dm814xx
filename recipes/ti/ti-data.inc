@@ -33,6 +33,11 @@ do_install () {
        cp -pPrf ${S}/data ${D}/${installdir}
 }
 
+do_install_append_c6a811x-evm () {
+       # delete video clips
+       rm -rf ${D}/${installdir}/data/videos/dm816x_1080p_demo.264
+}
+
 do_install_append_dm37x-evm () {
        # delete D1 clips
        rm -rf ${D}/${installdir}/data/videos/davincieffect_480p30.264
