@@ -8,10 +8,15 @@ dstdefault="${HOME}/targetfs"
 
 echo "--------------------------------------------------------------------------------"
 echo "In which directory do you want to install the target filesystem?(if this directory does not exist it will be created)"
+echo "Ensure that complete path is provided, otherwise NFS path in bootargs might be incomplete"
 read -p "[ $dstdefault ] " dst
 
 if [ ! -n "$dst" ]; then
     dst=$dstdefault
+else
+  if [[ $dst != /* ]]; then
+    dst=$PWD/$dst
+  fi
 fi
 echo "--------------------------------------------------------------------------------"
 
