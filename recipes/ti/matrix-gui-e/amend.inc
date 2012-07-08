@@ -9,6 +9,7 @@ SRC_URI += "file://0001-ti814x-Add-GStreamer-Decode-Demo-to-Multimedia-Menu.patc
             file://desc_mp3_decode_playback.html \
             file://menu_main.html \
             file://rpe_audio.html \
+            file://target.html \
             file://runAACLC_decode \
             file://runAACLC_encode \
             file://runGSTVideoLoopback \
@@ -40,6 +41,7 @@ do_copyimage() {
     cp ${WORKDIR}/desc_mp3_decode_playback.html ${S}/ti811x/html
     cp ${WORKDIR}/menu_main.html ${S}/ti811x/html
     cp ${WORKDIR}/rpe_audio.html ${S}/ti811x/html
+    cp ${WORKDIR}/target.html ${S}/ti811x/html
     cp ${WORKDIR}/aacdectest.cfg ${S}/ti811x/html
     cp ${WORKDIR}/aacenctest.cfg ${S}/ti811x/html
     cp ${WORKDIR}/mp3dectest.cfg ${S}/ti811x/html
