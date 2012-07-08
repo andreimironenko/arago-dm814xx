@@ -164,7 +164,7 @@ execute "cp $sdkdir/board-support/prebuilt-images/u-boot.bin /tmp/sdk/$$/"
 execute "cp $sdkdir/board-support/prebuilt-images/u-boot.min.nand /tmp/sdk/$$/"
 execute "cp $sdkdir/board-support/prebuilt-images/MLO /tmp/sdk/$$/"
 execute "cp $sdkdir/bin/ti_logo.bmp /tmp/sdk/$$/"
-execute "cp $sdkdir/bin/top_ti814x_evm.png /tmp/sdk/$$/"
+execute "cp $sdkdir/bin/top_ti811x_evm.png /tmp/sdk/$$/"
 execute "cp $sdkdir/bin/windows_users.htm /tmp/sdk/$$/"
 execute "cp $sdkdir/bin/README.boot.scr /tmp/sdk/$$/"
 
@@ -199,7 +199,7 @@ if [ "$pc2" != "" ]; then
   execute "mount ${device}3 /tmp/sdk/$$"
   execute "cp -ar $copy /tmp/sdk/$$"
   execute "cp $sdkdir/bin/setup.htm /tmp/sdk/$$"
-  execute "cp $sdkdir/bin/top_ti814x_evm.png /tmp/sdk/$$/"
+  execute "cp $sdkdir/bin/top_ti811x_evm.png /tmp/sdk/$$/"
   sync
   echo "unmounting ${device}3"
   execute "umount /tmp/sdk/$$"
