@@ -1,9 +1,9 @@
 require ti-firmware-c6a811x.inc
 
-PV = "01_00_01_39_sdk1"
+PV = "01_00_01_39_sdk2"
 
 SRC_URI = "http://install.source.dir.local/firmware-ti811x_${PV}.tar.gz;name=firmware \
 "
 
-SRC_URI[firmware.md5sum] = "ca283eee7786a113c287bd9584b3e439"
-SRC_URI[firmware.sha256sum] = "ab74f202c5570d19eee1e48c88dc1a7fcda1730d60f74d8e224e1e52add0b933"
+SRC_URI[firmware.md5sum] = "8690fb19a2824824910d6afbfc37a4cf"
+SRC_URI[firmware.sha256sum] = "6fce85701daf433b210aff753f1c76c4e53f36136cd1bd9c068a93b51294a34e"
