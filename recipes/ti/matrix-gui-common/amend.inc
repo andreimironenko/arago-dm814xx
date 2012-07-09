@@ -21,6 +21,7 @@ SRC_URI += "file://0001-ti814x-Add-GStreamer-Decode-Demo-to-Multimedia-Menu.patc
             file://aac-decode.png \
             file://aac-encode.png \
             file://mp3-decode.png \
+            file://top_ti811x_evm.png \
             file://video-loopback-demo.png \
             file://j5eco.init \
             file://aacdectest.cfg \
