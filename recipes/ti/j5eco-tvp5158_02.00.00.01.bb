@@ -5,12 +5,12 @@ require ti-paths.inc
 
 COMPATIBLE_MACHINE = "ti811x"
 
-SRC_URI = "http://install.source.dir.local/j5eco-tvp5158_02_00_00_01.tar.gz"
+SRC_URI = "http://install.source.dir.local/j5eco-tvp5158_02_00_00_04.tar.gz"
 
-SRC_URI[md5sum] = "ef44ef20d10d312b23ce910fe604d242"
-SRC_URI[sha256sum] = "9237616e2f201a2d9363892669047bc934e104d3162183f5d99c6aad3e23625c"
+SRC_URI[md5sum] = "e47ccf4b6b2afdd3a51b07fd925a572e"
+SRC_URI[sha256sum] = "766fdb3b2d9f10311f58c171cedb8a12a7589b3d00e2ab70b935354d38595ad2"
 
-S = ${WORKDIR}/j5eco-tvp5158_02_00_00_01
+S = ${WORKDIR}/j5eco-tvp5158_02_00_00_04
 
 EXTRA_OEMAKE = "KERNEL_DIR=${STAGING_KERNEL_DIR} \
         CROSS_COMPILE=${TARGET_PREFIX} \
