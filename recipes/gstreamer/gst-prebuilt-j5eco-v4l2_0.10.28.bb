@@ -6,8 +6,8 @@ HOMEPAGE = "http://www.gstreamer.net/"
 
 SRC_URI = "http://install.source.dir.local/gst-prebuilt-j5eco-v4l2-${PV}.tar.gz"
 
-SRC_URI[md5sum] = "e3eeb894fe0a3f5eb7c1d6b447c7e71b"
-SRC_URI[sha256sum] = "2b1fa1966a9674e310382ae6a3fc1b33428cdbb83104a341a15ca240e401cc33"
+SRC_URI[md5sum] = "352828c1cd887a592d26a6c00dd92903"
+SRC_URI[sha256sum] = "7f6b3e1fe1722a0983ff565c938433a639bcc230105f4779672b29a8de45635d"
 
 INC_PR = "r2"
 
