@@ -35,6 +35,41 @@ CXXFLAGS_dm365_append = " -DPlatform_dm365 "
 PACKAGE_ARCH = ${MACHINE_ARCH}
 
 inherit qt4e update-rc.d
+do_preparesource () {
+    # Remove platforms other than ti816x, ti814x and ti811x
+    rm -rf ${S}/am180x
+    rm -rf ${S}/am181x
+    rm -rf ${S}/am3517
+    rm -rf ${S}/am3715
+    rm -rf ${S}/am389x
+    rm -rf ${S}/beagleboard
+    rm -rf ${S}/dm365
+    rm -rf ${S}/dm368
+    rm -rf ${S}/dm3730
+    rm -rf ${S}/omap3530
+    rm -rf ${S}/omapl138
+
+    # remove ti816x platform if this is not the currently configured platfrom
+    if [[ ${PLATFORM} != ti816x ]]
+    then
+       rm -rf ${S}/ti816x
+    fi
+
+    # remove ti814x platform if this is not the currently configured platfrom
+    if [[ ${PLATFORM} != ti814x ]]
+    then
+       rm -rf ${S}/ti814x
+    fi
+
+    # remove ti811x platform if this is not the currently configured platfrom
+    if [[ ${PLATFORM} != ti811x ]]
+    then
+       rm -rf ${S}/ti811x
+    fi
+}
+
+# run prepare sources before do_patch to ensure that sourceipk picks the right sources.
+addtask preparesource after do_patch before do_create_srcipk
 
 do_install() {
 	install -d ${D}/${bindir}
