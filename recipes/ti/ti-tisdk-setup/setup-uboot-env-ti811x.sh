@@ -36,7 +36,7 @@ uimagedefault=`basename $uimagesrc`
 
 baseargs="console=ttyO0,115200n8 rootwait rw" 
 memargs="mem=304M@0x80000000"
-videoargs="vmalloc=500M notifyk.vpssm3_sva=0x9F900000"
+videoargs="notifyk.vpssm3_sva=0x9F900000"
 fssdargs="root=/dev/mmcblk0p2 rootfstype=ext3"
 fsnfsargs="root=/dev/nfs nfsroot=$ip"
 
