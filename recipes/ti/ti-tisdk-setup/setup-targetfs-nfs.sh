@@ -28,6 +28,11 @@ echo "Note! This command requires you to have administrator priviliges (sudo acc
 echo "on your host."
 read -p "Press return to continue" REPLY
 
+remove_psplash()
+{
+  sudo mv $1/etc/rcS.d/S01psplash $1/etc/rcS.d/K01psplash
+}
+
 extract_fs() {
     fstar=`ls -1 $cwd/../filesystem/??sdk*rootfs*.tar.gz`
     me=`whoami`
@@ -39,6 +44,7 @@ extract_fs() {
     check_status
     sudo chown -R $me:$me $1/home $1/usr $1/etc $1/lib $1/opt $1/boot
     check_status
+    remove_psplash $1
     echo
     echo "Successfully extracted `basename $fstar` to $1"
 }
