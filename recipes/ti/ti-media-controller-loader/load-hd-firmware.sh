@@ -28,7 +28,6 @@ configure_lcd()
 case "$1" in
     start)
         /usr/share/ti/j5eco-tvp5158/decoder_init
-        sleep 2
         echo "Loading HDVPSS Firmware"
         modprobe syslink
         sleep 2
@@ -39,22 +38,14 @@ case "$1" in
         /usr/share/ti/syslink-examples/TI811X/messageq/slaveloader_debug startup VPSS-M3 /usr/share/ti/ti-media-controller-utils/ti811x_hdvpss.xem3
         sleep 2
         modprobe vpss sbufaddr=0x9fd00000 mode=hdmi:720p-60 i2c_mode=1 debug=1
-        sleep 2
         modprobe ti81xxfb vram=0:16M,1:16M,2:6M  debug=1
-        sleep 2
         modprobe ti81xxvo video1_numbuffers=3 video2_numbuffers=3 debug=1
-        sleep 2
         modprobe tvp7002 debug=1
-        sleep 2
         modprobe ti81xxvin debug=1
-        sleep 2
         modprobe sii9022a
-        sleep 2
         modprobe tlc59108
-        sleep 2
         echo "Loading DSP Firmware"
         firmware_loader $DSP_ID /usr/share/ti/rpe/dm81xx_c6xdsp_debug.xe674 start
-        sleep 2
 
         initialize_lcd
 
