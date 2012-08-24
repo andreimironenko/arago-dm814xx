@@ -73,7 +73,6 @@ case "$1" in
         rmmod vpss
         echo "Unloading HDVPSS Firmware"
         /usr/share/ti/syslink-examples/TI811X/messageq/slaveloader_debug shutdown VPSS-M3
-        rm /tmp/firmware.$HDVPSS_ID
         rmmod syslink
       ;;
     *)
