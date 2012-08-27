@@ -35,7 +35,7 @@ case "$1" in
         do                                                
             sleep 0.5
         done
-        /usr/share/ti/syslink-examples/TI811X/messageq/slaveloader_debug startup VPSS-M3 /usr/share/ti/ti-media-controller-utils/ti811x_hdvpss.xem3
+        firmware_loader $HDVPSS_ID /usr/share/ti/ti-media-controller-utils/ti811x_hdvpss.xem3 start
         sleep 2
         modprobe vpss sbufaddr=0x9fd00000 mode=hdmi:720p-60 i2c_mode=1 debug=1
         modprobe ti81xxfb vram=0:16M,1:16M,2:6M  debug=1
@@ -63,7 +63,7 @@ case "$1" in
         rmmod ti81xxfb
         rmmod vpss
         echo "Unloading HDVPSS Firmware"
-        /usr/share/ti/syslink-examples/TI811X/messageq/slaveloader_debug shutdown VPSS-M3
+        firmware_loader $HDVPSS_ID /usr/share/ti/ti-media-controller-utils/ti811x_hdvpss.xem3 stop
         rmmod syslink
       ;;
     *)
