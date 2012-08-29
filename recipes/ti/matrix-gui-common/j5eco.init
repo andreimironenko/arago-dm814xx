@@ -20,7 +20,7 @@ calibrate()
 
 case "$1" in
   start)
-#    calibrate
+    #calibrate
 
 	if [ -e $PIDFILE ]; then
       PIDDIR=/proc/$(cat $PIDFILE)
