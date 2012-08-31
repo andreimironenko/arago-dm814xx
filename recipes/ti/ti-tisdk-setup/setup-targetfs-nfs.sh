@@ -112,7 +112,7 @@ echo "Note! This command requires you to have administrator priviliges (sudo acc
 echo "on your host."
 read -p "Press return to continue" REPLY
 
-grep $dst /etc/exports > /dev/null
+grep -w $dst /etc/exports > /dev/null
 if [ "$?" -eq "0" ]; then
     echo "$dst already NFS exported, skipping.."
 else
