@@ -110,6 +110,10 @@ help:
 	@echo "    rpe_clean                      : Remove Remote Processor Execute generated files"
 	@echo "    rpe_install                    : Install Remote Processor Execute"
 	@echo
+	@echo "    tvp5158_init_app               : Build TVP5158 init app & its sample app"
+	@echo "    tvp5158_init_app_clean         : Remove TVP5158 init app & its sample app"
+	@echo "    tvp5158_init_app_install       : Install TVP5158 init app & its sample app"
+	@echo
 	@echo "    all                            : Rebuild everything"
 	@echo "    clean                          : Remove all generated files"
 	@echo
@@ -341,6 +345,21 @@ rpe_clean:
 
 rpe_install:
 	${MAKE} -C ${RPE_INSTALL_DIR} $(RPE_BUILD_VARS) install prefix=$(EXEC_DIR)/usr
+
+###############################################################################
+# Build RPE
+###############################################################################
+tvp5158_init_app: 
+	${MAKE} -C ${TVP5158_INIT_APP_INSTALL_DIR} $(TVP5158_INIT_APP_BUILD_VARS) all
+	${MAKE} -C ${TVP5158_INIT_APP_INSTALL_DIR}/../video_capture_app $(TVP5158_INIT_APP_BUILD_VARS) all
+
+tvp5158_init_app_clean: 
+	${MAKE} -C ${TVP5158_INIT_APP_INSTALL_DIR} clean
+	${MAKE} -C ${TVP5158_INIT_APP_INSTALL_DIR}/../video_capture_app clean
+
+tvp5158_init_app_install:
+	${MAKE} -C ${TVP5158_INIT_APP_INSTALL_DIR} install EXEC_DIR=$(EXEC_DIR)/usr/share/ti/j5eco-tvp5158
+	${MAKE} -C ${TVP5158_INIT_APP_INSTALL_DIR}/../video_capture_app install EXEC_DIR=$(EXEC_DIR)/usr/share/ti/j5eco-tvp5158
 
 ###############################################################################
 # Build the DSP devkit
