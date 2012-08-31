@@ -114,6 +114,10 @@ help:
 	@echo "    tvp5158_init_app_clean         : Remove TVP5158 init app & its sample app"
 	@echo "    tvp5158_init_app_install       : Install TVP5158 init app & its sample app"
 	@echo
+	@echo "    hdvpss                         : Build HDVPSS driver & its sample app"
+	@echo "    hdvpss_clean                   : Remove HDVPSS driver & its sample app"
+	@echo "    hdvpss_install                 : Install HDVPSS firmware (Firmware for V4L2+FbDev app)"
+	@echo
 	@echo "    all                            : Rebuild everything"
 	@echo "    clean                          : Remove all generated files"
 	@echo
@@ -360,6 +364,19 @@ tvp5158_init_app_clean:
 tvp5158_init_app_install:
 	${MAKE} -C ${TVP5158_INIT_APP_INSTALL_DIR} install EXEC_DIR=$(EXEC_DIR)/usr/share/ti/j5eco-tvp5158
 	${MAKE} -C ${TVP5158_INIT_APP_INSTALL_DIR}/../video_capture_app install EXEC_DIR=$(EXEC_DIR)/usr/share/ti/j5eco-tvp5158
+
+###############################################################################
+# Build RPE
+###############################################################################
+hdvpss:
+	echo ${MAKE} -C ${HDVPSS_INSTALL_DIR} $(HDVPSS_BUILD_VARS) all OS=Linux
+	${MAKE} -C ${HDVPSS_INSTALL_DIR} $(HDVPSS_BUILD_VARS) all OS=Linux
+
+hdvpss_clean:
+	${MAKE} -C ${HDVPSS_INSTALL_DIR} clean OS=Linux
+
+hdvpss_install:
+	${MAKE} -C ${HDVPSS_INSTALL_DIR} install EXEC_DIR=$(EXEC_DIR)/usr/share/ti/j5eco-tvp5158 OS=Linux
 
 ###############################################################################
 # Build the DSP devkit

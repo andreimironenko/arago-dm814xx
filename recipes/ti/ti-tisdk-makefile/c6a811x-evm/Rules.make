@@ -7,6 +7,7 @@ MIN_UBOOT_CONFIG=ti811x_evm_min_sd
 SYSLINK_PLATFORM=TI811X
 GRAPHICS_PLATFORM=6.x
 RPE_PLATFORM=ti811x-evm
+HDVPSS_PLATFORM=ti811x-evm
 MEDIA_CONTROLLER_UTILS_PLATFORM=ti811x-evm
 MATRIX_PLATFORM=ti811x
 EDMA3_LLD_TARGET=edma3_lld_ti814x_dsp_libs
@@ -71,6 +72,9 @@ XDC_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__xdctools__>
 
 # Where the Code Gen is installed.
 CODEGEN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/dsp-devkit/<__cgt6x__>
+
+# Where the Media Controller Code Gen is installed
+MEDIA_CONTROLLER_CODECGEN_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/media-controller-devkit/<__cgt470__>
 
 # Where the PSP is installed.
 PSP_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/board-support
@@ -140,6 +144,23 @@ RPE_BUILD_VARS = ROOTDIR=$(RPE_INSTALL_DIR) \
 		TOOLCHAIN_LONGNAME=arm-none-linux-gnueabi \
         CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR}
 
+TVP5158_INIT_APP_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/board-support/<__j5eco-tvp5158__>/TVP5158_init_app
+TVP5158_INIT_APP_BUILD_VARS= CROSS_COMPILE=$(CSTOOL_DIR)/bin/arm-none-linux-gnueabi- \
+                             KERNEL_DIR=$(LINUXKERNEL_INSTALL_DIR)
+                             
+HDVPSS_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/component-sources/<__hdvpss__>
+HDVPSS_BUILD_VARS=CODEGEN_PATH_M3=(MEDIA_CONTROLLER_CODECGEN_INSTALL_DIR) \
+                    hdvpss_PATH=$(HDVPSS_INSTALL_DIR) \
+                    ROOTDIR=$(HDVPSS_INSTALL_DIR) \
+                    bios_PATH=${SYSBIOS_INSTALL_DIR} \
+                    xdc_PATH=$(XDC_INSTALL_DIR) \
+                    ipc_PATH=$(IPC_INSTALL_DIR) \
+                    XDCPATH="${SYSBIOS_INSTALL_DIR}/packages;$(XDC_INSTALL_DIR)/packages;$(IPC_INSTALL_DIR)/packages;$(HDVPSS_INSTALL_DIR)/packages" \
+                    PLATFORM=$(HDVPSS_PLATFORM) \
+                    PROFILE_m3vpss=debug \
+                    ISA=m3 \
+                    CORE=m3vpss
+
 # The prefix to be added before the GNU compiler tools (optionally including # path), i.e. "arm_v5t_le-" or "/opt/bin/arm_v5t_le-".
 CSTOOL_DIR=<__CROSS_COMPILER_PATH__>
 CSTOOL_LONGNAME=bin/arm-none-linux-gnueabi-gcc
@@ -152,6 +173,7 @@ MVTOOL_PREFIX=$(CSTOOL_PREFIX)
 # Where the devkits are located
 LINUX_DEVKIT_DIR=$(DVSDK_INSTALL_DIR)/linux-devkit
 DSP_DEVKIT_DIR=$(DVSDK_INSTALL_DIR)/dsp-devkit
+MEDIA_CONTROLLER_DEVKIT_DIR=$(DVSDK_INSTALL_DIR)/media-controller-devkit
 
 # Where to copy the resulting executables
 EXEC_DIR=$(HOME)/install/$(PLATFORM)
