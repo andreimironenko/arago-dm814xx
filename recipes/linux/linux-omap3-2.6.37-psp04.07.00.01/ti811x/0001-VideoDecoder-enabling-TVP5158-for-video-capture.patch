@@ -1,14 +1,18 @@
-From d11e20cc31577a65a39f30571a316bd746e6484f Mon Sep 17 00:00:00 2001
+From ec10b867a03e0bf422db1809d6750813b44be898 Mon Sep 17 00:00:00 2001
 From: bikash kund <bkund@ti.com>
-Date: Tue, 5 Jun 2012 16:38:17 +0530
+Date: Mon, 3 Sep 2012 15:48:37 +0530
 Subject: [PATCH] VideoDecoder: enabling TVP5158 for video capture
+
+Calls to tvp7002 was removed from capture driver. Vip port configurations
+were modified for tvp5158.
 
 Signed-off-by: bikash kund <bkund@ti.com>
 ---
- arch/arm/mach-omap2/board-ti8148evm.c |    8 +++++-
- arch/arm/mach-omap2/ti81xx_vpss.c     |   17 ++++++++++++++
- drivers/media/video/tvp7002.c         |   40 +++++++++++++++++++++++++++++---
- 3 files changed, 60 insertions(+), 5 deletions(-)
+ arch/arm/mach-omap2/board-ti8148evm.c       |    8 ++++-
+ arch/arm/mach-omap2/ti81xx_vpss.c           |   17 ++++++++++
+ drivers/media/video/ti81xx/ti81xxvin_main.c |    2 -
+ drivers/media/video/tvp7002.c               |   46 +++++++++++++++++++++------
+ 4 files changed, 60 insertions(+), 13 deletions(-)
 
 diff --git a/arch/arm/mach-omap2/board-ti8148evm.c b/arch/arm/mach-omap2/board-ti8148evm.c
 index 8519842..3bf55f0 100644
@@ -61,7 +65,7 @@ index 8519842..3bf55f0 100644
  }
  EXPORT_SYMBOL(vps_ti814x_set_tvp7002_filter);
 diff --git a/arch/arm/mach-omap2/ti81xx_vpss.c b/arch/arm/mach-omap2/ti81xx_vpss.c
-index 1cd9d3e..bd8cab7 100644
+index 4beb138..a7499bd 100644
 --- a/arch/arm/mach-omap2/ti81xx_vpss.c
 +++ b/arch/arm/mach-omap2/ti81xx_vpss.c
 @@ -39,6 +39,7 @@
@@ -72,7 +76,7 @@ index 1cd9d3e..bd8cab7 100644
  
  #if defined(CONFIG_TI81XX_VPSS) || defined(CONFIG_TI81XX_VPSS_MODULE)
  
-@@ -165,13 +166,25 @@ static struct ti81xxvin_subdev_info hdvpss_capture_sdev_info[] = {
+@@ -223,13 +224,25 @@ static struct ti81xxvin_subdev_info hdvpss_capture_sdev_info[] = {
  			.platform_data = &tvp7002_pdata,
  		},
  		.vip_port_cfg = {
@@ -98,7 +102,7 @@ index 1cd9d3e..bd8cab7 100644
  				.isMaxChan3Bits = 0,
  			},
  			.disConfig = {
-@@ -188,7 +201,11 @@ static struct ti81xxvin_subdev_info hdvpss_capture_sdev_info[] = {
+@@ -246,7 +259,11 @@ static struct ti81xxvin_subdev_info hdvpss_capture_sdev_info[] = {
  		},
  		.video_capture_mode =
  		   VPS_CAPT_VIDEO_CAPTURE_MODE_SINGLE_CH_NON_MUX_EMBEDDED_SYNC,
@@ -110,8 +114,21 @@ index 1cd9d3e..bd8cab7 100644
  		.input_data_format = FVID2_DF_YUV422P,
  	},
  	{
+diff --git a/drivers/media/video/ti81xx/ti81xxvin_main.c b/drivers/media/video/ti81xx/ti81xxvin_main.c
+index 9a1747e..bde77fc 100644
+--- a/drivers/media/video/ti81xx/ti81xxvin_main.c
++++ b/drivers/media/video/ti81xx/ti81xxvin_main.c
+@@ -2560,8 +2560,6 @@ static int ti81xxvin_probe(struct platform_device *pdev)
+ 			goto probe_subdev_out;
+ 		}
+ 
+-		v4l2_info(&ti81xxvin_obj.v4l2_dev, "registered sub device %s\n",
+-			  subdevdata->name);
+ 
+ 		if (ti81xxvin_obj.sd[i])
+ 			ti81xxvin_obj.sd[i]->grp_id = 1 << i;
 diff --git a/drivers/media/video/tvp7002.c b/drivers/media/video/tvp7002.c
-index 4d4306c..bab0480 100644
+index 4d4306c..7f2da79 100644
 --- a/drivers/media/video/tvp7002.c
 +++ b/drivers/media/video/tvp7002.c
 @@ -60,6 +60,8 @@ MODULE_LICENSE("GPL");
@@ -223,6 +240,24 @@ index 4d4306c..bab0480 100644
  	/* Set values in found preset */
  	qpreset->preset = presets->preset;
  
+@@ -1024,17 +1056,11 @@ static int tvp7002_probe(struct i2c_client *c, const struct i2c_device_id *id)
+ 
+ 	/* Tell v4l2 the device is ready */
+ 	v4l2_i2c_subdev_init(sd, c, &tvp7002_ops);
+-	v4l_info(c, "tvp7002 found @ 0x%02x (%s)\n",
+-					c->addr, c->adapter->name);
+ 
+ 	error = tvp7002_read(sd, TVP7002_CHIP_REV, &revision);
+ 	if (error < 0)
+ 		goto found_error;
+ 
+-	/* Get revision number */
+-	v4l2_info(sd, "Rev. %02x detected.\n", revision);
+-	if (revision != 0x02)
+-		v4l2_info(sd, "Unknown revision detected.\n");
+ 
+ 	/* Initializes TVP7002 to its default values */
+ 	error = tvp7002_write_inittab(sd, tvp7002_init_default);
 -- 
 1.7.0.4
 
