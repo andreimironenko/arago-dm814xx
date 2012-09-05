@@ -19,9 +19,9 @@ SRC_URI = "http://software-dl.ti.com:82/dsps/dsps_public_sw/rpe/${PV}/exports/rp
 DEPENDS  = "ti-xdais alsa-lib ti-uia ti-syslink ti-xdctools ti-sysbios ti-ipc ti-linuxutils"
 DEPENDS += "ti-c674x-aaclcdec ti-media-controller-utils"
 
-PLATFORM_ti816x-evm = "ti816x"
-PLATFORM_ti814x-evm = "ti814x"
-PLATFORM_ti811x-evm = "ti811x"
+PLATFORM_ti816x = "ti816x-evm"
+PLATFORM_ti814x = "ti814x-evm"
+PLATFORM_ti811x = "ti811x-evm"
 PLATFORM_c6a811x-evm = "c6a811x"
 
 EXTRA_OEMAKE = "ROOTDIR=${S} \
