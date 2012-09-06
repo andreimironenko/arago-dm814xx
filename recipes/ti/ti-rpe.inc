@@ -22,7 +22,6 @@ DEPENDS += "ti-c674x-aaclcdec ti-media-controller-utils"
 PLATFORM_ti816x = "ti816x-evm"
 PLATFORM_ti814x = "ti814x-evm"
 PLATFORM_ti811x = "ti811x-evm"
-PLATFORM_c6a811x-evm = "c6a811x"
 
 EXTRA_OEMAKE = "ROOTDIR=${S} \
         PLATFORM=${PLATFORM} \
@@ -49,18 +48,6 @@ PARALLEL_MAKE = ""
 do_install() {
     oe_runmake DESTDIR=${D} install
 }
-
-do_copyimage() {
-
-    # Copy only for c6a811x platfrom
-    if [[ ${PLATFORM} = c6a811x ]]
-    then
-      cp -f ${WORKDIR}/aacdectest_c6a811x.cfg ${S}/examples/aacdec/aacdectest.cfg
-      cp -f ${WORKDIR}/aacenctest_c6a811x.cfg ${S}/examples/aacenc/aacenctest.cfg
-      cp -f ${WORKDIR}/mp3dectest_c6a811x.cfg ${S}/examples/mp3dec/mp3dectest.cfg
-    fi
-}
-addtask copyimage after do_unpack before do_patch
 
 PACKAGES += "ti-rpe-examples"
 FILES_ti-rpe-examples += "${installdir}/*"
