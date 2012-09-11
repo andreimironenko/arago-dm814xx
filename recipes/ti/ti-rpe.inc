@@ -49,6 +49,19 @@ do_install() {
     oe_runmake DESTDIR=${D} install
 }
 
+do_copyimage() {
+}
+
+do_copyimage_append_c6a811x-evm() {
+    # Copy only for c6a811x platfrom
+    touch do_copyimage_append_c6a811x-evm.txt
+    cp -f ${WORKDIR}/aacdectest_c6a811x.cfg ${S}/examples/aacdec/aacdectest.cfg
+    cp -f ${WORKDIR}/aacenctest_c6a811x.cfg ${S}/examples/aacenc/aacenctest.cfg
+    cp -f ${WORKDIR}/mp3dectest_c6a811x.cfg ${S}/examples/mp3dec/mp3dectest.cfg
+}
+addtask copyimage after do_unpack before do_patch
+
+
 PACKAGES += "ti-rpe-examples"
 FILES_ti-rpe-examples += "${installdir}/*"
 INSANE_SKIP_${PN} = True
