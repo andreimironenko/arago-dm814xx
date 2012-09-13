@@ -170,6 +170,7 @@ BSP_COMPONENTS_ti811x = "\
     ti-docs-linux-devkit \
     ti-docs-dsp-devkit \
     j5eco-tvp5158-src \
+    ahudemo-src \
     "
 
 BSP_COMPONENTS_append_am180x-evm = "\
