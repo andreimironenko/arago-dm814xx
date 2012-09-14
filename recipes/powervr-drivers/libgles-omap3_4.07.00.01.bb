@@ -36,8 +36,8 @@ SRC_URI = "http://bangsdowebsvr01.india.ti.com:8090/gfxsdk/${SGXPV}/exports/Grap
 		           file://0001-Added-sdk-make-install-file-to-graphics-sdk.patch \
 "
 
-SRC_URI[md5sum] = "4ee74adf84fc31298700e21acab6531e"
-SRC_URI[sha256sum] = "9b65d329d80afe41519c3f70822d8bbece4b64430483ff758a366705b2d97ca4"
+SRC_URI[md5sum] = "9a9db870899a62678d4881d929b2ca97"
+SRC_URI[sha256sum] = "61f62a9273c020f1ea64ef4c00f2ee06dffa98e1b5b475f315d2c5f68b011301"
 
 S = "${WORKDIR}/Graphics_SDK_${SGXPV}"
 
