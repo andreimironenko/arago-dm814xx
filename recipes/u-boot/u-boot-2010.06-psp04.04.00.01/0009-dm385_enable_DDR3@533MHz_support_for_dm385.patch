@@ -1,0 +1,85 @@
+From: Raj, Deepu <deepu.raj@ti.com>
+Date: Fri, 6 Jan 2012 06:00:15 +0000 (+0530)
+Subject: dm385: enable DDR3@533MHz support for dm385
+X-Git-Tag: v2010.06_TI81XXPSP_ENG1_REL~4
+X-Git-Url: http://arago-project.org/git/projects/?p=u-boot-omap3.git;a=commitdiff_plain;h=839d3105b0f268ed5390fd4ea90fda97afdf9015
+
+dm385: enable DDR3@533MHz support for dm385
+
+This patch enable the DDR3 at 533MHz for dm385.
+The DDR Freq can be selected using the macros
+DDR_PLL_400/533 and CONFIG_DM385_DDR3_400/533
+defined in clocks_ti814x.h & ddr_defs_ti814x.h
+400MHz is the default DDR3 Freq.
+
+Signed-off-by: Raj, Deepu <deepu.raj@ti.com>
+---
+
+diff --git a/arch/arm/include/asm/arch-ti81xx/clocks_ti814x.h b/arch/arm/include/asm/arch-ti81xx/clocks_ti814x.h
+index 30a85cc..2988d54 100644
+--- a/arch/arm/include/asm/arch-ti81xx/clocks_ti814x.h
++++ b/arch/arm/include/asm/arch-ti81xx/clocks_ti814x.h
+@@ -21,6 +21,8 @@
+ #ifndef _CLOCKS_TI814X_H_
+ #define _CLOCKS_TI814X_H_
+ 
++#define DDR_PLL_400     /* Values supported 400,533 */
++
+ #define OSC_0_FREQ	20
+ 
+ /* Put the pll config values over here */
+@@ -49,7 +51,18 @@
+ 
+ #define DDR_N		19
+ #ifdef CONFIG_DM385
++
++/* DDR PLL */
++/* For 400 MHz */
++#if defined(DDR_PLL_400)
+ #define DDR_M		(opp_val_dm385(800, 800))
++#endif
++
++/* For 533 MHz */
++#if defined(DDR_PLL_533)
++#define DDR_M		(opp_val_dm385(1066, 1066))
++#endif
++
+ #else
+ #define DDR_M		(pg_val_ti814x(666, 800))
+ #endif
+diff --git a/arch/arm/include/asm/arch-ti81xx/ddr_defs_ti814x.h b/arch/arm/include/asm/arch-ti81xx/ddr_defs_ti814x.h
+index 19372b0..4990315 100644
+--- a/arch/arm/include/asm/arch-ti81xx/ddr_defs_ti814x.h
++++ b/arch/arm/include/asm/arch-ti81xx/ddr_defs_ti814x.h
+@@ -200,7 +200,11 @@
+ #define DDR2_EMIF_SDRAM_ZQCR		0x50074BE1
+ 
+ #ifdef CONFIG_DM385
++/* select the DDR3 Freq and timing paramets */
++#define CONFIG_DM385_DDR3_400 /* Values supported 400,533 */
++
+ /* DM385 DDR3 EMIF CFG Registers values 400MHz */
++#if defined(CONFIG_DM385_DDR3_400)
+ #define DDR3_EMIF_READ_LATENCY		0x00173209
+ #define DDR3_EMIF_TIM1			0x132BB953
+ #define DDR3_EMIF_TIM2			0x20437FDA
+@@ -208,6 +212,18 @@
+ #define DDR3_EMIF_REF_CTRL		0x00000C30
+ #define DDR3_EMIF_SDRAM_CONFIG		0x61C11B32
+ #define DDR3_EMIF_SDRAM_ZQCR		0x50074BE1
++#endif
++
++/* DM385 DDR3 EMIF CFG Registers values 533MHz */
++#if defined(CONFIG_DM385_DDR3_533)
++#define DDR3_EMIF_READ_LATENCY		0x0017320A
++#define DDR3_EMIF_TIM1			0x110F783B
++#define DDR3_EMIF_TIM2			0x238581E6
++#define DDR3_EMIF_TIM3			0x501F86AF
++#define DDR3_EMIF_REF_CTRL		0x0000103D
++#define DDR3_EMIF_SDRAM_CONFIG		0x61C121B2
++#define DDR3_EMIF_SDRAM_ZQCR		0x50074BE1
++#endif
+ #else
+ /* TI814X DDR3 EMIF CFG Registers values 400MHz */
+ #define DDR3_EMIF_READ_LATENCY		0x00173209
+

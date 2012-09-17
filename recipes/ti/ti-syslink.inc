@@ -49,15 +49,15 @@ do_compile() {
     unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
 
     oe_runmake syslink
-    oe_runmake samples
+    oe_runmake examples
 }
 
 do_install () {
     # Install the kernel module
     oe_runmake EXEC_DIR=${D} install-driver
 
-    # Install Samples
-    oe_runmake EXEC_DIR=${D}/usr/share install-samples
+    # Install samples
+    oe_runmake EXEC_DIR=${D}/usr/share install-examples
 
     # Install/Stage the Source Tree
     install -d ${D}${SYSLINK_INSTALL_DIR_RECIPE}
@@ -87,5 +87,5 @@ update-modules || true
 
 PACKAGES += "ti-syslink-examples"
 RDEPENDS_ti-syslink-examples_append = " ti-syslink-module"
-FILES_ti-syslink-examples = "${installdir}/syslink-examples/*"
+FILES_ti-syslink-examples = "/usr/share/*"
 INSANE_SKIP_ti-syslink-examples = True

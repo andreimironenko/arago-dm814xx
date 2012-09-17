@@ -23,3 +23,9 @@ SRC_URI += "file://0001-ti814x-ti816x-changes-in-makefile-for-supporting-log.pat
             file://0007-ti816x-added-configs-for-logo-support-at-u-boot.patch \
             file://0008-ti814x-ti816x-adding-the-vpdma-firmware-1B2-for-logo.patch \
 "
+
+SRC_URI_append_ti814x = " \
+            file://0009-dm385_enable_DDR3@533MHz_support_for_dm385.patch \
+            file://0010-TI814X_Add_support_for_detecting_Cent_PG3_0.patch \
+            file://0011-TI814X_Fixed_USB_PLL_divider_value_for_PG3_0.patch \
+"
