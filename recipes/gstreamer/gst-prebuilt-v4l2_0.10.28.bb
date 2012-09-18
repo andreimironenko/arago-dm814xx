@@ -6,8 +6,8 @@ HOMEPAGE = "http://www.gstreamer.net/"
 
 SRC_URI = "http://install.source.dir.local/gst-prebuilt-v4l2-${PV}.tar.gz"
 
-SRC_URI[md5sum] = "44552435b398dfdfdebb0af88ca58b6b"
-SRC_URI[sha256sum] = "93369dbb98b55acd43e6a3bffa7e7d3d17e9d0cb8b72b841a942758d8b5ee6fc"
+SRC_URI[md5sum] = "98cd6cdc510b108d82e9bdfab03572f1"
+SRC_URI[sha256sum] = "53ba85cb1bf0ef8481e59b0859162d1647dac7c20ff6484e2aa24a321cadc3e9"
 
 INC_PR = "r2"
 
