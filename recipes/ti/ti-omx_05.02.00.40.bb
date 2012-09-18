@@ -10,8 +10,8 @@ SRC_URI = "http://bangsdowebsvr01.india.ti.com:8090/DM81xx-OMX/${PV}/exports/omx
            file://sdk.mk \
 "
 
-SRC_URI[omx.md5sum] = "8ac9c2e25850980e870afcbb9fbd9520"
-SRC_URI[omx.sha256sum] = "94e4f00439ea97ca4c0a88f9c033dea1bc491ab796d91e79fd8abaf143afa6f0"
+SRC_URI[omx.md5sum] = "2f4d4443e155eb8487402ee8284e2d96"
+SRC_URI[omx.sha256sum] = "fc3591ee41083ed745b3b894f0f93e969274723c9be384c9692b877c03253868"
 
 do_prepsources() {
     cp ${WORKDIR}/sdk.mk ${S}
