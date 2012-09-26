@@ -27,3 +27,17 @@ do_compile() {
          CSTOOL_PREFIX=${TARGET_PREFIX} \
          KERNEL_INSTALL_DIR=${WORKDIR}/../../../sysroots/c6a811x-evm-none-linux-gnueabi/kernel
 }
+
+do_install() {
+    install -d ${D}/${installdir}/ahudemo
+    install ${WORKDIR}/ahudemo-1.00.00.02/fbsetup/fbsetup ${D}/${installdir}/ahudemo
+    install ${S}/cpu_usage ${D}/${installdir}/ahudemo/
+    install ${WORKDIR}/ahudemo-1.00.00.02/matrix/matrix-gui-e ${D}/${installdir}/ahudemo/
+    install ${WORKDIR}/ahudemo-1.00.00.02/matrix/*.html ${D}/${installdir}/ahudemo/
+    install ${WORKDIR}/ahudemo-1.00.00.02/matrix/*.png ${D}/${installdir}/ahudemo/
+}
+
+PACKAGES += "ahudemo-test-app"
+FILES_ahudemo-test-app = "${installdir}/ahudemo"
+INSANE_SKIP_ahudemo-test-app = True
+
