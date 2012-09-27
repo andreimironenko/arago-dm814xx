@@ -34,7 +34,8 @@ do_install() {
     install ${S}/driver/bb2d.ko ${D}/${installdir}/bb2ddrv
     install ${S}/bltsville/lib/libbltsville_bb2d-rel.so ${D}/${installdir}/bb2ddrv
     install ${S}/bltsville/lib/libbltsville_bb2d-dbg.so ${D}/${installdir}/bb2ddrv
-    ln -sf ${D}/${installdir}/bb2ddrv/libbltsville_bb2d-dbg.so ${D}/${installdir}/bb2ddrv/libbltsville_bb2d.so    
+    cp ${D}/${installdir}/bb2ddrv/libbltsville_bb2d-dbg.so ${D}/${installdir}/bb2ddrv/libbltsville_bb2d.so
+    #ln -sf ${D}/${installdir}/bb2ddrv/libbltsville_bb2d-dbg.so ${D}/${installdir}/bb2ddrv/libbltsville_bb2d.so    
     install ${S}/test/app/bin/bvtest ${D}/${installdir}/bb2ddrv
     install ${S}/test/app/bin/bvtest_g ${D}/${installdir}/bb2ddrv
     install ${S}/test/script/testbv.sh ${D}/${installdir}/bb2ddrv
@@ -44,5 +45,6 @@ do_install() {
 }
 
 PACKAGES += "bb2ddrv-test-app"
+RDEPENDS_bb2ddrv-test-app = " ti-cmem-module"
 FILES_bb2ddrv-test-app = "${installdir}/bb2ddrv"
 INSANE_SKIP_bb2ddrv-test-app = True
