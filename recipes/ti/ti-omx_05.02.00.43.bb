@@ -8,6 +8,7 @@ PV = "05_02_00_43"
 
 SRC_URI = "http://bangsdowebsvr01.india.ti.com:8090/DM81xx-OMX/${PV}/exports/omx-ti81xx_${PV}.tar.gz;name=omx \
            file://sdk.mk \
+           file://disable-tiler-for-syslink-dsp-for-omx.patch \
 "
 
 SRC_URI[omx.md5sum] = "bd80b01981e2961db53cc97057786a5e"

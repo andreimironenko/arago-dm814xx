@@ -1,0 +1,12 @@
+diff -Naur omx-ti81xx_05_02_00_43_ori/src/ti/omx/build/config_dsp.bld omx-ti81xx_05_02_00_43_new/src/ti/omx/build/config_dsp.bld
+--- omx-ti81xx_05_02_00_43_ori/src/ti/omx/build/config_dsp.bld	2012-09-27 19:29:36.000000000 +0530
++++ omx-ti81xx_05_02_00_43_new/src/ti/omx/build/config_dsp.bld	2012-09-28 13:47:47.005516000 +0530
+@@ -17,7 +17,7 @@
+ C674.ccOpts.suffix  += "--gcc -mi10 -mo --no_compress -DOS_DSPBIOS -DDBC_ASSERTS=1 -DGT_ASSERT=1 -DGT_TRACE=1 -DPLATFORM_EVM_SI -DTI_816X_BUILD";
+ 
+ /* karthik - Tiler not used in centaurus. remove this */
+-C674.ccOpts.suffix += " -DSYSLINK_USE_TILER ";
++//C674.ccOpts.suffix += " -DSYSLINK_USE_TILER ";
+ C674.ccOpts.suffix += " -DSYSLINK_BUILD_RTOS  ";
+ C674.lnkOpts.suffix += " --zero_init=off ";
+ C674.lnkOpts.suffix += " -x ";
