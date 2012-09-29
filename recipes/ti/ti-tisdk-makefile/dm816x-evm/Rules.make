@@ -11,7 +11,7 @@ OMTB_PLATFORM=ti816x-evm
 RPE_PLATFORM=ti816x-evm
 MEDIA_CONTROLLER_UTILS_PLATFORM=ti816x-evm
 MATRIX_PLATFORM=ti816x
-EDMA3_LLD_TARGET=edma3_lld_ti816x_dsp_libs
+EDMA3_LLD_TARGET=edma3_lld_ti816x-evm_674_libs
 
 # The installation directory of the SDK.
 EZSDK_INSTALL_DIR=<__SDK__INSTALL_DIR__>

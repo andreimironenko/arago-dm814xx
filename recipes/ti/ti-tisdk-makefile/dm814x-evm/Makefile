@@ -410,7 +410,7 @@ edma3lld:
 	make -C $(EDMA3_LLD_INSTALL_DIR)/packages $(EDMA3_LLD_BUILD_VARS) $(EDMA3_LLD_TARGET)
 
 edma3lld_clean:
-	make -C $(EDMA3_LLD_INSTALL_DIR)/packages $(EDMA3_LLD_BUILD_VARS) cleanall
+	make -C $(EDMA3_LLD_INSTALL_DIR)/packages $(EDMA3_LLD_BUILD_VARS) clean
 
 
 ###################################################################################

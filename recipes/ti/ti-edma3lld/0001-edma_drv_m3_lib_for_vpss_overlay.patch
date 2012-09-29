@@ -1,0 +1,25 @@
+From 072e1192deb35926f366422c2f6e2cb2d5b539ae Mon Sep 17 00:00:00 2001
+From: Velan <velan@ti.com>
+Date: Sat, 29 Sep 2012 19:03:56 +0530
+Subject: [PATCH] Changed to create edma3/drv/lib/m3 libs it was needed to build m3 vpss binaries using overlay
+
+---
+ packages/makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/packages/makefile b/packages/makefile
+index a0578b2..4ba8589 100644
+--- a/packages/makefile
++++ b/packages/makefile
+@@ -350,7 +350,7 @@ edma3_lld_ti814x-evm_a8_libs_rmsample_clean:
+ 
+ #=======================================================================================================================================
+ #To Build libs For Platform ti814x-evm Target m3
+-edma3_lld_ti814x-evm_m3_libs: edma3_lld_ti814x-evm_m3_libs_rm edma3_lld_ti814x-evm_m3_libs_drvsample edma3_lld_ti814x-evm_m3_libs_rmsample
++edma3_lld_ti814x-evm_m3_libs: edma3_lld_ti814x-evm_m3_libs_drv edma3_lld_ti814x-evm_m3_libs_rm edma3_lld_ti814x-evm_m3_libs_drvsample edma3_lld_ti814x-evm_m3_libs_rmsample
+ edma3_lld_ti814x-evm_m3_libs_drv:
+ ifeq ($(FORMAT),ELF)
+ 	$(ECHO) \# Making m3:debug:edma3_lld_drv 
+-- 
+1.7.0.4
+

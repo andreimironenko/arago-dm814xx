@@ -50,6 +50,7 @@ do_compile() {
 
     oe_runmake syslink
     oe_runmake examples
+    oe_runmake samples-hlos
 }
 
 do_install () {
@@ -57,11 +58,24 @@ do_install () {
     oe_runmake EXEC_DIR=${D} install-driver
 
     # Install samples
-    oe_runmake EXEC_DIR=${D}/usr/share install-examples
+    oe_runmake EXEC_DIR=${D}/usr/share/ti/examples install-examples
 
     # Install/Stage the Source Tree
     install -d ${D}${SYSLINK_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${SYSLINK_INSTALL_DIR_RECIPE}
+
+    # Install samples
+    #oe_runmake EXEC_DIR=${D}/usr/share/ti/examples install-examples
+}
+
+do_install_append_dm814x-evm () {
+    install -d ${D}/${installdir}/syslink-examples/TI814X/helloworld
+    install ${D}/usr/share/ti/examples/ex01_helloworld/release/* ${D}/${installdir}/syslink-examples/TI814X/helloworld
+}
+
+do_install_append_dm816x-evm () {
+    install -d ${D}/${installdir}/syslink-examples/TI816X/helloworld
+    install ${D}/usr/share/ti/examples/ex01_helloworld/release/* ${D}/${installdir}/syslink-examples/TI816X/helloworld
 }
 
 KERNEL_VERSION = "${@base_read_file('${STAGING_KERNEL_DIR}/kernel-abiversion')}"
@@ -87,5 +101,6 @@ update-modules || true
 
 PACKAGES += "ti-syslink-examples"
 RDEPENDS_ti-syslink-examples_append = " ti-syslink-module"
-FILES_ti-syslink-examples = "/usr/share/*"
+#FILES_ti-syslink-examples = "/usr/share/ti/ti-syslink-tree/*"
+FILES_ti-syslink-examples = "${installdir}/syslink-examples/*"
 INSANE_SKIP_ti-syslink-examples = True

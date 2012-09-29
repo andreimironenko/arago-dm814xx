@@ -1,0 +1,36 @@
+From a24cdb9877d9871b47efb0a304cff0d97e1d2055 Mon Sep 17 00:00:00 2001
+From: Velan <velan@ti.com>
+Date: Sat, 29 Sep 2012 18:56:24 +0530
+Subject: [PATCH] Modified the examples directory name which was wrongly reffered.
+
+---
+ packages/component.mk |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/packages/component.mk b/packages/component.mk
+index 12759c3..635b7a4 100644
+--- a/packages/component.mk
++++ b/packages/component.mk
+@@ -214,15 +214,15 @@ edma3_drv_tci6614-evm_66_example_EXAMPLES_PATH = $(edma3_lld_PATH)/$(edma3_drv_t
+ edma3_drv_tci6614-evm_66_be_example_EXAMPLES_RELPATH = examples/edma3_driver/evmTCI6614BE
+ edma3_drv_tci6614-evm_66_be_example_EXAMPLES_PATH = $(edma3_lld_PATH)/$(edma3_drv_tci6614-evm_66_be_example_EXAMPLES_RELPATH)
+ 
+-edma3_drv_c6657-evm_66_example_EXAMPLES_RELPATH = examples/edma3_driver/evmC6657
++edma3_drv_c6657-evm_66_example_EXAMPLES_RELPATH = examples/edma3_driver/evm6657
+ edma3_drv_c6657-evm_66_example_EXAMPLES_PATH = $(edma3_lld_PATH)/$(edma3_drv_c6657-evm_66_example_EXAMPLES_RELPATH)
+ 
+-edma3_drv_c6657-evm_66_be_example_EXAMPLES_RELPATH = examples/edma3_driver/evmC6657BE
++edma3_drv_c6657-evm_66_be_example_EXAMPLES_RELPATH = examples/edma3_driver/evm6657BE
+ edma3_drv_c6657-evm_66_be_example_EXAMPLES_PATH = $(edma3_lld_PATH)/$(edma3_drv_c6657-evm_66_be_example_EXAMPLES_RELPATH)
+ 
+-edma3_drv_tci6634-evm_66_example_EXAMPLES_RELPATH = examples/edma3_driver/evmTCI6634
++edma3_drv_tci6634-evm_66_example_EXAMPLES_RELPATH = examples/edma3_driver/simTCI6634
+ edma3_drv_tci6634-evm_66_example_EXAMPLES_PATH = $(edma3_lld_PATH)/$(edma3_drv_tci6634-evm_66_example_EXAMPLES_RELPATH)
+ 
+-edma3_drv_tci6634-evm_66_be_example_EXAMPLES_RELPATH = examples/edma3_driver/evmTCI6634BE
++edma3_drv_tci6634-evm_66_be_example_EXAMPLES_RELPATH = examples/edma3_driver/simTCI6634BE
+ edma3_drv_tci6634-evm_66_be_example_EXAMPLES_PATH = $(edma3_lld_PATH)/$(edma3_drv_tci6634-evm_66_be_example_EXAMPLES_RELPATH)
+ # Nothing beyond this point
+-- 
+1.7.0.4
+
