@@ -7,5 +7,11 @@ SRC_URI[edma3lldbin.sha256sum] = "5f394897c6f8c8b87f992b2a3c8ddc53417d30db0bf805
 
 SRC_URI += "file://0001-edma_cleanall_fix.patch \
             file://0001-edma_drv_m3_lib_for_vpss_overlay.patch \
+            file://sdk.mk \
 "
+
+do_prepsources() {
+    cp ${WORKDIR}/sdk.mk ${S}
+}
+addtask prepsources after do_unpack before do_patch
 

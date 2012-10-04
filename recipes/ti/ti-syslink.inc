@@ -71,11 +71,19 @@ do_install () {
 do_install_append_dm814x-evm () {
     install -d ${D}/${installdir}/syslink-examples/TI814X/helloworld
     install ${D}/usr/share/ti/examples/ex01_helloworld/release/* ${D}/${installdir}/syslink-examples/TI814X/helloworld
+    install -d ${D}/${installdir}/syslink-examples/TI814X/messageq
+    install ${D}/usr/share/ti/examples/ex02_messageq/release/* ${D}/${installdir}/syslink-examples/TI814X/messageq
+    install -d ${D}/${installdir}/syslink-examples/TI814X/notify
+    install ${D}/usr/share/ti/examples/ex03_notify/release/* ${D}/${installdir}/syslink-examples/TI814X/notify
 }
 
 do_install_append_dm816x-evm () {
     install -d ${D}/${installdir}/syslink-examples/TI816X/helloworld
     install ${D}/usr/share/ti/examples/ex01_helloworld/release/* ${D}/${installdir}/syslink-examples/TI816X/helloworld
+    install -d ${D}/${installdir}/syslink-examples/TI816X/messageq
+    install ${D}/usr/share/ti/examples/ex02_messageq/release/* ${D}/${installdir}/syslink-examples/TI816X/messageq
+    install -d ${D}/${installdir}/syslink-examples/TI816X/notify
+    install ${D}/usr/share/ti/examples/ex03_notify/release/* ${D}/${installdir}/syslink-examples/TI816X/notify
 }
 
 KERNEL_VERSION = "${@base_read_file('${STAGING_KERNEL_DIR}/kernel-abiversion')}"
