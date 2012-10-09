@@ -75,6 +75,17 @@ do_install_append_dm814x-evm () {
     install ${D}/usr/share/ti/examples/ex02_messageq/release/* ${D}/${installdir}/syslink-examples/TI814X/messageq
     install -d ${D}/${installdir}/syslink-examples/TI814X/notify
     install ${D}/usr/share/ti/examples/ex03_notify/release/* ${D}/${installdir}/syslink-examples/TI814X/notify
+    install -d ${D}/${installdir}/syslink-examples/TI814X/sharedregion
+    install ${D}/usr/share/ti/examples/ex04_sharedregion/release/* ${D}/${installdir}/syslink-examples/TI814X/sharedregion
+    install -d ${D}/${installdir}/syslink-examples/TI814X/heapbufmp 
+    install ${D}/usr/share/ti/examples/ex05_heapbufmp/release/* ${D}/${installdir}/syslink-examples/TI814X/heapbufmp
+    install -d ${D}/${installdir}/syslink-examples/TI814X/listmp
+    install ${D}/usr/share/ti/examples/ex06_listmp/release/* ${D}/${installdir}/syslink-examples/TI814X/listmp
+    install -d ${D}/${installdir}/syslink-examples/TI814X/gatemp
+    install ${D}/usr/share/ti/examples/ex07_gatemp/release/* ${D}/${installdir}/syslink-examples/TI814X/gatemp
+    install -d ${D}/${installdir}/syslink-examples/TI814X/ringio
+    install ${D}/usr/share/ti/examples/ex08_ringio/release/* ${D}/${installdir}/syslink-examples/TI814X/ringio
+    
 }
 
 do_install_append_dm816x-evm () {
@@ -84,6 +95,35 @@ do_install_append_dm816x-evm () {
     install ${D}/usr/share/ti/examples/ex02_messageq/release/* ${D}/${installdir}/syslink-examples/TI816X/messageq
     install -d ${D}/${installdir}/syslink-examples/TI816X/notify
     install ${D}/usr/share/ti/examples/ex03_notify/release/* ${D}/${installdir}/syslink-examples/TI816X/notify
+    install -d ${D}/${installdir}/syslink-examples/TI816X/sharedregion
+    install ${D}/usr/share/ti/examples/ex04_sharedregion/release/* ${D}/${installdir}/syslink-examples/TI816X/sharedregion
+    install -d ${D}/${installdir}/syslink-examples/TI816X/heapbufmp
+    install ${D}/usr/share/ti/examples/ex05_heapbufmp/release/* ${D}/${installdir}/syslink-examples/TI816X/heapbufmp
+    install -d ${D}/${installdir}/syslink-examples/TI816X/listmp
+    install ${D}/usr/share/ti/examples/ex06_listmp/release/* ${D}/${installdir}/syslink-examples/TI816X/listmp
+    install -d ${D}/${installdir}/syslink-examples/TI816X/gatemp
+    install ${D}/usr/share/ti/examples/ex07_gatemp/release/* ${D}/${installdir}/syslink-examples/TI816X/gatemp
+    install -d ${D}/${installdir}/syslink-examples/TI816X/ringio
+    install ${D}/usr/share/ti/examples/ex08_ringio/release/* ${D}/${installdir}/syslink-examples/TI816X/ringio
+}
+
+do_install_append_c6a811x-evm () {
+    install -d ${D}/${installdir}/syslink-examples/TI811X/helloworld
+    install ${D}/usr/share/ti/examples/ex01_helloworld/release/* ${D}/${installdir}/syslink-examples/TI811X/helloworld
+    install -d ${D}/${installdir}/syslink-examples/TI811X/messageq
+    install ${D}/usr/share/ti/examples/ex02_messageq/release/* ${D}/${installdir}/syslink-examples/TI811X/messageq
+    install -d ${D}/${installdir}/syslink-examples/TI811X/notify
+    install ${D}/usr/share/ti/examples/ex03_notify/release/* ${D}/${installdir}/syslink-examples/TI811X/notify
+    install -d ${D}/${installdir}/syslink-examples/TI811X/sharedregion
+    install ${D}/usr/share/ti/examples/ex04_sharedregion/release/* ${D}/${installdir}/syslink-examples/TI811X/sharedregion
+    install -d ${D}/${installdir}/syslink-examples/TI811X/heapbufmp
+    install ${D}/usr/share/ti/examples/ex05_heapbufmp/release/* ${D}/${installdir}/syslink-examples/TI811X/heapbufmp
+    install -d ${D}/${installdir}/syslink-examples/TI811X/listmp
+    install ${D}/usr/share/ti/examples/ex06_listmp/release/* ${D}/${installdir}/syslink-examples/TI811X/listmp
+    install -d ${D}/${installdir}/syslink-examples/TI811X/gatemp
+    install ${D}/usr/share/ti/examples/ex07_gatemp/release/* ${D}/${installdir}/syslink-examples/TI811X/gatemp
+    install -d ${D}/${installdir}/syslink-examples/TI811X/ringio
+    install ${D}/usr/share/ti/examples/ex08_ringio/release/* ${D}/${installdir}/syslink-examples/TI811X/ringio
 }
 
 KERNEL_VERSION = "${@base_read_file('${STAGING_KERNEL_DIR}/kernel-abiversion')}"
