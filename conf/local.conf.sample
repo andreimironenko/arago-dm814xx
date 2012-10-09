@@ -94,7 +94,6 @@ IMAGE_FSTYPES = "jffs2 tar.gz ext2.gz"
 # This allows make to spawn mutliple processes to take advantage of multiple 
 # processors. Useful on SMP machines. This may break some packages - we're
 # in the process of marking these so let us know if you find any.
-#PARALLEL_MAKE = "-j 4"
 
 # Uncomment this if you want BitBake to emit the log if a build fails.
 BBINCLUDELOGS = "yes"
