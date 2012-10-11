@@ -112,18 +112,6 @@ do_install_append_c6a811x-evm () {
     install ${D}/usr/share/ti/examples/ex01_helloworld/release/* ${D}/${installdir}/syslink-examples/TI811X/helloworld
     install -d ${D}/${installdir}/syslink-examples/TI811X/messageq
     install ${D}/usr/share/ti/examples/ex02_messageq/release/* ${D}/${installdir}/syslink-examples/TI811X/messageq
-    install -d ${D}/${installdir}/syslink-examples/TI811X/notify
-    install ${D}/usr/share/ti/examples/ex03_notify/release/* ${D}/${installdir}/syslink-examples/TI811X/notify
-    install -d ${D}/${installdir}/syslink-examples/TI811X/sharedregion
-    install ${D}/usr/share/ti/examples/ex04_sharedregion/release/* ${D}/${installdir}/syslink-examples/TI811X/sharedregion
-    install -d ${D}/${installdir}/syslink-examples/TI811X/heapbufmp
-    install ${D}/usr/share/ti/examples/ex05_heapbufmp/release/* ${D}/${installdir}/syslink-examples/TI811X/heapbufmp
-    install -d ${D}/${installdir}/syslink-examples/TI811X/listmp
-    install ${D}/usr/share/ti/examples/ex06_listmp/release/* ${D}/${installdir}/syslink-examples/TI811X/listmp
-    install -d ${D}/${installdir}/syslink-examples/TI811X/gatemp
-    install ${D}/usr/share/ti/examples/ex07_gatemp/release/* ${D}/${installdir}/syslink-examples/TI811X/gatemp
-    install -d ${D}/${installdir}/syslink-examples/TI811X/ringio
-    install ${D}/usr/share/ti/examples/ex08_ringio/release/* ${D}/${installdir}/syslink-examples/TI811X/ringio
 }
 
 KERNEL_VERSION = "${@base_read_file('${STAGING_KERNEL_DIR}/kernel-abiversion')}"
