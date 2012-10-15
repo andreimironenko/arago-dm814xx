@@ -1,0 +1,160 @@
+From 9d3a063c4a0c5d536204b8dce04cf60e3afe9ee2 Mon Sep 17 00:00:00 2001
+From: bikash kund <bkund@ti.com>
+Date: Mon, 17 Sep 2012 16:50:18 +0530
+Subject: [PATCH] V4L2: Rebase patch for enabling scaled video streams
+
+Patch for Enabling video streams for upsale/downscale mode.
+These changes were required in V4L2 display driver for
+accommodating dei driver changes in hdvpss release 1.00.01.44
+
+Signed-off-by: bikash kund <bkund@ti.com>
+---
+ arch/arm/plat-omap/include/plat/ti81xx-vpss.h |    3 +++
+ drivers/media/video/ti81xx/ti81xxvid_main.c   |    8 +++++---
+ drivers/video/ti81xx/vpss/video.c             |   18 ++++++++++++++----
+ include/linux/vps_display.h                   |   18 +++++++++++-------
+ 4 files changed, 33 insertions(+), 14 deletions(-)
+
+diff --git a/arch/arm/plat-omap/include/plat/ti81xx-vpss.h b/arch/arm/plat-omap/include/plat/ti81xx-vpss.h
+index 32080e8..d4cd4c9 100644
+--- a/arch/arm/plat-omap/include/plat/ti81xx-vpss.h
++++ b/arch/arm/plat-omap/include/plat/ti81xx-vpss.h
+@@ -254,6 +254,9 @@ struct vps_video_ctrl {
+ 	/* De-interlacer config params*/
+ 	struct vps_dei_disp_params      *vdeiprm;
+ 	u32                             vdei_phy;
++	/* De-interlacer scalar crop configs*/
++	struct vps_cropconfig           *vdeicrpcfg;
++	u32                             vdeicr_phy;
+ 	/* The followings  are the FVID2 varables*/
+ 	/*fvid2 create params*/
+ 	struct fvid2_cbparams           *cbparams;
+diff --git a/drivers/media/video/ti81xx/ti81xxvid_main.c b/drivers/media/video/ti81xx/ti81xxvid_main.c
+index 9fe83c4..5d206df 100644
+--- a/drivers/media/video/ti81xx/ti81xxvid_main.c
++++ b/drivers/media/video/ti81xx/ti81xxvid_main.c
+@@ -586,6 +586,7 @@ int ti81xxvid_setup_video(struct ti81xx_vidout_dev *vout,
+ 	int left, top;
+ 	bool crop = 0;
+ 	u8 fidmeg;
++	struct vps_cropconfig  dei_sc_crop_cfg;
+ 	struct vps_dei_disp_params deiprms;
+ 	if (video_mode_to_vpss_mode(vout, &dfmt) == -EINVAL) {
+ 		v4l2_err(&vout->vid_dev->v4l2_dev,
+@@ -659,9 +660,10 @@ int ti81xxvid_setup_video(struct ti81xx_vidout_dev *vout,
+ 	if ((vout->vctrl->caps & VPSS_VID_CAPS_SCALING) &&
+ 					scalar_prms->scalar_enable) {
+ 		/*Setting Dei/scalar params. Currently used for scalar config*/
+-		deiprms.scenable = scalar_prms->scalar_enable;
+-		deiprms.startx = vout->crop.left;
+-		deiprms.starty = vout->crop.top;
++		deiprms.deisccropcfg = &dei_sc_crop_cfg;
++		deiprms.sccfg.bypass = !scalar_prms->scalar_enable;
++		deiprms.deisccropcfg->cropstartx = vout->crop.left;
++		deiprms.deisccropcfg->cropstarty = vout->crop.top;
+ 		if (vctrl->set_deiparams(vctrl, &deiprms, outw, outh)) {
+ 			ret = -EINVAL;
+ 			goto error;
+diff --git a/drivers/video/ti81xx/vpss/video.c b/drivers/video/ti81xx/vpss/video.c
+index f512e81..43c6070 100644
+--- a/drivers/video/ti81xx/vpss/video.c
++++ b/drivers/video/ti81xx/vpss/video.c
+@@ -824,15 +824,17 @@ static int video_set_deiparams(struct vps_video_ctrl *vctrl,
+ 	int r;
+ 	VPSSDBG("Set dei/scalar config params\n");
+ 
+-	vctrl->vdeiprm->startx  = deiparams->startx;
+-	vctrl->vdeiprm->starty = deiparams->starty;
++	vctrl->vdeicrpcfg->cropstartx = deiparams->deisccropcfg->cropstartx;
++	vctrl->vdeicrpcfg->cropstarty = deiparams->deisccropcfg->cropstarty;
+ 	vctrl->vdeiprm->sctarwidth = w;
+ 	vctrl->vdeiprm->sctarheight = h;
+ 	vctrl->vdeiprm->fmt.height = scalar_prm.inframe_height;
+ 	vctrl->vdeiprm->fmt.width = scalar_prm.inframe_width;
+-	vctrl->vdeiprm->scenable = scalar_prm.scalar_enable;
++	vctrl->vdeiprm->sccfg.bypass = !scalar_prm.scalar_enable;
+ 	vctrl->vdeiprm->deicfg = NULL;
+ 	vctrl->vdeiprm->deihqcfg = NULL;
++	vctrl->vdeiprm->deisccropcfg = (struct vps_cropconfig *)
++					vctrl->vdeicr_phy;
+ 	r = vps_fvid2_control(
+ 		vctrl->handle,
+ 		IOCTL_VPS_DEI_DISP_SET_PARAMS,
+@@ -1662,6 +1664,7 @@ static inline int get_alloc_size(void)
+ 	size += sizeof(struct vps_frameparams);
+ 	size += sizeof(struct vps_dispstatus);
+ 	size += sizeof(struct vps_dei_disp_params);
++	size += sizeof(struct vps_cropconfig);
+ 
+ 	size += sizeof(struct fvid2_cbparams);
+ 	size += sizeof(struct fvid2_format);
+@@ -1718,6 +1721,12 @@ static inline void assign_payload_addr(struct vps_video_ctrl *vctrl,
+ 				&vctrl->vdei_phy,
+ 				sizeof(struct vps_dei_disp_params));
+ 
++	vctrl->vdeicrpcfg = (struct vps_cropconfig *)
++				setaddr(pinfo,
++				buf_offset,
++				&vctrl->vdeicr_phy,
++				sizeof(struct vps_cropconfig));
++
+ 	vctrl->cbparams = (struct fvid2_cbparams *)
+ 				setaddr(pinfo,
+ 					buf_offset,
+@@ -1823,7 +1832,8 @@ int __init vps_video_init(struct platform_device *pdev)
+ 			break;
+ 		case 1:
+ 			vctrl->caps = VPSS_VID_CAPS_POSITIONING |
+-				VPSS_VID_CAPS_COLOR | VPSS_VID_CAPS_CROPING;
++				VPSS_VID_CAPS_COLOR | VPSS_VID_CAPS_CROPING |
++				VPSS_VID_CAPS_SCALING;
+ 			break;
+ 		case 2:
+ 			vctrl->caps = VPSS_VID_CAPS_POSITIONING |
+diff --git a/include/linux/vps_display.h b/include/linux/vps_display.h
+index f70c358..94259d1 100644
+--- a/include/linux/vps_display.h
++++ b/include/linux/vps_display.h
+@@ -141,8 +141,6 @@ struct vps_dei_disp_params {
+ 	/**< Enables/disables the DRN module in the DEI path. DRN is not
+ 	available in TI814X platform, hence this is not used for TI814X
+ 	platform. */
+-	u32                           scenable;
+-	/**< Enable/Disable the Scalar block in the DEI Path. */
+ 	struct vps_scconfig           sccfg;
+ 	/**< Scalar parameters like crop and scaler type for the
+ 	 scalar in DEI path. */
+@@ -153,12 +151,12 @@ struct vps_dei_disp_params {
+ 	/**< Pointer to the deinterlacer configuration used for
+ 	*  DEI drivers. This parameter should be set to NULL for
+ 	*  DEI HQ drivers. */
+-	struct vps_cropconfig          deicropcfg;
++	struct vps_cropconfig          *deisccropcfg;;
+ 	/**< Cropping configuration for the DEI scalar. */
+-	u32                            startx;
+-	/**< Horizontal start position in pixels. */
+-	u32                            starty;
+-	/**< Vertical start position in lines. */
++	struct vps_posconfig           *posCfg;
++	/**< Position configuration used to position the PIP window.
++	* Only used if VCOMP is available in the display path,
++	* Otherwise it is ignored. */
+ 	u32                            sctarwidth;
+ 	/**< Target image Width(o/p of scalar).User should provide
+ 	this data even if scalar is in bypass. If scalar is in bypass
+@@ -169,6 +167,12 @@ struct vps_dei_disp_params {
+ 	this data even if scalar is in bypass. If scalar is in bypass
+ 	this is used to program the VPDMA, if scalar is enabled scalar IP
+ 	will be programmed to output this resolution */
++	u32                            comprenable;
++	/**< Enable compression/decompression for writing back the DEI context
++	to and from DDR. COMPR is not available in TI814X/TI813X platform,
++	hence this is not used for above platforms. And for TI816X, this
++	feature is not supported. Hence this flag should be always set to
++	FALSE. */
+ };
+ 
+ /**
+-- 
+1.7.0.4
+

@@ -1,0 +1,283 @@
+From f7a083f644f5d445924f1c6361d0749a4e139b80 Mon Sep 17 00:00:00 2001
+From: bikash kund <bkund@ti.com>
+Date: Fri, 24 Aug 2012 15:12:35 +0530
+Subject: [PATCH] VideoDecoder: enabling TVP5158 for video capture
+
+Calls to tvp7002 was removed from capture driver. Vip port configurations
+were modified for tvp5158.
+
+Signed-off-by: bikash kund <bkund@ti.com>
+---
+ arch/arm/mach-omap2/board-ti8148evm.c       |    8 ++++-
+ arch/arm/mach-omap2/ti81xx_vpss.c           |   17 +++++++++
+ drivers/media/video/ti81xx/ti81xxvin_main.c |    2 -
+ drivers/media/video/tvp7002.c               |   50 +++++++++++++++++++++-----
+ 4 files changed, 64 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm/mach-omap2/board-ti8148evm.c b/arch/arm/mach-omap2/board-ti8148evm.c
+index 096e895..b89fc94 100644
+--- a/arch/arm/mach-omap2/board-ti8148evm.c
++++ b/arch/arm/mach-omap2/board-ti8148evm.c
+@@ -61,6 +61,8 @@
+ /* Convert GPIO signal to GPIO pin number */
+ #define GPIO_TO_PIN(bank, gpio) (32 * (bank) + (gpio))
+ 
++#define TVP5158_TMP
++
+ #ifdef CONFIG_OMAP_MUX
+ static struct omap_board_mux board_mux[] __initdata = {
+ 	{ .reg_offset = OMAP_MUX_TERMINATOR },
+@@ -270,10 +272,12 @@ int vps_ti814x_select_video_decoder(int vid_decoder_id)
+ 		pcf8575_port[1] &= ~VPS_VC_IO_EXP_SEL_VIN0_S1_MASK;
+ 	else
+ 		pcf8575_port[1] |= VPS_VC_IO_EXP_SEL_VIN0_S1_MASK;
++#ifndef TVP5158_TMP
+ 	ret = (i2c_transfer(pcf8575_client->adapter, &msg, 1));
+ 	if (ret < 0)
+ 		printk(KERN_ERR "I2C: Transfer failed at %s %d with error code: %d\n",
+ 			__func__, __LINE__, ret);
++#endif
+ 	return ret;
+ }
+ EXPORT_SYMBOL(vps_ti814x_select_video_decoder);
+@@ -282,7 +286,7 @@ EXPORT_SYMBOL(vps_ti814x_select_video_decoder);
+ int vps_ti814x_set_tvp7002_filter(enum fvid2_standard standard)
+ {
+ 	int filter_sel;
+-	int ret;
++	int ret = 0;
+ 	struct i2c_msg msg = {
+ 			.addr = pcf8575_client->addr,
+ 			.flags = 0,
+@@ -345,12 +349,14 @@ int vps_ti814x_set_tvp7002_filter(enum fvid2_standard standard)
+ 	pcf8575_port[0] |=
+ 		(filter_sel << VPS_VC_IO_EXP_THS7368_FILTER_SHIFT);
+ 	msg.buf = pcf8575_port;
++#ifndef TVP5158_TMP
+ 	ret =  (i2c_transfer(pcf8575_client->adapter, &msg, 1));
+ 	if (ret < 0) {
+ 		printk(KERN_ERR "I2C: Transfer failed at %s %d with error code: %d\n",
+ 			__func__, __LINE__, ret);
+ 		return ret;
+ 	}
++#endif
+ 	return ret;
+ }
+ EXPORT_SYMBOL(vps_ti814x_set_tvp7002_filter);
+diff --git a/arch/arm/mach-omap2/ti81xx_vpss.c b/arch/arm/mach-omap2/ti81xx_vpss.c
+index 465b6aa..cb5faf1 100644
+--- a/arch/arm/mach-omap2/ti81xx_vpss.c
++++ b/arch/arm/mach-omap2/ti81xx_vpss.c
+@@ -39,6 +39,7 @@
+ #include <mach/board-ti811x.h>
+ #include <asm/mach/map.h>
+ 
++#define TVP5158_TMP
+ 
+ #if defined(CONFIG_TI81XX_VPSS) || defined(CONFIG_TI81XX_VPSS_MODULE)
+ 
+@@ -223,13 +224,25 @@ static struct ti81xxvin_subdev_info hdvpss_capture_sdev_info[] = {
+ 			.platform_data = &tvp7002_pdata,
+ 		},
+ 		.vip_port_cfg = {
++#ifdef TVP5158_TMP
++			.ctrlChanSel = VPS_VIP_CTRL_CHAN_SEL_7_0,
++			.ancChSel8b = VPS_VIP_ANC_CH_SEL_8B_LUMA_SIDE,
++			.pixClkEdgePol = VPS_VIP_PIX_CLK_EDGE_POL_FALLING,
++#else
+ 			.ctrlChanSel = VPS_VIP_CTRL_CHAN_SEL_15_8,
+ 			.ancChSel8b = VPS_VIP_ANC_CH_SEL_DONT_CARE,
+ 			.pixClkEdgePol = VPS_VIP_PIX_CLK_EDGE_POL_RISING,
++#endif
+ 			.invertFidPol = 0,
+ 			.embConfig = {
++#ifdef TVP5158_TMP
++				.errCorrEnable = 0,
++				.srcNumPos =
++				VPS_VIP_SRC_NUM_POS_LS_NIBBLE_OF_CODEWORD,
++#else
+ 				.errCorrEnable = 1,
+ 				.srcNumPos = VPS_VIP_SRC_NUM_POS_DONT_CARE,
++#endif
+ 				.isMaxChan3Bits = 0,
+ 			},
+ 			.disConfig = {
+@@ -246,7 +259,11 @@ static struct ti81xxvin_subdev_info hdvpss_capture_sdev_info[] = {
+ 		},
+ 		.video_capture_mode =
+ 		   VPS_CAPT_VIDEO_CAPTURE_MODE_SINGLE_CH_NON_MUX_EMBEDDED_SYNC,
++#ifdef TVP5158_TMP
++		.video_if_mode = VPS_CAPT_VIDEO_IF_MODE_8BIT,
++#else
+ 		.video_if_mode = VPS_CAPT_VIDEO_IF_MODE_16BIT,
++#endif
+ 		.input_data_format = FVID2_DF_YUV422P,
+ 	},
+ 	{
+diff --git a/drivers/media/video/ti81xx/ti81xxvin_main.c b/drivers/media/video/ti81xx/ti81xxvin_main.c
+index 333dd2f..83f7657 100644
+--- a/drivers/media/video/ti81xx/ti81xxvin_main.c
++++ b/drivers/media/video/ti81xx/ti81xxvin_main.c
+@@ -2554,8 +2554,6 @@ static int ti81xxvin_probe(struct platform_device *pdev)
+ 			goto probe_subdev_out;
+ 		}
+ 
+-		v4l2_info(&ti81xxvin_obj.v4l2_dev, "registered sub device %s\n",
+-			  subdevdata->name);
+ 
+ 		if (ti81xxvin_obj.sd[i])
+ 			ti81xxvin_obj.sd[i]->grp_id = 1 << i;
+diff --git a/drivers/media/video/tvp7002.c b/drivers/media/video/tvp7002.c
+index 4d4306c..a364d8b 100644
+--- a/drivers/media/video/tvp7002.c
++++ b/drivers/media/video/tvp7002.c
+@@ -60,6 +60,8 @@ MODULE_LICENSE("GPL");
+ #define TVP7002_CL_SHIFT	8
+ #define TVP7002_CL_MASK		0x0f
+ 
++#define TVP5158_TMP
++
+ /* Debug functions */
+ static int debug;
+ module_param(debug, bool, 0644);
+@@ -344,6 +346,28 @@ struct tvp7002_preset_definition {
+ 
+ /* Struct list for digital video presets */
+ static const struct tvp7002_preset_definition tvp7002_presets[] = {
++#ifdef TVP5158_TMP
++	{
++		V4L2_DV_480P59_94,
++		tvp7002_parms_480P,
++		V4L2_COLORSPACE_SMPTE170M,
++		V4L2_FIELD_INTERLACED,
++		0,
++		0x20D,
++		0xffff,
++		0xffff
++	},
++	{
++		V4L2_DV_576P50,
++		tvp7002_parms_576P,
++		V4L2_COLORSPACE_SMPTE170M,
++		V4L2_FIELD_INTERLACED,
++		0,
++		0x271,
++		0xffff,
++		0xffff
++	},
++#endif
+ 	{
+ 		V4L2_DV_720P60,
+ 		tvp7002_parms_720P60,
+@@ -451,10 +475,13 @@ static inline struct tvp7002 *to_tvp7002(struct v4l2_subdev *sd)
+  */
+ static int tvp7002_read(struct v4l2_subdev *sd, u8 addr, u8 *dst)
+ {
++#ifndef TVP5158_TMP
+ 	struct i2c_client *c = v4l2_get_subdevdata(sd);
+ 	int retry;
++#endif
+ 	int error;
+ 
++#ifndef TVP5158_TMP
+ 	for (retry = 0; retry < I2C_RETRY_COUNT; retry++) {
+ 		error = i2c_smbus_read_byte_data(c, addr);
+ 
+@@ -466,6 +493,9 @@ static int tvp7002_read(struct v4l2_subdev *sd, u8 addr, u8 *dst)
+ 		msleep_interruptible(10);
+ 	}
+ 	v4l2_err(sd, "TVP7002 read error %d\n", error);
++#else
++	error = 0;
++#endif
+ 	return error;
+ }
+ 
+@@ -498,11 +528,14 @@ static inline void tvp7002_read_err(struct v4l2_subdev *sd, u8 reg,
+ static int tvp7002_write(struct v4l2_subdev *sd, u8 addr, u8 value)
+ {
+ 	struct i2c_client *c;
++#ifndef TVP5158_TMP
+ 	int retry;
++#endif
+ 	int error;
+ 
+ 	c = v4l2_get_subdevdata(sd);
+ 
++#ifndef TVP5158_TMP
+ 	for (retry = 0; retry < I2C_RETRY_COUNT; retry++) {
+ 		error = i2c_smbus_write_byte_data(c, addr, value);
+ 
+@@ -513,6 +546,9 @@ static int tvp7002_write(struct v4l2_subdev *sd, u8 addr, u8 value)
+ 		msleep_interruptible(10);
+ 	}
+ 	v4l2_err(sd, "TVP7002 write error %d\n", error);
++#else
++	error = 0;
++#endif
+ 	return error;
+ }
+ 
+@@ -568,14 +604,14 @@ static int tvp7002_write_inittab(struct v4l2_subdev *sd,
+ 					const struct i2c_reg_value *regs)
+ {
+ 	int error = 0;
+-
++#ifndef TVP5158_TMP
+ 	/* Initialize the first (defined) registers */
+ 	while (TVP7002_EOR != regs->reg) {
+ 		if (TVP7002_WRITE == regs->type)
+ 			tvp7002_write_err(sd, regs->reg, regs->value, &error);
+ 		regs++;
+ 	}
+-
++#endif
+ 	return error;
+ }
+ 
+@@ -723,6 +759,7 @@ static int tvp7002_query_dv_preset(struct v4l2_subdev *sd,
+ 						struct v4l2_dv_preset *qpreset)
+ {
+ 	const struct tvp7002_preset_definition *presets = tvp7002_presets;
++#ifndef TVP5158_TMP
+ 	struct tvp7002 *device;
+ 	u8 progressive;
+ 	u32 lpfr;
+@@ -735,7 +772,6 @@ static int tvp7002_query_dv_preset(struct v4l2_subdev *sd,
+ 	int index;
+ 
+ 	device = to_tvp7002(sd);
+-
+ 	/* Read standards from device registers */
+ 	tvp7002_read_err(sd, TVP7002_L_FRAME_STAT_LSBS, &lpf_lsb, &error);
+ 	tvp7002_read_err(sd, TVP7002_L_FRAME_STAT_MSBS, &lpf_msb, &error);
+@@ -771,7 +807,7 @@ static int tvp7002_query_dv_preset(struct v4l2_subdev *sd,
+ 		qpreset->preset = V4L2_DV_INVALID;
+ 		return 0;
+ 	}
+-
++#endif
+ 	/* Set values in found preset */
+ 	qpreset->preset = presets->preset;
+ 
+@@ -1024,17 +1060,11 @@ static int tvp7002_probe(struct i2c_client *c, const struct i2c_device_id *id)
+ 
+ 	/* Tell v4l2 the device is ready */
+ 	v4l2_i2c_subdev_init(sd, c, &tvp7002_ops);
+-	v4l_info(c, "tvp7002 found @ 0x%02x (%s)\n",
+-					c->addr, c->adapter->name);
+ 
+ 	error = tvp7002_read(sd, TVP7002_CHIP_REV, &revision);
+ 	if (error < 0)
+ 		goto found_error;
+ 
+-	/* Get revision number */
+-	v4l2_info(sd, "Rev. %02x detected.\n", revision);
+-	if (revision != 0x02)
+-		v4l2_info(sd, "Unknown revision detected.\n");
+ 
+ 	/* Initializes TVP7002 to its default values */
+ 	error = tvp7002_write_inittab(sd, tvp7002_init_default);
+-- 
+1.7.0.4
+
