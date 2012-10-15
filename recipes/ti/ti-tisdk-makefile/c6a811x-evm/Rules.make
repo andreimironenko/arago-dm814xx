@@ -10,7 +10,7 @@ RPE_PLATFORM=ti811x-evm
 HDVPSS_PLATFORM=ti811x-evm
 MEDIA_CONTROLLER_UTILS_PLATFORM=ti811x-evm
 MATRIX_PLATFORM=ti811x
-EDMA3_LLD_TARGET=edma3_lld_ti814x_dsp_libs
+EDMA3_LLD_TARGET=edma3_lld_c6a811x-evm_674_libs
 
 # The installation directory of the SDK.
 EZSDK_INSTALL_DIR=<__SDK__INSTALL_DIR__>
