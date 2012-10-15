@@ -37,7 +37,7 @@ case "$1" in
         done
         firmware_loader $HDVPSS_ID /usr/share/ti/ti-media-controller-utils/ti811x_hdvpss.xem3 start
         sleep 2
-        modprobe vpss sbufaddr=0x9fd00000 mode=hdmi:720p-60 i2c_mode=1 debug=1
+        modprobe vpss sbufaddr=0x9fb00000 mode=hdmi:720p-60 i2c_mode=1 debug=1
         modprobe ti81xxfb vram=0:16M,1:16M,2:6M  debug=1
         modprobe ti81xxvo video1_numbuffers=3 video2_numbuffers=3 debug=1
         modprobe tvp7002 debug=1
