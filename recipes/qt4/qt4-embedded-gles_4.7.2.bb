@@ -12,6 +12,9 @@ require recipes/qt4/qt-${PV}.inc
 SRC_URI += "file://cursor-hack.diff \
             file://0001-wsegl2-support.patch \
 "
+SRC_URI_append_c6a811x-evm = " \
+            file://0001-bitblt-add-support-for-bitblt-screen-driver.patch \
+"
 
 FILESPATHBASE .= ":${OEBASE}/arago-oe-dev/recipes/qt4"
 FILESPATHPKG .= ":qt4-embedded-${PV}:qt4-embedded"

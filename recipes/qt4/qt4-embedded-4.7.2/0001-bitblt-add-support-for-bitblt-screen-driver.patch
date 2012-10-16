@@ -1,0 +1,1090 @@
+From d98aa55044cb0c21eebbcc0f3afc7a86315246f6 Mon Sep 17 00:00:00 2001
+From: Anand Balagopalakrishnan <anandb@ti.com>
+Date: Tue, 25 Sep 2012 21:26:46 +0530
+Subject: [PATCH] bitblt: add support for bitblt screen driver
+
+* adds support for bitblt 2d hardware accelerator on TI811X SoC
+* accelerates blit operations
+* defines contiguous memory surface for passing to HW
+* cache coherency managed in the plugin
+
+* depends on CMEM kernel module for contiguous memory
+* depends on BLTsville interface to BB2D
+
+Signed-off-by: Anand Balagopalakrishnan <anandb@ti.com>
+---
+ src/plugins/gfxdrivers/bitblt/bitblt.pri           |   17 ++
+ src/plugins/gfxdrivers/bitblt/bitblt.pro           |   19 ++
+ src/plugins/gfxdrivers/bitblt/bitbltscreen.cpp     |  307 ++++++++++++++++++++
+ src/plugins/gfxdrivers/bitblt/bitbltscreen.h       |   69 +++++
+ .../gfxdrivers/bitblt/bitbltscreendriver.cpp       |   63 ++++
+ src/plugins/gfxdrivers/bitblt/bitbltsurface.cpp    |  166 +++++++++++
+ src/plugins/gfxdrivers/bitblt/bitbltsurface.h      |   48 +++
+ src/plugins/gfxdrivers/bitblt/common.h             |   75 +++++
+ src/plugins/gfxdrivers/bitblt/contigmemory.cpp     |  153 ++++++++++
+ src/plugins/gfxdrivers/bitblt/contigmemory.h       |   63 ++++
+ src/plugins/gfxdrivers/gfxdrivers.pro              |    1 +
+ 11 files changed, 981 insertions(+)
+ create mode 100644 src/plugins/gfxdrivers/bitblt/bitblt.pri
+ create mode 100644 src/plugins/gfxdrivers/bitblt/bitblt.pro
+ create mode 100644 src/plugins/gfxdrivers/bitblt/bitbltscreen.cpp
+ create mode 100644 src/plugins/gfxdrivers/bitblt/bitbltscreen.h
+ create mode 100644 src/plugins/gfxdrivers/bitblt/bitbltscreendriver.cpp
+ create mode 100644 src/plugins/gfxdrivers/bitblt/bitbltsurface.cpp
+ create mode 100644 src/plugins/gfxdrivers/bitblt/bitbltsurface.h
+ create mode 100644 src/plugins/gfxdrivers/bitblt/common.h
+ create mode 100644 src/plugins/gfxdrivers/bitblt/contigmemory.cpp
+ create mode 100644 src/plugins/gfxdrivers/bitblt/contigmemory.h
+
+diff --git a/src/plugins/gfxdrivers/bitblt/bitblt.pri b/src/plugins/gfxdrivers/bitblt/bitblt.pri
+new file mode 100644
+index 0000000..177de23
+--- /dev/null
++++ b/src/plugins/gfxdrivers/bitblt/bitblt.pri
+@@ -0,0 +1,17 @@
++INCLUDEPATH += $$QMAKE_INCDIR_CMEM 
++INCLUDEPATH += $$QMAKE_INCDIR_BLTSVILLE 
++INCLUDEPATH += $$QMAKE_INCDIR_OCD
++
++DEFINES += QT_QWS_BITBLT 
++DEFINES += QT_QWS_LINUXFB
++
++# Enable log messages
++#DEFINES += BITBLT_LOG 
++
++# Enable profiling
++#DEFINES += BITBLT_PROFILE 
++
++# Enable debug messages
++#DEFINES += BITBLT_DEBUG
++
++LIBS += $$QMAKE_LIBDIR_CMEM/cmem.a470MV
+diff --git a/src/plugins/gfxdrivers/bitblt/bitblt.pro b/src/plugins/gfxdrivers/bitblt/bitblt.pro
+new file mode 100644
+index 0000000..ce5b09c
+--- /dev/null
++++ b/src/plugins/gfxdrivers/bitblt/bitblt.pro
+@@ -0,0 +1,19 @@
++TARGET = qscreenbitblt
++
++include(../../qpluginbase.pri)
++include(bitblt.pri)
++
++QTDIR_build:DESTDIR = $$QT_BUILD_TREE/plugins/gfxdrivers
++
++target.path = $$[QT_INSTALL_PLUGINS]/gfxdrivers
++INSTALLS += target
++
++DEFINES += FILE_NAME=\\\""$(notdir $<)\\\""
++
++HEADERS	= $$QT_SOURCE_TREE/src/gui/embedded/qscreenlinuxfb_qws.h
++
++SOURCES	= bitbltscreendriver.cpp \
++	  bitbltscreen.cpp \
++	  bitbltsurface.cpp \
++	  contigmemory.cpp \
++	$$QT_SOURCE_TREE/src/gui/embedded/qscreenlinuxfb_qws.cpp
+diff --git a/src/plugins/gfxdrivers/bitblt/bitbltscreen.cpp b/src/plugins/gfxdrivers/bitblt/bitbltscreen.cpp
+new file mode 100644
+index 0000000..dedd9df
+--- /dev/null
++++ b/src/plugins/gfxdrivers/bitblt/bitbltscreen.cpp
+@@ -0,0 +1,307 @@
++/*
++ * BitBLT screen
++ *
++ * This module adds support BitBLT 2D Hardware Accelerator (BB2D) for
++ * accelerating blits in Qt. BB2D is a 2D graphics accelerator available on TI
++ * C6A811X SoC. The acceleration is achieved through a public user-space
++ * interface called BLTsville (http://graphics.github.com/bltsville)
++ *
++ * Copyright (C) {2012} Texas Instruments Incorporated - http://www.ti.com/
++ *
++ * This program is free software; you can redistribute it and/or modify 
++ * it under the terms of the GNU Lesser General Public License version 2.1 as
++ * published by the Free Software Foundation.
++ *
++ * In addition, Texas Instruments has extended the Nokia Qt LGPL exception to
++ * the modifications made to this library. These exceptions give you certain 
++ * additional rights. These rights are described in the Nokia Qt LGPL Exception 
++ * version 1.1, included with this package. 
++ * 
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any kind,
++ * whether express or implied; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ */
++
++#include <bitbltscreen.h>
++#include <bitbltsurface.h>
++#include "qwsdisplay_qws.h"
++#include <dlfcn.h>
++
++#define BV_BB2D_LIBNAME         "libbltsville_bb2d.so"
++#define BV_BB2D_BLT_FXNAME      "bv_blt"
++
++bool BitbltScreen::isInit = false;
++
++int MIN_SURF_SIZE = 64*64;
++
++static enum ocdformat bvFormat(QImage::Format imgfmt, QScreen::PixelType type)
++{
++    enum ocdformat ocdfmt = OCDFMT_UNKNOWN;
++
++    BB_DBG_OBJ(imgfmt);
++    BB_DBG_OBJ(type);
++
++    switch(imgfmt) {
++    case QImage::Format_RGB32:
++    case QImage::Format_ARGB32:
++	ocdfmt = OCDFMT_nBGRA24;
++	break;
++
++    case QImage::Format_ARGB32_Premultiplied:
++	ocdfmt = OCDFMT_BGRA24;
++	break;
++
++    case QImage::Format_RGB16:
++	ocdfmt = OCDFMT_RGB16;
++	break;
++
++    case QImage::Format_RGB888:
++	ocdfmt = OCDFMT_BGR24;
++	break;
++
++    default:
++	BB_ERR("cannot map image format");
++	BB_ERR_OBJ(imgfmt);
++	return ocdfmt;
++    }
++
++    if (type == QScreen::BGRPixel)
++	ocdfmt = (enum ocdformat)((int)ocdfmt | OCDFMTDEF_REVERSED);
++
++    return ocdfmt;
++}
++
++BitbltScreen::BitbltScreen(int displayId) : QLinuxFbScreen(displayId)
++{
++    bv.structsize = sizeof(struct bventry);
++    bv.bv_map = NULL;
++    bv.bv_unmap = NULL;
++    bv.bv_cache = NULL;
++
++    memset(&params, 0, sizeof(struct bvbltparams));
++    memset(&dstgeom, 0, sizeof(struct bvsurfgeom));
++    memset(&src1geom, 0, sizeof(struct bvsurfgeom));
++    memset(&src2geom, 0, sizeof(struct bvsurfgeom));
++    memset(&dst, 0, sizeof(struct bvbuffdesc));
++    memset(&src1, 0, sizeof(struct bvbuffdesc));
++    memset(&src2, 0, sizeof(struct bvbuffdesc));
++
++    params.structsize = sizeof(struct bvbltparams);
++    params.errdesc = NULL;
++    params.implementation = BVIMPL_ANY;
++    params.flags = BVFLAG_BLEND;
++    params.op.blend = BVBLEND_SRC1;
++    params.colorkey = NULL;
++    params.scalemode = BVSCALE_FASTEST;
++    params.dithermode = BVDITHER_NONE;
++    params.batch = NULL;
++    params.callbackfn = NULL;
++    params.callbackdata = 0;
++    params.dstdesc = &dst;
++    params.src1.desc = &src1;
++    params.src2.desc = &src2;
++    params.dstgeom = &dstgeom;
++    params.src1geom = &src1geom;
++    params.src2geom = &src2geom;
++
++    dstgeom.structsize = sizeof(struct bvsurfgeom);
++    src1geom.structsize = sizeof(struct bvsurfgeom);
++    src2geom.structsize = sizeof(struct bvsurfgeom);
++
++    dst.structsize = sizeof(struct bvbuffdesc);
++    src1.structsize = sizeof(struct bvbuffdesc);
++    src2.structsize = sizeof(struct bvbuffdesc);
++
++    dst.auxtype = BVAT_PHYSADDR;
++    src1.auxtype = BVAT_PHYSADDR;
++    src2.auxtype = BVAT_PHYSADDR;
++}
++
++BitbltScreen::~BitbltScreen()
++{
++    if (blt_handle)
++	dlclose(blt_handle);
++}
++
++bool BitbltScreen::initDevice()
++{
++    bool status = true;
++
++    status = QLinuxFbScreen::initDevice();
++
++    if (!isInit && status) {
++	blt_handle = dlopen(BV_BB2D_LIBNAME, RTLD_LOCAL | RTLD_LAZY);
++	if (blt_handle == NULL) {
++	    BB_ERR("error : %s : failed to load %s\n", dlerror(), BV_BB2D_LIBNAME);
++	    return false;
++	}
++
++	bv.bv_blt = (BVFN_BLT)dlsym(blt_handle, BV_BB2D_BLT_FXNAME);
++	if (bv.bv_blt == NULL) {
++	    BB_ERR("error : %s : failed to get function %s\n", dlerror(), BV_BB2D_BLT_FXNAME);
++	    return false;
++	}
++
++	dst.virtaddr = this->base();
++	dst.length = this->screenSize();
++	dst.auxptr = (void *)ContigMemory::translate(dst.virtaddr);
++
++	dstgeom.format = bvFormat(this->pixelFormat(), this->pixelType());
++	dstgeom.width = this->width();
++	dstgeom.height = this->height();
++	dstgeom.virtstride = this->linestep();
++
++	BB_LOG("DLL initialization successful");
++	BB_LOG("screen mapped @ 0x%x, physical - 0x%x, size - %lu", (uint)dst.virtaddr,
++		(uint)dst.auxptr, dst.length);
++	BB_LOG("format - %d, width - %d, height - %d, stride - %ld",
++		dstgeom.format, dstgeom.width, dstgeom.height, dstgeom.virtstride);
++
++	isInit = true;
++    }
++
++    return status;
++}
++
++void BitbltScreen::shutdownDevice()
++{
++    QLinuxFbScreen::shutdownDevice();
++}
++
++bool BitbltScreen::connect(const QString &displaySpec)
++{
++    bool status = true;
++    QString linuxFbSpec;
++    QString dSpec = displaySpec;
++
++    BB_DBG_OBJ(displaySpec);
++
++    if (dSpec.startsWith(QLatin1String("bitblt:"), Qt::CaseInsensitive))
++	dSpec = dSpec.mid(QString::fromLatin1("bitblt:").size());
++
++    QStringList specs = dSpec.split(QLatin1Char(' '), QString::SkipEmptyParts);
++    foreach (QString spec, specs) {
++        if (spec.startsWith("linuxfb:", Qt::CaseInsensitive))
++            linuxFbSpec.append(spec);
++
++	if (spec.startsWith("minsurf=", Qt::CaseInsensitive)) {
++	    spec = spec.mid(QString::fromLatin1("minsurf=").size());
++	    MIN_SURF_SIZE = spec.toInt();
++	}
++    }
++
++    status = QLinuxFbScreen::connect(linuxFbSpec);
++
++    return status;
++}
++
++void BitbltScreen::disconnect()
++{
++    QLinuxFbScreen::disconnect();
++}
++
++void BitbltScreen::blit(const QImage &img, const QPoint &topLeft, const QRegion &reg)
++{
++    BB_DBG("pointer = 0x%x, img resolution = %dx%d", (uint)img.bits(), img.width(), img.height());
++    BB_DBG_OBJ(img.rect());
++    BB_DBG_OBJ(topLeft);
++    BB_DBG_OBJ(reg);
++
++    BBPROFILE_DEFINE(t);
++    
++    /* If the image size is less than a minimum surface size, we default to the
++     * regular screen blit - as the overheads for setting up the blit is higher
++     * than the performance benefit. 
++     * 
++     * This also takes care of the cursor blending operation involving 16x16
++     * image blend. Ideally, we also need to check if the memory was allocated
++     * using ContigMemory before allowing the BLTsville blit
++     */
++    if ((img.width() * img.height()) <= MIN_SURF_SIZE) {
++	QLinuxFbScreen::blit(img, topLeft, reg);
++	BB_DBG("defaulting to linux fb screen");
++    }
++    else {
++	const QRect bound = (region() & QRect(topLeft, img.size())).boundingRect();
++	QWSDisplay::grab();
++	bvBlt(img, topLeft - offset(), (reg & bound).translated(-topLeft));
++	QWSDisplay::ungrab();
++    }
++
++    BBPROFILE_END(t);
++}
++
++void BitbltScreen::solidFill(const QColor &color, const QRegion &region)
++{
++    BB_DBG_OBJ(color.name());
++    BB_DBG_OBJ(region);
++
++    BBPROFILE_DEFINE(t);
++    QLinuxFbScreen::solidFill(color, region);
++    BBPROFILE_END(t);
++}
++
++QWSWindowSurface* BitbltScreen::createSurface(QWidget *widget) const
++{
++    BB_DBG_OBJ(widget);
++
++    return new BitbltSurface(widget);
++}
++
++QWSWindowSurface* BitbltScreen::createSurface(const QString &key) const
++{
++    BB_DBG_OBJ(key);
++
++    if (key == QLatin1String("bitblt"))
++	return new BitbltSurface;
++
++    return QScreen::createSurface(key);
++}
++
++enum Surface {
++    SRC1 = 1,
++    SRC2,
++    DST
++};
++
++#define SURF(surf)  ((surf == SRC1)?"SRC1":((surf==SRC2)?"SRC2":"DST"))
++
++#define SURFINFO(surf, desc, geom, rect)						\
++	BB_DBG("\t%s @ 0x%.8x = 0x%.8x, geom %dx%d|%ld, rectangle %dx%d-%dx%d",		\
++		SURF(surf), (uint)desc.virtaddr,  *(uint *)desc.virtaddr, 		\
++		geom.width, geom.height, geom.virtstride,				\
++		rect.left, rect.top, rect.width, rect.height);
++
++void BitbltScreen::bvBlt(const QImage &img, const QPoint &topLeft, const QRegion &region)
++{
++    const uchar *imgaddr = img.constBits();
++    uchar *virtaddr = const_cast<uchar *>(imgaddr);
++
++    src1.virtaddr = virtaddr;
++    src1.length = img.byteCount();
++    src1.auxptr = (void *)ContigMemory::translate(src1.virtaddr);
++    ContigMemory::cacheWbInv(src1.virtaddr, src1.length);
++
++    src1geom.format = bvFormat(img.format(), QScreen::NormalPixel);
++    src1geom.width = img.width();
++    src1geom.height = img.height();
++    src1geom.virtstride = img.bytesPerLine();
++
++    const QVector<QRect> rects = region.rects();
++    for (int i=0; i<rects.size(); i++) {
++	const QRect r = rects.at(i);
++	params.dstrect.left = params.src1rect.left = r.left();
++	params.dstrect.top = params.src1rect.top = r.top();
++	params.dstrect.width = params.src1rect.width = r.width();
++	params.dstrect.height = params.src1rect.height = r.height();
++
++	params.dstrect.left += topLeft.x();
++	params.dstrect.top += topLeft.y();
++
++	SURFINFO(SRC1, src1, src1geom, params.src1rect);
++	SURFINFO(DST, dst, dstgeom, params.dstrect);
++
++	bv.bv_blt(&params);
++    }
++}
+diff --git a/src/plugins/gfxdrivers/bitblt/bitbltscreen.h b/src/plugins/gfxdrivers/bitblt/bitbltscreen.h
+new file mode 100644
+index 0000000..9c1c5d2
+--- /dev/null
++++ b/src/plugins/gfxdrivers/bitblt/bitbltscreen.h
+@@ -0,0 +1,69 @@
++/*
++ * BitBLT screen
++ *
++ * This module adds support BitBLT 2D Hardware Accelerator (BB2D) for
++ * accelerating blits in Qt. BB2D is a 2D graphics accelerator available on TI
++ * C6A811X SoC. The acceleration is achieved through a public user-space
++ * interface called BLTsville (http://graphics.github.com/bltsville)
++ *
++ * Copyright (C) {2012} Texas Instruments Incorporated - http://www.ti.com/
++ *
++ * This program is free software; you can redistribute it and/or modify 
++ * it under the terms of the GNU Lesser General Public License version 2.1 as
++ * published by the Free Software Foundation.
++ *
++ * In addition, Texas Instruments has extended the Nokia Qt LGPL exception to
++ * the modifications made to this library. These exceptions give you certain 
++ * additional rights. These rights are described in the Nokia Qt LGPL Exception 
++ * version 1.1, included with this package. 
++ * 
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any kind,
++ * whether express or implied; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ */
++
++#ifndef _QBITBLTSCREEN_
++#define _QBITBLTSCREEN_
++
++#include <QScreen>
++#include <qscreenlinuxfb_qws.h>
++
++#include "common.h"
++
++class BitbltScreen : public QLinuxFbScreen
++{
++public:
++    BitbltScreen(int displayId);
++    ~BitbltScreen();
++
++    bool initDevice();
++    void shutdownDevice();
++
++    bool connect(const QString &displaySpec);
++    void disconnect();
++
++    void blit(const QImage &img, const QPoint &topLeft, const QRegion &region);
++    void solidFill(const QColor &color, const QRegion &region);
++
++    QWSWindowSurface* createSurface(QWidget *widget) const;
++    QWSWindowSurface* createSurface(const QString &key) const;
++    
++protected:
++    void bvBlt(const QImage &img, const QPoint &topLeft, const QRegion &region);
++
++private:
++    void *blt_handle;
++    struct bventry bv;
++    struct bvbltparams params;
++    struct bvbuffdesc dst;
++    struct bvbuffdesc src1;
++    struct bvbuffdesc src2;
++    struct bvsurfgeom dstgeom;
++    struct bvsurfgeom src1geom;
++    struct bvsurfgeom src2geom;
++
++    static bool isInit;
++};
++
++#endif
+diff --git a/src/plugins/gfxdrivers/bitblt/bitbltscreendriver.cpp b/src/plugins/gfxdrivers/bitblt/bitbltscreendriver.cpp
+new file mode 100644
+index 0000000..0798acf
+--- /dev/null
++++ b/src/plugins/gfxdrivers/bitblt/bitbltscreendriver.cpp
+@@ -0,0 +1,63 @@
++/*
++ * BitBLT screen driver plugin
++ *
++ * This module adds support BitBLT 2D Hardware Accelerator (BB2D) for
++ * accelerating blits in Qt. BB2D is a 2D graphics accelerator available on TI
++ * C6A811X SoC. The acceleration is achieved through a public user-space
++ * interface called BLTsville (http://graphics.github.com/bltsville)
++ *
++ * Copyright (C) {2012} Texas Instruments Incorporated - http://www.ti.com/
++ *
++ * This program is free software; you can redistribute it and/or modify 
++ * it under the terms of the GNU Lesser General Public License version 2.1 as
++ * published by the Free Software Foundation.
++ *
++ * In addition, Texas Instruments has extended the Nokia Qt LGPL exception to
++ * the modifications made to this library. These exceptions give you certain 
++ * additional rights. These rights are described in the Nokia Qt LGPL Exception 
++ * version 1.1, included with this package. 
++ * 
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any kind,
++ * whether express or implied; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ */
++
++#include <qscreendriverplugin_qws.h>
++#include <qstringlist.h>
++#include <bitbltscreen.h>
++
++class QScreenBitBltPlugin : public QScreenDriverPlugin
++{
++public:
++    QScreenBitBltPlugin();
++
++    QStringList keys() const;
++    QScreen *create(const QString&, int displayId);
++};
++
++QScreenBitBltPlugin::QScreenBitBltPlugin() : QScreenDriverPlugin()
++{
++}
++
++QStringList QScreenBitBltPlugin::keys() const
++{
++    QStringList list;
++    list << QLatin1String("bitblt");
++    return list;
++}
++
++QScreen* QScreenBitBltPlugin::create(const QString& driver, int displayId)
++{
++    if (!ContigMemory::init()) {
++	qFatal("failed to initialize contig memory");
++	return NULL;
++    }
++
++    if (driver.toLower() == QLatin1String("bitblt"))
++	return new BitbltScreen(displayId);
++
++    return 0;
++}
++
++Q_EXPORT_PLUGIN2(qscreenbitblt, QScreenBitBltPlugin)
+diff --git a/src/plugins/gfxdrivers/bitblt/bitbltsurface.cpp b/src/plugins/gfxdrivers/bitblt/bitbltsurface.cpp
+new file mode 100644
+index 0000000..e09304d
+--- /dev/null
++++ b/src/plugins/gfxdrivers/bitblt/bitbltsurface.cpp
+@@ -0,0 +1,166 @@
++/****************************************************************************
++**
++** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
++** All rights reserved.
++** Contact: Nokia Corporation (qt-info@nokia.com)
++**
++** This file is part of the plugins of the Qt Toolkit.
++** 
++** 14-Sep-2012 Modified for BitBLT surface implementation
++**      Original source - $QT/src/gui/painting/qwindowsurface_qws.cpp
++**      Contact: Anand Balagopalakrishnan (anandb@ti.com)
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** GNU Lesser General Public License Usage
++** This file may be used under the terms of the GNU Lesser General Public
++** License version 2.1 as published by the Free Software Foundation and
++** appearing in the file LICENSE.LGPL included in the packaging of this
++** file. Please review the following information to ensure the GNU Lesser
++** General Public License version 2.1 requirements will be met:
++** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Nokia gives you certain additional
++** rights. These rights are described in the Nokia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU General
++** Public License version 3.0 as published by the Free Software Foundation
++** and appearing in the file LICENSE.GPL included in the packaging of this
++** file. Please review the following information to ensure the GNU General
++** Public License version 3.0 requirements will be met:
++** http://www.gnu.org/copyleft/gpl.html.
++**
++** Other Usage
++** Alternatively, this file may be used in accordance with the terms and
++** conditions contained in a signed written agreement between you and Nokia.
++**
++**
++**
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#include <bitbltsurface.h>
++#include <qapplication.h>
++#include <qdesktopwidget.h>
++
++static inline QScreen *getScreen(const QWidget *w)
++{
++    const QList<QScreen*> subScreens = qt_screen->subScreens();
++    if (subScreens.isEmpty())
++        return qt_screen;
++
++    const int screen = QApplication::desktop()->screenNumber(w);
++
++    return qt_screen->subScreens().at(screen < 0 ? 0 : screen);
++}
++
++static int bytesPerPixel(QImage::Format format)
++{
++    switch (format) {
++    case QImage::Format_Invalid:
++        return 0;
++#ifndef QT_NO_DEBUG
++    case QImage::Format_Mono:
++    case QImage::Format_MonoLSB:
++        qFatal("QWSWindowSurface: Invalid backingstore format: %i",
++               int(format));
++#endif
++    case QImage::Format_Indexed8:
++        return 1;
++    case QImage::Format_RGB32:
++    case QImage::Format_ARGB32:
++    case QImage::Format_ARGB32_Premultiplied:
++        return 4;
++    case QImage::Format_RGB16:
++    case QImage::Format_RGB555:
++    case QImage::Format_RGB444:
++    case QImage::Format_ARGB4444_Premultiplied:
++        return 2;
++    case QImage::Format_ARGB8565_Premultiplied:
++    case QImage::Format_ARGB8555_Premultiplied:
++    case QImage::Format_ARGB6666_Premultiplied:
++    case QImage::Format_RGB666:
++    case QImage::Format_RGB888:
++        return 3;
++    default:
++#ifndef QT_NO_DEBUG
++        qFatal("QWSWindowSurface: Invalid backingstore format: %i",
++               int(format));
++#endif
++        return 0;
++    }
++}
++
++static inline int nextMulOf4(int n)
++{
++    return ((n + 3) & 0xfffffffc);
++}
++
++static inline void setImageMetrics(QImage &img, QWidget *window) {
++    QScreen *myScreen = getScreen(window);
++    if (myScreen) {
++        int dpmx = myScreen->width()*1000 / myScreen->physicalWidth();
++        int dpmy = myScreen->height()*1000 / myScreen->physicalHeight();
++        img.setDotsPerMeterX(dpmx);
++        img.setDotsPerMeterY(dpmy);
++    }
++}
++
++BitbltSurface::BitbltSurface()
++    : QWSLocalMemSurface(), mykey("bitblt")
++{
++}
++
++BitbltSurface::BitbltSurface(QWidget *w)
++    : QWSLocalMemSurface(w), mykey("bitblt")
++{
++}
++
++BitbltSurface::~BitbltSurface()
++{
++    cmem.free();
++}
++
++QString BitbltSurface::key() const
++{
++    return mykey;
++}
++
++void BitbltSurface::setGeometry(const QRect &rect)
++{
++    QSize size = rect.size();
++
++    QWidget *win = window();
++    if (win && !win->mask().isEmpty()) {
++        const QRegion region = win->mask()
++                               & rect.translated(-win->geometry().topLeft());
++        size = region.boundingRect().size();
++    }
++
++    if (img.size() != size) {
++        if (size.isEmpty()) {
++            mem = 0;
++            img = QImage();
++        } else {
++            const QImage::Format format = preferredImageFormat(win);
++            const int bpl = nextMulOf4(bytesPerPixel(format) * size.width());
++            const int memsize = bpl * size.height();
++
++	    if (cmem.realloc(memsize))
++		mem = (uchar *)cmem.addr();
++	    else
++		qFatal("failed to allocate contiguous memory for %d bytes", memsize);
++
++	    BB_LOG("allocated cmem of size %d @ 0x%x\n", memsize, (uint)mem);
++
++            img = QImage(mem, size.width(), size.height(), bpl, format);
++            setImageMetrics(img, win);
++        }
++    }
++
++    QWSWindowSurface::setGeometry(rect);
++}
+diff --git a/src/plugins/gfxdrivers/bitblt/bitbltsurface.h b/src/plugins/gfxdrivers/bitblt/bitbltsurface.h
+new file mode 100644
+index 0000000..ad81272
+--- /dev/null
++++ b/src/plugins/gfxdrivers/bitblt/bitbltsurface.h
+@@ -0,0 +1,48 @@
++/*
++ * BitBLT surface
++ *
++ * This module adds support BitBLT 2D Hardware Accelerator (BB2D) for
++ * accelerating blits in Qt. BB2D is a 2D graphics accelerator available on TI
++ * C6A811X SoC. The acceleration is achieved through a public user-space
++ * interface called BLTsville (http://graphics.github.com/bltsville)
++ *
++ * Copyright (C) {2012} Texas Instruments Incorporated - http://www.ti.com/
++ *
++ * This program is free software; you can redistribute it and/or modify 
++ * it under the terms of the GNU Lesser General Public License version 2.1 as
++ * published by the Free Software Foundation.
++ *
++ * In addition, Texas Instruments has extended the Nokia Qt LGPL exception to
++ * the modifications made to this library. These exceptions give you certain 
++ * additional rights. These rights are described in the Nokia Qt LGPL Exception 
++ * version 1.1, included with this package. 
++ * 
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any kind,
++ * whether express or implied; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ */
++
++#ifndef _QBITBLTSURFACE_
++#define _QBITBLTSURFACE_
++
++#include <private/qwindowsurface_qws_p.h>
++
++#include "common.h"
++
++class BitbltSurface : public QWSLocalMemSurface
++{
++public:
++    BitbltSurface();
++    BitbltSurface(QWidget *w);
++    ~BitbltSurface(); 
++
++    QString key() const;
++    void setGeometry(const QRect &rect);
++
++private:
++    ContigMemory cmem;
++    QString mykey;
++};
++
++#endif
+diff --git a/src/plugins/gfxdrivers/bitblt/common.h b/src/plugins/gfxdrivers/bitblt/common.h
+new file mode 100644
+index 0000000..cb52950
+--- /dev/null
++++ b/src/plugins/gfxdrivers/bitblt/common.h
+@@ -0,0 +1,75 @@
++/*
++ * Common definitions
++ *
++ * This module adds support BitBLT 2D Hardware Accelerator (BB2D) for
++ * accelerating blits in Qt. BB2D is a 2D graphics accelerator available on TI
++ * C6A811X SoC. The acceleration is achieved through a public user-space
++ * interface called BLTsville (http://graphics.github.com/bltsville)
++ *
++ * Copyright (C) {2012} Texas Instruments Incorporated - http://www.ti.com/
++ *
++ * This program is free software; you can redistribute it and/or modify 
++ * it under the terms of the GNU Lesser General Public License version 2.1 as
++ * published by the Free Software Foundation.
++ *
++ * In addition, Texas Instruments has extended the Nokia Qt LGPL exception to
++ * the modifications made to this library. These exceptions give you certain 
++ * additional rights. These rights are described in the Nokia Qt LGPL Exception 
++ * version 1.1, included with this package. 
++ * 
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any kind,
++ * whether express or implied; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ */
++
++#ifndef _COMMON_H_
++#define _COMMON_H_
++
++#include <QColor>
++#include <QDebug>
++#include <QTime>
++#include <QtDebug>
++#include <qscreen_qws.h>
++
++#include "bltsville.h"
++#include "contigmemory.h"
++
++#ifndef FILE_NAME
++#define FILE_NAME 		""
++#endif
++
++#ifdef BITBLT_DEBUG
++#define BB_DBG(fmt, ...)        qCritical("<BB DBG> [ %s | %s():%3d] "fmt, FILE_NAME, __FUNCTION__, __LINE__, ##__VA_ARGS__);
++#define BB_DBG_OBJ(obj)         qCritical() << "<BB OBJ> [" <<  FILE_NAME << "|" << __FUNCTION__ << "():" << __LINE__ << "] " << #obj << ":" << obj;
++#define BB_FUNC_ENTRY()         BB_DBG("function entry");
++#define BB_FUNC_EXIT()          BB_DBG("function exit");
++#else
++#define BB_DBG(fmt, ...)
++#define BB_DBG_OBJ(obj)
++#define BB_FUNC_ENTRY()
++#define BB_FUNC_EXIT()
++#endif
++
++#ifdef BITBLT_LOG
++#define BB_LOG(fmt, ...)        qCritical("<BB LOG> [ %s | %s():%3d] "fmt, FILE_NAME, __FUNCTION__, __LINE__, ##__VA_ARGS__);
++#define BB_LOG_OBJ(obj)         qCritical() << "<BB LOG> [" <<  FILE_NAME << "|" << __FUNCTION__ << "():" << __LINE__ << "] " << #obj << ":" << obj;
++#else
++#define BB_LOG(fmt, ...)
++#define BB_LOG_OBJ(obj)
++#endif
++
++#define BB_ERR(fmt, ...)        qCritical("<BB ERR> [ %s | %s():%3d] #### "fmt, FILE_NAME, __FUNCTION__, __LINE__, ##__VA_ARGS__);
++#define BB_ERR_OBJ(obj)         qCritical() << "<BB ERR> [" <<  FILE_NAME << "|" << __FUNCTION__ << "():" << __LINE__ << "] " << #obj << ":" << obj;
++
++#ifdef BITBLT_PROFILE
++#define BBPROFILE_DEFINE(T)     QTime T; T.start();
++#define BBPROFILE_START(T)      T.restart();
++#define BBPROFILE_END(T)        qCritical("<BB PER> [ %s | %s():%3d] **** Profiled time %d ms", FILE_NAME, __FUNCTION__, __LINE__, T.elapsed());
++#else
++#define BBPROFILE_DEFINE(T)
++#define BBPROFILE_START(T)
++#define BBPROFILE_END(T)
++#endif
++
++#endif
+diff --git a/src/plugins/gfxdrivers/bitblt/contigmemory.cpp b/src/plugins/gfxdrivers/bitblt/contigmemory.cpp
+new file mode 100644
+index 0000000..3b56908
+--- /dev/null
++++ b/src/plugins/gfxdrivers/bitblt/contigmemory.cpp
+@@ -0,0 +1,153 @@
++/*
++ * Contiguous Memory
++ *
++ * This module adds support BitBLT 2D Hardware Accelerator (BB2D) for
++ * accelerating blits in Qt. BB2D is a 2D graphics accelerator available on TI
++ * C6A811X SoC. The acceleration is achieved through a public user-space
++ * interface called BLTsville (http://graphics.github.com/bltsville)
++ *
++ * Copyright (C) {2012} Texas Instruments Incorporated - http://www.ti.com/
++ *
++ * This program is free software; you can redistribute it and/or modify 
++ * it under the terms of the GNU Lesser General Public License version 2.1 as
++ * published by the Free Software Foundation.
++ *
++ * In addition, Texas Instruments has extended the Nokia Qt LGPL exception to
++ * the modifications made to this library. These exceptions give you certain 
++ * additional rights. These rights are described in the Nokia Qt LGPL Exception 
++ * version 1.1, included with this package. 
++ * 
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any kind,
++ * whether express or implied; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ */
++
++#include <contigmemory.h>
++
++bool ContigMemory::isInit = false;
++
++ContigMemory::ContigMemory()
++{
++    mem = NULL;
++    memPhys = 0;
++    size = 0;
++
++    cmemParams.type = CMEM_HEAP;
++    cmemParams.flags = CMEM_CACHED;
++    cmemParams.alignment = 4;
++}
++
++ContigMemory::~ContigMemory()
++{
++    this->free();
++}
++
++bool ContigMemory::alloc(int memsize)
++{
++    if (!isInit) {
++	qCritical("contig memory not initialized. call init() first");
++	return false;
++    }
++
++    if (size != 0) {
++	qCritical("contig memory allocated already. Use realloc()");
++	return false;
++    }
++
++    mem = CMEM_alloc(memsize, &cmemParams);
++    if (!mem)  {
++	qCritical("failed to allocate contiguous memory for %d bytes", memsize);
++	return false;
++    }
++
++    memPhys = CMEM_getPhys(mem);
++    if (memPhys == 0) {
++	qCritical("cannot find the physical address for memory @ 0x%x", (uint)mem);
++	this->free();
++	return false;
++    }
++
++    size = memsize;
++    return true;
++}
++
++bool ContigMemory::realloc(int memsize)
++{
++    bool status = false;
++
++    if (!isInit) {
++	qCritical("contig memory not initialized. call init() first");
++	return false;
++    }
++
++    if (this->free()) 
++	status = this->alloc(memsize);
++
++    return status;
++}
++
++bool ContigMemory::free()
++{
++    int ret = 0;
++
++    if (!isInit) {
++	qCritical("contig memory not initialized. call init() first");
++	return false;
++    }
++
++    if (size)
++	ret = CMEM_free(mem, &cmemParams);
++
++    if (ret != 0) {
++	qCritical("failed to free contig mem @ 0x%x - size %d bytes", (uint)mem, size);
++	return false;
++    }
++
++    size = 0;
++    mem = NULL;
++    memPhys = 0;
++
++    return true;
++}
++
++void *ContigMemory::addr() const
++{
++    return mem;
++}
++
++ulong ContigMemory::addrPhys()
++{
++    return memPhys;
++}
++
++bool ContigMemory::init()
++{
++    if (!isInit) {
++	if (CMEM_init() != 0) {
++	    qCritical("failed to initialize CMEM");
++	    return false;
++	}
++
++	isInit = true;
++    }
++
++    return true;
++}
++
++ulong ContigMemory::translate(void *mem)
++{
++    ulong phys = CMEM_getPhys(mem);
++    if (phys == 0) {
++	qCritical("cannot find the physical address for memory @ 0x%x", (uint)mem);
++    }
++
++    return phys;
++}
++
++bool ContigMemory::cacheWbInv(void *mem, int size)
++{
++    int ret = CMEM_cacheWbInv(mem, size);
++
++    return ((ret == 0)?true:false);
++}
+diff --git a/src/plugins/gfxdrivers/bitblt/contigmemory.h b/src/plugins/gfxdrivers/bitblt/contigmemory.h
+new file mode 100644
+index 0000000..49f3942
+--- /dev/null
++++ b/src/plugins/gfxdrivers/bitblt/contigmemory.h
+@@ -0,0 +1,63 @@
++/*
++ * Contiguous Memory
++ *
++ * This module adds support BitBLT 2D Hardware Accelerator (BB2D) for
++ * accelerating blits in Qt. BB2D is a 2D graphics accelerator available on TI
++ * C6A811X SoC. The acceleration is achieved through a public user-space
++ * interface called BLTsville (http://graphics.github.com/bltsville)
++ *
++ * Copyright (C) {2012} Texas Instruments Incorporated - http://www.ti.com/
++ *
++ * This program is free software; you can redistribute it and/or modify 
++ * it under the terms of the GNU Lesser General Public License version 2.1 as
++ * published by the Free Software Foundation.
++ *
++ * In addition, Texas Instruments has extended the Nokia Qt LGPL exception to
++ * the modifications made to this library. These exceptions give you certain 
++ * additional rights. These rights are described in the Nokia Qt LGPL Exception 
++ * version 1.1, included with this package. 
++ * 
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any kind,
++ * whether express or implied; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ */
++
++#ifndef _CONTIGMEMORY_
++#define _CONTIGMEMORY_
++
++#include <QDebug>
++
++#include <stdint.h>
++#include <stdio.h>
++#include "cmem.h"
++
++class ContigMemory
++{
++public:
++    ContigMemory();
++    ~ContigMemory();
++
++    bool alloc(int memsize);
++    bool realloc(int memsize);
++    bool free();
++
++    void *addr() const;
++    ulong addrPhys();
++
++    static bool init();
++    static ulong translate(void *mem);
++    static bool cacheWbInv(void *mem, int size);
++
++protected:
++    void *mem;
++    unsigned long memPhys;
++    int size;
++
++private:
++    CMEM_AllocParams cmemParams;
++
++    static bool isInit;
++};
++
++#endif
+diff --git a/src/plugins/gfxdrivers/gfxdrivers.pro b/src/plugins/gfxdrivers/gfxdrivers.pro
+index d1ee3f2..f2cd6f1 100644
+--- a/src/plugins/gfxdrivers/gfxdrivers.pro
++++ b/src/plugins/gfxdrivers/gfxdrivers.pro
+@@ -7,3 +7,4 @@ contains(gfx-plugins, vnc)	    :SUBDIRS += vnc
+ contains(gfx-plugins, transformed)  :SUBDIRS += transformed
+ contains(gfx-plugins, svgalib)      :SUBDIRS += svgalib
+ contains(gfx-plugins, powervr)      :SUBDIRS += powervr
++contains(gfx-plugins, bitblt)       :SUBDIRS += bitblt
+-- 
+1.7.9.5
+
