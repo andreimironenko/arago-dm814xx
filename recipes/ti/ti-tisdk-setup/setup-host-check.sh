@@ -12,7 +12,11 @@ elif [ "$host" == "oneiric" ]; then
     echo "Ubuntu 11.10 found successfully, continuing.."
     echo "--------------------------------------------------------------------------------"
     echo
+elif [ "$host" == "precise" ]; then
+    echo "Ubuntu 12.04 found successfully, continuing.."
+    echo "--------------------------------------------------------------------------------"
+    echo
 else
-    echo "Unsupported host machine, only Ubuntu 10.04 LTS and Ubuntu 11.10 supported"
+    echo "Unsupported host machine, only Ubuntu 10.04 LTS, Ubuntu 11.10 and Ubuntu 12.04 supported"
     exit 1
 fi
