@@ -13,6 +13,7 @@ SRC_URI += "file://0001-ti814x-Add-GStreamer-Decode-Demo-to-Multimedia-Menu.patc
             file://runAACLC_decode \
             file://runAACLC_encode \
             file://runGSTVideoLoopback \
+            file://runVideoLoopBackApp \
             file://runMP3_decode \
             file://aac-decode.png \
             file://aac-encode.png \
@@ -30,6 +31,7 @@ do_copyimage() {
     cp ${WORKDIR}/runAACLC_decode ${S}/ti811x/bin
     cp ${WORKDIR}/runAACLC_encode ${S}/ti811x/bin
     cp ${WORKDIR}/runGSTVideoLoopback ${S}/ti811x/bin
+    cp ${WORKDIR}/runVideoLoopBackApp ${S}/ti811x/bin
     cp ${WORKDIR}/runMP3_decode ${S}/ti811x/bin
     cp ${WORKDIR}/*.png ${S}/images
     cp ${WORKDIR}/j5eco.init ${S}/ti811x/etc/init
