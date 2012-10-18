@@ -29,8 +29,8 @@ QT_CONFIG_FLAGS += " \
 QT_CONFIG_FLAGS_append_c6a811x-evm = " \
  -plugin-gfx-bitblt \
 "
-DEPENDS = "ti-linuxutils ti-bb2ddrv"
 DEPENDS += "virtual/kernel"
+DEPENDS += "ti-linuxutils bb2ddrv"
 
 #EXTRA_ENV_append_c6a811x-evm = '-I/datalocal/amit/ezsdk/arago-tmp/work/armv7a-none-linux-gnueabi/amitamit'
 EXTRA_ENV_append_c6a811x-evm = '-I${LINUXUTILS_INSTALL_DIR}/packages/ti/sdo/linuxutils/cmem \
