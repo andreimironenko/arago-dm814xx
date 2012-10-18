@@ -5,7 +5,7 @@ require ti-paths.inc
 
 COMPATIBLE_MACHINE = "ti814x|ti816x|ti811x"
 
-PSPVERSION = "TI81XX-LINUX-PSP-04.07.00.02"
+PSPVERSION = "TI811X-LINUX-PSP-04.07.00.02"
 
 SRC_URI = "ftp://ftp.india.ti.com//PSP/Releases/ODC/TI81XX_PSP/${PSPVERSION}.tgz;name=psptarball"
 
