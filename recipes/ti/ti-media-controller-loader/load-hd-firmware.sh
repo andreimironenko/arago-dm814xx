@@ -6,7 +6,11 @@ PATH=$PATH:/usr/share/ti/ti-media-controller-utils
 DSP_ID=0
 HDVICP2_ID=1
 HDVPSS_ID=2
-      
+
+touch ./llp.sh
+echo export LD_LIBRARY_PATH=/usr/share/ti/bb2ddrv > llp.sh
+
+source ./llp.sh      
 
 initialize_lcd()
 {
@@ -44,6 +48,8 @@ case "$1" in
         modprobe ti81xxvin debug=1
         modprobe sii9022a
         modprobe tlc59108
+        modprobe cmemk phys_start=0x8E000000 phys_end=0x93000000
+        insmod /usr/share/ti/bb2ddrv/bb2d.ko
         echo "Loading DSP Firmware"
         firmware_loader $DSP_ID /usr/share/ti/rpe/dm81xx_c6xdsp_debug.xe674 start
 
