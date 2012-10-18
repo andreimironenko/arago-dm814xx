@@ -23,8 +23,6 @@ EXTRA_OEMAKE = "KERNEL_DIR=${STAGING_KERNEL_DIR} \
 
 do_compile() {
 
-    #touch ${STAGING_KERNEL_DIR}/test_ksd.txt
-
     cd ${S}/TVP5158_init_app
     oe_runmake
 
