@@ -167,6 +167,27 @@ CSTOOL_LONGNAME=bin/arm-none-linux-gnueabi-gcc
 CSTOOL_PREFIX=$(CSTOOL_DIR)/bin/arm-none-linux-gnueabi-
 CSTOOL_PATH=$(CSTOOL_DIR)/bin
 
+#Where the linux bltsville bb2d package is installed.
+BB2DDRV_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/board-support/<__bb2ddrv__>
+
+#bltsville bb2d build vars
+BB2DDRV_BUILD_VARS = LINUXKERNEL_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/board-support/linux-2.6.37-psp04.07.00.02 \
+        KERNEL_INSTALL_DIR=$(LINUXKERNEL_INSTALL_DIR) \
+        LINUXUTILS_INSTALL_DIR=${LINUXUTILS_INSTALL_DIR} \
+        CSTOOL_DIR=${CSTOOL_DIR} \
+        BB2D_ROOTDIR=${BB2DDRV_INSTALL_DIR} \
+        EXEC_DIR=${EXEC_DIR}/bb2d \
+
+# Where the AHDU package is installed.
+AHDU_INSTALL_DIR=$(DVSDK_INSTALL_DIR)/board-support/<__ahudemo__>
+
+#AHUD build vars
+AHDU_BUILD_VARS= PLATFORM=${PLATFORM} \
+         EZSDK=${DVSDK_INSTALL_DIR} \
+         CSTOOL_DIR=${CSTOOL_DIR} \
+         CSTOOL_PREFIX=${CSTOOL_PREFIX} \
+         KERNEL_INSTALL_DIR=${KERNEL_INSTALL_DIR}
+
 MVTOOL_DIR=$(CSTOOL_DIR)
 MVTOOL_PREFIX=$(CSTOOL_PREFIX)
 

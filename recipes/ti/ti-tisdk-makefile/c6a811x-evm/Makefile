@@ -102,6 +102,14 @@ help:
 	@echo "    edma3lld                       : Build the EDMA3LLD Libraries"
 	@echo "    edma3lld_clean                 : Remove generated EDMA3LLD files"
 	@echo
+	@echo "    bltsville_bb2d                 : Build the bitblt driver and apps"
+	@echo "    bltsville_bb2d_install         : Install the bitblt driver and apps"
+	@echo "    bltsville_bb2d_clean           : Remove the generated bb2d.ko and apps"
+	@echo
+	@echo "    ahudemo                        : Build ahudemo libraries"
+	@echo "    ahudemo_install                : Installs ahud demos"
+	@echo "    ahudemo_clean                  : clean ahudemo libraries"
+	@echo
 	@echo "    sgx-driver                     : Build SGX kernel module"
 	@echo "    sgx-driver_clean               : Remove SGX generated files"
 	@echo "    sgx-driver_install             : Install SGX kernel module"
@@ -235,6 +243,7 @@ psp-examples_install:
 #==============================================================================
 cmem:
 	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/interface $(CMEM_BUILD_VARS) ../../lib/cmem.a470MV
+	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/interface $(CMEM_BUILD_VARS)
 	$(MAKE) -C $(CMEM_INSTALL_DIR)/packages/ti/sdo/linuxutils/cmem/src/module $(CMEM_BUILD_VARS)
 
 cmem_clean:
@@ -331,6 +340,34 @@ edma3lld:
 edma3lld_clean:
 	make -C $(EDMA3_LLD_INSTALL_DIR)/packages $(EDMA3_LLD_BUILD_VARS) clean
 
+###################################################################################
+# build BITBLT BB@D
+##################################################################################
+bltsville_bb2d:
+	make -C $(BB2DDRV_INSTALL_DIR) $(BB2DDRV_BUILD_VARS)
+
+bltsville_bb2d_clean:
+	make -C $(BB2DDRV_INSTALL_DIR) $(BB2DDRV_BUILD_VARS) clean
+
+bltsville_bb2d_install:
+	install -d $(EXEC_DIR)/bb2d
+	make -C $(BB2DDRV_INSTALL_DIR) $(BB2DDRV_BUILD_VARS) install
+
+###################################################################################
+# build AHDU DEMOS
+##################################################################################
+ahudemo:
+	@echo "!!!Run ${LINUX_DEVKIT_DIR}/environment-setup befor make ahudemo!!!"
+	make -C $(AHDU_INSTALL_DIR) $(AHDU_BUILD_VARS)
+
+ahudemo_clean:
+	make -C $(AHDU_INSTALL_DIR) $(AHDU_BUILD_VARS) clean
+
+ahudemo_install:
+	install -d $(EXEC_DIR)/ahudemo
+	install ${AHDU_INSTALL_DIR}/fbsetup/fbsetup $(EXEC_DIR)/ahudemo
+	install ${AHDU_INSTALL_DIR}/cpu_usage $(EXEC_DIR)/ahudemo
+	install ${AHDU_INSTALL_DIR}/matrix/matrix-gui-e $(EXEC_DIR)/ahudemo
 
 ###############################################################################
 # Build RPE
