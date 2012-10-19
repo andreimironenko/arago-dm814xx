@@ -1,5 +1,4 @@
 require recipes/qt4/qt4-embedded.inc
-require ../arago/recipes/ti/ti-paths.inc
 PR = "${INC_PR}.14"
 
 PROVIDES += "qt4-embedded"
@@ -21,6 +20,7 @@ FILESPATHBASE .= ":${OEBASE}/arago-oe-dev/recipes/qt4"
 FILESPATHPKG .= ":qt4-embedded-${PV}:qt4-embedded"
 
 DEPENDS += "virtual/egl"
+DEPENDS += "virtual/kernel ti-linuxutils bb2ddrv"
 require recipes/egl/egl.inc
 
 QT_CONFIG_FLAGS += " \
@@ -29,16 +29,7 @@ QT_CONFIG_FLAGS += " \
 QT_CONFIG_FLAGS_append_c6a811x-evm = " \
  -plugin-gfx-bitblt \
 "
-DEPENDS += "virtual/kernel"
-DEPENDS += "ti-linuxutils bb2ddrv"
 
-#EXTRA_ENV_append_c6a811x-evm = '-I/datalocal/amit/ezsdk/arago-tmp/work/armv7a-none-linux-gnueabi/amitamit'
-EXTRA_ENV_append_c6a811x-evm = '-I${LINUXUTILS_INSTALL_DIR}/packages/ti/sdo/linuxutils/cmem \
-                                -I${LINUXUTILS_INSTALL_DIR}/packages/ti/sdo/linuxutils/cmem/include \
-                                -I${LINUXUTILS_INSTALL_DIR}/packages/ti/sdo/linuxutils/cmem/lib \
-                                -I${WORKDIR}/../../c6a811x-evm-none-linux-gnueabi/bb2ddrv-00.00.01-r0/linux_bltsville_bb2d_00.00.01 \
-                                -I${WORKDIR}/../../c6a811x-evm-none-linux-gnueabi/bb2ddrv-00.00.01-r0/linux_bltsville_bb2d_00.00.01/include/bltsville \
-			        -I${WORKDIR}/../../c6a811x-evm-none-linux-gnueabi/bb2ddrv-00.00.01-r0/linux_bltsville_bb2d_00.00.01/include/ocd'
 
 PACKAGES += " \
 ${QT_BASE_NAME}-qmlimports-folderlistmodel \
