@@ -61,7 +61,7 @@ index 096e895..b89fc94 100644
  		return ret;
  	}
 +#endif
- 	return ret;
+ 	return 0;
  }
  EXPORT_SYMBOL(vps_ti814x_set_tvp7002_filter);
 diff --git a/arch/arm/mach-omap2/ti81xx_vpss.c b/arch/arm/mach-omap2/ti81xx_vpss.c

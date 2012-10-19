@@ -5,7 +5,7 @@ COMPATIBLE_MACHINE = "ti811x"
 BRANCH = "ti81xx-master"
 
 # Use literal tags in SRCREV, when available, instead of commit IDs
-SRCREV = "9dc53ec36fbf3bc6e77ceccff61ab48a6ce5fe76"
+SRCREV = "v2010.06_TI811XPSP_04.07.00.02.pacth1"
 
 UVER = "2010.06"
 PSPREL = "04.07.00.02"
