@@ -10,8 +10,8 @@ SRC_URI = "http://install.source.dir.local/videoloopbackdemo_01_00_00_01.tar.gz 
         
 DEPENDS = "virtual/kernel"
 
-SRC_URI[md5sum] = "fbb3daffcc6ec2e33b15b3db87b2f5bc"
-SRC_URI[sha256sum] = "f0ee8553ef8210a9d119991a3c17f16aa4c7fe6c403b889fc420253c6e60ef0f"
+SRC_URI[md5sum] = "9628cc01db6150320d39643d28473d1c"
+SRC_URI[sha256sum] = "1604dafaf636302234d48357ca6d680c20583d0d2ce3ffbd51fe1f5f5c5f7346"
 
 S = ${WORKDIR}/videoloopbackdemo_01_00_00_01
 
