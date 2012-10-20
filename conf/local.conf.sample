@@ -100,4 +100,3 @@ PARALLEL_MAKE = "-j 20"
 BBINCLUDELOGS = "yes"
 
 # Uncomment this to remove work directory after packaging to save disk space
-INHERIT += "rm_work"
