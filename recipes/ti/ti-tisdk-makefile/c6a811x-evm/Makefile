@@ -368,6 +368,9 @@ ahudemo_install:
 	install ${AHDU_INSTALL_DIR}/fbsetup/fbsetup $(EXEC_DIR)/ahudemo
 	install ${AHDU_INSTALL_DIR}/cpu_usage $(EXEC_DIR)/ahudemo
 	install ${AHDU_INSTALL_DIR}/matrix/matrix-gui-e $(EXEC_DIR)/ahudemo
+	install ${AHDU_INSTALL_DIR}/matrix/menu_ahudemo.html $(EXEC_DIR)/ahudemo
+	install ${AHDU_INSTALL_DIR}/matrix/music.png $(EXEC_DIR)/ahudemo
+	install ${AHDU_INSTALL_DIR}/matrix/qt-logo.png $(EXEC_DIR)/ahudemo
 
 ###############################################################################
 # Build RPE
@@ -410,10 +413,11 @@ hdvpss:
 	${MAKE} -C ${HDVPSS_INSTALL_DIR} $(HDVPSS_BUILD_VARS) all OS=Linux
 
 hdvpss_clean:
-	${MAKE} -C ${HDVPSS_INSTALL_DIR} clean OS=Linux
+	${MAKE} -C ${HDVPSS_INSTALL_DIR} $(HDVPSS_BUILD_VARS) clean OS=Linux
 
 hdvpss_install:
-	${MAKE} -C ${HDVPSS_INSTALL_DIR} install EXEC_DIR=$(EXEC_DIR)/usr/share/ti/j5eco-tvp5158 OS=Linux
+	install -d $(EXEC_DIR)/usr/share/ti/ti-media-controller-utils
+	install ${HDVPSS_INSTALL_DIR}/build/ti811x_hdvpss/bin/ti811x-evm/ti811x_hdvpss_debug.xem3 $(EXEC_DIR)/usr/share/ti/ti-media-controller-utils
 
 ###############################################################################
 # Build the DSP devkit
