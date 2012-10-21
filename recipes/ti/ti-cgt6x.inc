@@ -9,7 +9,7 @@ require ti-eula-unpack.inc
 
 PR = "r4"
 
-S = "${WORKDIR}/cgt6x_${PV}"
+S = "${WORKDIR}/ti/TI_CGT_C6000_${PVwithdots}"
 
 SRC_URI = "http://install.source.dir.local/ti_cgt_c6000_${PVwithdots}_setup_linux_x86.bin;name=cgt6xbin"
 
