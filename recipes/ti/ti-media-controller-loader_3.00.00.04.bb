@@ -13,7 +13,7 @@ SRC_URI[sha256sum] = "ab0101a8e61fa2cae9a55ed7816a0e264b6c7e0147f6b96675e9e90e64
 S = "${WORKDIR}/media-controller-utils_${PV}/src/linux/${PLATFORM}"
 
 do_copyimage() {
+    cp -f ${WORKDIR}/change_display.sh ${WORKDIR}/media-controller-utils_${PV}/src/linux/ti811x-evm/change_display.sh
     cp -f ${WORKDIR}/load-hd-firmware.sh ${WORKDIR}/media-controller-utils_${PV}/src/linux/ti811x-evm/load-hd-firmware.sh
-    cp -f ${WORKDIR}/change_display.sh ${WORKDIR}/media-controller-utils_${PV}/src/linux/ti811x-evm/load-hd-firmware.sh
 }
 addtask copyimage after do_unpack before do_patch
