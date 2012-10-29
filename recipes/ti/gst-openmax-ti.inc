@@ -17,7 +17,8 @@ SRC_URI = "http://install.source.dir.local/gst-openmax-${PV}.tar.gz\
 
 S = ${WORKDIR}/gst-openmax-${PV}
 
-COMPATIBLE_MACHINE = "dm816x-evm|dm814x-evm"
+COMPATIBLE_MACHINE = "dm816x-evm|dm814x-evm|dm814x-z3"
+
 
 GSTPLATFORM_ti814x = "Platform_dm814x"
 GSTPLATFORM_ti816x = "Platform_dm816x"
@@ -43,3 +44,12 @@ EXTRA_OEMAKE = BIOS_INSTALL_DIR="${SYSBIOS_INSTALL_DIR}" \
 FILES_${PN}     += "${libdir}/gstreamer-0.10/*.so ${sysconfdir} ${installdir}"
 FILES_${PN}-dev += "${libdir}/gstreamer-0.10/*.a ${libdir}/gstreamer-0.10/*.la"
 FILES_${PN}-dbg += "${libdir}/gstreamer-0.10/.debug"
+
+#AM URI is not working
+# I made a tarball from EZSDK sources
+
+do_fetch() {
+
+  :
+ 
+}

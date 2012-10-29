@@ -12,6 +12,10 @@ SRC_URI = "http://software-dl.ti.com/dsps/dsps_public_sw/DM814x-Firmware/${PV}/e
 
 S = "${WORKDIR}/firmware-ti814x_${PV}"
 
+do_fetch() {
+ :
+}
+
 do_install() {
     install -d ${D}/${installdir}/ti-media-controller-utils
     install ${S}/*.xem3 ${D}/${installdir}/ti-media-controller-utils

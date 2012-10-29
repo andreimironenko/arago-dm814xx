@@ -12,10 +12,17 @@ PR = "r4"
 S = "${WORKDIR}/ti/TI_CGT_C6000_${PVwithdots}"
 
 SRC_URI = "http://install.source.dir.local/ti_cgt_c6000_${PVwithdots}_setup_linux_x86.bin;name=cgt6xbin"
-
 BINFILE="ti_cgt_c6000_${PVwithdots}_setup_linux_x86.bin"
+
+
+
 TI_BIN_UNPK_CMDS="Y:qY:workdir: : "
 TI_BIN_UNPK_WDEXT="/cgt6x_${PV}"
+
+#Skip do_fetch, the binary is already in oe/downloads
+do_fetch() {
+ :
+}
 
 do_install() {
     install -d ${D}${CODEGEN_INSTALL_DIR_RECIPE}

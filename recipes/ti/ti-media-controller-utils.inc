@@ -28,6 +28,14 @@ EXTRA_OEMAKE = "PLATFORM=${PLATFORM} \
         CODEGEN_PATH_DSPELF=${CODEGEN_INSTALL_DIR} \
 "
 
+#AM: URI is not working. I've got this package from EZSDK.
+#So we don't need do_fetch()
+do_fetch() {
+ :
+ 
+ }
+
+
 do_install() {
     cd ${S}
     oe_runmake DESTDIR=${D} prefix=${prefix} install
