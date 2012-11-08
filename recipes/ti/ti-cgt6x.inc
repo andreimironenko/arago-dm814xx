@@ -15,17 +15,12 @@ SRC_URI = "http://install.source.dir.local/ti_cgt_c6000_${PVwithdots}_setup_linu
 BINFILE="ti_cgt_c6000_${PVwithdots}_setup_linux_x86.bin"
 
 
-
 TI_BIN_UNPK_CMDS="Y:qY:workdir: : "
 TI_BIN_UNPK_WDEXT="/cgt6x_${PV}"
-
-#Skip do_fetch, the binary is already in oe/downloads
-do_fetch() {
- :
-}
 
 do_install() {
     install -d ${D}${CODEGEN_INSTALL_DIR_RECIPE}
     cp -pPrf ${S}/* ${D}${CODEGEN_INSTALL_DIR_RECIPE}
 }
 
+ 

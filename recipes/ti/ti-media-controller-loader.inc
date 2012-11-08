@@ -18,7 +18,8 @@ PLATFORM_ti814x = "ti814x-evm"
 PLATFORM_ti811x = "ti811x-evm"
 PLATFORM ?= "<UNDEFINED-PLATFORM>"
 
-SRC_URI = "svn://gforge.ti.com/svn/m_c_utils/;module=trunk;proto=https;user=anonymous;pswd='' "
+SRC_URI = "svn://gforge.ti.com/svn/m_c_utils/;module=trunk;proto=https;user=anonymous;pswd='' \
+"
 
 S = "${WORKDIR}/trunk/media_controller_utils/${PLATFORM}"
 

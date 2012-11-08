@@ -23,13 +23,6 @@ DEPENDS = "ti-sysbios ti-cgt6x ti-xdctools"
 BINFILE="ipc_setuplinux_${PV}${PVExtra}.bin"
 TI_BIN_UNPK_CMDS="Y: q:workdir:Y"
 
-#AM: We have this package under downloads and provided SRC_URI is broken
-do_fetch() {
-
- :
-
-}
-
 do_configure() {
     sed -i -e s:@VERSION@:${PV}:g ${WORKDIR}/ipc.pc
     
