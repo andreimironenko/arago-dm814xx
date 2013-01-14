@@ -1,15 +1,20 @@
 DESCRIPTION = "Package contains system wide loadmodule for DVSDK"
 LICENSE = "TI"
 
-inherit update-rc.d
+DEPENDS = "update-rc.d"
 
 SRC_URI = "\
-file://loadmodule-rc \
+          file://loadmodule-rc \
 "
 PR = "r3"
 
+S = "${WORKDIR}"
+
 do_compile () {
-:
+ :
+}
+
+do_stage () {
 }
 
 do_install () {
@@ -21,4 +26,3 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 INITSCRIPT_NAME = "loadmodule-rc"
 INITSCRIPT_PARAMS = "defaults 99"
-

@@ -16,3 +16,12 @@ do_prepsources() {
 addtask prepsources after do_unpack before do_patch
 
 INSANE_SKIP_${PN} = True
+
+#AM: URI is not working. The package can be retrieved from 
+# ti-ezsdk_dm814x-evm_5_05_01_04
+#do_fetch() {
+# 
+#  :
+# 
+# }
+ 

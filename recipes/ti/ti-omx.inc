@@ -52,12 +52,6 @@ PARALLEL_MAKE = ""
 PLATFORM_ti816x = "ti816x-evm"
 PLATFORM_ti814x = "ti814x-evm"
 
-#AM: URI is not working 
-# I created a tarball from EZSDK and put it under downloads
-do_fetch() {
- :
- }
-
 do_compile() {
     cd ${S}/src
 

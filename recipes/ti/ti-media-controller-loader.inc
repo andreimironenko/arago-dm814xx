@@ -4,6 +4,9 @@ LICENSE = "BSD"
 
 inherit update-rc.d
 
+require ti-paths.inc
+require ti-staging.inc
+
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 INC_PR = "r1"

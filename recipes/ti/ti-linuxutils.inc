@@ -39,6 +39,7 @@ do_compile() {
       UCTOOL_PREFIX="${TARGET_PREFIX}" \
       clean debug release
     done
+    
 }
 
 do_install () {

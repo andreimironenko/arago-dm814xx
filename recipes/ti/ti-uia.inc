@@ -20,16 +20,6 @@ UIAPLATFORM_ti816x = "evmti816x"
 UIAPLATFORM_ti814x = "evmti816x"
 UIAPLATFORM_ti811x = "evmti816x"
 
-#AM: URI is not working. The package can only be downloaded manually.
-#It's stored in downloads.
-do_fetch() {
- :
- 
- }
-
-do_compile() {
-    :
-}
 
 do_install() {
     install -d ${D}${installdir}/ti-uia
