@@ -8,6 +8,7 @@ export ARAGO_TOP=${OEBASE}/arago
 export OE_TOP=${OEBASE}/arago-oe-dev
 
 #AM: Hanover local overlays
+export HANOVER_SYSTEM_DEV=${OEBASE}/hanover-system-dev
 export HANOVER_SYSTEM=${OEBASE}/hanover-system
 export HANOVER_APPS=${OEBASE}/hanover-apps
 
@@ -15,7 +16,7 @@ export HANOVER_APPS=${OEBASE}/hanover-apps
 # export SCRATCH=/sim/scratch_AID
 
 # Set the paths...
-export BBPATH=${HANOVER_SYSTEM}:${HANOVER_APPS}:${ARAGO_TOP}:${OE_TOP}
+export BBPATH=${HANOVER_SYSTEM_DEV}:${HANOVER_SYSTEM}:${HANOVER_APPS}:${ARAGO_TOP}:${OE_TOP}
 export PATH=$OEBASE/arago-bitbake/bin/:$OEBASE/arago-utils/:$PATH
 
 # Preserve important/all environment variables
