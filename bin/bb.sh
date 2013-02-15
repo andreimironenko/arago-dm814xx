@@ -34,6 +34,9 @@ declare CMD=""
 #it will require super-user access level on amuxi.
 declare BUILD_MODE=""
 
+#Debug mode. If't set bitbake will produce a lot of log with debug information.
+#Use it to pin in build issue with your component
+declare DEBUG=""
 
 #bb.sh possible errors
 declare BB_ERR_SWITCH_NO_SUPPORT=-192
@@ -92,7 +95,8 @@ while [ $# -gt 0 ]; do
     --machine | -m)     shift; MACHINE=$1; shift; ;;
     --bb |      -b)     shift; BB=$1;      shift; ;;
     --command | -c)     shift; CMD=$1;     shift; ;;
-    --admin   | -a)     shift; BUILD_MODE="release"  shift; ;;
+    --admin   | -a)     shift; BUILD_MODE="release";  shift; ;;
+    --debug   | -d)     shift; DEBUG="1";    shift; ;;
     _*)                 printf "%s\n" "Switch not supported" >&2; exit $BB_ERR_SWITCH_NO_SUPPORT ;;
     *)                 printf "%s\n" "Extra argument or missing switch" >&2; exit $BB_ERR_EXTRA_ARGUMENT ;;  
 esac
@@ -155,6 +159,11 @@ fi
 #Check either a command has been provided
 if [ ! -z "$CMD" ] ; then
 	COMMAND_LINE+=" -c $CMD" 
+fi
+
+#And finally check if the debug mode has enabled
+if [ "$DEBUG" = "1" ] ; then
+	COMMAND_LINE+=" -DDD"
 fi
 
 printf "%s\n" "Starting bitbake  ..."
