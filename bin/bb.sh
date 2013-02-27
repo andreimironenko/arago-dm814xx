@@ -130,29 +130,29 @@ fi
 declare RECIPE=""
 
 #Check either the product/release recipe exist
-if [ $TYPE = "" || $TYPE = "image" ] ; then
+if [ "$TYPE" = "" -o "$TYPE" = "image" ] ; then
 	if [ $PR = "dev" ] ; then 
 		if [ ! -f $OEBASE/hanover-system-dev/recipes/images/$PRODUCT/$PRODUCT-image.dev.bb ] ; then
 			SANITY_CHECK_STATUS=0
 			printf "%s\n" "Product image $PRODUCT-image.dev.bb is not found"
 		else
-			RECIPE = "$OEBASE/hanover-system-dev/recipes/images/$PRODUCT/$PRODUCT-image.dev.bb"
+			RECIPE="$PRODUCT-image.dev"
 		fi
 	else
 		if [ ! -f $OEBASE/hanover-system/recipes/images/$PRODUCT/$PRODUCT-image.$PR.bb ] ; then
 			SANITY_CHECK_STATUS=0
 			printf "%s\n" "Product image $PRODUCT-image.$PR.bb is not found"
 		else
-			RECIPE = "$OEBASE/hanover-system/recipes/images/$PRODUCT/$PRODUCT-image.$PR.bb"
+			RECIPE="$PRODUCT-image.$PR"
 		fi
 	fi
 
 else
-	if [ ! -f $OEBASE/hanover-system-dev/recipes/meta/$PRODUCT/$PRODUCT-sdk.$PR.bb ] ; then
+	if [ ! -f $OEBASE/hanover-system/recipes/meta/$PRODUCT/$PRODUCT-sdk.$PR.bb ] ; then
 	SANITY_CHECK_STATUS=0
 	printf "%s\n" "Product image $PRODUCT-sdk.$PR.bb is not found"
 	else
-		RECIPE = "$OEBASE/hanover-system-dev/recipes/meta/$PRODUCT/$PRODUCT-sdk.$PR.bb"
+		RECIPE="$PRODUCT-sdk.$PR"
 	fi
 fi
 
