@@ -38,6 +38,9 @@ declare BUILD_MODE=""
 #Use it to pin in build issue with your component
 declare DEBUG=""
 
+#Type of the build: image or SDK. If it's not provided then by default -image.
+declare TYPE=""
+
 #bb.sh possible errors
 declare BB_ERR_SWITCH_NO_SUPPORT=-192
 declare BB_ERR_EXTRA_ARGUMENT=-193
@@ -82,6 +85,7 @@ while [ $# -gt 0 ]; do
 	printf "%s\n" "Available options:"
 	printf "%s\t%s\n" "-p, --product" "Mandatory. Product ID, i.e. SR1106"
 	printf "%s\t%s\n" "-r, --release" "Mandatory. Product release, i.e. r01, r02, dev..."
+	printf "%s\t%s\n" "-t, --type"    "Optional. Type of the build: image or sdk. Default: image"
 	printf "%s\t%s\n" "-m, --machine" "Mandatory. Machine ID, i.e dm814x-z3, dm365-htc ..."
 	printf "%s\t%s\n" "-b, --bb" "Optional. Build a OE bitbake package, not a whole product"
 	printf "%s\t%s\n" "-c, --command" "Optional. Run only one command, i.e. -c clean"
@@ -92,6 +96,7 @@ while [ $# -gt 0 ]; do
     ;;
     --product | -p)     shift; PRODUCT=$1; shift; ;;
     --release | -r)     shift; PR=$1;      shift; ;;
+    --type    | -t)     shift; TYPE=$1;    shift; ;;
     --machine | -m)     shift; MACHINE=$1; shift; ;;
     --bb |      -b)     shift; BB=$1;      shift; ;;
     --command | -c)     shift; CMD=$1;     shift; ;;
@@ -106,7 +111,7 @@ done
 printf "%s" "Sanity check for parameters and build targets  ..."
 SANITY_CHECK_STATUS=1
 
-#Check mandatory parameters fist
+#Check mandatory parameters first
 if [ -z "$PRODUCT" ] ; then
    printf "%s\n" "Mandatory parameter -p, --product is missed" >&2
    SANITY_CHECK_STATUS=0
@@ -122,14 +127,32 @@ if [ -z "$MACHINE" ] ; then
    SANITY_CHECK_STATUS=0
 fi
 
+declare RECIPE=""
+
 #Check either the product/release recipe exist
-if [ $PR = "dev" ] ; then 
-	if [ ! -f $OEBASE/hanover-system-dev/recipes/images/$PRODUCT/$PRODUCT-image.dev.bb ] ; then
-		SANITY_CHECK_STATUS=0
+if [ $TYPE = "" || $TYPE = "image" ] ; then
+	if [ $PR = "dev" ] ; then 
+		if [ ! -f $OEBASE/hanover-system-dev/recipes/images/$PRODUCT/$PRODUCT-image.dev.bb ] ; then
+			SANITY_CHECK_STATUS=0
+			printf "%s\n" "Product image $PRODUCT-image.dev.bb is not found"
+		else
+			RECIPE = "$OEBASE/hanover-system-dev/recipes/images/$PRODUCT/$PRODUCT-image.dev.bb"
+		fi
+	else
+		if [ ! -f $OEBASE/hanover-system/recipes/images/$PRODUCT/$PRODUCT-image.$PR.bb ] ; then
+			SANITY_CHECK_STATUS=0
+			printf "%s\n" "Product image $PRODUCT-image.$PR.bb is not found"
+		else
+			RECIPE = "$OEBASE/hanover-system/recipes/images/$PRODUCT/$PRODUCT-image.$PR.bb"
+		fi
 	fi
+
 else
-	if [ ! -f $OEBASE/hanover-system/recipes/images/$PRODUCT/$PRODUCT-image.$PR.bb ] ; then
-		SANITY_CHECK_STATUS=0
+	if [ ! -f $OEBASE/hanover-system-dev/recipes/meta/$PRODUCT/$PRODUCT-sdk.$PR.bb ] ; then
+	SANITY_CHECK_STATUS=0
+	printf "%s\n" "Product image $PRODUCT-sdk.$PR.bb is not found"
+	else
+		RECIPE = "$OEBASE/hanover-system-dev/recipes/meta/$PRODUCT/$PRODUCT-sdk.$PR.bb"
 	fi
 fi
 
@@ -151,7 +174,7 @@ declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT PRODUCT_RELEASE=$PR BUIL
 
 #Check either it is going a complete product or just one component build
 if [ -z "$BB" ] ; then
-	COMMAND_LINE+=" $PRODUCT-image.$PR";
+	COMMAND_LINE+=" $RECIPE";
 else
 	COMMAND_LINE+=" -b $BB"
 fi
