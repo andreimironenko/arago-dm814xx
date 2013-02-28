@@ -34,12 +34,19 @@ declare CMD=""
 #it will require super-user access level on amuxi.
 declare BUILD_MODE=""
 
+#Postfix mode. Is used in the tasks/image recipes for defining what type of the
+# package is required: dev, dbg or release. dev is used for SDK builds, dbg for
+# dev images and empty line for releases.
+declare POSTFIX="" 
+
 #Debug mode. If't set bitbake will produce a lot of log with debug information.
 #Use it to pin in build issue with your component
 declare DEBUG=""
 
 #Type of the build: image or SDK. If it's not provided then by default -image.
 declare TYPE=""
+
+
 
 #bb.sh possible errors
 declare BB_ERR_SWITCH_NO_SUPPORT=-192
@@ -84,7 +91,7 @@ while [ $# -gt 0 ]; do
 	printf "%s\n"
 	printf "%s\n" "Available options:"
 	printf "%s\t%s\n" "-p, --product" "Mandatory. Product ID, i.e. SR1106"
-	printf "%s\t%s\n" "-r, --release" "Mandatory. Product release, i.e. r01, r02, dev..."
+	printf "%s\t%s\n" "-r, --release" "Mandatory. Product release, i.e. r01, r02, dbg..."
 	printf "%s\t%s\n" "-t, --type"    "Optional. Type of the build: image or sdk. Default: image"
 	printf "%s\t%s\n" "-m, --machine" "Mandatory. Machine ID, i.e dm814x-z3, dm365-htc ..."
 	printf "%s\t%s\n" "-b, --bb" "Optional. Build a OE bitbake package, not a whole product"
@@ -131,28 +138,31 @@ declare RECIPE=""
 
 #Check either the product/release recipe exist
 if [ "$TYPE" = "" -o "$TYPE" = "image" ] ; then
-	if [ $PR = "dev" ] ; then 
-		if [ ! -f $OEBASE/hanover-system-dev/recipes/images/$PRODUCT/$PRODUCT-image.dev.bb ] ; then
+	if [ $PR = "dbg" ] ; then 
+		if [ ! -f $OEBASE/hanover-system-dev/recipes/images/$PRODUCT/$PRODUCT-image.dbg.bb ] ; then
 			SANITY_CHECK_STATUS=0
-			printf "%s\n" "Product image $PRODUCT-image.dev.bb is not found"
+			printf "%s\n" "Product image $PRODUCT-image.dbg.bb is not found"
 		else
-			RECIPE="$PRODUCT-image.dev"
+			RECIPE="$PRODUCT-image.dbg"
+			POSTFIX="-dbg"
 		fi
 	else
-		if [ ! -f $OEBASE/hanover-system/recipes/images/$PRODUCT/$PRODUCT-image.$PR.bb ] ; then
+		if [ ! -f $OEBASE/hanover-system/recipes/images/$PRODUCT/$PRODUCT-image.bb ] ; then
 			SANITY_CHECK_STATUS=0
-			printf "%s\n" "Product image $PRODUCT-image.$PR.bb is not found"
+			printf "%s\n" "Product image $PRODUCT-image.bb is not found"
 		else
-			RECIPE="$PRODUCT-image.$PR"
+			RECIPE="$PRODUCT-image"
+			POSTFIX=""
 		fi
 	fi
 
 else
-	if [ ! -f $OEBASE/hanover-system/recipes/meta/$PRODUCT/$PRODUCT-sdk.$PR.bb ] ; then
+	if [ ! -f $OEBASE/hanover-system/recipes/meta/$PRODUCT/$PRODUCT-sdk.bb ] ; then
 	SANITY_CHECK_STATUS=0
-	printf "%s\n" "Product image $PRODUCT-sdk.$PR.bb is not found"
+	printf "%s\n" "Product image $PRODUCT-sdk.bb is not found"
 	else
-		RECIPE="$PRODUCT-sdk.$PR"
+		RECIPE="$PRODUCT-sdk"
+		POSTFIX="-dev"
 	fi
 fi
 
@@ -170,13 +180,13 @@ if [ -z "$BUILD_MODE" ] ; then
 fi
 
 
-declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT PRODUCT_RELEASE=$PR BUILD_MODE=$BUILD_MODE bitbake"
+declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT PRODUCT_RELEASE=$PR BUILD_MODE=$BUILD_MODE POSTFIX=$POSTFIX bitbake"
 
 #Check either it is going a complete product or just one component build
 if [ -z "$BB" ] ; then
 	COMMAND_LINE+=" $RECIPE";
 else
-	COMMAND_LINE+=" -b $BB"
+	COMMAND_LINE+=" -b $BB$POSTFIX"
 fi
 
 #Check either a command has been provided
@@ -190,6 +200,8 @@ if [ "$DEBUG" = "1" ] ; then
 fi
 
 printf "%s\n" "Starting bitbake  ..."
+printf "%s\n" "Command line: $COMMAND_LINE"
+
 eval "$COMMAND_LINE"
 
 exit 0
