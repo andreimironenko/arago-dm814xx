@@ -8,4 +8,7 @@ LICENSE = "GPLv2+"
 hostname_da830-omapl137-evm = "arago"
 hostname_da850-omapl138-evm = "arago"
 
+#Z3 host name
+hostname_dm814x-z3 = "iptft"
+
 PR_append = "-arago2"

@@ -146,10 +146,19 @@ if [ "$TYPE" = "" -o "$TYPE" = "image" ] ; then
 			RECIPE="$PRODUCT-image.dbg"
 			POSTFIX="-dbg"
 		fi
+	elif [ $PR = "dev" ] ; then
+		if [ ! -f $OEBASE/hanover-system-dev/recipes/images/$PRODUCT/$PRODUCT-image.dev.bb ] ; then
+			SANITY_CHECK_STATUS=0
+			printf "%s\n" "Product image $PRODUCT-image.dev.bb is not found"
+		else
+			RECIPE="$PRODUCT-image.dev"
+			POSTFIX=""
+		fi
+		
 	else
 		if [ ! -f $OEBASE/hanover-system/recipes/images/$PRODUCT/$PRODUCT-image.bb ] ; then
 			SANITY_CHECK_STATUS=0
-			printf "%s\n" "Product image $PRODUCT-image.bb is not found"
+			printf "%s\n" "Product image $PRODUCT-image.dev.bb is not found"
 		else
 			RECIPE="$PRODUCT-image"
 			POSTFIX=""
@@ -201,6 +210,7 @@ fi
 
 printf "%s\n" "Starting bitbake  ..."
 printf "%s\n" "Command line: $COMMAND_LINE"
+
 
 eval "$COMMAND_LINE"
 
