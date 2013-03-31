@@ -32,7 +32,7 @@ declare CMD=""
 #Build mode. If it's set then all built binaries will be copied to release 
 #and not user personal folder on amuxi. Only build-manager should use it as 
 #it will require super-user access level on amuxi.
-declare BUILD_MODE=""
+declare BUILD_PURPOSE=""
 
 #Postfix mode. Is used in the tasks/image recipes for defining what type of the
 # package is required: dev, dbg or release. dev is used for SDK builds, dbg for
@@ -46,6 +46,20 @@ declare DEBUG=""
 #Type of the build: image or SDK. If it's not provided then by default -image.
 declare TYPE=""
 
+# Type of the build debug/releas for the packages, it's used as a postfix in
+# the product definition file, so the same package can be built with or without
+# debug information. Take task-sr1106.inc as an example.
+declare PKG_DEBUG_PF=""
+
+# Build mode for the libraries release/development. Development versions of the
+# libraries are used for building product SDK. Take task-sr1106-libs.inc as an
+# example.
+declare LIB_SDK_PF=""
+
+# This postfix is used to vary the version of the packages. For development the
+# most recent version from git is used, so the value of this variable will be
+# "git". For release build, it will be empty.
+declare PKG_VER_PF="" 
 
 
 #bb.sh possible errors
@@ -77,7 +91,22 @@ while [ $# -gt 0 ]; do
     printf "%s\n"             
     printf "%s\n" "This script is a wrapper for bitbake command to simplify"
 	printf "%s\n" "product build procedure in the OE"
-	printf "%s\n" 
+	printf "%s\n"
+	printf "%s\n" "Usage: bb [options]"
+	printf "%s\n"
+	printf "%s\n" "Available options:"
+	printf "%s\t%s\n" "-p, --product" "Mandatory. Product ID, i.e. SR1106"
+	printf "%s\t%s\n" "-r, --release" "Mandatory. Product release, i.e. r01, r02, dbg..."
+	printf "%s\t%s\n" "-t, --type"    "Optional. Type of the build: image or sdk. Default: image"
+	printf "%s\t%s\n" "-m, --machine" "Mandatory. Machine ID, i.e dm814x-z3, dm365-htc ..."
+	printf "%s\t%s\n" "-b, --bb" "Optional. Build a OE bitbake package, not a whole product"
+	printf "%s\t%s\n" "-c, --command" "Optional. Run only one bitbake command, i.e. -c clean"
+	printf "%s\t%s\n" "-a, --admin" "Optinal. Only for build-manager making official releases "
+	printf "%s\t%s\n" "-d, --debug" "Optinal. Enable OE debug messages " 
+	printf "%s\t%s\n" "-h, --help" "This help"
+	printf "%s\n"
+	printf "%s\n" "Some examples:"
+	printf "%s\n"
 	printf "%s\n" "To build certain product:"
 	printf "%s\n" "$SCRIPT -p sr1106 -r r01 -m dm814x-z3"
 	printf "%s\n"
@@ -88,17 +117,7 @@ while [ $# -gt 0 ]; do
 	printf "%s\n" "$SCRIPT -p sr1106 -r r01 -m dm814x-z3 -c clean"
 	printf "\n%s\n" "Or to clean only one package:"
 	printf "%s\n" "$SCRIPT -p sr1106 -r r01 -m dm814x-z3 -b ipled -c clean"
-	printf "%s\n"
-	printf "%s\n" "Available options:"
-	printf "%s\t%s\n" "-p, --product" "Mandatory. Product ID, i.e. SR1106"
-	printf "%s\t%s\n" "-r, --release" "Mandatory. Product release, i.e. r01, r02, dbg..."
-	printf "%s\t%s\n" "-t, --type"    "Optional. Type of the build: image or sdk. Default: image"
-	printf "%s\t%s\n" "-m, --machine" "Mandatory. Machine ID, i.e dm814x-z3, dm365-htc ..."
-	printf "%s\t%s\n" "-b, --bb" "Optional. Build a OE bitbake package, not a whole product"
-	printf "%s\t%s\n" "-c, --command" "Optional. Run only one command, i.e. -c clean"
-	printf "%s\t%s\n" "-a, --admin" "Optinal. Only for build-manager making official releases " 
-	printf "%s\t%s\n" "-h, --help" "This help"
-	printf "%s\n"
+	
 	exit 0
     ;;
     --product | -p)     shift; PRODUCT=$1; shift; ;;
@@ -107,10 +126,10 @@ while [ $# -gt 0 ]; do
     --machine | -m)     shift; MACHINE=$1; shift; ;;
     --bb |      -b)     shift; BB=$1;      shift; ;;
     --command | -c)     shift; CMD=$1;     shift; ;;
-    --admin   | -a)     shift; BUILD_MODE="release";  shift; ;;
+    --admin   | -a)     shift; BUILD_PURPOSE="release";  shift; ;;
     --debug   | -d)     shift; DEBUG="1";    shift; ;;
-    _*)                 printf "%s\n" "Switch not supported" >&2; exit $BB_ERR_SWITCH_NO_SUPPORT ;;
-    *)                 printf "%s\n" "Extra argument or missing switch" >&2; exit $BB_ERR_EXTRA_ARGUMENT ;;  
+    -*)                 printf "%s\n" "Switch not supported" >&2; exit $BB_ERR_SWITCH_NO_SUPPORT ;;
+    *)                  printf "%s\n" "Extra argument or missing switch" >&2; exit $BB_ERR_EXTRA_ARGUMENT ;;  
 esac
 done
 
@@ -134,47 +153,10 @@ if [ -z "$MACHINE" ] ; then
    SANITY_CHECK_STATUS=0
 fi
 
-declare RECIPE=""
-
-#Check either the product/release recipe exist
-if [ "$TYPE" = "" -o "$TYPE" = "image" ] ; then
-	if [ $PR = "dbg" ] ; then 
-		if [ ! -f $OEBASE/hanover-system-dev/recipes/images/$PRODUCT/$PRODUCT-image.dbg.bb ] ; then
-			SANITY_CHECK_STATUS=0
-			printf "%s\n" "Product image $PRODUCT-image.dbg.bb is not found"
-		else
-			RECIPE="$PRODUCT-image.dbg"
-			POSTFIX="-dbg"
-		fi
-	elif [ $PR = "dev" ] ; then
-		if [ ! -f $OEBASE/hanover-system-dev/recipes/images/$PRODUCT/$PRODUCT-image.dev.bb ] ; then
-			SANITY_CHECK_STATUS=0
-			printf "%s\n" "Product image $PRODUCT-image.dev.bb is not found"
-		else
-			RECIPE="$PRODUCT-image.dev"
-			POSTFIX=""
-		fi
-		
-	else
-		if [ ! -f $OEBASE/hanover-system/recipes/images/$PRODUCT/$PRODUCT-image.bb ] ; then
-			SANITY_CHECK_STATUS=0
-			printf "%s\n" "Product image $PRODUCT-image.dev.bb is not found"
-		else
-			RECIPE="$PRODUCT-image"
-			POSTFIX=""
-		fi
-	fi
-
-else
-	if [ ! -f $OEBASE/hanover-system/recipes/meta/$PRODUCT/$PRODUCT-sdk.bb ] ; then
+if [ ! -d $OEBASE/hanover-system/recipes/tasks/products/${PRODUCT} ] ; then
+	printf "%s\n" "$PRODUCT folder is not found"
 	SANITY_CHECK_STATUS=0
-	printf "%s\n" "Product image $PRODUCT-sdk.bb is not found"
-	else
-		RECIPE="$PRODUCT-sdk"
-		POSTFIX="-dev"
-	fi
 fi
-
 
 if [ "$SANITY_CHECK_STATUS" == 1 ] ; then
   printf "%s\n" "Ok"
@@ -183,13 +165,32 @@ else
  exit $BB_ERR_SANITY_FAILED
 fi
 
-#Non-admin user mode build
-if [ -z "$BUILD_MODE" ] ; then
-	BUILD_MODE=${USER}
+
+
+declare RECIPE=""
+
+#Check either the product/release recipe exist
+if [ "$TYPE" = "" -o "$TYPE" = "image" ] ; then
+	
+	if [ $PR = "dev" ] ; then
+		PKG_DEBUG_PF="-dbg"
+		PKG_VER_PF="git"
+	fi
+	RECIPE="hanover-product-image"
+else
+	LIB_SDK_PF="-dev"
+	RECIPE="hanover-product-sdk"
 fi
 
+#Non-admin user mode build
+if [ -z "$BUILD_PURPOSE" -o "$PR" = "dev"] ; then
+	BUILD_PURPOSE=${USER}
+fi
 
-declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT PRODUCT_RELEASE=$PR BUILD_MODE=$BUILD_MODE POSTFIX=$POSTFIX bitbake"
+declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT \
+PRODUCT_RELEASE=$PR BUILD_PURPOSE=$BUILD_PURPOSE \
+PKG_DEBUG_PF=$PKG_DEBUG_PF LIB_SDK_PF=$LIB_SDK_PF PKG_VER_PF=$PKG_VER_PF \   
+bitbake"
 
 #Check either it is going a complete product or just one component build
 if [ -z "$BB" ] ; then
@@ -211,6 +212,7 @@ fi
 printf "%s\n" "Starting bitbake  ..."
 printf "%s\n" "Command line: $COMMAND_LINE"
 
+exit 0
 
 eval "$COMMAND_LINE"
 
