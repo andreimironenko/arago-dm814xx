@@ -171,26 +171,17 @@ declare RECIPE=""
 
 #Check either the product/release recipe exist
 if [ "$TYPE" = "" -o "$TYPE" = "image" ] ; then
-	
-	if [ $PR = "dev" ] ; then
-		PKG_DEBUG_PF="-dbg"
-		PKG_VER_PF="git"
-	fi
 	RECIPE="hanover-product-image"
 else
-	LIB_SDK_PF="-dev"
 	RECIPE="hanover-product-sdk"
 fi
 
 #Non-admin user mode build
-if [ -z "$BUILD_PURPOSE" -o "$PR" = "dev"] ; then
+if [ -z "$BUILD_PURPOSE" -o "$PR" = "dev" ] ; then
 	BUILD_PURPOSE=${USER}
 fi
 
-declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT \
-PRODUCT_RELEASE=$PR BUILD_PURPOSE=$BUILD_PURPOSE \
-PKG_DEBUG_PF=$PKG_DEBUG_PF LIB_SDK_PF=$LIB_SDK_PF PKG_VER_PF=$PKG_VER_PF \   
-bitbake"
+declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT PRODUCT_RELEASE=$PR BUILD_PURPOSE=$BUILD_PURPOSE PKG_DEBUG_PF=$PKG_DEBUG_PF LIB_SDK_PF=$LIB_SDK_PF PKG_VER_PF=$PKG_VER_PF bitbake"
 
 #Check either it is going a complete product or just one component build
 if [ -z "$BB" ] ; then
@@ -212,7 +203,7 @@ fi
 printf "%s\n" "Starting bitbake  ..."
 printf "%s\n" "Command line: $COMMAND_LINE"
 
-exit 0
+
 
 eval "$COMMAND_LINE"
 
