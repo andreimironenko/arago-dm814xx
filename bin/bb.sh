@@ -46,28 +46,10 @@ declare DEBUG=""
 #Type of the build: image or SDK. If it's not provided then by default -image.
 declare TYPE=""
 
-# Type of the build debug/releas for the packages, it's used as a postfix in
-# the product definition file, so the same package can be built with or without
-# debug information. Take task-sr1106.inc as an example.
-declare PKG_DEBUG_PF=""
-
-# Build mode for the libraries release/development. Development versions of the
-# libraries are used for building product SDK. Take task-sr1106-libs.inc as an
-# example.
-declare LIB_SDK_PF=""
-
-# This postfix is used to vary the version of the packages. For development the
-# most recent version from git is used, so the value of this variable will be
-# "git". For release build, it will be empty.
-declare PKG_VER_PF="" 
-
-
 #bb.sh possible errors
 declare BB_ERR_SWITCH_NO_SUPPORT=-192
 declare BB_ERR_EXTRA_ARGUMENT=-193
 declare BB_ERR_SANITY_FAILED=194
-
-
 
 declare -rx SCRIPT=${0##*/}
 
@@ -181,7 +163,7 @@ if [ -z "$BUILD_PURPOSE" ] ; then
 	BUILD_PURPOSE=${USER}
 fi
 
-declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT PRODUCT_RELEASE=$PR BUILD_PURPOSE=$BUILD_PURPOSE PKG_DEBUG_PF=$PKG_DEBUG_PF LIB_SDK_PF=$LIB_SDK_PF PKG_VER_PF=$PKG_VER_PF bitbake"
+declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT PRODUCT_RELEASE=$PR BUILD_PURPOSE=$BUILD_PURPOSE bitbake"
 
 #Check either it is going a complete product or just one component build
 if [ -z "$BB" ] ; then
