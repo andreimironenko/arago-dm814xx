@@ -29,16 +29,6 @@ declare BB=""
 #Command to execute
 declare CMD=""
 
-#Build mode. If it's set then all built binaries will be copied to release 
-#and not user personal folder on amuxi. Only build-manager should use it as 
-#it will require super-user access level on amuxi.
-declare BUILD_PURPOSE=""
-
-#Postfix mode. Is used in the tasks/image recipes for defining what type of the
-# package is required: dev, dbg or release. dev is used for SDK builds, dbg for
-# dev images and empty line for releases.
-declare POSTFIX="" 
-
 #Debug mode. If't set bitbake will produce a lot of log with debug information.
 #Use it to pin in build issue with your component
 declare DEBUG=""
@@ -53,6 +43,14 @@ declare BB_ERR_SANITY_FAILED=194
 
 declare -rx SCRIPT=${0##*/}
 
+declare USER=`whoami`
+
+#Build mode. If it's set then all built binaries will be copied to release 
+#and not user personal folder on amuxi. Only build-manager should use it as 
+#it will require super-user access level on amuxi.
+declare BUILD_PURPOSE="$USER"
+
+
 execute () 
 {
 	$* >/dev/null
@@ -64,7 +62,6 @@ execute ()
     fi
 }
 
-declare USER=`whoami`
 
 # Process command line...
 while [ $# -gt 0 ]; do
@@ -158,10 +155,6 @@ else
 	RECIPE="hanover-product-sdk"
 fi
 
-#Non-admin user mode build
-if [ -z "$BUILD_PURPOSE" ] ; then
-	BUILD_PURPOSE=${USER}
-fi
 
 declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT PRODUCT_RELEASE=$PR BUILD_PURPOSE=$BUILD_PURPOSE bitbake"
 
