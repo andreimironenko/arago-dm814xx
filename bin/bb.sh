@@ -177,7 +177,7 @@ else
 fi
 
 #Non-admin user mode build
-if [ -z "$BUILD_PURPOSE" -o "$PR" = "dev" ] ; then
+if [ -z "$BUILD_PURPOSE" ] ; then
 	BUILD_PURPOSE=${USER}
 fi
 
