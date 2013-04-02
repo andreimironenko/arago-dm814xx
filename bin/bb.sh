@@ -36,6 +36,12 @@ declare DEBUG=""
 #Type of the build: image or SDK. If it's not provided then by default -image.
 declare TYPE=""
 
+# Library build mode
+# This flag is used to separate the image and SDK builds. For the SDK builds
+# "-dev" postfix must be added to each of the library. DEV type of the library
+# package includes all header files for this library. 
+declare LIB_BUILD_MODE=""  
+
 #bb.sh possible errors
 declare BB_ERR_SWITCH_NO_SUPPORT=-192
 declare BB_ERR_EXTRA_ARGUMENT=-193
@@ -153,10 +159,11 @@ if [ "$TYPE" = "" -o "$TYPE" = "image" ] ; then
 	RECIPE="hanover-product-image"
 else
 	RECIPE="hanover-product-sdk"
+	LIB_BUILD_MODE="-dev"
 fi
 
 
-declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT PRODUCT_RELEASE=$PR BUILD_PURPOSE=$BUILD_PURPOSE bitbake"
+declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT PRODUCT_RELEASE=$PR BUILD_PURPOSE=$BUILD_PURPOSE LIB_BUILD_MODE=$LIB_BUILD_MODE bitbake"
 
 #Check either it is going a complete product or just one component build
 if [ -z "$BB" ] ; then
