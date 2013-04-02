@@ -158,7 +158,7 @@ declare RECIPE=""
 if [ "$TYPE" = "" -o "$TYPE" = "image" ] ; then
 	RECIPE="hanover-product-image"
 else
-	RECIPE="hanover-product-sdk"
+	RECIPE="meta-hanover-sdk"
 	LIB_BUILD_MODE="-dev"
 fi
 
