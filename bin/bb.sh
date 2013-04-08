@@ -150,8 +150,6 @@ else
  exit $BB_ERR_SANITY_FAILED
 fi
 
-
-
 declare RECIPE=""
 
 #Check either the product/release recipe exist
