@@ -138,7 +138,7 @@ if [ -z "$MACHINE" ] ; then
    SANITY_CHECK_STATUS=0
 fi
 
-if [ ! -d $OEBASE/hanover-system/recipes/tasks/products/${PRODUCT} ] ; then
+if [ ! -d $OEBASE/hanover-system/recipes/tasks/product/${PRODUCT} ] ; then
 	printf "%s\n" "$PRODUCT folder is not found"
 	SANITY_CHECK_STATUS=0
 fi
@@ -154,9 +154,9 @@ declare RECIPE=""
 
 #Check either the product/release recipe exist
 if [ "$TYPE" = "" -o "$TYPE" = "image" ] ; then
-	RECIPE="hanover-product-image"
+	RECIPE="hanover-${PRODUCT}-image"
 else
-	RECIPE="meta-hanover-sdk"
+	RECIPE="meta-${PRODUCT}-sdk"
 	LIB_BUILD_MODE="-dev"
 fi
 
