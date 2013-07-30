@@ -5,7 +5,7 @@ LICENSE = "BSD"
 
 require ti-paths.inc
 require ti-staging.inc
-# require ti-eula-unpack.inc
+require ti-eula-unpack.inc
 
 PR = "r2"
 

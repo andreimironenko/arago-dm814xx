@@ -62,10 +62,11 @@ do_install () {
 
     # Install/Stage the Source Tree
     install -d ${D}${SYSLINK_INSTALL_DIR_RECIPE}
-    cp -pPrf ${S}/* ${D}${SYSLINK_INSTALL_DIR_RECIPE}
-
-    # Install samples
-    #oe_runmake EXEC_DIR=${D}/usr/share/ti/examples install-examples
+    #cp -pPrf ${S}/* ${D}${SYSLINK_INSTALL_DIR_RECIPE}
+    cp -rf ${S}/* ${D}${SYSLINK_INSTALL_DIR_RECIPE}
+    
+    cd ${D}${SYSLINK_INSTALL_DIR_RECIPE}
+    ln -sf packages/ti ti
 }
 
 do_install_append_dm814x-evm () {
@@ -114,10 +115,14 @@ do_install_append_c6a811x-evm () {
     install ${D}/usr/share/ti/examples/ex02_messageq/release/* ${D}/${installdir}/syslink-examples/TI811X/messageq
 }
 
-KERNEL_VERSION = "${@base_read_file('${STAGING_KERNEL_DIR}/kernel-abiversion')}"
+#AM: Reading kernel version is not working when we deal with git/srctree. 
+#KERNEL_VERSION ?= "${@base_read_file('${STAGING_KERNEL_DIR}/kernel-abiversion')}"
 
 PACKAGES += "ti-syslink-module"
-FILES_ti-syslink-module = "/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp/syslink.ko" 
+#AM: We don't really need to specify the path down to the module file, 
+# /lib/modules should be sufficient!
+#FILES_ti-syslink-module = "/lib/modules/${KERNEL_VERSION}/kernel/drivers/dsp/syslink.ko" 
+FILES_ti-syslink-module = "/lib/modules" 
 RDEPENDS_ti-syslink-module += "update-modules"
 
 pkg_postinst_ti-syslink-module () {

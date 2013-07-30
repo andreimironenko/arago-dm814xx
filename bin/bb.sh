@@ -34,13 +34,16 @@ declare CMD=""
 declare DEBUG=""
 
 #Type of the build: image or SDK. If it's not provided then by default -image.
-declare TYPE=""
+declare BUILD_TYPE="image"
 
 # Library build mode
 # This flag is used to separate the image and SDK builds. For the SDK builds
 # "-dev" postfix must be added to each of the library. DEV type of the library
 # package includes all header files for this library. 
-declare LIB_BUILD_MODE=""  
+declare LIB_BUILD_MODE="" 
+
+# Default DEV_FLAG=0
+declare DEV_FLAG=0 
 
 #bb.sh possible errors
 declare BB_ERR_SWITCH_NO_SUPPORT=-192
@@ -81,45 +84,43 @@ while [ $# -gt 0 ]; do
 	printf "%s\n"
 	printf "%s\n" "Available options:"
 	printf "%s\t%s\n" "-p, --product" "Mandatory. Product ID, i.e. SR1106"
-	printf "%s\t%s\n" "-r, --release" "Mandatory. Product release, i.e. r01, r02, dbg..."
-	printf "%s\t%s\n" "-t, --type"    "Optional. Type of the build: image or sdk. Default: image"
 	printf "%s\t%s\n" "-m, --machine" "Mandatory. Machine ID, i.e dm814x-z3, dm365-htc ..."
-	printf "%s\t%s\n" "-b, --bb" "Optional. Build a OE bitbake package, not a whole product"
+	printf "%s\t%s\n" "-i, --image"   "Optional. Build a product image or product sdk. Default: image"
+	printf "%s\t%s\n" "-b, --bb" "Optional. Build a particular package, not a whole product"
 	printf "%s\t%s\n" "-c, --command" "Optional. Run only one bitbake command, i.e. -c clean"
-	printf "%s\t%s\n" "-a, --admin" "Optinal. Only for build-manager making official releases "
-	printf "%s\t%s\n" "-d, --debug" "Optinal. Enable OE debug messages " 
+	printf "%s\t%s\n" "-d, --dev"     "Optional. Development build"
+	printf "%s\t%s\n" "-r, --release" "Optinal. Build manager only, making an official release build."
+	printf "%s\t%s\n" "-D, --debug" "Optinal. Enable OE extra build information" 
 	printf "%s\t%s\n" "-h, --help" "This help"
 	printf "%s\n"
 	printf "%s\n" "Some examples:"
 	printf "%s\n"
 	printf "%s\n" "To build certain product:"
-	printf "%s\n" "$SCRIPT -p sr1106 -r r01 -m dm814x-z3"
+	printf "%s\n" "$SCRIPT -p sr1106 -r -m dm814x-z3"
 	printf "%s\n"
 	printf "%s\n" "To build one package use -b option:"
-	printf "%s\n" "$SCRIPT -p sr1106 -r r01 -m dm814x-z3 -b ipled"
+	printf "%s\n" "$SCRIPT -p sr1106 -r -m dm814x-z3 -b ipled"
 	printf "%s\n"
 	printf "%s\n" "To clean from previous build:"
-	printf "%s\n" "$SCRIPT -p sr1106 -r r01 -m dm814x-z3 -c clean"
+	printf "%s\n" "$SCRIPT -p sr1106 -r -m dm814x-z3 -c clean"
 	printf "\n%s\n" "Or to clean only one package:"
-	printf "%s\n" "$SCRIPT -p sr1106 -r r01 -m dm814x-z3 -b ipled -c clean"
+	printf "%s\n" "$SCRIPT -p sr1106 -r -m dm814x-z3 -b ipled -c clean"
 	
 	exit 0
     ;;
     --product | -p)     shift; PRODUCT=$1; shift; ;;
-    --release | -r)     shift; PR=$1;      shift; ;;
-    --type    | -t)     shift; TYPE=$1;    shift; ;;
     --machine | -m)     shift; MACHINE=$1; shift; ;;
-    --bb |      -b)     shift; BB=$1;      shift; ;;
+    --bb      | -b)     shift; BB=$1;      shift; ;;
     --command | -c)     shift; CMD=$1;     shift; ;;
-    --admin   | -a)     shift; BUILD_PURPOSE="release";  shift; ;;
-    --debug   | -d)     shift; DEBUG="1";    shift; ;;
-    -*)                 printf "%s\n" "Switch not supported" >&2; exit $BB_ERR_SWITCH_NO_SUPPORT ;;
-    *)                  printf "%s\n" "Extra argument or missing switch" >&2; exit $BB_ERR_EXTRA_ARGUMENT ;;  
+    --release | -r)     shift; BUILD_PURPOSE="release";  shift; ;;
+    --debug   | -D)     shift; DEBUG=1;    shift; ;;
+    -*)                 printf "%s\n" "Switch not supported" >&2; exit -1 ;;
+    *)                  USER_IMAGE=$1; shift; ;;  
 esac
 done
 
 
-printf "%s" "Sanity check for parameters and build targets  ..."
+#Sanity check for parameters and build targets
 SANITY_CHECK_STATUS=1
 
 #Check mandatory parameters first
@@ -128,46 +129,78 @@ if [ -z "$PRODUCT" ] ; then
    SANITY_CHECK_STATUS=0
 fi
 
-if [ -z "$PR" ] ; then
-   printf "%s\n" "Mandatory parameter -r, --release is missed" >&2
-   SANITY_CHECK_STATUS=0
-fi
-
 if [ -z "$MACHINE" ] ; then
    printf "%s\n" "Mandatory parameter -m, --machine is missed" >&2
    SANITY_CHECK_STATUS=0
 fi
 
-if [ ! -d $OEBASE/hanover-system/recipes/tasks/product/${PRODUCT} ] ; then
-	printf "%s\n" "$PRODUCT folder is not found"
+#Checking either we are dealing with development or release build
+if [ -d $OEBASE/hanover-system-dev -a -d $OEBASE/hanover-apps-dev ] ; then
+	DEV_FLAG=1;
+elif [ ! -d "$OEBASE/hanover-system-dev" -a -d "$OEBASE/hanover-apps-dev" ]  ; then
+	SANITY_CHECK_STATUS=0;
+	printf "%s\n" 
+	printf "%s\n" "Although hanover-system-dev is present,"
+	printf "%s\n" "hanover-apps-dev is not found."
+	printf "%s\n" "Run \"bb-get -d\" to get proper development build environment."
+	printf "%s\n" 
+elif [ ! -d "$OEBASE/hanover-apps-dev" -a -d "$OEBASE/hanover-system-dev" ]  ; then
+	SANITY_CHECK_STATUS=0;
+	printf "%s\n" 
+	printf "%s\n" "Although hanover-system-dev is present," 
+	printf "%s\n" "hanover-apps-dev is not found."
+	printf "%s\n" "Run \"bb-get -d\" to get proper development build environment."
+	printf "%s\n" 
+elif [ ! -d $OEBASE/hanover-system-dev -a ! -d $OEBASE/hanover-apps-dev ] ; then 
+	DEV_FLAG=0;
+fi	
+
+
+
+if [ ! -f $OEBASE/hanover-system/recipes/products/${PRODUCT}/release.inc ] ; then
+	printf "%s\n" "release.inc for $PRODUCT is not found"
 	SANITY_CHECK_STATUS=0
 fi
 
-if [ "$SANITY_CHECK_STATUS" == 1 ] ; then
-  printf "%s\n" "Ok"
+if [ "$SANITY_CHECK_STATUS" = "1" ] ; then
+	printf "%s\n" "Sanity check for parameters and build targets...Ok"
 else
- printf "%s\n" "Failed"
- exit $BB_ERR_SANITY_FAILED
+	printf "%s\n" "Sanity check for parameters and build targets...Failed"
+	exit -1 
 fi
 
-declare RECIPE=""
-
-#Check either the product/release recipe exist
-if [ "$TYPE" = "" -o "$TYPE" = "image" ] ; then
-	RECIPE="hanover-${PRODUCT}-image"
+PRODUCT_RELEASE=`cat $OEBASE/hanover-system/recipes/products/${PRODUCT}/release.inc`
+if [ ${DEV_FLAG} == 0 ] ; then 
+	PRODUCT_RELEASE="r${PRODUCT_RELEASE:23}"
+	RELDIR="rel"
 else
-	RECIPE="meta-${PRODUCT}-sdk"
-	LIB_BUILD_MODE="-dev"
+	PRODUCT_RELEASE="d${PRODUCT_RELEASE:23}"
+	RELDIR="dev"
 fi
 
 
-declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT PRODUCT_RELEASE=$PR BUILD_PURPOSE=$BUILD_PURPOSE LIB_BUILD_MODE=$LIB_BUILD_MODE bitbake"
+if [ -z ${USER_IMAGE} ] ; then 
+	IMAGE="hanover-image"; 
+elif [ ${USER_IMAGE} = image ] ; then 
+	IMAGE="hanover-image";
+elif [ ${USER_IMAGE} = sdk ] ; then
+	IMAGE="hanover-meta-sdk";
+	LIB_BUILD_MODE="-dev";
+else
+	IMAGE=${USER_IMAGE};
+fi
+
+
+
+declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT \
+	PRODUCT_RELEASE=$PRODUCT_RELEASE BUILD_PURPOSE=$BUILD_PURPOSE \
+	LIB_BUILD_MODE=$LIB_BUILD_MODE RELDIR=$RELDIR bitbake"
 
 #Check either it is going a complete product or just one component build
 if [ -z "$BB" ] ; then
-	COMMAND_LINE+=" $RECIPE";
+	COMMAND_LINE+=" $IMAGE";
 else
-	COMMAND_LINE+=" -b $BB$POSTFIX"
+	COMMAND_LINE+=" -b $BB"
 fi
 
 #Check either a command has been provided
@@ -183,8 +216,18 @@ fi
 printf "%s\n" "Starting bitbake  ..."
 printf "%s\n" "Command line: $COMMAND_LINE"
 
+printf "\n"
+echo "PRODUCT=${PRODUCT}"
+echo "MACHINE=${MACHINE}"
+echo "BUILD_TYPE=${BUILD_TYPE}"
+echo "BB=${BB}"
+echo "CMD=${CMD}"
+echo "DEV_FLAG=${DEV_FLAG}"
+echo "BUILD_PURPOSE=${BUILD_PURPOSE}"
+echo "PRODUCT_RELEASE=${PRODUCT_RELEASE}"
+echo "IMAGE=${IMAGE}"
+echo "RELDIR=${RELDIR}"
 
-
-eval "$COMMAND_LINE"
+eval "$COMMAND_LINE -k"
 
 exit 0

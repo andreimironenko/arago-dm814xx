@@ -7,11 +7,11 @@ SRC_URI = "\
   file://bluez4-fix-synchronization-between-bluetoothd-and-dr.patch \
 "
 
-SRC_URI[md5sum] = "341294b2849a04a4afff5c96bfbf30b2"
-SRC_URI[sha256sum] = "d6ea9de410fc2bcd2620d709c2202893b218e2e6a55c3c0ce6bebd27fa4120f6"
+#SRC_URI[md5sum] = "341294b2849a04a4afff5c96bfbf30b2"
+#SRC_URI[sha256sum] = "d6ea9de410fc2bcd2620d709c2202893b218e2e6a55c3c0ce6bebd27fa4120f6"
 
-#SRC_URI[md5sum] = "3e6e77ae06aad73bbedbabed3f0d508e"
-#SRC_URI[sha256sum] = "795dc8eb45e07c7848c58e2f2d730a404179ecce3dd1cd7b822cdec5ea7b69c8"
+SRC_URI[md5sum] = "3e6e77ae06aad73bbedbabed3f0d508e"
+SRC_URI[sha256sum] = "795dc8eb45e07c7848c58e2f2d730a404179ecce3dd1cd7b822cdec5ea7b69c8"
 
 
 # path to bluetooth.conf residing in arago-oe-dev
@@ -26,6 +26,8 @@ BTUDEV = " --disable-udevrules"
 BTUDEV_angstrom = " --enable-udevrules"
 BTUDEV_shr = " --enable-udevrules"
 
+#AM: By default EXTRA_AUTOCONF is assigned to "--exclude=autopoint" what causes compilation failure
+EXTRA_AUTORECONF = "" 
 EXTRA_OECONF += "${BTUDEV}"
 do_configure_append(){
 	echo "#define LIBUDEV_I_KNOW_THE_API_IS_SUBJECT_TO_CHANGE" >> ${S}/config.h
