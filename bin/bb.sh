@@ -96,15 +96,16 @@ while [ $# -gt 0 ]; do
 	printf "%s\n" "Some examples:"
 	printf "%s\n"
 	printf "%s\n" "To build certain product:"
-	printf "%s\n" "$SCRIPT -p sr1106 -r -m dm814x-z3"
+	printf "%s\n" "$SCRIPT -p sr1106 -m dm814x-z3"
 	printf "%s\n"
 	printf "%s\n" "To build one package use -b option:"
-	printf "%s\n" "$SCRIPT -p sr1106 -r -m dm814x-z3 -b ipled"
+	printf "%s\n" "$SCRIPT -p sr1106 -m dm814x-z3 -b ipled"
 	printf "%s\n"
 	printf "%s\n" "To clean from previous build:"
-	printf "%s\n" "$SCRIPT -p sr1106 -r -m dm814x-z3 -c clean"
+	printf "%s\n" "$SCRIPT -p sr1106 -m dm814x-z3 -c clean"
 	printf "\n%s\n" "Or to clean only one package:"
-	printf "%s\n" "$SCRIPT -p sr1106 -r -m dm814x-z3 -b ipled -c clean"
+	printf "%s\n" "$SCRIPT -p sr1106  -m dm814x-z3 -b ipled -c clean"
+	printf "%s\n"
 	
 	exit 0
     ;;
