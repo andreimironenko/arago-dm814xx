@@ -15,7 +15,7 @@ SRC_URI = "file://Makefile \
 
 S = ${WORKDIR}/omx-core
 
-COMPATIBLE_MACHINE = "dm816x-evm|dm814x-evm|dm814x-z3"
+COMPATIBLE_MACHINE = "(dm816x-evm|dm814x-evm|dm814x-z3|dm814x-stib)"
 
 EXTRA_OEMAKE = FC_INSTALL_DIR="${FC_INSTALL_DIR}" \
          CE_INSTALL_DIR="${CE_INSTALL_DIR}" \

@@ -19,7 +19,7 @@ export BUILD_MODE
 export POSTFIX
 export RELDIR
 export KERNEL_VERSION
-export GITSERVER="amuxi"
+export GITSERVER="ebs"
 export GITBASE="/opt/git"
 
 # Set SCRATCH variable accordingly if you want to use scratch area
@@ -28,6 +28,7 @@ export GITBASE="/opt/git"
 # Set the paths...
 export BBPATH=${HANOVER_SYSTEM_DEV}:${HANOVER_SYSTEM}:${HANOVER_APPS_DEV}:${HANOVER_APPS}:${ARAGO_TOP}:${OE_TOP}
 export PATH=$OEBASE/arago-bitbake/bin/:$OEBASE/arago-utils/:$OEBASE/arago/bin/:$PATH
+
 
 # Preserve important/all environment variables
 export BB_ENV_EXTRAWHITE="HANOVER_SYSTEM_DEV HANOVER_SYSTEM HANOVER_APPS_DEV HANOVER_APPS OEBASE OE_TOP ARAGO_TOP \ 
