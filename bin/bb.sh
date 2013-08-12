@@ -215,16 +215,6 @@ if [ "$DEBUG" = "1" ] ; then
 fi
 
 
-#Build envrionment setup
-#export SDK_PATH=${OEBASE}/arago-tmp/${USER}/${PRODUCT}.${PRODUCT_RELEASE}/${MACHINE}/sysroots/x86_64-linux/usr/armv7a
-#export TOOLCHAIN_PATH=$SDK_PATH
-#export TARGET_SYS=arm-arago-linux-gnueabi
-#export LD_LIBRARY_PATH=$SDK_PATH/$TARGET_SYS/lib:$SDK_PATH/$TARGET_SYS/usr/lib:$LD_LIBRARY_PATH
-#export PATH=$SDK_PATH/bin:$TOOLCHAIN_PATH/bin:$PATH
-#export CPATH=$SDK_PATH/$TARGET_SYS/usr/include:$CPATH
-#export LIBTOOL_SYSROOT_PATH=$SDK_PATH/$TARGET_SYS
-
-
 printf "%s\n" "Starting bitbake  ..."
 printf "%s\n" "Command line: $COMMAND_LINE"
 
