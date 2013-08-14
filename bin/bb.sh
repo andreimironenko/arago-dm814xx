@@ -48,7 +48,7 @@ declare DEV_FLAG=0
 #bb.sh possible errors
 declare BB_ERR_SWITCH_NO_SUPPORT=-192
 declare BB_ERR_EXTRA_ARGUMENT=-193
-declare BB_ERR_SANITY_FAILED=194
+declare BB_ERR_SANITY_FAILED=-194
 
 declare -rx SCRIPT=${0##*/}
 
