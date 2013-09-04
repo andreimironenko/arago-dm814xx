@@ -51,25 +51,49 @@ elif [ ! -d $OEBASE/hanover-system-dev -a ! -d $OEBASE/hanover-apps-dev ] ; then
 fi	
 
 
-PRODUCT_RELEASE=`cat $OEBASE/hanover-system/recipes/products/${PRODUCT}/release.inc`
+
 if [ ${DEV_FLAG} == 0 ] ; then 
-	PRODUCT_RELEASE="r${PRODUCT_RELEASE:23}"
 	RELDIR="rel"
 else
-	PRODUCT_RELEASE="d${PRODUCT_RELEASE:23}"
 	RELDIR="dev"
 fi
 
 export MACHINE=$MACHINE
-export PRODUCT=$PRODUCT 
-export PRODUCT_RELEASE=$PRODUCT_RELEASE
-export SDK_PATH="${OEBASE}/arago-tmp/${USER}/${PRODUCT}.${PRODUCT_RELEASE}/${MACHINE}/sysroots/x86_64-linux/usr/armv7a"
+export PRODUCT=$PRODUCT
+
+
+case $MACHINE in 
+
+ dm365-htc)
+    FEED_ARCH=armv5te
+    ;;
+
+ dm365-evm)
+    FEED_ARCH=armv5te
+    ;;
+
+ dm814x-z3)
+    FEED_ARCH=armv7a
+    ;;
+
+ dm814x-evm)
+    FEED_ARCH=armv7a
+    ;;
+
+ dm814x-stib)
+    FEED_ARCH=armv7a
+    ;;
+
+esac
+
+    
+export SDK_PATH="${OEBASE}/arago-tmp/${PRODUCT}/sysroots/x86_64-linux/usr/${FEED_ARCH}"
 export TOOLCHAIN_PATH="$SDK_PATH"
 export TARGET_SYS=arm-arago-linux-gnueabi
 export LD_LIBRARY_PATH=$SDK_PATH/$TARGET_SYS/lib:$SDK_PATH/$TARGET_SYS/usr/lib:$LD_LIBRARY_PATH
 export PATH=$SDK_PATH/bin:$TOOLCHAIN_PATH/bin:$PATH
 export CPATH=$SDK_PATH/$TARGET_SYS/usr/include:$CPATH
-export CFLAGS=-I${OEBASE}/arago-tmp/${USER}/${PRODUCT}.${PRODUCT_RELEASE}/${MACHINE}/sysroots/armv7a-arago-linux-gnueabi/usr/include
-export CPPFLAGS=-I${OEBASE}/arago-tmp/${USER}/${PRODUCT}.${PRODUCT_RELEASE}/${MACHINE}/sysroots/armv7a-arago-linux-gnueabi/usr/include
+export CFLAGS=-I${OEBASE}/arago-tmp/${USER}/${PRODUCT}/${MACHINE}/sysroots/armv7a-arago-linux-gnueabi/usr/include
+export CPPFLAGS=-I${OEBASE}/arago-tmp/${USER}/${PRODUCT}/${MACHINE}/sysroots/armv7a-arago-linux-gnueabi/usr/include
 export LIBTOOL_SYSROOT_PATH=$SDK_PATH/$TARGET_SYS
 

@@ -11,4 +11,7 @@ hostname_da850-omapl138-evm = "arago"
 #Z3 host name
 hostname_dm814x-z3 = "iptft"
 
+#STIB EVM 
+hostname_dm814x-stib = "evm"
+
 PR_append = "-arago2"

@@ -158,7 +158,7 @@ fi
 
 
 
-if [ ! -f $OEBASE/hanover-system/recipes/products/${PRODUCT}/release.inc ] ; then
+if [ ! -f $OEBASE/hanover-products/${PRODUCT}/release.inc ] ; then
 	printf "%s\n" "release.inc for $PRODUCT is not found"
 	SANITY_CHECK_STATUS=0
 fi
@@ -170,15 +170,38 @@ else
 	exit -1 
 fi
 
-PRODUCT_RELEASE=`cat $OEBASE/hanover-system/recipes/products/${PRODUCT}/release.inc`
-if [ ${DEV_FLAG} == 0 ] ; then 
-	PRODUCT_RELEASE="r${PRODUCT_RELEASE:23}"
-	RELDIR="rel"
-else
-	PRODUCT_RELEASE="d${PRODUCT_RELEASE:23}"
-	RELDIR="dev"
+source ./hanover-products/${PRODUCT}/release.inc
+#(( PRODUCT_RELEASE = ${#OE_RELEASE[@]} - 1 ))
+
+#if [ ${#PRODUCT_RELEASE} -eq "1" ] ; then
+	#	PRODUCT_RELEASE="0${PRODUCT_RELEASE}"
+#fi
+
+#PRODUCT_RELEASE=`git --git-dir=./hanover-products/${PRODUCT}/.git describe`
+PRODUCT_RELEASE_GIT=`git --git-dir=./hanover-products/${PRODUCT}/.git describe`
+#PRODUCT_RELEASE_GIT=${PRODUCT_RELEASE_GIT##${PRODUCT}_}
+#PRODUCT_RELEASE_GIT=${PRODUCT_RELEASE_GIT:11}
+
+
+#printf "%s\n" "PRODUCT_RELEASE_GIT=${PRODUCT_RELEASE_GIT}"
+PRODUCT_RELEASE="${PRODUCT_RELEASE_GIT:0:3}"
+PRODUCT_VERSION="${PRODUCT_RELEASE_GIT:4}"
+
+# If there is no commits in the product since the last release PRODUCT_VERSION
+# will be empty string. For this case, it's initialised with 0.
+if [ -z $PRODUCT_VERSION ] ; then 
+	PRODUCT_VERSION="0"
 fi
 
+#printf "%s\n" "PRODUCT_RELEASE = $PRODUCT_RELEASE"
+#printf "%s\n" "PRODUCT_VERSION = $PRODUCT_VERSION"
+
+
+if [ "$DEV_FLAG" = "1" ] ; then
+	RELDIR="dev"
+else
+	RELDIR="rel"
+fi
 
 if [ -z ${USER_IMAGE} ] ; then 
 	IMAGE="hanover-image"; 
@@ -194,7 +217,8 @@ fi
 
 
 declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT \
-	PRODUCT_RELEASE=$PRODUCT_RELEASE BUILD_PURPOSE=$BUILD_PURPOSE \
+	PRODUCT_RELEASE=$PRODUCT_RELEASE PRODUCT_VERSION=$PRODUCT_VERSION \
+    BUILD_PURPOSE=$BUILD_PURPOSE \
 	LIB_BUILD_MODE=$LIB_BUILD_MODE RELDIR=$RELDIR bitbake"
 
 #Check either it is going a complete product or just one component build
@@ -227,10 +251,11 @@ echo "CMD=${CMD}"
 echo "DEV_FLAG=${DEV_FLAG}"
 echo "BUILD_PURPOSE=${BUILD_PURPOSE}"
 echo "PRODUCT_RELEASE=${PRODUCT_RELEASE}"
+echo "PRODUCT_VERSION=${PRODUCT_VERSION}"
 echo "IMAGE=${IMAGE}"
 echo "RELDIR=${RELDIR}"
 
 
-eval "$COMMAND_LINE -k"
+#eval "$COMMAND_LINE -k"
 
 exit 0
