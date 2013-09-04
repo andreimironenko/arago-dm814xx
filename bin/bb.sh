@@ -256,6 +256,6 @@ echo "IMAGE=${IMAGE}"
 echo "RELDIR=${RELDIR}"
 
 
-#eval "$COMMAND_LINE -k"
+eval "$COMMAND_LINE -k"
 
 exit 0
