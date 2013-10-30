@@ -87,7 +87,7 @@ case $MACHINE in
 esac
 
     
-export SDK_PATH="${OEBASE}/arago-tmp/${PRODUCT}/sysroots/x86_64-linux/usr/${FEED_ARCH}"
+export SDK_PATH="${OEBASE}/arago-tmp/${PRODUCT}/dev/sysroots/x86_64-linux/usr/${FEED_ARCH}"
 export TOOLCHAIN_PATH="$SDK_PATH"
 export TARGET_SYS=arm-arago-linux-gnueabi
 export LD_LIBRARY_PATH=$SDK_PATH/$TARGET_SYS/lib:$SDK_PATH/$TARGET_SYS/usr/lib:$LD_LIBRARY_PATH

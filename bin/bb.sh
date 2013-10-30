@@ -42,8 +42,8 @@ declare BUILD_TYPE="image"
 # package includes all header files for this library. 
 declare LIB_BUILD_MODE="" 
 
-# Default DEV_FLAG=0
-declare DEV_FLAG=0 
+# Default build environment is development, DEV_FLAG=1
+declare DEV_FLAG=1 
 
 #bb.sh possible errors
 declare BB_ERR_SWITCH_NO_SUPPORT=-192
@@ -85,36 +85,38 @@ while [ $# -gt 0 ]; do
 	printf "%s\n" "Available options:"
 	printf "%s\t%s\n" "-p, --product" "Mandatory. Product ID, i.e. SR1106"
 	printf "%s\t%s\n" "-m, --machine" "Mandatory. Machine ID, i.e dm814x-z3, dm365-htc ..."
-	printf "%s\t%s\n" "-i, --image"   "Optional. Build a product image or product sdk. Default: image"
-	printf "%s\t%s\n" "-b, --bb" "Optional. Build a particular package, not a whole product"
-	printf "%s\t%s\n" "-c, --command" "Optional. Run only one bitbake command, i.e. -c clean"
-	printf "%s\t%s\n" "-d, --dev"     "Optional. Development build"
-	printf "%s\t%s\n" "-r, --release" "Optinal. Build manager only, making an official release build."
-	printf "%s\t%s\n" "-D, --debug" "Optinal. Enable OE extra build information" 
-	printf "%s\t%s\n" "-h, --help" "This help"
+	printf "%s\t%s\n" "-b, --bitbake" "Optional.  Build a particular package, not a whole product"
+	printf "%s\t%s\n" "-c, --command" "Optional.  Run only one bitbake command, i.e. -c clean"
+	printf "%s\t%s\n" "-r, --release" "Optinal.   Make a release build"
+	printf "%s\t%s\n" "-f, --freeze"  "Optinal.   For build manager only. Build a final product release"
+	printf "%s\t%s\n" "-D, --debug"   "Optinal.   Enable OE extra build information" 
+	printf "%s\t%s\n" "-h, --help"    "This help"
 	printf "%s\n"
 	printf "%s\n" "Some examples:"
 	printf "%s\n"
-	printf "%s\n" "To build certain product:"
+	printf "%s\n" "To build release version of the product:"
+	printf "%s\n" "$SCRIPT -p sr1106 -m dm814x-z3 -r"
+	printf "%s\n"
+	printf "%s\n" "To build  development version of the product:"
 	printf "%s\n" "$SCRIPT -p sr1106 -m dm814x-z3"
 	printf "%s\n"
 	printf "%s\n" "To build one package use -b option:"
-	printf "%s\n" "$SCRIPT -p sr1106 -m dm814x-z3 -b ipled"
+	printf "%s\n" "$SCRIPT -p sr1106 -m dm814x-z3 -b hanover-apps-dev/recipes/iptft/iptft_git.bb"
 	printf "%s\n"
-	printf "%s\n" "To clean from previous build:"
-	printf "%s\n" "$SCRIPT -p sr1106 -m dm814x-z3 -c clean"
-	printf "\n%s\n" "Or to clean only one package:"
-	printf "%s\n" "$SCRIPT -p sr1106  -m dm814x-z3 -b ipled -c clean"
+	printf "\n%s\n" "To clean the same pacakge package:"
+	printf "%s\n" "$SCRIPT -p sr1106 -m dm814x-z3 -b hanover-apps-dev/recipes/iptft/iptft_git.bb -c clean"
 	printf "%s\n"
 	
 	exit 0
     ;;
     --product | -p)     shift; PRODUCT=$1; shift; ;;
     --machine | -m)     shift; MACHINE=$1; shift; ;;
-    --bb      | -b)     shift; BB=$1;      shift; ;;
+    --bitbake | -b)     shift; BB=$1;      shift; ;;
     --command | -c)     shift; CMD=$1;     shift; ;;
-    --release | -r)     shift; BUILD_PURPOSE="release";  shift; ;;
-    --debug   | -D)     shift; DEBUG=1;    shift; ;;
+    --release | -r)     shift; DEV_FLAG=0;  ;;
+    --freeze  | -f)     shift; BUILD_PURPOSE="release"; DEV_FLAG=0;  ;;
+    --debug   | -D)     shift; DEBUG=1;    ;;
+    
     -*)                 printf "%s\n" "Switch not supported" >&2; exit -1 ;;
     *)                  USER_IMAGE=$1; shift; ;;  
 esac
@@ -136,26 +138,23 @@ if [ -z "$MACHINE" ] ; then
 fi
 
 #Checking either we are dealing with development or release build
-if [ -d $OEBASE/hanover-system-dev -a -d $OEBASE/hanover-apps-dev ] ; then
-	DEV_FLAG=1;
-elif [ ! -d "$OEBASE/hanover-system-dev" -a -d "$OEBASE/hanover-apps-dev" ]  ; then
-	SANITY_CHECK_STATUS=0;
-	printf "%s\n" 
-	printf "%s\n" "Although hanover-system-dev is present,"
-	printf "%s\n" "hanover-apps-dev is not found."
-	printf "%s\n" "Run \"bb-get -d\" to get proper development build environment."
-	printf "%s\n" 
-elif [ ! -d "$OEBASE/hanover-apps-dev" -a -d "$OEBASE/hanover-system-dev" ]  ; then
-	SANITY_CHECK_STATUS=0;
-	printf "%s\n" 
-	printf "%s\n" "Although hanover-system-dev is present," 
-	printf "%s\n" "hanover-apps-dev is not found."
-	printf "%s\n" "Run \"bb-get -d\" to get proper development build environment."
-	printf "%s\n" 
-elif [ ! -d $OEBASE/hanover-system-dev -a ! -d $OEBASE/hanover-apps-dev ] ; then 
-	DEV_FLAG=0;
+if [ "$DEV_FLAG" = "1" ] ; then
+	if [ ! -d "$OEBASE/hanover-system-dev" -a -d "$OEBASE/hanover-apps-dev" ]  ; then
+		SANITY_CHECK_STATUS=0;
+		printf "%s\n" 
+		printf "%s\n" "Although hanover-system-dev is present,"
+		printf "%s\n" "hanover-apps-dev is not found."
+		printf "%s\n" "Run \"bb-get -d\" to get proper development build environment."
+		printf "%s\n" 
+	elif [ ! -d "$OEBASE/hanover-apps-dev" -a -d "$OEBASE/hanover-system-dev" ]  ; then
+		SANITY_CHECK_STATUS=0;
+		printf "%s\n" 
+		printf "%s\n" "Although hanover-system-dev is present," 
+		printf "%s\n" "hanover-apps-dev is not found."
+		printf "%s\n" "Run \"bb-get -d\" to get proper development build environment."
+		printf "%s\n" 
+	fi 
 fi	
-
 
 
 if [ ! -f $OEBASE/hanover-products/${PRODUCT}/release.inc ] ; then
@@ -170,32 +169,23 @@ else
 	exit -1 
 fi
 
-source ./hanover-products/${PRODUCT}/release.inc
-#(( PRODUCT_RELEASE = ${#OE_RELEASE[@]} - 1 ))
 
-#if [ ${#PRODUCT_RELEASE} -eq "1" ] ; then
-	#	PRODUCT_RELEASE="0${PRODUCT_RELEASE}"
-#fi
-
-#PRODUCT_RELEASE=`git --git-dir=./hanover-products/${PRODUCT}/.git describe`
+#Take a product release from the product folder
 PRODUCT_RELEASE_GIT=`git --git-dir=./hanover-products/${PRODUCT}/.git describe`
-#PRODUCT_RELEASE_GIT=${PRODUCT_RELEASE_GIT##${PRODUCT}_}
-#PRODUCT_RELEASE_GIT=${PRODUCT_RELEASE_GIT:11}
 
+printf "%s\n" "PRODUCT_RELEASE_GIT=$PRODUCT_RELEASE_GIT"
 
-#printf "%s\n" "PRODUCT_RELEASE_GIT=${PRODUCT_RELEASE_GIT}"
 PRODUCT_RELEASE="${PRODUCT_RELEASE_GIT:0:3}"
 PRODUCT_VERSION="${PRODUCT_RELEASE_GIT:4}"
+
+printf "%s\n" "PRODUCT_RELEASE=$PRODUCT_RELEASE"
+printf "%s\n" "PRODUCT_VERSION=$PRODUCT_VERSION"
 
 # If there is no commits in the product since the last release PRODUCT_VERSION
 # will be empty string. For this case, it's initialised with 0.
 if [ -z $PRODUCT_VERSION ] ; then 
 	PRODUCT_VERSION="0"
 fi
-
-#printf "%s\n" "PRODUCT_RELEASE = $PRODUCT_RELEASE"
-#printf "%s\n" "PRODUCT_VERSION = $PRODUCT_VERSION"
-
 
 if [ "$DEV_FLAG" = "1" ] ; then
 	RELDIR="dev"
@@ -214,12 +204,18 @@ else
 	IMAGE=${USER_IMAGE};
 fi
 
+EXPORT_PATH="/opt/exports/${BUILD_PURPOSE}/${PRODUCT}.${PRODUCT_RELEASE}-${PRODUCT_VERSION}/${RELDIR}/${MACHINE}"
+TFTP_PATH="${BUILD_PURPOSE}/${PRODUCT}.${PRODUCT_RELEASE}-${PRODUCT_VERSION}/${RELDIR}/${MACHINE}/img"
+NFS_PATH="${EXPORT_PATH}/${PRODUCT_VERSION}/nfs"
 
 
 declare COMMAND_LINE="MACHINE=$MACHINE PRODUCT=$PRODUCT \
 	PRODUCT_RELEASE=$PRODUCT_RELEASE PRODUCT_VERSION=$PRODUCT_VERSION \
     BUILD_PURPOSE=$BUILD_PURPOSE \
-	LIB_BUILD_MODE=$LIB_BUILD_MODE RELDIR=$RELDIR bitbake"
+	LIB_BUILD_MODE=$LIB_BUILD_MODE RELDIR=$RELDIR \
+    EXPORT_PATH=$EXPORT_PATH TFTP_PATH=$TFTP_PATH NFS_PATH=$NFS_PATH \
+    bitbake"
+	
 
 #Check either it is going a complete product or just one component build
 if [ -z "$BB" ] ; then
