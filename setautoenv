@@ -93,7 +93,7 @@ export TARGET_SYS=arm-arago-linux-gnueabi
 export LD_LIBRARY_PATH=$SDK_PATH/$TARGET_SYS/lib:$SDK_PATH/$TARGET_SYS/usr/lib:$LD_LIBRARY_PATH
 export PATH=$SDK_PATH/bin:$TOOLCHAIN_PATH/bin:$PATH
 export CPATH=$SDK_PATH/$TARGET_SYS/usr/include:$CPATH
-export CFLAGS=-I${OEBASE}/arago-tmp/${PRODUCT}/sysroots/${FEED_ARCH}-arago-linux-gnueabi/usr/include
-export CPPFLAGS=-I${OEBASE}/arago-tmp/${PRODUCT}/sysroots/${FEED_ARCH}-arago-linux-gnueabi/usr/include
+export CFLAGS=-I${OEBASE}/arago-tmp/${PRODUCT}/${RELDIR}/sysroots/${FEED_ARCH}-arago-linux-gnueabi/usr/include
+export CPPFLAGS=-I${OEBASE}/arago-tmp/${PRODUCT}/${RELDIR}/sysroots/${FEED_ARCH}-arago-linux-gnueabi/usr/include
 export LIBTOOL_SYSROOT_PATH=$SDK_PATH/$TARGET_SYS
 
