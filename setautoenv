@@ -95,5 +95,7 @@ export PATH=$SDK_PATH/bin:$TOOLCHAIN_PATH/bin:$PATH
 export CPATH=$SDK_PATH/$TARGET_SYS/usr/include:$CPATH
 export CFLAGS=-I${OEBASE}/arago-tmp/${PRODUCT}/${RELDIR}/sysroots/${FEED_ARCH}-arago-linux-gnueabi/usr/include
 export CPPFLAGS=-I${OEBASE}/arago-tmp/${PRODUCT}/${RELDIR}/sysroots/${FEED_ARCH}-arago-linux-gnueabi/usr/include
+export CFLAGS=-I${OEBASE}/arago-tmp/${PRODUCT}/dev/sysroots/x86_64-linux/usr/${FEED_ARCH}/arm-arago-linux-gnueabi/include/c++/4.5.3
+export CPPFLAGS=-I${OEBASE}/arago-tmp/${PRODUCT}/dev/sysroots/x86_64-linux/usr/${FEED_ARCH}/arm-arago-linux-gnueabi/include/c++/4.5.3
 export LIBTOOL_SYSROOT_PATH=$SDK_PATH/$TARGET_SYS
 
