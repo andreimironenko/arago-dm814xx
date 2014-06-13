@@ -184,7 +184,7 @@ printf "%s\n" "PRODUCT_VERSION=$PRODUCT_VERSION"
 # If there is no commits in the product since the last release PRODUCT_VERSION
 # will be empty string. For this case, it's initialised with 0.
 if [ -z $PRODUCT_VERSION ] ; then 
-	PRODUCT_VERSION="0"
+	PRODUCT_VERSION="rc00"
 fi
 
 if [ "$DEV_FLAG" = "1" ] ; then
