@@ -35,8 +35,8 @@ if [ -d $OEBASE/hanover-system-dev -a -d $OEBASE/hanover-apps-dev ] ; then
 elif [ ! -d "$OEBASE/hanover-system-dev" -a -d "$OEBASE/hanover-apps-dev" ]  ; then
 	SANITY_CHECK_STATUS=0;
 	printf "%s\n" 
-	printf "%s\n" "Although hanover-system-dev is present,"
-	printf "%s\n" "hanover-apps-dev is not found."
+	printf "%s\n" "Although hanover-apps-dev is present,"
+	printf "%s\n" "hanover-system-dev is not found."
 	printf "%s\n" "Run \"bb-get -d\" to get proper development build environment."
 	printf "%s\n" 
 elif [ ! -d "$OEBASE/hanover-apps-dev" -a -d "$OEBASE/hanover-system-dev" ]  ; then
