@@ -253,4 +253,4 @@ echo "RELDIR=${RELDIR}"
 
 eval "$COMMAND_LINE -k"
 
-exit 0
+exit $? 
