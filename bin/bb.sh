@@ -33,6 +33,9 @@ declare CMD=""
 #Use it to pin in build issue with your component
 declare DEBUG=""
 
+# force run of specified cmd, regardless of stamp status
+declare FORCE=
+
 #Type of the build: image or SDK. If it's not provided then by default -image.
 declare BUILD_TYPE="image"
 
@@ -90,6 +93,7 @@ while [ $# -gt 0 ]; do
 	printf "%s\t%s\n" "-r, --release" "Optinal.   Make a release build"
 	printf "%s\t%s\n" "-f, --freeze"  "Optinal.   For build manager only. Build a final product release"
 	printf "%s\t%s\n" "-D, --debug"   "Optinal.   Enable OE extra build information" 
+	printf "%s\t%s\n" "-F, --force"   "Opional.   Force run of specified cmd, regardless of stamp status."
 	printf "%s\t%s\n" "-h, --help"    "This help"
 	printf "%s\n"
 	printf "%s\n" "Some examples:"
@@ -116,6 +120,7 @@ while [ $# -gt 0 ]; do
     --release | -r)     shift; DEV_FLAG=0;  ;;
     --freeze  | -f)     shift; BUILD_PURPOSE="release"; DEV_FLAG=0;  ;;
     --debug   | -D)     shift; DEBUG=1;    ;;
+    --force   | -F)     shift; FORCE=1;    ;;
     
     -*)                 printf "%s\n" "Switch not supported" >&2; exit -1 ;;
     *)                  USER_IMAGE=$1; shift; ;;  
@@ -233,6 +238,7 @@ if [ "$DEBUG" = "1" ] ; then
 	COMMAND_LINE+=" -DDD"
 fi
 
+COMMAND_LINE+="${FORCE:+ -f}"
 
 printf "%s\n" "Starting bitbake  ..."
 printf "%s\n" "Command line: $COMMAND_LINE"
