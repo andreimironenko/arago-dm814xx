@@ -1,10 +1,10 @@
 #! /bin/sh
 ################################################################################
-#This script is a wrapper for bitbake command to simplify product build        # 
-#procedure                                                                     #
-# Author: Andrei Mironenko <amironenko@hanoverdisplays.com>                    #
+# This script is a wrapper for bitbake command to simplify product build       # 
+# procedure                                                                    #
+# Author: Andrei Mironenko <andrei.mironenko@paralleldynamic.com>              #
 #                                                                              #
-# Copyright(C) 2012 Hanover Displays Ltd.                                      #
+# Copyright(C) 2015 Parallel Dynamic Ltd.                                      #
 # This file is licensed under the terms of the GNU General Public License      #
 # version 2. This program  is licensed "as is" without any warranty of any kind#
 # whether express or implied.                                                  #
@@ -105,10 +105,10 @@ while [ $# -gt 0 ]; do
 	printf "%s\n" "$SCRIPT -p sr1106 -m dm814x-z3"
 	printf "%s\n"
 	printf "%s\n" "To build one package use -b option:"
-	printf "%s\n" "$SCRIPT -p sr1106 -m dm814x-z3 -b hanover-apps-dev/recipes/iptft/iptft_git.bb"
+	printf "%s\n" "$SCRIPT -p sr1106 -m dm814x-z3 -b pd-apps-dev/recipes/net-snmp-agentx++/net-snmp-agentx++_git.bb"
 	printf "%s\n"
 	printf "\n%s\n" "To clean the same pacakge package:"
-	printf "%s\n" "$SCRIPT -p sr1106 -m dm814x-z3 -b hanover-apps-dev/recipes/iptft/iptft_git.bb -c clean"
+	printf "%s\n" "$SCRIPT -p sr1106 -m dm814x-z3 -b pd-apps-dev/recipes/net-snmp-agentx++/net-snmp-agentx++_git.bb"
 	printf "%s\n"
 	
 	exit 0
@@ -144,25 +144,25 @@ fi
 
 #Checking either we are dealing with development or release build
 if [ "$DEV_FLAG" = "1" ] ; then
-	if [ ! -d "$OEBASE/hanover-system-dev" -a -d "$OEBASE/hanover-apps-dev" ]  ; then
+	if [ ! -d "$OEBASE/pd-system-dev" -a -d "$OEBASE/pd-apps-dev" ]  ; then
 		SANITY_CHECK_STATUS=0;
 		printf "%s\n" 
-		printf "%s\n" "Although hanover-system-dev is present,"
-		printf "%s\n" "hanover-apps-dev is not found."
+		printf "%s\n" "Although pd-system-dev is present,"
+		printf "%s\n" "pd-apps-dev is not found."
 		printf "%s\n" "Run \"bb-get -d\" to get proper development build environment."
 		printf "%s\n" 
-	elif [ ! -d "$OEBASE/hanover-apps-dev" -a -d "$OEBASE/hanover-system-dev" ]  ; then
+	elif [ ! -d "$OEBASE/pd-apps-dev" -a -d "$OEBASE/pd-system-dev" ]  ; then
 		SANITY_CHECK_STATUS=0;
 		printf "%s\n" 
-		printf "%s\n" "Although hanover-system-dev is present," 
-		printf "%s\n" "hanover-apps-dev is not found."
+		printf "%s\n" "Although pd-system-dev is present," 
+		printf "%s\n" "pd-apps-dev is not found."
 		printf "%s\n" "Run \"bb-get -d\" to get proper development build environment."
 		printf "%s\n" 
 	fi 
 fi	
 
 
-if [ ! -f $OEBASE/hanover-products/${PRODUCT}/release.inc ] ; then
+if [ ! -f $OEBASE/pd-products/${PRODUCT}/release.inc ] ; then
 	printf "%s\n" "release.inc for $PRODUCT is not found"
 	SANITY_CHECK_STATUS=0
 fi
@@ -176,7 +176,7 @@ fi
 
 
 #Take a product release from the product folder
-PRODUCT_RELEASE_GIT=`git --git-dir=./hanover-products/${PRODUCT}/.git describe`
+PRODUCT_RELEASE_GIT=`git --git-dir=./pd-products/${PRODUCT}/.git describe`
 
 printf "%s\n" "PRODUCT_RELEASE_GIT=$PRODUCT_RELEASE_GIT"
 
@@ -199,11 +199,11 @@ else
 fi
 
 if [ -z ${USER_IMAGE} ] ; then 
-	IMAGE="hanover-image"; 
+	IMAGE="image"; 
 elif [ ${USER_IMAGE} = image ] ; then 
-	IMAGE="hanover-image";
+	IMAGE="image";
 elif [ ${USER_IMAGE} = sdk ] ; then
-	IMAGE="hanover-meta-sdk";
+	IMAGE="pd-meta-sdk";
 	LIB_BUILD_MODE="-dev";
 else
 	IMAGE=${USER_IMAGE};
