@@ -8,13 +8,13 @@ LICENSE = "GPLv2+"
 hostname_da830-omapl137-evm = "arago"
 hostname_da850-omapl138-evm = "arago"
 
-#Z3 host name
-hostname_dm814x-z3 = "iptft"
+# DM814x-Z3 
+hostname_dm814x-z3 = $PRODUCT 
 
-#STIB-EVM 
-hostname_dm814x-stib = "evm"
+# DM814x-EVM 
+hostname_dm814x-stib = $PRODUCT 
 
-#HTC
-hostname_dm365-htc = "htc"
+# DM365-HTC 
+hostname_dm365-evm = $PRODUCT 
 
 PR_append = "-arago2"

@@ -176,20 +176,17 @@ fi
 
 
 #Take a product release from the product folder
-PRODUCT_RELEASE_GIT=`git --git-dir=./pd-products/${PRODUCT}/.git describe`
-
-printf "%s\n" "PRODUCT_RELEASE_GIT=$PRODUCT_RELEASE_GIT"
-
-PRODUCT_RELEASE="${PRODUCT_RELEASE_GIT:0:3}"
-PRODUCT_VERSION="${PRODUCT_RELEASE_GIT:4}"
+PRODUCT_RELEASE=`git --git-dir=./pd-products/${PRODUCT}/.git describe`
 
 printf "%s\n" "PRODUCT_RELEASE=$PRODUCT_RELEASE"
-printf "%s\n" "PRODUCT_VERSION=$PRODUCT_VERSION"
+#printf "%s\n" "PRODUCT_VERSION=$PRODUCT_VERSION"
+
 
 # If there is no commits in the product since the last release PRODUCT_VERSION
 # will be empty string. For this case, it's initialised with 0.
 if [ -z $PRODUCT_VERSION ] ; then 
-	PRODUCT_VERSION="rc00"
+	#PRODUCT_VERSION="rc00"
+	:
 fi
 
 if [ "$DEV_FLAG" = "1" ] ; then
@@ -199,11 +196,11 @@ else
 fi
 
 if [ -z ${USER_IMAGE} ] ; then 
-	IMAGE="image"; 
+	IMAGE="system-image"; 
 elif [ ${USER_IMAGE} = image ] ; then 
-	IMAGE="image";
+	IMAGE="system-image";
 elif [ ${USER_IMAGE} = sdk ] ; then
-	IMAGE="pd-meta-sdk";
+	IMAGE="meta-sdk";
 	LIB_BUILD_MODE="-dev";
 else
 	IMAGE=${USER_IMAGE};
@@ -252,10 +249,9 @@ echo "CMD=${CMD}"
 echo "DEV_FLAG=${DEV_FLAG}"
 echo "BUILD_PURPOSE=${BUILD_PURPOSE}"
 echo "PRODUCT_RELEASE=${PRODUCT_RELEASE}"
-echo "PRODUCT_VERSION=${PRODUCT_VERSION}"
+#echo "PRODUCT_VERSION=${PRODUCT_VERSION}"
 echo "IMAGE=${IMAGE}"
 echo "RELDIR=${RELDIR}"
-
 
 eval "$COMMAND_LINE -k"
 

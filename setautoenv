@@ -30,23 +30,23 @@ esac
 done
 
 #Checking either we are dealing with development or release build
-if [ -d $OEBASE/hanover-system-dev -a -d $OEBASE/hanover-apps-dev ] ; then
+if [ -d $OEBASE/pd-system-dev -a -d $OEBASE/pd-apps-dev ] ; then
 	DEV_FLAG=1;
-elif [ ! -d "$OEBASE/hanover-system-dev" -a -d "$OEBASE/hanover-apps-dev" ]  ; then
+elif [ ! -d "$OEBASE/pd-system-dev" -a -d "$OEBASE/pd-apps-dev" ]  ; then
 	SANITY_CHECK_STATUS=0;
 	printf "%s\n" 
-	printf "%s\n" "Although hanover-apps-dev is present,"
-	printf "%s\n" "hanover-system-dev is not found."
+	printf "%s\n" "Although pd-apps-dev is present,"
+	printf "%s\n" "pd-system-dev is not found."
 	printf "%s\n" "Run \"bb-get -d\" to get proper development build environment."
 	printf "%s\n" 
-elif [ ! -d "$OEBASE/hanover-apps-dev" -a -d "$OEBASE/hanover-system-dev" ]  ; then
+elif [ ! -d "$OEBASE/pd-apps-dev" -a -d "$OEBASE/pd-system-dev" ]  ; then
 	SANITY_CHECK_STATUS=0;
 	printf "%s\n" 
-	printf "%s\n" "Although hanover-system-dev is present," 
-	printf "%s\n" "hanover-apps-dev is not found."
+	printf "%s\n" "Although pd-system-dev is present," 
+	printf "%s\n" "pd-apps-dev is not found."
 	printf "%s\n" "Run \"bb-get -d\" to get proper development build environment."
 	printf "%s\n" 
-elif [ ! -d $OEBASE/hanover-system-dev -a ! -d $OEBASE/hanover-apps-dev ] ; then 
+elif [ ! -d $OEBASE/pd-system-dev -a ! -d $OEBASE/pd-apps-dev ] ; then 
 	DEV_FLAG=0;
 fi	
 
