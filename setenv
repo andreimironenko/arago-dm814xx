@@ -24,12 +24,13 @@ export LOCAL_BASE_PATH="/media/update"
 export HTTP_BASE_PATH="/exports"
 export FTP_BASE_PATH=""
 export TFTP_BASE_PATH=""
-export GITSERVER="xw6400"
 export FTP_SERVER="10.42.43.1"
 export TFT_PSERVER="10.42.43.1"
 export NFS_SERVER="10.42.43.1"
 export HTTP_SERVER="10.42.43.1"
-export GITBASE="/opt/git"
+
+export GITBASE="andreimironenko"
+export GITSERVER="github.com"
 
 #Update source media
 export UPDATESRC="http"
